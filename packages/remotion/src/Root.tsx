@@ -3,10 +3,16 @@ import { MyCodeScene } from './MyCodeScene';
 import videoConfig from '../../../config/video.json';
 
 // 나중에 구현할 컴포넌트들을 위한 플레이스홀더
-const TitleScreen: React.FC<{ main: string; sub: string }> = ({ main, sub }) => (
+const TitleScreen: React.FC<{ title?: string; main?: string; sub?: string }> = ({ title, main, sub }) => (
   <AbsoluteFill style={{ backgroundColor: '#1a1a1a', color: 'white', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
-    <h1 style={{ fontSize: '100px', marginBottom: '20px' }}>{main}</h1>
-    <h2 style={{ fontSize: '50px', opacity: 0.8 }}>{sub}</h2>
+    <h1 style={{ fontSize: '100px', marginBottom: '20px' }}>{title || main || 'Untitled Scene'}</h1>
+    {sub && <h2 style={{ fontSize: '50px', opacity: 0.8 }}>{sub}</h2>}
+  </AbsoluteFill>
+);
+
+const DefaultScreen: React.FC<{ componentName?: string }> = ({ componentName }) => (
+  <AbsoluteFill style={{ backgroundColor: '#000', color: '#555', justifyContent: 'center', alignItems: 'center' }}>
+    <p style={{ fontSize: '30px' }}>[Missing Component: {componentName || 'Unknown'}]</p>
   </AbsoluteFill>
 );
 
@@ -79,8 +85,10 @@ const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDura
                 <TitleScreen {...scene.visual.props as any} />
               ) : scene.visual.component === 'SummaryScreen' ? (
                 <SummaryScreen {...scene.visual.props as any} />
-              ) : (
+              ) : scene.visual.component === 'MyCodeScene' ? (
                 <MyCodeScene />
+              ) : (
+                <DefaultScreen componentName={scene.visual.component} />
               )}
               <Audio src={audioUrl} />
             </AbsoluteFill>
