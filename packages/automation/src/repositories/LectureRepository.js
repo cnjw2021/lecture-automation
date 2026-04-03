@@ -23,6 +23,11 @@ class LectureRepository {
     return await fs.pathExists(filePath);
   }
 
+  async existsCapture(lectureId, sceneId) {
+    const filePath = path.join(this.captureBaseDir, lectureId, `scene-${sceneId}.webm`);
+    return await fs.pathExists(filePath);
+  }
+
   // 향후 영상 캡처 저장도 이곳에 추가하여 DRY를 실현함
   async saveCapture(lectureId, sceneId, videoBuffer) {
     // ...
