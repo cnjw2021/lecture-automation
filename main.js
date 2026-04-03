@@ -2,27 +2,26 @@ const fs = require('fs-extra');
 const path = require('path');
 const config = require('./src/config');
 const ProviderFactory = require('./src/factory/ProviderFactory');
+const LectureRepository = require('./src/repositories/LectureRepository');
 const AudioService = require('./src/services/AudioService');
 
 async function runAutomation(jsonFileName) {
-  // 1. 설정 확인 (SSoT)
-  const providerType = config.active_audio_provider;
-  const providerSettings = config.providers[providerType];
+  // 1. 필요한 의존성 준비 (Composition Root)
+  const providerSettings = config.providers[config.active_audio_provider];
+  const audioProvider = ProviderFactory.createAudioProvider(config.active_audio_provider, providerSettings);
+  
+  // 2. 서비스 생성 (DIP 준수: 모든 의존성 주입)
+  const audioService = new AudioService(audioProvider, LectureRepository);
 
-  // 2. 팩토리를 통해 프로바이더 생성 (DIP - 구체 클래스를 직접 생성하지 않음)
-  const audioProvider = ProviderFactory.createAudioProvider(providerType, providerSettings);
-
-  // 3. 의존성 주입 (Dependency Injection)
-  const audioService = new AudioService(audioProvider);
-
-  // 4. 비즈니스 로직 실행
+  // 3. 강의 데이터 로드
   const filePath = path.join(config.paths.data, jsonFileName);
   const rawData = await fs.readFile(filePath, 'utf8');
   const lectureData = JSON.parse(rawData);
 
-  await audioService.generateFromLecture(lectureData);
+  // 4. 실행
+  await audioService.processLecture(lectureData);
 
-  console.log('✅ 강의 자동화 공정이 성공적으로 실행되었습니다.');
+  console.log('✨ 모든 공정이 Clean Architecture 원칙에 따라 완료되었습니다.');
 }
 
 if (require.main === module) {
