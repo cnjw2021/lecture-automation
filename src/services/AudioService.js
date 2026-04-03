@@ -1,12 +1,14 @@
 const fs = require('fs-extra');
 const path = require('path');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
 const config = require('../config');
 
 class AudioService {
-  constructor() {
-    this.genAI = new GoogleGenerativeAI(config.GEMINI_API_KEY);
-    this.model = this.genAI.getGenerativeModel({ model: config.model.name });
+  /**
+   * Dependency Injection (DI)
+   * 생성자에서 provider를 주입받아 OCP 원칙을 준수함
+   */
+  constructor(provider) {
+    this.provider = provider;
   }
 
   async generateFromLecture(lectureData) {
@@ -21,11 +23,8 @@ class AudioService {
       if (await fs.pathExists(outputPath)) continue;
 
       try {
-        const result = await this.model.generateContent([
-          { text: `다음 텍스트를 나레이션으로 읽어줘: "${scene.narration}"` }
-        ]);
-        // TODO: 실제 오디오 데이터 저장 로직은 SDK 사양에 맞춰 구현
-        console.log(`- Scene ${scene.scene_id} 생성 성공`);
+        // 주입받은 provider를 통해 비즈니스 로직 수행
+        await this.provider.generate(scene.narration, { scene_id: scene.scene_id });
       } catch (error) {
         console.error(`- Scene ${scene.scene_id} 에러:`, error.message);
       }
@@ -33,4 +32,9 @@ class AudioService {
   }
 }
 
-module.exports = new AudioService();
+// SSoT 설정을 기반으로 서비스 인스턴스화
+const activeModelConfig = config.models[config.active_audio_model];
+const ProviderClass = activeModelConfig.provider;
+const provider = new ProviderClass(activeModelConfig.apiKey, activeModelConfig.name);
+
+module.exports = new AudioService(provider);
