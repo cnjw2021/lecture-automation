@@ -6,17 +6,16 @@ const PlaywrightVisualProvider = require('./src/providers/PlaywrightVisualProvid
 const LectureRepository = require('./src/repositories/LectureRepository');
 const AudioService = require('./src/services/AudioService');
 const VisualService = require('./src/services/VisualService');
+const RenderService = require('./src/services/RenderService');
 
 async function runAutomation(jsonFileName) {
-  console.log('🚀 강의 자동화 파이프라인 가동...');
+  console.log('🚀 강의 자동화 파이프라인 가동 (Full-Cycle)...');
 
   // 1. 필요한 의존성 준비 (Composition Root)
   const audioProvider = ProviderFactory.createAudioProvider(
     config.active_audio_provider, 
     config.providers[config.active_audio_provider]
   );
-  
-  // 시각 자료 녹화 제공자 (현재는 Playwright 고정이나, 필요시 Factory화 가능)
   const visualProvider = new PlaywrightVisualProvider();
 
   // 2. 서비스 생성 (DIP 준수: 모든 의존성 주입)
@@ -28,18 +27,19 @@ async function runAutomation(jsonFileName) {
   const rawData = await fs.readFile(filePath, 'utf8');
   const lectureData = JSON.parse(rawData);
 
-  // 4. 순차적 공정 실행 (오디오 -> 비주얼)
+  // 4. 순차적 공정 실행 (오디오 -> 비주얼 -> 렌더링)
   console.log('\n--- 1단계: 나레이션 오디오 생성 ---');
   await audioService.processLecture(lectureData);
 
   console.log('\n--- 2단계: 시각 자료(브라우저) 녹화 ---');
   await visualService.processLecture(lectureData);
 
-  console.log('\n✨ [완료] 모든 에셋이 준비되었습니다!');
-  console.log('--------------------------------------------------');
-  console.log('최종 영상을 렌더링하려면 다음 명령을 실행하세요:');
-  console.log(`npm run render -w packages/remotion`);
-  console.log('--------------------------------------------------');
+  // 5. 최종 렌더링 자동 실행 (Full Automation의 완성!)
+  console.log('\n--- 3단계: 최종 동영상(MP4) 빌드 ---');
+  await RenderService.render(lectureData.lecture_id);
+
+  console.log('\n✨ [완료] 전 공정이 성공적으로 마무리되었습니다!');
+  console.log(`📍 최종 결과물: output/${lectureData.lecture_id}.mp4`);
 }
 
 if (require.main === module) {
