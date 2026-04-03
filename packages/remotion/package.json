@@ -2,7 +2,7 @@
   "name": "@lecture/remotion",
   "scripts": {
     "start": "remotion preview src/Root.tsx",
-    "build": "remotion render src/Root.tsx CodeLecture out.mp4"
+    "build": "remotion render src/Root.tsx"
   },
   "dependencies": {
     "remotion": "latest",
