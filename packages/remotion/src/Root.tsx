@@ -1,8 +1,6 @@
 import { Composition, Sequence, Audio, Video, AbsoluteFill, registerRoot, staticFile } from 'remotion';
 import { MyCodeScene } from './MyCodeScene';
-import lectureData from '../../../data/p1-01-01.json';
-import audioDurations from '../public/audio/P1-01-01-FULL/durations.json';
-import videoConfig from '../../../config/video.json'; 
+import videoConfig from '../../../config/video.json';
 
 // 나중에 구현할 컴포넌트들을 위한 플레이스홀더
 const TitleScreen: React.FC<{ main: string; sub: string }> = ({ main, sub }) => (
@@ -21,13 +19,33 @@ const SummaryScreen: React.FC<{ points: string[] }> = ({ points }) => (
   </AbsoluteFill>
 );
 
-export const RemotionRoot: React.FC = () => {
-  const { width, height } = videoConfig.resolution;
+// 타입 정의
+interface SceneData {
+  scene_id: number;
+  visual: {
+    type: string;
+    component?: string;
+    props?: Record<string, unknown>;
+  };
+}
+
+interface LectureData {
+  lecture_id: string;
+  sequence: SceneData[];
+}
+
+interface LectureProps {
+  lectureData: LectureData;
+  audioDurations: Record<string, number>;
+}
+
+// 메인 강의 컴포넌트
+const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDurations }) => {
   const FPS = videoConfig.fps;
 
   // 각 scene의 duration을 프레임으로 계산 (오디오 길이 + 0.5초 여유)
   const getSceneDurationFrames = (sceneId: number): number => {
-    const durationSec = audioDurations[sceneId as keyof typeof audioDurations] || 10;
+    const durationSec = audioDurations[sceneId.toString()] || 10;
     return Math.ceil((durationSec + 0.5) * FPS);
   };
 
@@ -40,51 +58,79 @@ export const RemotionRoot: React.FC = () => {
     return startFrame;
   };
 
-  // 전체 영상 길이 계산
-  const totalDurationFrames = lectureData.sequence.reduce(
-    (acc, scene) => acc + getSceneDurationFrames(scene.scene_id),
-    0
+  return (
+    <AbsoluteFill>
+      {lectureData.sequence.map((scene, index) => {
+        const audioUrl = staticFile(`audio/${lectureData.lecture_id}/scene-${scene.scene_id}.wav`);
+        const captureUrl = staticFile(`captures/${lectureData.lecture_id}/scene-${scene.scene_id}.webm`);
+        const sceneDuration = getSceneDurationFrames(scene.scene_id);
+        const sceneStart = getSceneStartFrame(index);
+
+        return (
+          <Sequence
+            key={scene.scene_id}
+            from={sceneStart}
+            durationInFrames={sceneDuration}
+          >
+            <AbsoluteFill>
+              {scene.visual.type === 'playwright' ? (
+                <Video src={captureUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : scene.visual.component === 'TitleScreen' ? (
+                <TitleScreen {...scene.visual.props as any} />
+              ) : scene.visual.component === 'SummaryScreen' ? (
+                <SummaryScreen {...scene.visual.props as any} />
+              ) : (
+                <MyCodeScene />
+              )}
+              <Audio src={audioUrl} />
+            </AbsoluteFill>
+          </Sequence>
+        );
+      })}
+    </AbsoluteFill>
   );
+};
+
+export const RemotionRoot: React.FC = () => {
+  const { width, height } = videoConfig.resolution;
+  const FPS = videoConfig.fps;
 
   return (
     <>
       <Composition
         id="FullLecture"
-        component={() => (
-          <AbsoluteFill>
-            {lectureData.sequence.map((scene, index) => {
-              const audioUrl = staticFile(`audio/${lectureData.lecture_id}/scene-${scene.scene_id}.wav`);
-              const captureUrl = staticFile(`captures/${lectureData.lecture_id}/scene-${scene.scene_id}.webm`);
-              const sceneDuration = getSceneDurationFrames(scene.scene_id);
-              const sceneStart = getSceneStartFrame(index);
-
-              return (
-                <Sequence
-                  key={scene.scene_id}
-                  from={sceneStart}
-                  durationInFrames={sceneDuration}
-                >
-                  <AbsoluteFill>
-                    {scene.visual.type === 'playwright' ? (
-                      <Video src={captureUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    ) : scene.visual.component === 'TitleScreen' ? (
-                      <TitleScreen {...scene.visual.props as any} />
-                    ) : scene.visual.component === 'SummaryScreen' ? (
-                      <SummaryScreen {...scene.visual.props as any} />
-                    ) : (
-                      <MyCodeScene />
-                    )}
-                    <Audio src={audioUrl} />
-                  </AbsoluteFill>
-                </Sequence>
-              );
-            })}
-          </AbsoluteFill>
-        )}
-        durationInFrames={totalDurationFrames}
-        fps={FPS}
+        component={FullLectureComposition}
         width={width}
         height={height}
+        fps={FPS}
+        durationInFrames={300} // calculateMetadata에서 동적으로 계산됨
+        defaultProps={{
+          lectureData: { lecture_id: '', sequence: [] },
+          audioDurations: {},
+        } as LectureProps}
+        calculateMetadata={async ({ props }) => {
+          const { lectureData, audioDurations } = props as LectureProps;
+
+          // props가 없으면 기본값 반환
+          if (!lectureData?.sequence?.length) {
+            return { durationInFrames: 300 };
+          }
+
+          // 전체 영상 길이 계산
+          const getSceneDurationFrames = (sceneId: number): number => {
+            const durationSec = audioDurations[sceneId.toString()] || 10;
+            return Math.ceil((durationSec + 0.5) * FPS);
+          };
+
+          const totalDurationFrames = lectureData.sequence.reduce(
+            (acc, scene) => acc + getSceneDurationFrames(scene.scene_id),
+            0
+          );
+
+          return {
+            durationInFrames: totalDurationFrames,
+          };
+        }}
       />
     </>
   );
