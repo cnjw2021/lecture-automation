@@ -4,18 +4,19 @@ const config = require('../config');
 
 class AudioService {
   /**
-   * Dependency Injection (DI)
-   * 생성자에서 provider를 주입받아 OCP 원칙을 준수함
+   * DIP (의존성 역전 원칙) 준수
+   * AudioService는 추상화된 AudioProvider(인터페이스)에만 의존하며,
+   * 구체적인 GeminiAudioProvider 등에 대해서는 전혀 알지 못합니다.
    */
-  constructor(provider) {
-    this.provider = provider;
+  constructor(audioProvider) {
+    this.audioProvider = audioProvider;
   }
 
   async generateFromLecture(lectureData) {
     const audioOutputDir = path.join(config.paths.audio, lectureData.lecture_id);
     await fs.ensureDir(audioOutputDir);
 
-    console.log(`[${lectureData.lecture_id}] 오디오 생성 시작...`);
+    console.log(`[${lectureData.lecture_id}] 오디오 생성 시작... (Provider: ${this.audioProvider.constructor.name})`);
 
     for (const scene of lectureData.sequence) {
       const outputPath = path.join(audioOutputDir, `scene-${scene.scene_id}.wav`);
@@ -23,8 +24,8 @@ class AudioService {
       if (await fs.pathExists(outputPath)) continue;
 
       try {
-        // 주입받은 provider를 통해 비즈니스 로직 수행
-        await this.provider.generate(scene.narration, { scene_id: scene.scene_id });
+        // 추상 메서드 호출
+        await this.audioProvider.generate(scene.narration, { scene_id: scene.scene_id });
       } catch (error) {
         console.error(`- Scene ${scene.scene_id} 에러:`, error.message);
       }
@@ -32,9 +33,4 @@ class AudioService {
   }
 }
 
-// SSoT 설정을 기반으로 서비스 인스턴스화
-const activeModelConfig = config.models[config.active_audio_model];
-const ProviderClass = activeModelConfig.provider;
-const provider = new ProviderClass(activeModelConfig.apiKey, activeModelConfig.name);
-
-module.exports = new AudioService(provider);
+module.exports = AudioService;

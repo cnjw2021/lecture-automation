@@ -3,22 +3,19 @@ const path = require('path');
 
 const ROOT_DIR = path.join(__dirname, '../../');
 
-/**
- * Single Source of Truth (SSoT)
- * 모든 모델과 프로젝트 전역 설정을 이곳에서 관리함
- */
 module.exports = {
-  // 사용 중인 모델 설정
-  active_audio_model: 'gemini', // 'openai', 'gemini' 등 변경 가능 (OCP)
+  // 어떤 프로바이더를 사용할지에 대한 '식별자'만 가짐
+  active_audio_provider: 'gemini', 
   
-  models: {
+  providers: {
     gemini: {
-      provider: require('../providers/GeminiAudioProvider'),
       apiKey: process.env.GEMINI_API_KEY,
-      name: "gemini-1.5-flash",
+      modelName: "gemini-1.5-flash",
     },
-    // 향후 OpenAI 등 추가 시 여기서만 설정하면 됨
-    // openai: { ... }
+    openai: {
+      apiKey: process.env.OPENAI_API_KEY,
+      modelName: "tts-1",
+    }
   },
 
   paths: {
