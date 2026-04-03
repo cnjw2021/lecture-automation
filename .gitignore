@@ -11,6 +11,9 @@ output/
 *.mp3
 *.wav
 
+# TypeScript build output
+packages/automation/dist/
+
 # Remotion build
 remotion-project/out/
 
