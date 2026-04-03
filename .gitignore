@@ -13,3 +13,7 @@ output/
 
 # Remotion build
 remotion-project/out/
+
+# 디버깅 스크립트
+diagnose.js
+list-models.js
