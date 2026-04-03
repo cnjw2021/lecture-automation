@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const AudioProvider = require('./AudioProvider');
+const videoConfig = require('../../../../config/video.json');
 
 class GeminiAudioProvider extends AudioProvider {
   constructor(apiKey, modelName) {
@@ -11,9 +12,8 @@ class GeminiAudioProvider extends AudioProvider {
   }
 
   pcmToWav(pcmData) {
-    const sampleRate = 24000;
-    const channels = 1;
-    const sampleWidth = 2; // 16-bit
+    const { sampleRate, channels, bitDepth } = videoConfig.audio;
+    const sampleWidth = bitDepth / 8;
     const dataSize = pcmData.length;
     const header = Buffer.alloc(44);
 

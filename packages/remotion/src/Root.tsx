@@ -1,7 +1,8 @@
 import { Composition, Sequence, Audio, Video, AbsoluteFill, registerRoot, staticFile } from 'remotion';
 import { MyCodeScene } from './MyCodeScene';
 import lectureData from '../../../data/p1-01-01.json';
-import audioDurations from '../public/audio/P1-01-01-FULL/durations.json'; 
+import audioDurations from '../public/audio/P1-01-01-FULL/durations.json';
+import videoConfig from '../../../config/video.json'; 
 
 // 나중에 구현할 컴포넌트들을 위한 플레이스홀더
 const TitleScreen: React.FC<{ main: string; sub: string }> = ({ main, sub }) => (
@@ -21,7 +22,8 @@ const SummaryScreen: React.FC<{ points: string[] }> = ({ points }) => (
 );
 
 export const RemotionRoot: React.FC = () => {
-  const FPS = 30;
+  const { width, height } = videoConfig.resolution;
+  const FPS = videoConfig.fps;
 
   // 각 scene의 duration을 프레임으로 계산 (오디오 길이 + 0.5초 여유)
   const getSceneDurationFrames = (sceneId: number): number => {
@@ -81,8 +83,8 @@ export const RemotionRoot: React.FC = () => {
         )}
         durationInFrames={totalDurationFrames}
         fps={FPS}
-        width={1920}
-        height={1080}
+        width={width}
+        height={height}
       />
     </>
   );
