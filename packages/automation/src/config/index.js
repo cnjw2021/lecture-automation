@@ -10,8 +10,9 @@ module.exports = {
   providers: {
     gemini: {
       apiKey: process.env.GEMINI_API_KEY,
-      modelName: "gemini-1.5-flash",
-    }
+      modelName: "gemini-2.5-flash-preview-tts", // 파이썬 코드 기반 TTS 전용 모델
+    },
+
   },
 
   paths: {

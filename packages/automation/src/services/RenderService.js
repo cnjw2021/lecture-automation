@@ -13,8 +13,8 @@ class RenderService {
     const remotionDir = path.join(config.paths.root, 'packages/remotion');
     const outPath = path.join(config.paths.root, 'output', `${lectureId}.mp4`);
     
-    // 렌더링 명령어 실행 (npm run build 활용)
-    const command = `npm run build -w packages/remotion -- --props='{"lecture_id": "${lectureId}"}' ${outPath}`;
+    // 렌더링 명령어 실행 (ID: FullLecture, Output: outPath)
+    const command = `npm run build -w packages/remotion -- FullLecture ${outPath} --props='{"lecture_id": "${lectureId}"}'`;
 
     return new Promise((resolve, reject) => {
       const process = exec(command, (error, stdout, stderr) => {
