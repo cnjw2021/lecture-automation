@@ -14,7 +14,11 @@
       "visual": {
         "type": "remotion",
         "component": "TitleScreen",
-        "props": { "title": "導入：日常に溶け込む技術の正体" }
+        "props": {
+          "title": "画面の向こう側の世界",
+          "sub": "インターネットとウェブの仕組み"
+        },
+        "transition": { "enter": "fade", "exit": "fade" }
       }
     },
     {
@@ -28,7 +32,8 @@
           { "cmd": "focus", "selector": "#map" },
           { "cmd": "mouse_drag", "from": [600, 400], "to": [300, 300] },
           { "cmd": "wait", "ms": 5000 }
-        ]
+        ],
+        "transition": { "enter": "fade", "exit": "fade" }
       }
     },
     {
@@ -36,8 +41,31 @@
       "narration": "次に「ウェブ」についてです。正式にはワールド・ワイド・ウェブ、略してWWWと呼びます。インターネットを「道路」に例えるなら、ウェブはその上を走る「自動車や列車」のようなものです。1989年、情報の共有をより簡単にするために、文書と文書をリンクで結びつけるアイデアが生まれました。これがウェブの始まりです。皆さんがブラウザを開いてホームページを閲覧する行為は、このウェブというサービスを利用している状態を指します。つまり、インターネットという道路がなければウェブは存在できませんが、ウェブはインターネットをより便利に、誰でも使える形にした「コンテンツ」そのものと言えます。",
       "visual": {
         "type": "remotion",
-        "component": "TitleScreen",
-        "props": { "title": "ウェブ（WWW）：道路を走る洗練された列車" }
+        "component": "ComparisonScreen",
+        "props": {
+          "left": {
+            "title": "インターネット",
+            "points": [
+              "物理的な通信インフラ",
+              "光ファイバー・衛星で構成",
+              "メール・ゲーム等も流れる",
+              "1969年 ARPANET から発展"
+            ],
+            "color": "#6366f1"
+          },
+          "right": {
+            "title": "ウェブ (WWW)",
+            "points": [
+              "情報共有サービス",
+              "リンクで文書を結びつける",
+              "ブラウザで閲覧",
+              "1989年 ティム・バーナーズ＝リー"
+            ],
+            "color": "#f59e0b"
+          },
+          "vsLabel": "VS"
+        },
+        "transition": { "enter": "slide-up", "exit": "fade" }
       }
     },
     {
@@ -50,7 +78,8 @@
           { "cmd": "press", "key": "F12" },
           { "cmd": "wait", "ms": 2000 },
           { "cmd": "highlight", "selector": "header", "note": "コードが画面に変換される様子を表示" }
-        ]
+        ],
+        "transition": { "enter": "fade", "exit": "fade" }
       }
     },
     {
@@ -60,12 +89,14 @@
         "type": "remotion",
         "component": "SummaryScreen",
         "props": {
+          "title": "今日の要点",
           "points": [
             "インターネット ＝ 物理的なインフラ（道路）",
             "ウェブ ＝ 情報を共有するサービス（列車）",
             "ブラウザ ＝ コードを画面に変える翻訳者"
           ]
-        }
+        },
+        "transition": { "enter": "slide-up", "exit": "fade" }
       }
     }
   ]

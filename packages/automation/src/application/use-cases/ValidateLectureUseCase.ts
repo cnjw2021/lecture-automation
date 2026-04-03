@@ -1,8 +1,17 @@
-import { Lecture, RemotionVisual } from '../domain/entities/Lecture';
+import { Lecture, RemotionVisual } from '../../domain/entities/Lecture';
 
 export class ValidateLectureUseCase {
   // 현재 Remotion에 실제 구현되어 있는 컴포넌트 목록
-  private readonly SUPPORTED_COMPONENTS = ['TitleScreen', 'SummaryScreen', 'MyCodeScene'];
+  private readonly SUPPORTED_COMPONENTS = [
+    'TitleScreen',
+    'SummaryScreen',
+    'MyCodeScene',
+    'KeyPointScreen',
+    'ComparisonScreen',
+    'DiagramScreen',
+    'ProgressScreen',
+    'QuoteScreen',
+  ];
 
   execute(lecture: Lecture): void {
     console.log(`[검증] '${lecture.lecture_id}' 강의 데이터 무결성 검사 중...`);

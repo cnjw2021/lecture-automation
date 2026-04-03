@@ -1,37 +1,50 @@
 import { Composition, Sequence, Audio, Video, AbsoluteFill, registerRoot, staticFile } from 'remotion';
 import { MyCodeScene } from './MyCodeScene';
+import {
+  TitleScreen,
+  SummaryScreen,
+  SceneTransition,
+  KeyPointScreen,
+  ComparisonScreen,
+  DiagramScreen,
+  ProgressScreen,
+  QuoteScreen,
+} from './components';
 import videoConfig from '../../../config/video.json';
 
-// 나중에 구현할 컴포넌트들을 위한 플레이스홀더
-const TitleScreen: React.FC<{ title?: string; main?: string; sub?: string }> = ({ title, main, sub }) => (
-  <AbsoluteFill style={{ backgroundColor: '#1a1a1a', color: 'white', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
-    <h1 style={{ fontSize: '100px', marginBottom: '20px' }}>{title || main || 'Untitled Scene'}</h1>
-    {sub && <h2 style={{ fontSize: '50px', opacity: 0.8 }}>{sub}</h2>}
-  </AbsoluteFill>
-);
-
+// Fallback for unknown components
 const DefaultScreen: React.FC<{ componentName?: string }> = ({ componentName }) => (
   <AbsoluteFill style={{ backgroundColor: '#000', color: '#555', justifyContent: 'center', alignItems: 'center' }}>
     <p style={{ fontSize: '30px' }}>[Missing Component: {componentName || 'Unknown'}]</p>
   </AbsoluteFill>
 );
 
-const SummaryScreen: React.FC<{ points: string[] }> = ({ points }) => (
-  <AbsoluteFill style={{ backgroundColor: '#2d3436', color: 'white', padding: '100px' }}>
-    <h1 style={{ fontSize: '80px', marginBottom: '60px' }}>오늘의 핵심 요약</h1>
-    <ul style={{ fontSize: '40px', lineHeight: '2' }}>
-      {points.map((p, i) => <li key={i}>{p}</li>)}
-    </ul>
-  </AbsoluteFill>
-);
+// Component registry - add new components here
+const COMPONENT_MAP: Record<string, React.FC<any>> = {
+  TitleScreen,
+  SummaryScreen,
+  MyCodeScene,
+  KeyPointScreen,
+  ComparisonScreen,
+  DiagramScreen,
+  ProgressScreen,
+  QuoteScreen,
+};
 
-// 타입 정의
+// Type definitions
+interface TransitionConfig {
+  enter?: 'fade' | 'slide-left' | 'slide-up' | 'zoom' | 'none';
+  exit?: 'fade' | 'slide-right' | 'slide-down' | 'zoom' | 'none';
+  durationFrames?: number;
+}
+
 interface SceneData {
   scene_id: number;
   visual: {
     type: string;
     component?: string;
     props?: Record<string, unknown>;
+    transition?: TransitionConfig;
   };
 }
 
@@ -45,17 +58,15 @@ interface LectureProps {
   audioDurations: Record<string, number>;
 }
 
-// 메인 강의 컴포넌트
+// Main lecture composition
 const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDurations }) => {
   const FPS = videoConfig.fps;
 
-  // 각 scene의 duration을 프레임으로 계산 (오디오 길이 + 0.5초 여유)
   const getSceneDurationFrames = (sceneId: number): number => {
     const durationSec = audioDurations[sceneId.toString()] || 10;
     return Math.ceil((durationSec + 0.5) * FPS);
   };
 
-  // 각 scene의 시작 프레임 계산 (이전 scene들의 duration 누적)
   const getSceneStartFrame = (index: number): number => {
     let startFrame = 0;
     for (let i = 0; i < index; i++) {
@@ -72,6 +83,24 @@ const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDura
         const sceneDuration = getSceneDurationFrames(scene.scene_id);
         const sceneStart = getSceneStartFrame(index);
 
+        // Resolve transition config (defaults to fade)
+        const transition = scene.visual.transition || {};
+        const enter = transition.enter ?? 'fade';
+        const exit = transition.exit ?? 'fade';
+
+        // Resolve component
+        const Component = scene.visual.component
+          ? COMPONENT_MAP[scene.visual.component] || DefaultScreen
+          : null;
+
+        const visualContent = scene.visual.type === 'playwright' ? (
+          <Video src={captureUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        ) : Component ? (
+          <Component {...(scene.visual.props || {})} componentName={scene.visual.component} />
+        ) : (
+          <DefaultScreen componentName={scene.visual.component} />
+        );
+
         return (
           <Sequence
             key={scene.scene_id}
@@ -79,17 +108,13 @@ const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDura
             durationInFrames={sceneDuration}
           >
             <AbsoluteFill>
-              {scene.visual.type === 'playwright' ? (
-                <Video src={captureUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : scene.visual.component === 'TitleScreen' ? (
-                <TitleScreen {...scene.visual.props as any} />
-              ) : scene.visual.component === 'SummaryScreen' ? (
-                <SummaryScreen {...scene.visual.props as any} />
-              ) : scene.visual.component === 'MyCodeScene' ? (
-                <MyCodeScene />
-              ) : (
-                <DefaultScreen componentName={scene.visual.component} />
-              )}
+              <SceneTransition
+                durationInFrames={sceneDuration}
+                enter={enter}
+                exit={exit}
+              >
+                {visualContent}
+              </SceneTransition>
               <Audio src={audioUrl} />
             </AbsoluteFill>
           </Sequence>
@@ -111,7 +136,7 @@ export const RemotionRoot: React.FC = () => {
         width={width}
         height={height}
         fps={FPS}
-        durationInFrames={300} // calculateMetadata에서 동적으로 계산됨
+        durationInFrames={300}
         defaultProps={{
           lectureData: { lecture_id: '', sequence: [] },
           audioDurations: {},
@@ -119,12 +144,10 @@ export const RemotionRoot: React.FC = () => {
         calculateMetadata={async ({ props }) => {
           const { lectureData, audioDurations } = props as LectureProps;
 
-          // props가 없으면 기본값 반환
           if (!lectureData?.sequence?.length) {
             return { durationInFrames: 300 };
           }
 
-          // 전체 영상 길이 계산
           const getSceneDurationFrames = (sceneId: number): number => {
             const durationSec = audioDurations[sceneId.toString()] || 10;
             return Math.ceil((durationSec + 0.5) * FPS);
