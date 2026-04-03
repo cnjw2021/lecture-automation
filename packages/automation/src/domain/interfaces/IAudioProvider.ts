@@ -1,8 +1,5 @@
-import { Scene, Metadata } from '../entities/Lecture';
-
 export interface GenerateAudioOptions {
   scene_id?: number;
-  metadata?: Metadata;
 }
 
 export interface AudioGenerateResult {

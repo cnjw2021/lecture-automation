@@ -30,9 +30,8 @@ export class GenerateAudioUseCase {
       }
 
       try {
-        const { buffer, durationSec } = await this.audioProvider.generate(scene.narration, { 
-          scene_id: scene.scene_id,
-          metadata: lecture.metadata
+        const { buffer, durationSec } = await this.audioProvider.generate(scene.narration, {
+          scene_id: scene.scene_id
         });
 
         await this.lectureRepository.saveAudio(lecture.lecture_id, scene.scene_id, buffer);

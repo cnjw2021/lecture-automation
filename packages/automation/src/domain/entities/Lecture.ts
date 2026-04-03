@@ -1,8 +1,6 @@
 export interface Metadata {
   title: string;
   target_duration: string;
-  language: string;
-  voice_model: string;
   target_audience: string;
 }
 

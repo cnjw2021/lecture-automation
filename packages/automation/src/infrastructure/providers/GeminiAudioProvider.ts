@@ -4,11 +4,15 @@ import { config } from '../config';
 export class GeminiAudioProvider implements IAudioProvider {
   private apiKey: string;
   private modelName: string;
+  private voice: string;
+  private language: string;
   private baseUrl = "https://generativelanguage.googleapis.com/v1beta/models";
 
-  constructor(apiKey: string, modelName: string) {
+  constructor(apiKey: string, modelName: string, voice: string, language: string) {
     this.apiKey = apiKey;
     this.modelName = modelName;
+    this.voice = voice;
+    this.language = language;
   }
 
   private pcmToWav(pcmData: Buffer): { buffer: Buffer, durationSec: number } {
@@ -39,26 +43,22 @@ export class GeminiAudioProvider implements IAudioProvider {
   }
 
   async generate(text: string, options: GenerateAudioOptions = {}): Promise<AudioGenerateResult> {
-    const { scene_id, metadata } = options;
+    const { scene_id } = options;
     console.log(`[Gemini TTS] Scene ${scene_id || 'unknown'} 음성 생성 시도 (${this.modelName})...`);
-    
-    // Apply user feedback: Use metadata.voice_model if available, fallback to "Puck"
-    const voiceName = metadata?.voice_model || "Puck";
-    const language = metadata?.language || "English";
-    
+
     const sanitizedText = text.length < 15 ? text + "..." : text;
     const url = `${this.baseUrl}/${this.modelName}:generateContent?key=${this.apiKey}`;
 
     const payload = {
       contents: [{
-        parts: [{ text: `Read aloud naturally in ${language}: ` + sanitizedText }]
+        parts: [{ text: `Read aloud naturally in ${this.language}: ` + sanitizedText }]
       }],
       generationConfig: {
         responseModalities: ["AUDIO"],
         speechConfig: {
           voiceConfig: {
             prebuiltVoiceConfig: {
-              voiceName: voiceName
+              voiceName: this.voice
             }
           }
         }
@@ -86,7 +86,7 @@ export class GeminiAudioProvider implements IAudioProvider {
         if (audioPart) {
           const pcmBuffer = Buffer.from(audioPart.inlineData.data, 'base64');
           const { buffer, durationSec } = this.pcmToWav(pcmBuffer);
-          console.log(`  ✅ 오디오 생성 완료 (${pcmBuffer.length} bytes, ${durationSec.toFixed(2)}초, Voice: ${voiceName})`);
+          console.log(`  ✅ 오디오 생성 완료 (${pcmBuffer.length} bytes, ${durationSec.toFixed(2)}초, Voice: ${this.voice})`);
           return { buffer, durationSec };
         }
       }
