@@ -1,0 +1,15 @@
+node_modules/
+.env
+.DS_Store
+
+# Media files
+remotion-project/public/audio/
+remotion-project/public/captures/
+videos/
+output/
+*.webm
+*.mp3
+*.wav
+
+# Remotion build
+remotion-project/out/

@@ -1,0 +1,14 @@
+{
+  "name": "remotion-project",
+  "scripts": {
+    "start": "remotion preview src/Root.tsx",
+    "build": "remotion render src/Root.tsx CodeLecture out.mp4"
+  },
+  "dependencies": {
+    "remotion": "latest",
+    "@remotion/cli": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-syntax-highlighter": "latest"
+  }
+}
