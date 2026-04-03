@@ -1,0 +1,10 @@
+{
+  "name": "@lecture/automation",
+  "version": "1.0.0",
+  "main": "main.js",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "fs-extra": "^11.3.4",
+    "dotenv": "^16.4.5"
+  }
+}

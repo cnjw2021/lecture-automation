@@ -1,5 +1,5 @@
 {
-  "name": "remotion-project",
+  "name": "@lecture/remotion",
   "scripts": {
     "start": "remotion preview src/Root.tsx",
     "build": "remotion render src/Root.tsx CodeLecture out.mp4"

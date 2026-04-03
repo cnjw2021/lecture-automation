@@ -1,19 +1,16 @@
 {
-  "name": "lecture-automation",
-  "version": "1.0.0",
-  "description": "Lecture automation system",
-  "main": "generate-audio.js",
+  "name": "lecture-automation-root",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "generate-audio": "node generate-audio.js",
-    "record-visuals": "node scripts/record-visuals.js",
-    "render-video": "cd remotion-project && npm run build",
-    "build-lecture": "npm run generate-audio && npm run record-visuals && npm run render-video"
+    "start": "npm run build -w packages/automation",
+    "render": "npm run build -w packages/remotion",
+    "test": "npm test --workspaces",
+    "install-all": "npm install"
   },
-  "dependencies": {
-    "@google-cloud/text-to-speech": "^5.1.0",
-    "@google/generative-ai": "^0.24.1",
-    "fs-extra": "^11.3.4",
-    "openai": "^4.28.0",
-    "path": "^0.12.7"
+  "devDependencies": {
+    "dotenv": "^16.4.5"
   }
 }
