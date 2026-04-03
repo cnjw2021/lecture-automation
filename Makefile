@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install run clean render-only
+.PHONY: help install run run-force clean render-only
 
 # 기본 변수 설정
 LECTURE ?= p1-01-01.json
@@ -14,6 +14,7 @@ help:
 	@echo "make install         - 모든 패키지 의존성 설치"
 	@echo "make run             - 전 공정 실행 (기본: p1-01-01.json)"
 	@echo "make run LECTURE=xxx - 특정 강의 JSON 파일로 실행"
+	@echo "make run-force       - 기존 에셋 무시하고 전체 재생성"
 	@echo "make clean           - 생성된 모든 에셋 및 결과물 삭제"
 	@echo "make render-only     - 에셋이 있을 때 Remotion 렌더링만 실행"
 	@echo "--------------------------------------------------"
@@ -25,6 +26,10 @@ install:
 run:
 	@echo "🚀 강의 자동화 파이프라인 시작: $(LECTURE)"
 	node $(ENGINE_PATH) $(LECTURE)
+
+run-force:
+	@echo "🔄 강제 재생성 모드로 파이프라인 시작: $(LECTURE)"
+	FORCE=1 node $(ENGINE_PATH) $(LECTURE)
 
 render-only:
 	@echo "🎬 Remotion 렌더링만 실행 중..."

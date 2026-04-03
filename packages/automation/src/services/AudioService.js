@@ -7,16 +7,17 @@ class AudioService {
     this.repository = lectureRepository;
   }
 
-  async processLecture(lecture) {
+  async processLecture(lecture, options = {}) {
+    const { force = false } = options;
     console.log(`[${lecture.lecture_id}] 오디오 공정 시작 (Provider: ${this.provider.constructor.name})`);
 
     const results = [];
     const durations = {};
 
     for (const scene of lecture.sequence) {
-      // 1. 이미 존재하는지 저장소에 확인 (데이터 관리 책임 분리)
-      if (await this.repository.existsAudio(lecture.lecture_id, scene.scene_id)) {
-        console.log(`- Scene ${scene.scene_id} 이미 존재함`);
+      // 1. 이미 존재하는지 저장소에 확인 (force 모드일 경우 무시)
+      if (!force && await this.repository.existsAudio(lecture.lecture_id, scene.scene_id)) {
+        console.log(`- Scene ${scene.scene_id} 이미 존재함 (스킵)`);
         // 기존 오디오의 duration도 읽어옴
         const existingDuration = await this.repository.getAudioDuration(lecture.lecture_id, scene.scene_id);
         if (existingDuration) {
