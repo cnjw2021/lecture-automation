@@ -1,0 +1,82 @@
+import * as fs from 'fs-extra';
+import * as path from 'path';
+import { config } from '../../infrastructure/config';
+import { FileLectureRepository } from '../../infrastructure/repositories/FileLectureRepository';
+import { GeminiAudioProvider } from '../../infrastructure/providers/GeminiAudioProvider';
+import { PlaywrightVisualProvider } from '../../infrastructure/providers/PlaywrightVisualProvider';
+import { RemotionRenderProvider } from '../../infrastructure/providers/RemotionRenderProvider';
+import { GenerateAudioUseCase } from '../../application/use-cases/GenerateAudioUseCase';
+import { RecordVisualUseCase } from '../../application/use-cases/RecordVisualUseCase';
+import { RenderVideoUseCase } from '../../application/use-cases/RenderVideoUseCase';
+import { ValidateLectureUseCase } from '../../application/use-cases/ValidateLectureUseCase';
+import { Lecture } from '../../domain/entities/Lecture';
+
+async function runAutomation(jsonFileName: string) {
+  if (!config.providers.gemini.apiKey || config.providers.gemini.apiKey === 'YOUR_GEMINI_API_KEY_HERE') {
+    console.error('\n❌ [에러] GEMINI_API_KEY가 설정되어 있지 않습니다.');
+    console.error('루트 디렉토리의 .env 파일에 올바른 API 키를 입력해 주세요.\n');
+    process.exit(1);
+  }
+
+  const forceRegenerate = process.env.FORCE === '1';
+  if (forceRegenerate) {
+    console.log('🔄 강제 재생성 모드 활성화 - 기존 에셋을 무시합니다.');
+  }
+
+  console.log('🚀 강의 자동화 파이프라인 가동 (Full-Cycle, Clean Architecture)...');
+
+  // 1. Composition Root: Instantiate Dependencies (Infrastructure)
+  const lectureRepository = new FileLectureRepository();
+  const audioProvider = new GeminiAudioProvider(
+    config.providers.gemini.apiKey, 
+    config.providers.gemini.modelName
+  );
+  const visualProvider = new PlaywrightVisualProvider();
+  const renderProvider = new RemotionRenderProvider();
+
+  // 2. Instantiate Application Use Cases (Application)
+  const validateLectureUseCase = new ValidateLectureUseCase();
+  const generateAudioUseCase = new GenerateAudioUseCase(audioProvider, lectureRepository);
+  const recordVisualUseCase = new RecordVisualUseCase(visualProvider, lectureRepository);
+  const renderVideoUseCase = new RenderVideoUseCase(renderProvider);
+
+  // 3. Load Data
+  const filePath = path.join(config.paths.data, jsonFileName);
+  if (!await fs.pathExists(filePath)) {
+    console.error(`\n❌ [에러] 파일을 찾을 수 없습니다: ${filePath}`);
+    process.exit(1);
+  }
+  const rawData = await fs.readFile(filePath, 'utf8');
+  const lectureData: Lecture = JSON.parse(rawData);
+
+  // 4. Validate before proceeding (Fail-Fast)
+  try {
+    validateLectureUseCase.execute(lectureData);
+  } catch (error) {
+    process.exit(1);
+  }
+
+  // 5. Execute Pipeline
+  try {
+    console.log('\n--- 1단계: 나레이션 오디오 생성 ---');
+    await generateAudioUseCase.execute(lectureData, { force: forceRegenerate });
+
+    console.log('\n--- 2단계: 시각 자료(브라우저) 녹화 ---');
+    await recordVisualUseCase.execute(lectureData, { force: forceRegenerate });
+
+    console.log('\n--- 3단계: 최종 동영상(MP4) 빌드 ---');
+    await renderVideoUseCase.execute(lectureData.lecture_id, lectureData);
+
+    console.log('\n✨ [완료] 전 공정이 성공적으로 마무리되었습니다!');
+    console.log(`📍 최종 결과물: ${path.join(config.paths.output, `${lectureData.lecture_id}.mp4`)}`);
+  } catch (error) {
+    console.error('\n❌ [자동화 중단] 치명적인 오류가 발생하여 공정을 중단합니다.');
+    console.error(error);
+    process.exit(1);
+  }
+}
+
+if (require.main === module) {
+  const file = process.argv[2] || 'p1-01-01.json';
+  runAutomation(file).catch(console.error);
+}

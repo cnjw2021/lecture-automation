@@ -1,17 +1,18 @@
-const fs = require('fs-extra');
-const path = require('path');
-const AudioProvider = require('./AudioProvider');
-const videoConfig = require('../../../../config/video.json');
+import { IAudioProvider, GenerateAudioOptions, AudioGenerateResult } from '../../domain/interfaces/IAudioProvider';
+import { config } from '../config';
 
-class GeminiAudioProvider extends AudioProvider {
-  constructor(apiKey, modelName) {
-    super();
+export class GeminiAudioProvider implements IAudioProvider {
+  private apiKey: string;
+  private modelName: string;
+  private baseUrl = "https://generativelanguage.googleapis.com/v1beta/models";
+
+  constructor(apiKey: string, modelName: string) {
     this.apiKey = apiKey;
     this.modelName = modelName;
-    this.baseUrl = "https://generativelanguage.googleapis.com/v1beta/models";
   }
 
-  pcmToWav(pcmData) {
+  private pcmToWav(pcmData: Buffer): { buffer: Buffer, durationSec: number } {
+    const videoConfig = config.getVideoConfig();
     const { sampleRate, channels, bitDepth } = videoConfig.audio;
     const sampleWidth = bitDepth / 8;
     const dataSize = pcmData.length;
@@ -37,22 +38,27 @@ class GeminiAudioProvider extends AudioProvider {
     return { buffer, durationSec };
   }
 
-  async generate(text, { scene_id } = {}) {
+  async generate(text: string, options: GenerateAudioOptions = {}): Promise<AudioGenerateResult> {
+    const { scene_id, metadata } = options;
     console.log(`[Gemini TTS] Scene ${scene_id || 'unknown'} 음성 생성 시도 (${this.modelName})...`);
+    
+    // Apply user feedback: Use metadata.voice_model if available, fallback to "Puck"
+    const voiceName = metadata?.voice_model || "Puck";
+    const language = metadata?.language || "English";
     
     const sanitizedText = text.length < 15 ? text + "..." : text;
     const url = `${this.baseUrl}/${this.modelName}:generateContent?key=${this.apiKey}`;
 
     const payload = {
       contents: [{
-        parts: [{ text: "Read aloud naturally: " + sanitizedText }]
+        parts: [{ text: `Read aloud naturally in ${language}: ` + sanitizedText }]
       }],
       generationConfig: {
         responseModalities: ["AUDIO"],
         speechConfig: {
           voiceConfig: {
             prebuiltVoiceConfig: {
-              voiceName: "Puck"
+              voiceName: voiceName
             }
           }
         }
@@ -69,7 +75,6 @@ class GeminiAudioProvider extends AudioProvider {
       const result = await response.json();
 
       if (!response.ok) {
-        // 404가 발생하면 모델 이름을 gemini-2.5-flash (v1에서 확인된 것)로 자동 변경 추천 로그
         if (response.status === 404) {
            console.error(`  ⚠️ 모델 ${this.modelName}이 존재하지 않습니다. gemini-2.5-flash로 시도해보세요.`);
         }
@@ -77,11 +82,11 @@ class GeminiAudioProvider extends AudioProvider {
       }
 
       if (result.candidates && result.candidates[0].content.parts) {
-        const audioPart = result.candidates[0].content.parts.find(p => p.inlineData);
+        const audioPart = result.candidates[0].content.parts.find((p: any) => p.inlineData);
         if (audioPart) {
           const pcmBuffer = Buffer.from(audioPart.inlineData.data, 'base64');
           const { buffer, durationSec } = this.pcmToWav(pcmBuffer);
-          console.log(`  ✅ 오디오 생성 완료 (${pcmBuffer.length} bytes, ${durationSec.toFixed(2)}초)`);
+          console.log(`  ✅ 오디오 생성 완료 (${pcmBuffer.length} bytes, ${durationSec.toFixed(2)}초, Voice: ${voiceName})`);
           return { buffer, durationSec };
         }
       }
@@ -92,5 +97,3 @@ class GeminiAudioProvider extends AudioProvider {
     }
   }
 }
-
-module.exports = GeminiAudioProvider;
