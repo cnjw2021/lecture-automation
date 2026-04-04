@@ -1,18 +1,21 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
 import { theme } from '../theme';
+import { getAnimConfig, resolveSpring, type TitleScreenAnim } from '../animation';
 
 interface TitleScreenProps {
   title?: string;
   main?: string;
   sub?: string;
+  animation?: Partial<Record<keyof TitleScreenAnim, Record<string, unknown>>>;
 }
 
-export const TitleScreen: React.FC<TitleScreenProps> = ({ title, main, sub }) => {
+export const TitleScreen: React.FC<TitleScreenProps> = ({ title, main, sub, animation }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const a = getAnimConfig<TitleScreenAnim>('TitleScreen', animation);
 
   // Background fade-in
-  const bgOpacity = interpolate(frame, [0, 15], [0, 1], {
+  const bgOpacity = interpolate(frame, a.bg.fadeFrames, [0, 1], {
     extrapolateRight: 'clamp',
   });
 
@@ -20,23 +23,23 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ title, main, sub }) =>
   const titleSpring = spring({
     frame,
     fps,
-    config: { damping: 14, stiffness: 80, mass: 0.8 },
+    config: resolveSpring(a.title.spring),
   });
-  const titleY = interpolate(titleSpring, [0, 1], [60, 0]);
+  const titleY = interpolate(titleSpring, [0, 1], [a.title.distance?.y ?? 60, 0]);
   const titleOpacity = interpolate(titleSpring, [0, 1], [0, 1]);
 
-  // Subtitle delayed fade-in (appears after title settles)
-  const subDelay = 18;
+  // Subtitle delayed fade-in
+  const subDelay = a.sub.delay ?? 18;
   const subSpring = spring({
     frame: Math.max(0, frame - subDelay),
     fps,
-    config: { damping: 16, stiffness: 60, mass: 0.6 },
+    config: resolveSpring(a.sub.spring),
   });
   const subOpacity = interpolate(subSpring, [0, 1], [0, 1]);
-  const subY = interpolate(subSpring, [0, 1], [30, 0]);
+  const subY = interpolate(subSpring, [0, 1], [a.sub.distance?.y ?? 30, 0]);
 
   // Decorative line animation
-  const lineWidth = interpolate(frame, [10, 40], [0, 200], {
+  const lineWidth = interpolate(frame, a.line.frames, [0, a.line.width], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -77,7 +80,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ title, main, sub }) =>
             marginBottom: 24,
             opacity: titleOpacity,
             transform: `translateY(${titleY}px)`,
-            textShadow: '0 2px 40px rgba(196,123,90,0.15)',
+            textShadow: `0 2px 40px ${theme.color.surface}`,
           }}
         >
           {displayTitle}

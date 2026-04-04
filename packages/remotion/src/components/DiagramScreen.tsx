@@ -1,6 +1,7 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
 import { theme } from '../theme';
 import { NodeIcon } from './NodeIcon';
+import { getAnimConfig, resolveSpring, type DiagramScreenAnim } from '../animation';
 
 interface DiagramNode {
   id: string;
@@ -21,29 +22,40 @@ interface DiagramScreenProps {
   title?: string;
   nodes: DiagramNode[];
   edges: DiagramEdge[];
+  animation?: Partial<Record<keyof DiagramScreenAnim, Record<string, unknown>>>;
 }
 
-const NODE_MIN_WIDTH = 180;
-const NODE_CHAR_WIDTH = 28;  // px per character (Japanese full-width)
-const NODE_PADDING_X = 48;
-const NODE_HEIGHT = 100;
+const NODE_MIN_WIDTH = 220;
+const NODE_CHAR_WIDTH = 28;
+const NODE_PADDING_X = 60;
+const NODE_HEIGHT = 150;
+const ICON_BG_SIZE = 72;
+const ICON_SIZE = 48;
 
 const getNodeWidth = (label: string): number => {
   return Math.max(NODE_MIN_WIDTH, label.length * NODE_CHAR_WIDTH + NODE_PADDING_X);
 };
 
-export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edges }) => {
+export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edges, animation }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const a = getAnimConfig<DiagramScreenAnim>('DiagramScreen', animation);
 
   // Title animation
   const titleSpring = spring({
     frame,
     fps,
-    config: { damping: 14, stiffness: 80, mass: 0.8 },
+    config: resolveSpring(a.title.spring),
   });
   const titleOpacity = interpolate(titleSpring, [0, 1], [0, 1]);
-  const titleY = interpolate(titleSpring, [0, 1], [30, 0]);
+  const titleY = interpolate(titleSpring, [0, 1], [a.title.distance?.y ?? 30, 0]);
+
+  // Node/edge timing from config
+  const nodeBaseDelay = (a.node.baseDelay as number) ?? 18;
+  const nodeInterval = a.node.staggerInterval ?? 16;
+  const edgeExtraDelay = a.edge.extraDelay ?? 10;
+  const edgeDrawDuration = a.edge.drawDuration ?? 25;
+  const nodeScaleRange = a.node.scale ?? [0, 1];
 
   // Build node position map with computed widths for edge drawing
   const nodeMap = new Map(nodes.map((n) => [n.id, { ...n, width: getNodeWidth(n.label) }]));
@@ -125,10 +137,9 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
             const toNode = nodeMap.get(edge.to);
             if (!fromNode || !toNode) return null;
 
-            // Edge draws in after its source node appears
             const fromIndex = nodes.findIndex((n) => n.id === edge.from);
-            const edgeDelay = 18 + fromIndex * 16 + 10;
-            const edgeProgress = interpolate(frame, [edgeDelay, edgeDelay + 25], [0, 1], {
+            const edgeDelay = nodeBaseDelay + fromIndex * nodeInterval + edgeExtraDelay;
+            const edgeProgress = interpolate(frame, [edgeDelay, edgeDelay + edgeDrawDuration], [0, 1], {
               extrapolateLeft: 'clamp',
               extrapolateRight: 'clamp',
             });
@@ -144,7 +155,6 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
             const ux = dx / len;
             const uy = dy / len;
 
-            // Offset from node edges (use half of node width)
             const fromWidth = fromNode.width || NODE_MIN_WIDTH;
             const toWidth = toNode.width || NODE_MIN_WIDTH;
             const fromOffset = fromWidth / 2 + 10;
@@ -154,33 +164,28 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
             const ex = x2 - ux * toOffset;
             const ey = y2 - uy * toOffset;
 
-            // Curved path — perpendicular offset for control point
             const perpX = -uy;
             const perpY = ux;
             const curvature = Math.min(len * 0.12, 40);
             const cpX = (sx + ex) / 2 + perpX * curvature;
             const cpY = (sy + ey) / 2 + perpY * curvature;
 
-            // Label position (along curve midpoint, shifted above)
             const labelX = (sx + 2 * cpX + ex) / 4;
             const labelY = (sy + 2 * cpY + ey) / 4 - 18;
 
-            // Animated path using dasharray
             const pathD = `M ${sx} ${sy} Q ${cpX} ${cpY} ${ex} ${ey}`;
             const approxLen = len * 0.9;
             const dashOffset = approxLen * (1 - edgeProgress);
 
             return (
               <g key={i} opacity={interpolate(edgeProgress, [0, 0.05], [0, 1], { extrapolateRight: 'clamp' })}>
-                {/* Shadow line */}
                 <path
                   d={pathD}
                   fill="none"
-                  stroke="rgba(196,123,90,0.08)"
+                  stroke={theme.color.edgeShadow}
                   strokeWidth={8}
                   strokeLinecap="round"
                 />
-                {/* Main line */}
                 <path
                   d={pathD}
                   fill="none"
@@ -193,7 +198,6 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
                   markerEnd="url(#arrowhead)"
                 />
 
-                {/* Edge label with background */}
                 {edge.label && edgeProgress > 0.5 && (
                   <g opacity={interpolate(edgeProgress, [0.5, 0.8], [0, 1], {
                     extrapolateLeft: 'clamp',
@@ -205,8 +209,8 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
                       width={edge.label.length * 14 + 20}
                       height={30}
                       rx={8}
-                      fill="#FDF8F0"
-                      stroke="rgba(196,123,90,0.15)"
+                      fill={theme.color.edgeLabelBg}
+                      stroke={theme.color.edgeLabelBorder}
                       strokeWidth={1}
                     />
                     <text
@@ -229,13 +233,13 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
 
         {/* Nodes */}
         {nodes.map((node, i) => {
-          const nodeDelay = 18 + i * 16;
+          const nodeDelay = nodeBaseDelay + i * nodeInterval;
           const nodeSpring = spring({
             frame: Math.max(0, frame - nodeDelay),
             fps,
-            config: { damping: 12, stiffness: 100, mass: 0.6 },
+            config: resolveSpring(a.node.spring),
           });
-          const nodeScale = interpolate(nodeSpring, [0, 1], [0, 1]);
+          const nodeScale = interpolate(nodeSpring, [0, 1], nodeScaleRange);
           const nodeOpacity = interpolate(nodeSpring, [0, 1], [0, 1]);
           const nodeColor = node.color || theme.color.accent;
           const nodeWidth = getNodeWidth(node.label);
@@ -251,25 +255,50 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
                 minHeight: NODE_HEIGHT,
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'center',
                 alignItems: 'center',
-                background: `linear-gradient(145deg, #FFFFFF 0%, #FDF8F0 100%)`,
+                background: theme.color.nodeBackground,
                 border: `1.5px solid ${nodeColor}30`,
+                borderTop: `4px solid ${nodeColor}`,
                 borderRadius: 20,
-                padding: '16px 20px',
+                padding: '24px 20px 20px',
                 opacity: nodeOpacity,
                 transform: `scale(${nodeScale})`,
-                boxShadow: `0 4px 20px rgba(45,41,38,0.06), 0 1px 4px rgba(45,41,38,0.04), inset 0 1px 0 rgba(255,255,255,0.8)`,
+                boxShadow: theme.color.nodeShadow,
+                overflow: 'hidden',
               }}
             >
+              {/* Step badge */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 10,
+                  left: 14,
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: nodeColor,
+                  opacity: 0.7,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                STEP {i + 1}
+              </div>
+
+              {/* Icon with circle background */}
               {node.icon && (
                 <div style={{
-                  marginBottom: 10,
+                  marginTop: 10,
+                  marginBottom: 14,
+                  width: ICON_BG_SIZE,
+                  height: ICON_BG_SIZE,
+                  borderRadius: '50%',
+                  background: `${nodeColor}15`,
+                  border: `1.5px solid ${nodeColor}25`,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                  <NodeIcon icon={node.icon} size={44} />
+                  <NodeIcon icon={node.icon} size={ICON_SIZE} />
                 </div>
               )}
               <span

@@ -13,26 +13,179 @@
     "speechRate": 0.85,
     "pauseBetweenSentences": "short"
   },
-  "theme": {
-    "backgrounds": {
-      "primary": "linear-gradient(160deg, #FAF6F0 0%, #F5EDE3 50%, #FDF8F0 100%)",
-      "title": "linear-gradient(135deg, #FDF8F0 0%, #F5EDE3 40%, #FAF0E6 100%)",
-      "code": "#FEFCF9"
+  "activeTemplate": "warm-cream",
+  "templates": {
+    "warm-cream": {
+      "theme": {
+        "backgrounds": {
+          "primary": "linear-gradient(160deg, #FAF6F0 0%, #F5EDE3 50%, #FDF8F0 100%)",
+          "title": "linear-gradient(135deg, #FDF8F0 0%, #F5EDE3 40%, #FAF0E6 100%)",
+          "code": "#FEFCF9"
+        },
+        "colors": {
+          "textPrimary": "#2D2926",
+          "textSecondary": "#5C5552",
+          "textMuted": "rgba(45,41,38,0.55)",
+          "accent": "#C47B5A",
+          "accentSecondary": "#7BA68C",
+          "accentMuted": "rgba(196,123,90,0.18)",
+          "surface": "rgba(196,123,90,0.08)",
+          "surfaceBorder": "rgba(196,123,90,0.2)",
+          "divider": "rgba(45,41,38,0.08)",
+          "gradientLine": "linear-gradient(90deg, #C47B5A, #D4A574)",
+          "nodeBackground": "linear-gradient(145deg, #FFFFFF 0%, #FDF8F0 100%)",
+          "nodeShadow": "0 4px 20px rgba(45,41,38,0.06), 0 1px 4px rgba(45,41,38,0.04), inset 0 1px 0 rgba(255,255,255,0.8)",
+          "edgeShadow": "rgba(196,123,90,0.08)",
+          "edgeLabelBg": "#FDF8F0",
+          "edgeLabelBorder": "rgba(196,123,90,0.15)",
+          "textOnAccent": "#ffffff",
+          "stepPast": "rgba(196,123,90,0.2)",
+          "stepInactive": "rgba(45,41,38,0.06)",
+          "stepInactiveBorder": "rgba(45,41,38,0.1)"
+        },
+        "glow": {
+          "title": "radial-gradient(circle, rgba(196,123,90,0.12) 0%, transparent 70%)"
+        }
+      },
+      "animation": {
+        "spring": {
+          "default": { "damping": 14, "stiffness": 80, "mass": 0.8 },
+          "bouncy": { "damping": 10, "stiffness": 100, "mass": 0.6 },
+          "gentle": { "damping": 16, "stiffness": 60, "mass": 0.6 },
+          "snappy": { "damping": 10, "stiffness": 120, "mass": 0.5 },
+          "smooth": { "damping": 14, "stiffness": 70, "mass": 0.7 }
+        },
+        "TitleScreen": {
+          "bg": { "fadeFrames": [0, 15] },
+          "title": { "spring": "default", "distance": { "y": 60 } },
+          "sub": { "delay": 18, "spring": "gentle", "distance": { "y": 30 } },
+          "line": { "frames": [10, 40], "width": 200 }
+        },
+        "KeyPointScreen": {
+          "icon": { "spring": "bouncy", "scale": [0, 1] },
+          "headline": { "delay": 12, "spring": "default", "distance": { "y": 50 } },
+          "detail": { "delay": 28, "spring": "gentle", "distance": { "y": 25 } },
+          "line": { "frames": [20, 50], "width": 120 }
+        },
+        "QuoteScreen": {
+          "quoteMark": { "spring": "bouncy", "scale": [0.3, 1], "opacity": [0, 0.15] },
+          "text": { "delay": 10, "spring": "default", "distance": { "y": 40 } },
+          "attribution": { "delay": 25, "spring": "gentle" },
+          "line": { "frames": [15, 45], "width": 100 }
+        },
+        "SummaryScreen": {
+          "title": { "spring": "default", "distance": { "x": -80 } },
+          "item": { "baseDelay": 15, "staggerInterval": 20, "spring": "smooth", "distance": { "x": -50 }, "scale": [0.95, 1] },
+          "check": { "delay": 8, "fadeDuration": 10 }
+        },
+        "ComparisonScreen": {
+          "left": { "spring": "default", "distance": { "x": -120 } },
+          "right": { "delay": 8, "spring": "default", "distance": { "x": 120 } },
+          "vs": { "delay": 15, "spring": "snappy", "scale": [0, 1] },
+          "point": { "baseDelay": [20, 28], "staggerInterval": 15, "spring": "gentle" }
+        },
+        "DiagramScreen": {
+          "title": { "spring": "default", "distance": { "y": 30 } },
+          "node": { "baseDelay": 18, "staggerInterval": 16, "spring": "bouncy", "scale": [0, 1] },
+          "edge": { "extraDelay": 10, "drawDuration": 25 }
+        },
+        "ProgressScreen": {
+          "title": { "spring": "default" },
+          "step": { "baseDelay": 10, "staggerInterval": 15, "spring": "smooth", "distance": { "x": -40 } },
+          "pulse": { "speed": 0.08, "range": [1, 1.02] }
+        },
+        "SceneTransition": {
+          "enterDuration": 15,
+          "exitDuration": 10,
+          "distances": { "slideX": 60, "slideY": 40, "zoomScale": [0.9, 1], "zoomExitScale": [1, 1.1] }
+        }
+      }
     },
-    "colors": {
-      "textPrimary": "#2D2926",
-      "textSecondary": "#5C5552",
-      "textMuted": "rgba(45,41,38,0.55)",
-      "accent": "#C47B5A",
-      "accentSecondary": "#7BA68C",
-      "accentMuted": "rgba(196,123,90,0.18)",
-      "surface": "rgba(196,123,90,0.08)",
-      "surfaceBorder": "rgba(196,123,90,0.2)",
-      "divider": "rgba(45,41,38,0.08)",
-      "gradientLine": "linear-gradient(90deg, #C47B5A, #D4A574)"
-    },
-    "glow": {
-      "title": "radial-gradient(circle, rgba(196,123,90,0.12) 0%, transparent 70%)"
+    "chalkboard": {
+      "theme": {
+        "backgrounds": {
+          "primary": "linear-gradient(160deg, #2B3D2F 0%, #243328 50%, #2E4233 100%)",
+          "title": "linear-gradient(135deg, #2E4233 0%, #1E2D22 40%, #2B3D2F 100%)",
+          "code": "#1E2D22"
+        },
+        "colors": {
+          "textPrimary": "#E8E4D9",
+          "textSecondary": "#B8B2A4",
+          "textMuted": "rgba(232,228,217,0.5)",
+          "accent": "#F5C56A",
+          "accentSecondary": "#7EC8A0",
+          "accentMuted": "rgba(245,197,106,0.2)",
+          "surface": "rgba(245,197,106,0.1)",
+          "surfaceBorder": "rgba(245,197,106,0.25)",
+          "divider": "rgba(232,228,217,0.12)",
+          "gradientLine": "linear-gradient(90deg, #F5C56A, #E8B85E)",
+          "nodeBackground": "linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
+          "nodeShadow": "0 4px 20px rgba(0,0,0,0.2), 0 1px 4px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.05)",
+          "edgeShadow": "rgba(245,197,106,0.1)",
+          "edgeLabelBg": "#2E4233",
+          "edgeLabelBorder": "rgba(245,197,106,0.2)",
+          "textOnAccent": "#1E2D22",
+          "stepPast": "rgba(245,197,106,0.25)",
+          "stepInactive": "rgba(232,228,217,0.08)",
+          "stepInactiveBorder": "rgba(232,228,217,0.15)"
+        },
+        "glow": {
+          "title": "radial-gradient(circle, rgba(245,197,106,0.1) 0%, transparent 70%)"
+        }
+      },
+      "animation": {
+        "spring": {
+          "default": { "damping": 14, "stiffness": 80, "mass": 0.8 },
+          "bouncy": { "damping": 10, "stiffness": 100, "mass": 0.6 },
+          "gentle": { "damping": 16, "stiffness": 60, "mass": 0.6 },
+          "snappy": { "damping": 10, "stiffness": 120, "mass": 0.5 },
+          "smooth": { "damping": 14, "stiffness": 70, "mass": 0.7 }
+        },
+        "TitleScreen": {
+          "bg": { "fadeFrames": [0, 15] },
+          "title": { "spring": "default", "distance": { "y": 60 } },
+          "sub": { "delay": 18, "spring": "gentle", "distance": { "y": 30 } },
+          "line": { "frames": [10, 40], "width": 200 }
+        },
+        "KeyPointScreen": {
+          "icon": { "spring": "bouncy", "scale": [0, 1] },
+          "headline": { "delay": 12, "spring": "default", "distance": { "y": 50 } },
+          "detail": { "delay": 28, "spring": "gentle", "distance": { "y": 25 } },
+          "line": { "frames": [20, 50], "width": 120 }
+        },
+        "QuoteScreen": {
+          "quoteMark": { "spring": "bouncy", "scale": [0.3, 1], "opacity": [0, 0.15] },
+          "text": { "delay": 10, "spring": "default", "distance": { "y": 40 } },
+          "attribution": { "delay": 25, "spring": "gentle" },
+          "line": { "frames": [15, 45], "width": 100 }
+        },
+        "SummaryScreen": {
+          "title": { "spring": "default", "distance": { "x": -80 } },
+          "item": { "baseDelay": 15, "staggerInterval": 20, "spring": "smooth", "distance": { "x": -50 }, "scale": [0.95, 1] },
+          "check": { "delay": 8, "fadeDuration": 10 }
+        },
+        "ComparisonScreen": {
+          "left": { "spring": "default", "distance": { "x": -120 } },
+          "right": { "delay": 8, "spring": "default", "distance": { "x": 120 } },
+          "vs": { "delay": 15, "spring": "snappy", "scale": [0, 1] },
+          "point": { "baseDelay": [20, 28], "staggerInterval": 15, "spring": "gentle" }
+        },
+        "DiagramScreen": {
+          "title": { "spring": "default", "distance": { "y": 30 } },
+          "node": { "baseDelay": 18, "staggerInterval": 16, "spring": "bouncy", "scale": [0, 1] },
+          "edge": { "extraDelay": 10, "drawDuration": 25 }
+        },
+        "ProgressScreen": {
+          "title": { "spring": "default" },
+          "step": { "baseDelay": 10, "staggerInterval": 15, "spring": "smooth", "distance": { "x": -40 } },
+          "pulse": { "speed": 0.08, "range": [1, 1.02] }
+        },
+        "SceneTransition": {
+          "enterDuration": 15,
+          "exitDuration": 10,
+          "distances": { "slideX": 60, "slideY": 40, "zoomScale": [0.9, 1], "zoomExitScale": [1, 1.1] }
+        }
+      }
     }
   }
 }
