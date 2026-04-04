@@ -2,6 +2,7 @@ import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate } from 'remo
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { useMemo } from 'react';
+import { theme } from './theme';
 
 interface MyCodeSceneProps {
   code?: string;
@@ -40,13 +41,13 @@ export const MyCodeScene: React.FC<MyCodeSceneProps> = ({
     : 0;
 
   return (
-    <AbsoluteFill style={{ backgroundColor: '#ffffff', padding: '60px' }}>
+    <AbsoluteFill style={{ backgroundColor: theme.bg.code, padding: '60px' }}>
       {title && (
         <h2
           style={{
             fontSize: 32,
             fontWeight: 700,
-            color: '#1a1a2e',
+            color: theme.color.textPrimary,
             marginBottom: 20,
             opacity: titleOpacity,
           }}
@@ -54,7 +55,7 @@ export const MyCodeScene: React.FC<MyCodeSceneProps> = ({
           {title}
         </h2>
       )}
-      <div style={{ fontSize: '35px', overflow: 'hidden', border: '1px solid #ddd', borderRadius: '15px' }}>
+      <div style={{ fontSize: '35px', overflow: 'hidden', border: `1px solid ${theme.color.divider}`, borderRadius: '15px' }}>
         <SyntaxHighlighter
           language={language}
           style={prism}

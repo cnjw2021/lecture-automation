@@ -31,6 +31,11 @@ export const config = {
     if (fs.existsSync(videoConfigPath)) {
       return fs.readJsonSync(videoConfigPath);
     }
-    return { audio: { sampleRate: 24000, channels: 1, bitDepth: 16 }, resolution: { width: 1920, height: 1080 } };
+    return { audio: { sampleRate: 24000, channels: 1, bitDepth: 16 }, resolution: { width: 1920, height: 1080 }, tts: { speechRate: 0.85 } };
+  },
+
+  getTtsConfig: () => {
+    const videoConfig = config.getVideoConfig();
+    return videoConfig.tts || { speechRate: 0.85, pauseBetweenSentences: 'short' };
   }
 };

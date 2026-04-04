@@ -1,4 +1,5 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
+import { theme } from '../theme';
 
 interface KeyPointScreenProps {
   icon?: string;
@@ -11,10 +12,12 @@ export const KeyPointScreen: React.FC<KeyPointScreenProps> = ({
   icon,
   headline,
   detail,
-  color = '#6366f1',
+  color,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+
+  const accentColor = color || theme.color.accent;
 
   // Icon/emoji scale-in with bounce
   const iconSpring = spring({
@@ -52,7 +55,7 @@ export const KeyPointScreen: React.FC<KeyPointScreenProps> = ({
   return (
     <AbsoluteFill
       style={{
-        background: 'linear-gradient(160deg, #0f0c29 0%, #1a1a2e 50%, #16213e 100%)',
+        background: theme.bg.primary,
         justifyContent: 'center',
         alignItems: 'center',
         textAlign: 'center',
@@ -65,7 +68,7 @@ export const KeyPointScreen: React.FC<KeyPointScreenProps> = ({
           width: 500,
           height: 500,
           borderRadius: '50%',
-          background: `radial-gradient(circle, ${color}22 0%, transparent 70%)`,
+          background: `radial-gradient(circle, ${accentColor}15 0%, transparent 70%)`,
           top: '50%',
           left: '50%',
           transform: `translate(-50%, -50%) scale(${iconScale})`,
@@ -92,7 +95,7 @@ export const KeyPointScreen: React.FC<KeyPointScreenProps> = ({
           style={{
             fontSize: 80,
             fontWeight: 800,
-            color: '#ffffff',
+            color: theme.color.textPrimary,
             lineHeight: 1.3,
             marginBottom: 16,
             opacity: headlineOpacity,
@@ -107,7 +110,7 @@ export const KeyPointScreen: React.FC<KeyPointScreenProps> = ({
           style={{
             width: lineWidth,
             height: 4,
-            background: color,
+            background: accentColor,
             margin: '0 auto 28px',
             borderRadius: 2,
           }}
@@ -119,7 +122,7 @@ export const KeyPointScreen: React.FC<KeyPointScreenProps> = ({
             style={{
               fontSize: 38,
               fontWeight: 400,
-              color: 'rgba(255,255,255,0.7)',
+              color: theme.color.textSecondary,
               lineHeight: 1.6,
               opacity: detailOpacity,
               transform: `translateY(${detailY}px)`,

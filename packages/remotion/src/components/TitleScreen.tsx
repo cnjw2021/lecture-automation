@@ -1,4 +1,5 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
+import { theme } from '../theme';
 
 interface TitleScreenProps {
   title?: string;
@@ -45,7 +46,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ title, main, sub }) =>
   return (
     <AbsoluteFill
       style={{
-        background: 'linear-gradient(135deg, #0f0c29 0%, #1a1a2e 40%, #16213e 100%)',
+        background: theme.bg.title,
         justifyContent: 'center',
         alignItems: 'center',
         textAlign: 'center',
@@ -59,7 +60,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ title, main, sub }) =>
           width: 600,
           height: 600,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%)',
+          background: theme.glow.title,
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
@@ -71,12 +72,12 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ title, main, sub }) =>
           style={{
             fontSize: 90,
             fontWeight: 800,
-            color: '#ffffff',
+            color: theme.color.textPrimary,
             lineHeight: 1.2,
             marginBottom: 24,
             opacity: titleOpacity,
             transform: `translateY(${titleY}px)`,
-            textShadow: '0 2px 40px rgba(99,102,241,0.3)',
+            textShadow: '0 2px 40px rgba(196,123,90,0.15)',
           }}
         >
           {displayTitle}
@@ -87,7 +88,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ title, main, sub }) =>
           style={{
             width: lineWidth,
             height: 3,
-            background: 'linear-gradient(90deg, #6366f1, #a78bfa)',
+            background: theme.color.gradientLine,
             margin: '0 auto 28px',
             borderRadius: 2,
           }}
@@ -98,7 +99,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ title, main, sub }) =>
             style={{
               fontSize: 44,
               fontWeight: 400,
-              color: 'rgba(255,255,255,0.75)',
+              color: theme.color.textSecondary,
               opacity: subOpacity,
               transform: `translateY(${subY}px)`,
             }}

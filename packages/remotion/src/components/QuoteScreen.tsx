@@ -1,4 +1,5 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
+import { theme } from '../theme';
 
 interface QuoteScreenProps {
   quote: string;
@@ -44,7 +45,7 @@ export const QuoteScreen: React.FC<QuoteScreenProps> = ({ quote, attribution }) 
   return (
     <AbsoluteFill
       style={{
-        background: 'linear-gradient(160deg, #0f0c29 0%, #1a1a2e 50%, #16213e 100%)',
+        background: theme.bg.primary,
         justifyContent: 'center',
         alignItems: 'center',
       }}
@@ -57,7 +58,7 @@ export const QuoteScreen: React.FC<QuoteScreenProps> = ({ quote, attribution }) 
           left: '12%',
           fontSize: 400,
           fontFamily: 'Georgia, serif',
-          color: '#6366f1',
+          color: theme.color.accent,
           opacity: quoteMarkOpacity,
           transform: `scale(${quoteMarkScale})`,
           lineHeight: 1,
@@ -81,7 +82,7 @@ export const QuoteScreen: React.FC<QuoteScreenProps> = ({ quote, attribution }) 
           style={{
             fontSize: 56,
             fontWeight: 500,
-            color: '#e2e8f0',
+            color: theme.color.textPrimary,
             lineHeight: 1.6,
             fontStyle: 'italic',
             opacity: textOpacity,
@@ -97,7 +98,7 @@ export const QuoteScreen: React.FC<QuoteScreenProps> = ({ quote, attribution }) 
           style={{
             width: lineWidth,
             height: 3,
-            background: 'linear-gradient(90deg, #6366f1, #a78bfa)',
+            background: theme.color.gradientLine,
             margin: '0 auto 28px',
             borderRadius: 2,
           }}
@@ -109,7 +110,7 @@ export const QuoteScreen: React.FC<QuoteScreenProps> = ({ quote, attribution }) 
             style={{
               fontSize: 32,
               fontWeight: 400,
-              color: 'rgba(167,139,250,0.8)',
+              color: theme.color.accent,
               opacity: attrOpacity,
             }}
           >

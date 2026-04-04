@@ -1,4 +1,5 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
+import { theme } from '../theme';
 
 interface ProgressScreenProps {
   steps: string[];
@@ -25,7 +26,7 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
   return (
     <AbsoluteFill
       style={{
-        background: 'linear-gradient(160deg, #0f0c29 0%, #1a1a2e 50%, #16213e 100%)',
+        background: theme.bg.primary,
         padding: '80px 140px',
         justifyContent: 'center',
       }}
@@ -36,7 +37,7 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
           style={{
             fontSize: 56,
             fontWeight: 800,
-            color: '#e2e8f0',
+            color: theme.color.textPrimary,
             marginBottom: 60,
             opacity: titleOpacity,
           }}
@@ -81,10 +82,10 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
                 padding: '18px 28px',
                 borderRadius: 16,
                 background: isActive
-                  ? 'rgba(99,102,241,0.15)'
+                  ? theme.color.accentMuted
                   : 'transparent',
                 border: isActive
-                  ? '2px solid rgba(99,102,241,0.4)'
+                  ? `2px solid ${theme.color.surfaceBorder}`
                   : '2px solid transparent',
               }}
             >
@@ -100,16 +101,16 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
                   fontSize: 24,
                   fontWeight: 700,
                   background: isActive
-                    ? '#6366f1'
+                    ? theme.color.accent
                     : isPast
-                      ? 'rgba(99,102,241,0.3)'
-                      : 'rgba(255,255,255,0.08)',
-                  color: isActive || isPast ? '#ffffff' : 'rgba(255,255,255,0.4)',
+                      ? 'rgba(196,123,90,0.2)'
+                      : 'rgba(45,41,38,0.06)',
+                  color: isActive || isPast ? '#ffffff' : theme.color.textMuted,
                   border: isActive
                     ? 'none'
                     : isPast
-                      ? '2px solid rgba(99,102,241,0.5)'
-                      : '2px solid rgba(255,255,255,0.15)',
+                      ? `2px solid ${theme.color.surfaceBorder}`
+                      : '2px solid rgba(45,41,38,0.1)',
                 }}
               >
                 {isPast ? '\u2713' : i + 1}
@@ -121,10 +122,10 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
                   fontSize: 36,
                   fontWeight: isActive ? 700 : 400,
                   color: isActive
-                    ? '#ffffff'
+                    ? theme.color.textPrimary
                     : isPast
-                      ? 'rgba(255,255,255,0.5)'
-                      : 'rgba(255,255,255,0.6)',
+                      ? theme.color.textMuted
+                      : theme.color.textSecondary,
                   textDecoration: isPast ? 'line-through' : 'none',
                 }}
               >
@@ -144,14 +145,14 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
           right: 140,
           height: 6,
           borderRadius: 3,
-          background: 'rgba(255,255,255,0.08)',
+          background: theme.color.divider,
         }}
       >
         <div
           style={{
             height: '100%',
             borderRadius: 3,
-            background: 'linear-gradient(90deg, #6366f1, #a78bfa)',
+            background: theme.color.gradientLine,
             width: `${(currentStep / steps.length) * 100}%`,
             transition: 'width 0.3s',
           }}

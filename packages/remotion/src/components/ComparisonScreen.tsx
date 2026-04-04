@@ -1,4 +1,5 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
+import { theme } from '../theme';
 
 interface Side {
   title: string;
@@ -48,7 +49,7 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({
 
   const renderSide = (side: Side, index: number) => {
     const isLeft = index === 0;
-    const sideColor = side.color || (isLeft ? '#6366f1' : '#f59e0b');
+    const sideColor = side.color || (isLeft ? theme.color.accent : theme.color.accentSecondary);
 
     return (
       <div
@@ -119,7 +120,7 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({
                 <span
                   style={{
                     fontSize: 34,
-                    color: '#e2e8f0',
+                    color: theme.color.textPrimary,
                     lineHeight: 1.5,
                   }}
                 >
@@ -136,7 +137,7 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({
   return (
     <AbsoluteFill
       style={{
-        background: 'linear-gradient(160deg, #0f0c29 0%, #1a1a2e 50%, #16213e 100%)',
+        background: theme.bg.primary,
       }}
     >
       <div
@@ -176,7 +177,7 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({
             style={{
               width: 2,
               height: 200,
-              background: 'rgba(255,255,255,0.1)',
+              background: theme.color.divider,
             }}
           />
           <div
@@ -184,14 +185,14 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({
               width: 80,
               height: 80,
               borderRadius: '50%',
-              background: 'rgba(255,255,255,0.1)',
-              border: '2px solid rgba(255,255,255,0.2)',
+              background: theme.color.surface,
+              border: `2px solid ${theme.color.surfaceBorder}`,
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
               fontSize: 28,
               fontWeight: 800,
-              color: '#ffffff',
+              color: theme.color.textPrimary,
               transform: `scale(${vsScale})`,
             }}
           >
@@ -201,7 +202,7 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({
             style={{
               width: 2,
               height: 200,
-              background: 'rgba(255,255,255,0.1)',
+              background: theme.color.divider,
             }}
           />
         </div>

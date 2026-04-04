@@ -1,4 +1,5 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
+import { theme } from '../theme';
 
 interface DiagramNode {
   id: string;
@@ -40,7 +41,7 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
   return (
     <AbsoluteFill
       style={{
-        background: 'linear-gradient(160deg, #0f0c29 0%, #1a1a2e 50%, #16213e 100%)',
+        background: theme.bg.primary,
       }}
     >
       {/* Title */}
@@ -54,7 +55,7 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
             textAlign: 'center',
             fontSize: 56,
             fontWeight: 800,
-            color: '#e2e8f0',
+            color: theme.color.textPrimary,
             opacity: titleOpacity,
             transform: `translateY(${titleY}px)`,
           }}
@@ -132,7 +133,7 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
                   y1={sy}
                   x2={cx}
                   y2={cy}
-                  stroke="rgba(99,102,241,0.6)"
+                  stroke="rgba(196,123,90,0.5)"
                   strokeWidth={3}
                   strokeLinecap="round"
                 />
@@ -141,7 +142,7 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
                 {edgeProgress > 0.9 && (
                   <polygon
                     points={`${ex},${ey} ${ex - ux * 16 + uy * 8},${ey - uy * 16 - ux * 8} ${ex - ux * 16 - uy * 8},${ey - uy * 16 + ux * 8}`}
-                    fill="rgba(99,102,241,0.8)"
+                    fill="rgba(196,123,90,0.7)"
                     opacity={interpolate(edgeProgress, [0.9, 1], [0, 1])}
                   />
                 )}
@@ -152,7 +153,7 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
                     x={midX}
                     y={midY - 14}
                     textAnchor="middle"
-                    fill="rgba(167,139,250,0.8)"
+                    fill={theme.color.accent}
                     fontSize={22}
                     fontWeight={500}
                     opacity={interpolate(edgeProgress, [0.5, 0.8], [0, 1], {
@@ -178,7 +179,7 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
           });
           const nodeScale = interpolate(nodeSpring, [0, 1], [0, 1]);
           const nodeOpacity = interpolate(nodeSpring, [0, 1], [0, 1]);
-          const nodeColor = node.color || '#6366f1';
+          const nodeColor = node.color || theme.color.accent;
 
           return (
             <div
@@ -193,8 +194,8 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                background: `${nodeColor}18`,
-                border: `2px solid ${nodeColor}55`,
+                background: `${nodeColor}12`,
+                border: `2px solid ${nodeColor}40`,
                 borderRadius: 16,
                 padding: '14px 16px',
                 opacity: nodeOpacity,
@@ -208,7 +209,7 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
                 style={{
                   fontSize: 22,
                   fontWeight: 600,
-                  color: '#e2e8f0',
+                  color: theme.color.textPrimary,
                   textAlign: 'center',
                   lineHeight: 1.3,
                 }}
