@@ -10,7 +10,7 @@
     "bitDepth": 16
   },
   "tts": {
-    "speechRate": 0.85,
+    "speechRate": 0.65,
     "pauseBetweenSentences": "short"
   },
   "activeTemplate": "warm-cream",
