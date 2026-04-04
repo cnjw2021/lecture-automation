@@ -21,6 +21,12 @@ export const config = {
       voiceName: process.env.GOOGLE_CLOUD_TTS_VOICE || 'ja-JP-Chirp3-HD-Kore',
       languageCode: process.env.GOOGLE_CLOUD_TTS_LANGUAGE_CODE || 'ja-JP',
     },
+    gemini_cloud_tts: {
+      keyFilePath: process.env.GOOGLE_CLOUD_TTS_KEY_FILE || '',
+      modelName: process.env.GEMINI_CLOUD_TTS_MODEL || 'gemini-2.5-flash-tts',
+      voiceName: process.env.GEMINI_CLOUD_TTS_VOICE || 'Kore',
+      languageCode: process.env.GEMINI_CLOUD_TTS_LANGUAGE_CODE || 'ja-JP',
+    },
   },
 
   paths: {

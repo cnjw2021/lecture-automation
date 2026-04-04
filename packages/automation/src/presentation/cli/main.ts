@@ -4,6 +4,7 @@ import { config } from '../../infrastructure/config';
 import { FileLectureRepository } from '../../infrastructure/repositories/FileLectureRepository';
 import { GeminiAudioProvider } from '../../infrastructure/providers/GeminiAudioProvider';
 import { GoogleCloudTtsProvider } from '../../infrastructure/providers/GoogleCloudTtsProvider';
+import { GeminiCloudTtsProvider } from '../../infrastructure/providers/GeminiCloudTtsProvider';
 import { PlaywrightVisualProvider } from '../../infrastructure/providers/PlaywrightVisualProvider';
 import { RemotionRenderProvider } from '../../infrastructure/providers/RemotionRenderProvider';
 import { IAudioProvider } from '../../domain/interfaces/IAudioProvider';
@@ -27,7 +28,15 @@ async function runAutomation(jsonFileName: string) {
   const providerName = config.active_audio_provider;
   let audioProvider: IAudioProvider;
 
-  if (providerName === 'google_cloud_tts') {
+  if (providerName === 'gemini_cloud_tts') {
+    const gcConfig = config.providers.gemini_cloud_tts;
+    if (!gcConfig.keyFilePath) {
+      console.error('\n❌ [에러] GOOGLE_CLOUD_TTS_KEY_FILE이 설정되어 있지 않습니다.');
+      console.error('루트 디렉토리의 .env 파일에 Service Account JSON 키 파일 경로를 입력해 주세요.\n');
+      process.exit(1);
+    }
+    audioProvider = new GeminiCloudTtsProvider(gcConfig.keyFilePath, gcConfig.modelName, gcConfig.voiceName, gcConfig.languageCode);
+  } else if (providerName === 'google_cloud_tts') {
     const gcConfig = config.providers.google_cloud_tts;
     if (!gcConfig.keyFilePath) {
       console.error('\n❌ [에러] GOOGLE_CLOUD_TTS_KEY_FILE이 설정되어 있지 않습니다.');
