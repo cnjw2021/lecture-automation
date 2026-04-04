@@ -27,9 +27,12 @@ async function runAutomation(jsonFileName: string) {
 
   // 1. Composition Root: Instantiate Dependencies (Infrastructure)
   const lectureRepository = new FileLectureRepository();
+  const geminiConfig = config.providers.gemini;
   const audioProvider = new GeminiAudioProvider(
-    config.providers.gemini.apiKey, 
-    config.providers.gemini.modelName
+    geminiConfig.apiKey,
+    geminiConfig.modelName,
+    geminiConfig.voice,
+    geminiConfig.language
   );
   const visualProvider = new PlaywrightVisualProvider();
   const renderProvider = new RemotionRenderProvider();

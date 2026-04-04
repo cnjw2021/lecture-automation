@@ -4,7 +4,7 @@
 
 # 기본 변수 설정
 LECTURE ?= p1-01-01.json
-ENGINE_PATH = packages/automation/main.js
+ENGINE_PATH = packages/automation/dist/presentation/cli/main.js
 REMOTION_PATH = packages/remotion
 OUTPUT_DIR = output
 

@@ -13,6 +13,8 @@ export const config = {
     gemini: {
       apiKey: process.env.GEMINI_API_KEY || '',
       modelName: "gemini-2.5-flash-preview-tts",
+      voice: process.env.TTS_VOICE || "Kore",
+      language: process.env.TTS_LANGUAGE || "Japanese",
     },
   },
 
