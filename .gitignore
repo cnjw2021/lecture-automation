@@ -1,6 +1,7 @@
 node_modules/
 .env
 .DS_Store
+.credentials/
 
 # Media files
 remotion-project/public/audio/

@@ -3,8 +3,10 @@ import * as path from 'path';
 import { config } from '../../infrastructure/config';
 import { FileLectureRepository } from '../../infrastructure/repositories/FileLectureRepository';
 import { GeminiAudioProvider } from '../../infrastructure/providers/GeminiAudioProvider';
+import { GoogleCloudTtsProvider } from '../../infrastructure/providers/GoogleCloudTtsProvider';
 import { PlaywrightVisualProvider } from '../../infrastructure/providers/PlaywrightVisualProvider';
 import { RemotionRenderProvider } from '../../infrastructure/providers/RemotionRenderProvider';
+import { IAudioProvider } from '../../domain/interfaces/IAudioProvider';
 import { GenerateAudioUseCase } from '../../application/use-cases/GenerateAudioUseCase';
 import { RecordVisualUseCase } from '../../application/use-cases/RecordVisualUseCase';
 import { RenderVideoUseCase } from '../../application/use-cases/RenderVideoUseCase';
@@ -12,12 +14,6 @@ import { ValidateLectureUseCase } from '../../application/use-cases/ValidateLect
 import { Lecture } from '../../domain/entities/Lecture';
 
 async function runAutomation(jsonFileName: string) {
-  if (!config.providers.gemini.apiKey || config.providers.gemini.apiKey === 'YOUR_GEMINI_API_KEY_HERE') {
-    console.error('\n❌ [에러] GEMINI_API_KEY가 설정되어 있지 않습니다.');
-    console.error('루트 디렉토리의 .env 파일에 올바른 API 키를 입력해 주세요.\n');
-    process.exit(1);
-  }
-
   const forceRegenerate = process.env.FORCE === '1';
   if (forceRegenerate) {
     console.log('🔄 강제 재생성 모드 활성화 - 기존 에셋을 무시합니다.');
@@ -27,13 +23,29 @@ async function runAutomation(jsonFileName: string) {
 
   // 1. Composition Root: Instantiate Dependencies (Infrastructure)
   const lectureRepository = new FileLectureRepository();
-  const geminiConfig = config.providers.gemini;
-  const audioProvider = new GeminiAudioProvider(
-    geminiConfig.apiKey,
-    geminiConfig.modelName,
-    geminiConfig.voice,
-    geminiConfig.language
-  );
+
+  const providerName = config.active_audio_provider;
+  let audioProvider: IAudioProvider;
+
+  if (providerName === 'google_cloud_tts') {
+    const gcConfig = config.providers.google_cloud_tts;
+    if (!gcConfig.keyFilePath) {
+      console.error('\n❌ [에러] GOOGLE_CLOUD_TTS_KEY_FILE이 설정되어 있지 않습니다.');
+      console.error('루트 디렉토리의 .env 파일에 Service Account JSON 키 파일 경로를 입력해 주세요.\n');
+      process.exit(1);
+    }
+    audioProvider = new GoogleCloudTtsProvider(gcConfig.keyFilePath, gcConfig.voiceName, gcConfig.languageCode);
+  } else {
+    const geminiConfig = config.providers.gemini;
+    if (!geminiConfig.apiKey || geminiConfig.apiKey === 'YOUR_GEMINI_API_KEY_HERE') {
+      console.error('\n❌ [에러] GEMINI_API_KEY가 설정되어 있지 않습니다.');
+      console.error('루트 디렉토리의 .env 파일에 올바른 API 키를 입력해 주세요.\n');
+      process.exit(1);
+    }
+    audioProvider = new GeminiAudioProvider(geminiConfig.apiKey, geminiConfig.modelName, geminiConfig.voice, geminiConfig.language);
+  }
+
+  console.log(`🔊 오디오 프로바이더: ${providerName}`);
   const visualProvider = new PlaywrightVisualProvider();
   const renderProvider = new RemotionRenderProvider();
 

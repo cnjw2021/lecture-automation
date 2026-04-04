@@ -7,10 +7,16 @@ export interface GenerateAudioUseCaseOptions {
 }
 
 export class GenerateAudioUseCase {
+  private readonly REQUEST_INTERVAL_MS = 7000; // RPM 10 제한 대응 (약 8.5 req/min)
+
   constructor(
     private readonly audioProvider: IAudioProvider,
     private readonly lectureRepository: ILectureRepository
   ) {}
+
+  private async sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
   async execute(lecture: Lecture, options: GenerateAudioUseCaseOptions = {}): Promise<any[]> {
     const { force = false } = options;
@@ -18,6 +24,7 @@ export class GenerateAudioUseCase {
 
     const results: any[] = [];
     const durations: Record<string, number> = {};
+    let lastRequestTime = 0;
 
     for (const scene of lecture.sequence) {
       if (!force && await this.lectureRepository.existsAudio(lecture.lecture_id, scene.scene_id)) {
@@ -29,7 +36,16 @@ export class GenerateAudioUseCase {
         continue;
       }
 
+      // RPM 제한 대응: 요청 간 최소 간격 유지
+      const elapsed = Date.now() - lastRequestTime;
+      if (lastRequestTime > 0 && elapsed < this.REQUEST_INTERVAL_MS) {
+        const waitMs = this.REQUEST_INTERVAL_MS - elapsed;
+        console.log(`  ⏳ RPM 제한 대응 대기 (${(waitMs / 1000).toFixed(1)}초)...`);
+        await this.sleep(waitMs);
+      }
+
       try {
+        lastRequestTime = Date.now();
         const { buffer, durationSec } = await this.audioProvider.generate(scene.narration, {
           scene_id: scene.scene_id
         });
