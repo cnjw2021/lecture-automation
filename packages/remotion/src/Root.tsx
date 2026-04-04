@@ -10,6 +10,7 @@ import {
   ProgressScreen,
   QuoteScreen,
 } from './components';
+import { TemplateEffects } from './components/TemplateEffects';
 import videoConfig from '../../../config/video.json';
 
 // Fallback for unknown components
@@ -108,13 +109,15 @@ const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDura
             durationInFrames={sceneDuration}
           >
             <AbsoluteFill>
-              <SceneTransition
-                durationInFrames={sceneDuration}
-                enter={enter}
-                exit={exit}
-              >
-                {visualContent}
-              </SceneTransition>
+              <TemplateEffects>
+                <SceneTransition
+                  durationInFrames={sceneDuration}
+                  enter={enter}
+                  exit={exit}
+                >
+                  {visualContent}
+                </SceneTransition>
+              </TemplateEffects>
               <Audio src={audioUrl} />
             </AbsoluteFill>
           </Sequence>
@@ -132,7 +135,11 @@ interface PreviewProps {
 
 const PreviewComposition: React.FC<PreviewProps> = ({ componentName, props: componentProps }) => {
   const Component = COMPONENT_MAP[componentName] || DefaultScreen;
-  return <Component {...componentProps} componentName={componentName} />;
+  return (
+    <TemplateEffects>
+      <Component {...componentProps} componentName={componentName} />
+    </TemplateEffects>
+  );
 };
 
 export const RemotionRoot: React.FC = () => {

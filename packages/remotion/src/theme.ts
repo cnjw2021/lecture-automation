@@ -34,4 +34,9 @@ export const theme = {
   glow: {
     title: t.glow.title as string,
   },
+  effects: {
+    chalk: !!t.effects?.chalk,
+    boardTexture: t.effects?.boardTexture ?? null,
+    chalkText: t.effects?.chalkText ?? null,
+  },
 } as const;

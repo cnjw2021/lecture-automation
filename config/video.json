@@ -45,6 +45,9 @@
         },
         "glow": {
           "title": "radial-gradient(circle, rgba(196,123,90,0.12) 0%, transparent 70%)"
+        },
+        "effects": {
+          "chalk": false
         }
       },
       "animation": {
@@ -104,33 +107,47 @@
     "chalkboard": {
       "theme": {
         "backgrounds": {
-          "primary": "linear-gradient(160deg, #2B3D2F 0%, #243328 50%, #2E4233 100%)",
-          "title": "linear-gradient(135deg, #2E4233 0%, #1E2D22 40%, #2B3D2F 100%)",
+          "primary": "#2B3D2F",
+          "title": "#263A2C",
           "code": "#1E2D22"
         },
         "colors": {
-          "textPrimary": "#E8E4D9",
-          "textSecondary": "#B8B2A4",
-          "textMuted": "rgba(232,228,217,0.5)",
-          "accent": "#F5C56A",
-          "accentSecondary": "#7EC8A0",
+          "textPrimary": "rgba(232,228,217,0.92)",
+          "textSecondary": "rgba(184,178,164,0.85)",
+          "textMuted": "rgba(232,228,217,0.45)",
+          "accent": "rgba(245,197,106,0.9)",
+          "accentSecondary": "rgba(126,200,160,0.85)",
           "accentMuted": "rgba(245,197,106,0.2)",
           "surface": "rgba(245,197,106,0.1)",
-          "surfaceBorder": "rgba(245,197,106,0.25)",
-          "divider": "rgba(232,228,217,0.12)",
-          "gradientLine": "linear-gradient(90deg, #F5C56A, #E8B85E)",
-          "nodeBackground": "linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
-          "nodeShadow": "0 4px 20px rgba(0,0,0,0.2), 0 1px 4px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.05)",
-          "edgeShadow": "rgba(245,197,106,0.1)",
-          "edgeLabelBg": "#2E4233",
-          "edgeLabelBorder": "rgba(245,197,106,0.2)",
+          "surfaceBorder": "rgba(245,197,106,0.2)",
+          "divider": "rgba(232,228,217,0.1)",
+          "gradientLine": "linear-gradient(90deg, rgba(245,197,106,0.8), rgba(232,184,94,0.6))",
+          "nodeBackground": "rgba(255,255,255,0.04)",
+          "nodeShadow": "inset 0 0 0 1.5px rgba(232,228,217,0.12)",
+          "edgeShadow": "rgba(245,197,106,0.06)",
+          "edgeLabelBg": "rgba(43,61,47,0.9)",
+          "edgeLabelBorder": "rgba(245,197,106,0.15)",
           "textOnAccent": "#1E2D22",
-          "stepPast": "rgba(245,197,106,0.25)",
-          "stepInactive": "rgba(232,228,217,0.08)",
-          "stepInactiveBorder": "rgba(232,228,217,0.15)"
+          "stepPast": "rgba(245,197,106,0.2)",
+          "stepInactive": "rgba(232,228,217,0.06)",
+          "stepInactiveBorder": "rgba(232,228,217,0.1)"
         },
         "glow": {
-          "title": "radial-gradient(circle, rgba(245,197,106,0.1) 0%, transparent 70%)"
+          "title": "radial-gradient(circle, rgba(245,197,106,0.06) 0%, transparent 70%)"
+        },
+        "effects": {
+          "chalk": true,
+          "boardTexture": {
+            "noiseFrequency": 0.7,
+            "noiseOctaves": 4,
+            "noiseOpacity": 0.12,
+            "scratchOpacity": 0.04
+          },
+          "chalkText": {
+            "displacementScale": 1.0,
+            "noiseFrequency": 0.04,
+            "textShadow": "0 0 8px rgba(232,228,217,0.15)"
+          }
         }
       },
       "animation": {
