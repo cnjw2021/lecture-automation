@@ -77,17 +77,17 @@ export const SceneTransition: React.FC<SceneTransitionProps> = ({
       case 'slide-right':
         return {
           opacity: exitProgress,
-          transform: `translateX(${interpolate(exitProgress, [1, 0], [0, d.slideX])}px)`,
+          transform: `translateX(${interpolate(exitProgress, [0, 1], [d.slideX, 0])}px)`,
         };
       case 'slide-down':
         return {
           opacity: exitProgress,
-          transform: `translateY(${interpolate(exitProgress, [1, 0], [0, d.slideY])}px)`,
+          transform: `translateY(${interpolate(exitProgress, [0, 1], [d.slideY, 0])}px)`,
         };
       case 'zoom':
         return {
           opacity: exitProgress,
-          transform: `scale(${interpolate(exitProgress, [1, 0], d.zoomExitScale)})`,
+          transform: `scale(${interpolate(exitProgress, [0, 1], [d.zoomExitScale[1], d.zoomExitScale[0]])})`,
         };
       case 'none':
       default:
