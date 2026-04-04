@@ -118,6 +118,79 @@
           "title": { "spring": "default", "distance": { "y": 30 } },
           "item": { "baseDelay": 8, "staggerInterval": 14, "spring": "smooth" },
           "bar": {}
+        },
+        "CodeWalkthroughScreen": {
+          "title": { "spring": "default" },
+          "code": { "delay": 10, "spring": "gentle" },
+          "highlight": { "delay": 25 }
+        },
+        "BeforeAfterScreen": {
+          "title": { "spring": "default" },
+          "before": { "delay": 8, "spring": "default" },
+          "arrow": { "delay": 20, "spring": "bouncy" },
+          "after": { "delay": 28, "spring": "default" }
+        },
+        "BarChartScreen": {
+          "title": { "spring": "default" },
+          "bar": { "baseDelay": 12, "staggerInterval": 12, "spring": "smooth" }
+        },
+        "PieChartScreen": {
+          "title": { "spring": "default" },
+          "chart": { "delay": 10, "spring": "bouncy" },
+          "legend": { "delay": 30, "spring": "gentle" }
+        },
+        "BulletDetailScreen": {
+          "title": { "spring": "default", "distance": { "y": 30 } },
+          "item": { "baseDelay": 10, "staggerInterval": 16, "spring": "smooth" }
+        },
+        "DefinitionScreen": {
+          "term": { "spring": "bouncy" },
+          "definition": { "delay": 15, "spring": "gentle" },
+          "example": { "delay": 30, "spring": "gentle" }
+        },
+        "QnAScreen": {
+          "question": { "spring": "default" },
+          "answer": { "delay": 25, "spring": "gentle" }
+        },
+        "SectionBreakScreen": {
+          "section": { "spring": "bouncy" },
+          "title": { "delay": 12, "spring": "default" },
+          "subtitle": { "delay": 22, "spring": "gentle" }
+        },
+        "EndScreen": {
+          "title": { "spring": "default" },
+          "message": { "delay": 18, "spring": "gentle" },
+          "credits": { "delay": 35, "spring": "gentle" }
+        },
+        "TwoColumnScreen": {
+          "title": { "spring": "default" },
+          "left": { "delay": 8, "spring": "default" },
+          "right": { "delay": 16, "spring": "default" }
+        },
+        "ImagePlaceholderScreen": {
+          "image": { "delay": 5, "spring": "bouncy" },
+          "text": { "delay": 15, "spring": "default" }
+        },
+        "CalloutScreen": {
+          "card": { "spring": "bouncy" },
+          "text": { "delay": 12, "spring": "gentle" }
+        },
+        "NumberedListScreen": {
+          "title": { "spring": "default" },
+          "item": { "baseDelay": 10, "staggerInterval": 16, "spring": "smooth" }
+        },
+        "IconListScreen": {
+          "title": { "spring": "default", "distance": { "y": 30 } },
+          "item": { "baseDelay": 10, "staggerInterval": 14, "spring": "smooth" }
+        },
+        "VennDiagramScreen": {
+          "title": { "spring": "default" },
+          "circle": { "delay": 8, "spring": "bouncy" },
+          "intersection": { "delay": 25, "spring": "snappy" }
+        },
+        "HierarchyScreen": {
+          "title": { "spring": "default" },
+          "node": { "baseDelay": 8, "staggerInterval": 10, "spring": "bouncy" }
         }
       }
     },
