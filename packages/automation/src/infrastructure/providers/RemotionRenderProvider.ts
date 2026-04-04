@@ -7,6 +7,7 @@ import { IRenderProvider } from '../../domain/interfaces/IRenderProvider';
 
 export class RemotionRenderProvider implements IRenderProvider {
   async render(lectureId: string, lectureData: Lecture): Promise<void> {
+    const startTime = Date.now();
     console.log(`\n🎬 최종 MP4 렌더링 시작 (Lecture: ${lectureId})...`);
 
     const outPath = path.join(config.paths.output, `${lectureId}.mp4`);
@@ -30,37 +31,53 @@ export class RemotionRenderProvider implements IRenderProvider {
 
     return new Promise((resolve, reject) => {
       const child = exec(command, (error, stdout, stderr) => {
-        // 임시 파일 정리
         fs.removeSync(propsPath);
 
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+        const minutes = Math.floor(Number(elapsed) / 60);
+        const seconds = (Number(elapsed) % 60).toFixed(0);
+
         if (error) {
-          console.error(`❌ 렌더링 실패: ${error.message}`);
+          console.error(`❌ 렌더링 실패 (${minutes}분 ${seconds}초 경과): ${error.message}`);
           return reject(error);
         }
-        console.log('✅ 렌더링이 완료되었습니다!');
+        console.log(`✅ 렌더링 완료! (소요 시간: ${minutes}분 ${seconds}초)`);
         console.log(`📍 결과물 경로: ${outPath}`);
         resolve();
       });
 
       if (child.stdout) {
-        let lastLoggedRendered = -100;
+        let lastLoggedRendered = -1000;
+        let lastLoggedEncoded = -1000;
         child.stdout.on('data', (data) => {
           const text = data.trim();
           if (!text) return;
 
-          // "Rendered N/Total" 패턴 — 100프레임마다 출력
+          // "Rendered N/Total" — 1000프레임마다 출력
           const renderMatch = text.match(/Rendered\s+(\d+)\/(\d+)/);
           if (renderMatch) {
             const current = parseInt(renderMatch[1], 10);
             const total = parseInt(renderMatch[2], 10);
-            if (current === 0 || current === total || current - lastLoggedRendered >= 100) {
+            if (current === 0 || current === total || current - lastLoggedRendered >= 1000) {
               lastLoggedRendered = current;
               console.log(`  > ${text}`);
             }
             return;
           }
 
-          // props 덤프나 너무 긴 라인은 생략
+          // "Encoded N/Total" — 1000프레임마다 출력
+          const encodeMatch = text.match(/Encoded\s+(\d+)\/(\d+)/);
+          if (encodeMatch) {
+            const current = parseInt(encodeMatch[1], 10);
+            const total = parseInt(encodeMatch[2], 10);
+            if (current === 0 || current === total || current - lastLoggedEncoded >= 1000) {
+              lastLoggedEncoded = current;
+              console.log(`  > ${text}`);
+            }
+            return;
+          }
+
+          // 너무 긴 라인은 truncate
           if (text.length > 300) {
             console.log(`  > ${text.substring(0, 100)}...`);
             return;
