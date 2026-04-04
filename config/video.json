@@ -8,5 +8,31 @@
     "sampleRate": 24000,
     "channels": 1,
     "bitDepth": 16
+  },
+  "tts": {
+    "speechRate": 0.85,
+    "pauseBetweenSentences": "short"
+  },
+  "theme": {
+    "backgrounds": {
+      "primary": "linear-gradient(160deg, #FAF6F0 0%, #F5EDE3 50%, #FDF8F0 100%)",
+      "title": "linear-gradient(135deg, #FDF8F0 0%, #F5EDE3 40%, #FAF0E6 100%)",
+      "code": "#FEFCF9"
+    },
+    "colors": {
+      "textPrimary": "#2D2926",
+      "textSecondary": "#5C5552",
+      "textMuted": "rgba(45,41,38,0.55)",
+      "accent": "#C47B5A",
+      "accentSecondary": "#7BA68C",
+      "accentMuted": "rgba(196,123,90,0.18)",
+      "surface": "rgba(196,123,90,0.08)",
+      "surfaceBorder": "rgba(196,123,90,0.2)",
+      "divider": "rgba(45,41,38,0.08)",
+      "gradientLine": "linear-gradient(90deg, #C47B5A, #D4A574)"
+    },
+    "glow": {
+      "title": "radial-gradient(circle, rgba(196,123,90,0.12) 0%, transparent 70%)"
+    }
   }
 }

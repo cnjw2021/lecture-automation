@@ -49,9 +49,17 @@ export class GeminiAudioProvider implements IAudioProvider {
     const sanitizedText = text.length < 15 ? text + "..." : text;
     const url = `${this.baseUrl}/${this.modelName}:generateContent?key=${this.apiKey}`;
 
+    const ttsConfig = config.getTtsConfig();
+    const speechRate = ttsConfig.speechRate || 0.85;
+    const paceInstruction = speechRate <= 0.8
+      ? 'ゆっくり、はっきりと'
+      : speechRate <= 0.9
+        ? '落ち着いたペースで、丁寧に'
+        : '自然なペースで';
+
     const payload = {
       contents: [{
-        parts: [{ text: `Read aloud naturally in ${this.language}: ` + sanitizedText }]
+        parts: [{ text: `${paceInstruction}、${this.language}で読み上げてください: ` + sanitizedText }]
       }],
       generationConfig: {
         responseModalities: ["AUDIO"],

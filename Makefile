@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install run run-force clean render-only
+.PHONY: help install run run-force clean render-only preview
 
 # 기본 변수 설정
 LECTURE ?= p1-01-01.json
@@ -17,6 +17,7 @@ help:
 	@echo "make run-force       - 기존 에셋 무시하고 전체 재생성"
 	@echo "make clean           - 생성된 모든 에셋 및 결과물 삭제"
 	@echo "make render-only     - 에셋이 있을 때 Remotion 렌더링만 실행"
+	@echo "make preview SCENE=6 - 특정 씬의 프리뷰 이미지 생성 (PNG)"
 	@echo "--------------------------------------------------"
 
 install:
@@ -34,6 +35,12 @@ run-force:
 render-only:
 	@echo "🎬 Remotion 렌더링만 실행 중..."
 	npm run render -w packages/remotion
+
+preview:
+	@echo "📸 컴포넌트 프리뷰 이미지 생성 중..."
+	@echo "사용법: make preview SCENE=6"
+	@echo "       make preview SCENE=6 FRAME=45"
+	@node scripts/preview.mjs $(LECTURE) $(SCENE) $(FRAME)
 
 clean:
 	@echo "🧹 생성된 에셋 및 결과물 정리 중..."

@@ -1,4 +1,5 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
+import { theme } from '../theme';
 
 interface SummaryScreenProps {
   points: string[];
@@ -23,8 +24,8 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({ points, title }) =
   return (
     <AbsoluteFill
       style={{
-        background: 'linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-        color: 'white',
+        background: theme.bg.primary,
+        color: theme.color.textPrimary,
         padding: '100px 120px',
       }}
     >
@@ -36,7 +37,7 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({ points, title }) =
           marginBottom: 60,
           opacity: titleOpacity,
           transform: `translateX(${titleX}px)`,
-          color: '#e2e8f0',
+          color: theme.color.textPrimary,
         }}
       >
         {displayTitle}
@@ -79,14 +80,14 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({ points, title }) =
                   minWidth: 52,
                   height: 52,
                   borderRadius: 14,
-                  background: `rgba(99,102,241,${0.15 + checkOpacity * 0.35})`,
-                  border: '2px solid rgba(99,102,241,0.4)',
+                  background: `rgba(196,123,90,${0.08 + checkOpacity * 0.15})`,
+                  border: `2px solid ${theme.color.surfaceBorder}`,
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
                   fontSize: 26,
                   fontWeight: 700,
-                  color: '#a78bfa',
+                  color: theme.color.accent,
                 }}
               >
                 {i + 1}
@@ -98,7 +99,7 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({ points, title }) =
                   fontSize: 40,
                   lineHeight: 1.5,
                   fontWeight: 500,
-                  color: '#e2e8f0',
+                  color: theme.color.textPrimary,
                 }}
               >
                 {point}

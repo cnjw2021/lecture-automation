@@ -124,6 +124,17 @@ const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDura
   );
 };
 
+// --- Preview compositions for quick single-frame checks ---
+interface PreviewProps {
+  componentName: string;
+  props: Record<string, unknown>;
+}
+
+const PreviewComposition: React.FC<PreviewProps> = ({ componentName, props: componentProps }) => {
+  const Component = COMPONENT_MAP[componentName] || DefaultScreen;
+  return <Component {...componentProps} componentName={componentName} />;
+};
+
 export const RemotionRoot: React.FC = () => {
   const { width, height } = videoConfig.resolution;
   const FPS = videoConfig.fps;
@@ -162,6 +173,20 @@ export const RemotionRoot: React.FC = () => {
             durationInFrames: totalDurationFrames,
           };
         }}
+      />
+
+      {/* Preview: render any component as a still image */}
+      <Composition
+        id="Preview"
+        component={PreviewComposition}
+        width={width}
+        height={height}
+        fps={FPS}
+        durationInFrames={90}
+        defaultProps={{
+          componentName: 'TitleScreen',
+          props: { title: 'Preview', sub: 'サブタイトル' },
+        } as PreviewProps}
       />
     </>
   );
