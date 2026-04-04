@@ -1,0 +1,72 @@
+{
+  "brandIcons": [
+    "claude", "chatgpt", "cursor", "v0"
+  ],
+  "emojiToLucide": {
+    "👤": "User", "👥": "Users", "🧑": "User", "👨": "User", "👩": "User",
+    "🧑‍💻": "UserCog", "👨‍💻": "UserCog", "👩‍💻": "UserCog",
+    "🧑‍🏫": "GraduationCap", "👨‍🏫": "GraduationCap", "👩‍🏫": "GraduationCap",
+    "🧑‍🎓": "GraduationCap", "🎓": "GraduationCap",
+    "🤖": "Bot", "👾": "Bot",
+
+    "💬": "MessageSquare", "🗨️": "MessageCircle", "💭": "MessageCircle",
+    "📧": "Mail", "✉️": "Mail", "📨": "Mail",
+    "📞": "Phone", "☎️": "Phone",
+
+    "💻": "Laptop", "🖥️": "Monitor", "⌨️": "Keyboard",
+    "📱": "Smartphone", "📲": "Smartphone",
+    "🌐": "Globe", "🔗": "Link", "🔌": "Plug",
+    "⚙️": "Settings", "🔧": "Wrench", "🛠️": "Wrench",
+    "🔨": "Hammer", "✏️": "Pencil", "🖊️": "PenLine",
+    "📝": "FileEdit", "🎨": "Palette", "🖌️": "Paintbrush",
+    "🗄️": "Database", "📊": "BarChart3", "📈": "TrendingUp", "📉": "TrendingDown",
+    "🧩": "Puzzle", "🔐": "Lock", "🔑": "Key", "🔒": "Lock", "🔓": "Unlock",
+    "🐛": "Bug", "🧪": "TestTube", "🔬": "Microscope",
+
+    "📄": "FileText", "📃": "FileText", "📋": "ClipboardList",
+    "📁": "Folder", "📂": "FolderOpen", "🗂️": "FolderTree",
+    "📖": "BookOpen", "📚": "Library", "📕": "Book", "📗": "Book", "📘": "Book",
+
+    "✅": "CheckCircle", "❌": "XCircle", "⭕": "Circle",
+    "✨": "Sparkles", "⭐": "Star", "🌟": "Star",
+    "💡": "Lightbulb", "🔍": "Search", "🔎": "SearchCheck",
+    "🚀": "Rocket", "🎯": "Target", "🏆": "Trophy", "🏅": "Medal",
+    "⚡": "Zap", "🔥": "Flame", "💥": "Sparkles",
+    "♻️": "RefreshCcw", "🔄": "RefreshCw",
+    "➡️": "ArrowRight", "⬆️": "ArrowUp", "⬇️": "ArrowDown", "⬅️": "ArrowLeft",
+    "▶️": "Play", "⏸️": "Pause", "⏹️": "Square",
+
+    "☕": "Coffee", "🍵": "Coffee",
+    "🎬": "Clapperboard", "🎥": "Video", "📹": "Video", "🎞️": "Film",
+    "📸": "Camera", "📷": "Camera",
+    "🎵": "Music", "🎶": "Music2", "🔊": "Volume2", "🔔": "Bell",
+    "🛒": "ShoppingCart", "🛍️": "ShoppingBag", "💰": "Coins", "💳": "CreditCard",
+    "🏠": "Home", "🏢": "Building", "🏗️": "Building2",
+    "🗺️": "Map", "📍": "MapPin", "📌": "Pin",
+    "⏰": "Clock", "🕐": "Clock", "⏱️": "Timer",
+    "📅": "Calendar", "🗓️": "CalendarDays",
+    "🎁": "Gift", "🧰": "Briefcase", "💼": "Briefcase",
+    "🔋": "Battery", "☁️": "Cloud", "🌩️": "CloudLightning",
+    "📡": "Wifi", "📤": "Upload", "📥": "Download",
+    "🗑️": "Trash2", "🏷️": "Tag",
+
+    "🔙": "ArrowLeft", "🔜": "ArrowRight",
+    "🆕": "Plus", "🆗": "Check",
+
+    "🌍": "Globe", "🌎": "Globe", "🌏": "Globe",
+    "☀️": "Sun", "🌙": "Moon", "🌤️": "CloudSun",
+    "🌈": "Rainbow", "💧": "Droplet", "🌊": "Waves",
+    "🌱": "Sprout", "🌿": "Leaf", "🍀": "Clover",
+    "🐢": "Turtle",
+
+    "👍": "ThumbsUp", "👎": "ThumbsDown", "👋": "Hand",
+    "🤝": "Handshake", "✋": "Hand", "☝️": "Pointer",
+    "💪": "Dumbbell",
+
+    "😀": "Smile", "😊": "Smile", "😃": "Smile",
+    "😢": "Frown", "😡": "Angry",
+    "🤔": "HelpCircle", "❓": "HelpCircle", "❗": "AlertCircle",
+    "⚠️": "AlertTriangle", "🚫": "Ban", "⛔": "Ban",
+    "ℹ️": "Info", "💯": "BadgeCheck"
+  }
+}
