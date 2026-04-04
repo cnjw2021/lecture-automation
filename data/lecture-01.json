@@ -1,0 +1,693 @@
+{
+  "lecture_id": "p1-01-01-jp",
+  "metadata": {
+    "title": "オリエンテーション — AI時代のWeb制作マスター",
+    "target_duration": "1200s",
+    "target_audience": "General Public (Non-experts)"
+  },
+  "sequence": [
+    {
+      "scene_id": 1,
+      "narration": "皆さん、こんにちは。「AI時代のWeb制作マスター」へようこそ。",
+      "visual": {
+        "type": "remotion",
+        "component": "TitleScreen",
+        "props": {
+          "title": "AI時代のWeb制作マスター",
+          "sub": "オリエンテーション"
+        },
+        "transition": {
+          "enter": "zoom",
+          "exit": "fade"
+        }
+      }
+    },
+    {
+      "scene_id": 2,
+      "narration": "この講座を選んでくださった皆さんには、きっとそれぞれの理由があると思います。自分のお店のホームページを作りたい方、フリーランスとして自己紹介サイトが欲しい方、あるいはWeb制作を副業にしてみたいという方もいらっしゃるかもしれません。",
+      "visual": {
+        "type": "remotion",
+        "component": "SectionBreakScreen",
+        "props": {
+          "section": "PART 1",
+          "title": "AI時代のWeb、私たちの戦略",
+          "subtitle": "全5パートの最初の一歩"
+        },
+        "transition": {
+          "enter": "zoom",
+          "exit": "fade"
+        }
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "どんな理由であっても、大丈夫です。この講座は、まさにそういう皆さんのために作りました。",
+      "visual": {
+        "type": "remotion",
+        "component": "AgendaScreen",
+        "props": {
+          "title": "本日のアジェンダ",
+          "items": [
+            {
+              "title": "この講座で学ぶこと",
+              "description": "コーダーからディレクターへ",
+              "icon": "🎯",
+              "duration": "5分"
+            },
+            {
+              "title": "講座の全体像",
+              "description": "5つのパートと学習ロードマップ",
+              "icon": "🗺️",
+              "duration": "5分"
+            },
+            {
+              "title": "修了後に手に入るもの",
+              "description": "3つの具体的な成果",
+              "icon": "🎁",
+              "duration": "4分"
+            },
+            {
+              "title": "準備物の確認",
+              "description": "必要な機材とソフトウェア",
+              "icon": "✅",
+              "duration": "2分"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "最初にひとつだけお伝えしたいことがあります。この講座は、皆さんをプログラマーにするための講座ではありません。ここ、とても大事なポイントです。",
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "warning",
+          "title": "大事なポイント",
+          "body": "この講座は、皆さんをプログラマーにするための講座ではありません。"
+        }
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "では、何を学ぶのか？　それをこれから20分でしっかりお話しします。",
+      "visual": {
+        "type": "remotion",
+        "component": "QnAScreen",
+        "props": {
+          "question": "では、何を学ぶのか？",
+          "answer": "それをこれから20分でしっかりお話しします。"
+        }
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "まず、はっきりさせておきましょう。この講座のゴールは「コードをバリバリ書けるようになる」ことではありません。",
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🚫",
+          "headline": "コーディング講座ではない",
+          "color": "#6366f1"
+        },
+        "transition": {
+          "enter": "slide-left",
+          "exit": "fade"
+        }
+      }
+    },
+    {
+      "scene_id": 7,
+      "narration": "皆さん、最近「AI」という言葉をよく聞きますよね。ChatGPTやClaudeといったAIツールに話しかけると、文章を書いてくれたり、翻訳してくれたりします。実は、このAI、ホームページのコードも書けるんです。",
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🤖",
+          "headline": "AIはコードも書ける",
+          "detail": "ChatGPTやClaudeでHP制作が可能な時代",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 8,
+      "narration": "つまり、コードを「自分で一から全部書く」時代は、もう終わりつつあります。これからは、AIにうまく指示を出して、AIが作ったものをチェックして、必要なところを自分で直す。そういう働き方が主流になっていきます。",
+      "visual": {
+        "type": "remotion",
+        "component": "QuoteScreen",
+        "props": {
+          "quote": "AIと協業する方法を学ぶ"
+        }
+      }
+    },
+    {
+      "scene_id": 9,
+      "narration": "この講座で皆さんが身につけるのは、まさにこの力です。AIに正確に指示を出し、結果を判断できる力。私はこれを「ディレクター」の力と呼んでいます。",
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "ディレクター",
+          "reading": "Director",
+          "definition": "AIに正確に指示を出し、結果を判断できる力。この講座で皆さんが身につける核心スキルです。"
+        }
+      }
+    },
+    {
+      "scene_id": 10,
+      "narration": "映画を作るとき、監督は自分でカメラを回したり、演技をしたりはしませんよね。でも、「このシーンはこう撮って」「この演技はもう少しこうして」と指示を出し、最終的な品質を判断します。",
+      "visual": {
+        "type": "remotion",
+        "component": "ComparisonScreen",
+        "props": {
+          "title": "コーダー → ディレクター",
+          "left": {
+            "label": "コーダー",
+            "color": "#94a3b8",
+            "points": [
+              "自分でコードを一から書く",
+              "すべてを暗記する必要がある",
+              "時間と労力がかかる"
+            ]
+          },
+          "right": {
+            "label": "ディレクター",
+            "color": "#6366f1",
+            "points": [
+              "AIに的確な指示を出す",
+              "成果物をチェック・修正する",
+              "効率的に完成させる"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 11,
+      "narration": "Web制作も同じです。AIというとても優秀なスタッフに指示を出し、成果物をチェックし、修正を加えて完成させる。皆さんはその「監督」になるわけです。",
+      "visual": {
+        "type": "remotion",
+        "component": "DiagramScreen",
+        "props": {
+          "title": "ディレクションの流れ",
+          "nodes": [
+            {
+              "id": "you",
+              "label": "あなた",
+              "x": 200,
+              "y": 420,
+              "icon": "🎬",
+              "color": "#6366f1"
+            },
+            {
+              "id": "ai",
+              "label": "AI",
+              "x": 600,
+              "y": 420,
+              "icon": "🤖",
+              "color": "#a78bfa"
+            },
+            {
+              "id": "check",
+              "label": "チェック",
+              "x": 1000,
+              "y": 420,
+              "icon": "✅",
+              "color": "#818cf8"
+            },
+            {
+              "id": "done",
+              "label": "完成",
+              "x": 1400,
+              "y": 420,
+              "icon": "🎉",
+              "color": "#10b981"
+            }
+          ],
+          "edges": [
+            {
+              "from": "you",
+              "to": "ai",
+              "label": "指示を出す"
+            },
+            {
+              "from": "ai",
+              "to": "check",
+              "label": "成果物"
+            },
+            {
+              "from": "check",
+              "to": "done",
+              "label": "修正・確定"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 12,
+      "narration": "ただし、監督も映画の基礎知識がなければ良い指示は出せません。だからこそ、この講座ではHTMLやCSSといったWebの基礎をしっかり学びます。暗記するためではなく、「AIが作ったものを読んで理解するため」に学ぶんです。",
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "tip",
+          "title": "基礎を学ぶ理由",
+          "body": "暗記するためではなく、AIが作ったものを読んで理解するために、HTMLやCSSの基礎を学びます。"
+        }
+      }
+    },
+    {
+      "scene_id": 13,
+      "narration": "では、この講座の全体像をお見せします。全部で5つのパートに分かれています。",
+      "visual": {
+        "type": "remotion",
+        "component": "ProgressScreen",
+        "props": {
+          "title": "講座の全体ロードマップ",
+          "steps": [
+            "PART 1: AI時代のWeb",
+            "PART 2: HTML",
+            "PART 3: CSS",
+            "PART 4: 実践プロジェクト",
+            "PART 5: デプロイ"
+          ],
+          "currentStep": 0
+        },
+        "transition": {
+          "enter": "slide-left",
+          "exit": "fade"
+        }
+      }
+    },
+    {
+      "scene_id": 14,
+      "narration": "まず、今まさにご覧いただいているPART 1。「AI時代のWeb、そして私たちの戦略」です。ここではWebの仕組みを理解して、開発環境を整えて、最初のWebページを作るところまでいきます。今日のこの講義が終わるまでに、皆さんの画面に「Hello World」——つまり、自分が作った最初のWebページが表示されます。",
+      "visual": {
+        "type": "remotion",
+        "component": "BulletDetailScreen",
+        "props": {
+          "title": "PART 1: AI時代のWeb",
+          "items": [
+            {
+              "title": "Webの仕組みを理解",
+              "detail": "ブラウザとサーバーの関係を学ぶ",
+              "icon": "🌐",
+              "color": "#6366f1"
+            },
+            {
+              "title": "開発環境を構築",
+              "detail": "必要なツールをインストール",
+              "icon": "🛠️",
+              "color": "#6366f1"
+            },
+            {
+              "title": "Hello Worldを表示",
+              "detail": "自分が作った最初のWebページ",
+              "icon": "👋",
+              "color": "#6366f1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 15,
+      "narration": "PART 2はHTMLです。HTMLというのはWebページの「骨格」にあたるもので、ページの構造を作る言語です。ここでは、HTMLを暗記するのではなく「読める」ようになることを目指します。AIが作ったHTMLを見て、「ああ、ここはこういう構造なんだな」とわかるようになる。それがゴールです。",
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🦴",
+          "headline": "PART 2: HTML",
+          "detail": "Webの「骨格」を読めるようになる",
+          "color": "#ef4444"
+        }
+      }
+    },
+    {
+      "scene_id": 16,
+      "narration": "PART 3はCSS。CSSはWebページの「見た目」を決めるものです。色、フォント、レイアウト、全部CSSで指定します。ここでも目標は同じで、CSSを一から設計するのではなく、AIが生成したCSSを「理解して調整できる」ようになることです。",
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🎨",
+          "headline": "PART 3: CSS",
+          "detail": "「見た目」を理解して調整できるように",
+          "color": "#3b82f6"
+        }
+      }
+    },
+    {
+      "scene_id": 17,
+      "narration": "PART 4がこの講座のメインイベントです。AIと一緒に、実際のWebサイトを3つ作ります。自己紹介のプロフィールサイト、お店やサロンの紹介サイト、そしてサービスのランディングページ。どれも実際にそのまま使えるレベルのものを作りますよ。",
+      "visual": {
+        "type": "remotion",
+        "component": "IconListScreen",
+        "props": {
+          "title": "PART 4: 実践プロジェクト",
+          "items": [
+            {
+              "icon": "👤",
+              "title": "プロフィールサイト",
+              "description": "自己紹介ページ",
+              "color": "#10b981"
+            },
+            {
+              "icon": "🏪",
+              "title": "お店・サロン紹介サイト",
+              "description": "店舗情報ページ",
+              "color": "#10b981"
+            },
+            {
+              "icon": "📄",
+              "title": "ランディングページ",
+              "description": "サービス紹介LP",
+              "color": "#10b981"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 18,
+      "narration": "そして最後のPART 5。作ったサイトをインターネットに公開します。自分だけのURLを持って、Googleの検索結果にも表示されるようにする。ここまでやって、はじめて「完成」です。",
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🌍",
+          "headline": "PART 5: デプロイ",
+          "detail": "自分だけのURLでインターネットに公開",
+          "color": "#f59e0b"
+        }
+      }
+    },
+    {
+      "scene_id": 19,
+      "narration": "全部で約20時間。長く感じるかもしれませんが、1つずつ順番に進めていきますので、焦る必要はまったくありません。",
+      "visual": {
+        "type": "remotion",
+        "component": "StatScreen",
+        "props": {
+          "value": "20",
+          "label": "講座の総時間",
+          "suffix": "時間",
+          "description": "焦らず1つずつ順番に進めます"
+        }
+      }
+    },
+    {
+      "scene_id": 20,
+      "narration": "さて、20時間の学習を終えたとき、皆さんの手元には具体的に何が残るのか。ここをはっきりさせておきましょう。",
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🎁",
+          "headline": "修了後に手に入る3つのもの",
+          "color": "#6366f1"
+        },
+        "transition": {
+          "enter": "slide-left",
+          "exit": "fade"
+        }
+      }
+    },
+    {
+      "scene_id": 21,
+      "narration": "1つ目。自分で作ったWebサイトが2つから3つ、手元にあります。プロフィールサイト、お店の紹介サイト、ランディングページ。これらは練習作品ではなく、実際にインターネットに公開されて、誰でもアクセスできる状態になっています。",
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "①",
+          "headline": "Webサイト 2〜3個",
+          "detail": "練習ではなく、実際に公開される本物のサイト",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 22,
+      "narration": "名刺に自分のサイトのURLを載せることだってできます。お店のお客さんに「うちのホームページはこちらです」と案内できるようになります。",
+      "visual": {
+        "type": "remotion",
+        "component": "ImagePlaceholderScreen",
+        "props": {
+          "title": "すぐに実用できる",
+          "description": "名刺やお店の案内に自分のサイトURLを掲載",
+          "icon": "💼",
+          "label": "完成サイトのイメージ",
+          "layout": "right"
+        }
+      }
+    },
+    {
+      "scene_id": 23,
+      "narration": "2つ目。これが実はいちばん大きな財産かもしれません。AIに対して的確な指示を出せるようになります。",
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "②",
+          "headline": "AIへの指示力",
+          "detail": "いちばん大きな財産",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 24,
+      "narration": "たとえば、講座を受ける前だったら「いい感じのホームページを作って」としか言えなかったのが、講座を終えるころには「ヘッダーにナビゲーションを置いて、ヒーローセクションは背景画像付きで、その下にサービス紹介のカードを3列で並べて、レスポンシブ対応にして」と、具体的に伝えられるようになります。",
+      "visual": {
+        "type": "remotion",
+        "component": "BeforeAfterScreen",
+        "props": {
+          "title": "AIへの指示がこう変わる",
+          "before": {
+            "label": "受講前",
+            "points": [
+              "「いい感じのHP作って」",
+              "漠然とした指示しか出せない"
+            ],
+            "color": "#ef4444"
+          },
+          "after": {
+            "label": "受講後",
+            "points": [
+              "ヘッダーにナビゲーション配置",
+              "ヒーローセクションは背景画像付き",
+              "カード3列・レスポンシブ対応"
+            ],
+            "color": "#10b981"
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 25,
+      "narration": "今はこの言葉の意味がわからなくても、まったく問題ありません。講座が終わるころには、自然と口から出てくるようになりますから。",
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "info",
+          "title": "今わからなくてOK",
+          "body": "講座が終わるころには、専門用語も自然と口から出てくるようになります。"
+        }
+      }
+    },
+    {
+      "scene_id": 26,
+      "narration": "3つ目。自分だけのURLです。「https://○○○.netlify.app」のような、世界中からアクセスできるアドレスを持つことになります。さらに希望される方は、独自ドメイン——たとえば「tanaka-salon.com」のような自分だけのアドレスを設定する方法もお伝えします。",
+      "visual": {
+        "type": "remotion",
+        "component": "TwoColumnScreen",
+        "props": {
+          "title": "③ 自分だけのURL",
+          "left": {
+            "title": "無料URL",
+            "body": "https://○○○.netlify.app\n世界中からアクセス可能",
+            "icon": "🔗",
+            "color": "#6366f1"
+          },
+          "right": {
+            "title": "独自ドメイン",
+            "body": "tanaka-salon.com\n自分だけのアドレスも設定可能",
+            "icon": "✨",
+            "color": "#f59e0b"
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 27,
+      "narration": "ちなみに、ここで「ホームページ」と「Webサイト」という言葉について触れておきますね。日常会話では「ホームページ」と呼ぶことが多いですが、業界では「Webサイト」と呼ぶのが一般的です。この講座では、皆さんに馴染みのある「ホームページ」という言葉もよく使いますが、同じものだと思ってください。",
+      "visual": {
+        "type": "remotion",
+        "component": "QuoteScreen",
+        "props": {
+          "quote": "ホームページ ＝ Webサイト\nどちらも同じ意味です",
+          "attribution": "この講座ではどちらの言葉も使います"
+        }
+      }
+    },
+    {
+      "scene_id": 28,
+      "narration": "最後に、この講座を進めるにあたって必要なものを確認しましょう。",
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "📝",
+          "headline": "準備物チェックリスト",
+          "color": "#6366f1"
+        },
+        "transition": {
+          "enter": "slide-left",
+          "exit": "fade"
+        }
+      }
+    },
+    {
+      "scene_id": 29,
+      "narration": "まず、パソコンです。WindowsでもMacでも、どちらでも大丈夫です。タブレットやスマートフォンでは作業が難しいので、パソコンをご用意ください。特別に高性能なパソコンは必要ありません。普段お使いのもので十分です。",
+      "visual": {
+        "type": "remotion",
+        "component": "IconListScreen",
+        "props": {
+          "title": "必要な準備物",
+          "items": [
+            {
+              "icon": "💻",
+              "title": "パソコン",
+              "description": "Win/MacどちらもOK。普段使いので十分",
+              "color": "#6366f1"
+            },
+            {
+              "icon": "📶",
+              "title": "インターネット接続",
+              "description": "安定した回線環境",
+              "color": "#6366f1"
+            },
+            {
+              "icon": "🌐",
+              "title": "Google Chrome",
+              "description": "無料。事前にインストール推奨",
+              "color": "#6366f1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 30,
+      "narration": "次に、インターネット接続です。動画を見ながら作業したり、AIツールを使ったり、作ったサイトをアップロードしたりしますので、安定したインターネット環境が必要です。それから、Webブラウザ。この講座ではGoogle Chromeを使います。まだインストールしていない方は、事前にインストールしておいてください。無料です。",
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "info",
+          "title": "ネット環境とブラウザ",
+          "body": "安定したインターネット接続と、Google Chrome（無料）を事前にご用意ください。"
+        }
+      }
+    },
+    {
+      "scene_id": 31,
+      "narration": "そして、いちばん大事なことを言いますね。プログラミングの知識や経験は、一切不要です。「HTMLって何ですか？」というレベルで、まったく問題ありません。そこから一緒に始めます。",
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🔰",
+          "headline": "知識・経験は一切不要",
+          "detail": "「HTMLって何？」から一緒に始めます",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 32,
+      "narration": "必要なソフトのインストールなどは、次の講義から一つずつ画面を見ながら一緒にやっていきますので、ご安心ください。",
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "tip",
+          "title": "ご安心ください",
+          "body": "ソフトのインストールは次の講義から、画面を見ながら一緒に進めます。"
+        }
+      }
+    },
+    {
+      "scene_id": 33,
+      "narration": "では、この講義のポイントを整理しましょう。",
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "📌",
+          "headline": "本日のまとめ",
+          "color": "#6366f1"
+        },
+        "transition": {
+          "enter": "slide-left",
+          "exit": "fade"
+        }
+      }
+    },
+    {
+      "scene_id": 34,
+      "narration": "1つ目。この講座は「コードを書く人」になる講座ではなく、「AIに指示を出して、Webサイトを作れるディレクター」になる講座です。2つ目。全5パート、約20時間で、実際に使えるWebサイトを作って、インターネットに公開するところまでやります。3つ目。必要なのはパソコンとインターネットだけ。プログラミングの経験は要りません。",
+      "visual": {
+        "type": "remotion",
+        "component": "SummaryScreen",
+        "props": {
+          "title": "本日のまとめ",
+          "points": [
+            "「ディレクター」になる講座（コーダーではない）",
+            "全5パート・約20時間でWebサイトを公開",
+            "必要なのはPCとネットだけ。経験不要"
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 35,
+      "narration": "さて、次の講義では「Webはどのように動くのか」をお話しします。皆さんが毎日ブラウザでWebサイトを見ているとき、裏側では何が起きているのか。これを知ると、これから学ぶことの全体像がグッと見えてきます。",
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "👉",
+          "headline": "次回予告",
+          "detail": "Webはどのように動くのか",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 36,
+      "narration": "それでは、次の講義でお会いしましょう。",
+      "visual": {
+        "type": "remotion",
+        "component": "EndScreen",
+        "props": {
+          "title": "お疲れ様でした",
+          "message": "次の講義でお会いしましょう",
+          "nextPreview": "Webはどのように動くのか"
+        },
+        "transition": {
+          "enter": "fade",
+          "exit": "zoom"
+        }
+      }
+    }
+  ]
+}
