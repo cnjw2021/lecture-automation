@@ -6,3 +6,7 @@ export { ComparisonScreen } from './ComparisonScreen';
 export { DiagramScreen } from './DiagramScreen';
 export { ProgressScreen } from './ProgressScreen';
 export { QuoteScreen } from './QuoteScreen';
+export { StatScreen } from './StatScreen';
+export { TimelineScreen } from './TimelineScreen';
+export { FeatureGridScreen } from './FeatureGridScreen';
+export { AgendaScreen } from './AgendaScreen';

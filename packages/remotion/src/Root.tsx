@@ -9,6 +9,10 @@ import {
   DiagramScreen,
   ProgressScreen,
   QuoteScreen,
+  StatScreen,
+  TimelineScreen,
+  FeatureGridScreen,
+  AgendaScreen,
 } from './components';
 import videoConfig from '../../../config/video.json';
 
@@ -29,6 +33,10 @@ const COMPONENT_MAP: Record<string, React.FC<any>> = {
   DiagramScreen,
   ProgressScreen,
   QuoteScreen,
+  StatScreen,
+  TimelineScreen,
+  FeatureGridScreen,
+  AgendaScreen,
 };
 
 // Type definitions

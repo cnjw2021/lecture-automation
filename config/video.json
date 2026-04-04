@@ -98,6 +98,26 @@
           "enterDuration": 15,
           "exitDuration": 10,
           "distances": { "slideX": 60, "slideY": 40, "zoomScale": [0.9, 1], "zoomExitScale": [1, 1.1] }
+        },
+        "StatScreen": {
+          "ring": { "spring": "bouncy" },
+          "value": { "delay": 8, "spring": "default" },
+          "label": { "delay": 20, "spring": "gentle", "distance": { "y": 30 } },
+          "description": { "delay": 32, "spring": "gentle" }
+        },
+        "TimelineScreen": {
+          "title": { "spring": "default", "distance": { "y": 30 } },
+          "line": {},
+          "event": { "baseDelay": 12, "staggerInterval": 18, "spring": "smooth" }
+        },
+        "FeatureGridScreen": {
+          "title": { "spring": "default", "distance": { "y": 30 } },
+          "card": { "baseDelay": 10, "staggerInterval": 10, "spring": "bouncy" }
+        },
+        "AgendaScreen": {
+          "title": { "spring": "default", "distance": { "y": 30 } },
+          "item": { "baseDelay": 8, "staggerInterval": 14, "spring": "smooth" },
+          "bar": {}
         }
       }
     },
