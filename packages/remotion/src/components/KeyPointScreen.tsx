@@ -1,12 +1,14 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
 import { theme } from '../theme';
 import { NodeIcon } from './NodeIcon';
+import { getAnimConfig, resolveSpring, type KeyPointScreenAnim } from '../animation';
 
 interface KeyPointScreenProps {
   icon?: string;
   headline: string;
   detail?: string;
   color?: string;
+  animation?: Partial<Record<keyof KeyPointScreenAnim, Record<string, unknown>>>;
 }
 
 export const KeyPointScreen: React.FC<KeyPointScreenProps> = ({
@@ -14,9 +16,11 @@ export const KeyPointScreen: React.FC<KeyPointScreenProps> = ({
   headline,
   detail,
   color,
+  animation,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const a = getAnimConfig<KeyPointScreenAnim>('KeyPointScreen', animation);
 
   const accentColor = color || theme.color.accent;
 
@@ -24,31 +28,32 @@ export const KeyPointScreen: React.FC<KeyPointScreenProps> = ({
   const iconSpring = spring({
     frame,
     fps,
-    config: { damping: 10, stiffness: 100, mass: 0.6 },
+    config: resolveSpring(a.icon.spring),
   });
-  const iconScale = interpolate(iconSpring, [0, 1], [0, 1]);
+  const iconScaleRange = a.icon.scale ?? [0, 1];
+  const iconScale = interpolate(iconSpring, [0, 1], iconScaleRange);
   const iconOpacity = interpolate(iconSpring, [0, 1], [0, 1]);
 
   // Headline slides up after icon
   const headlineSpring = spring({
-    frame: Math.max(0, frame - 12),
+    frame: Math.max(0, frame - (a.headline.delay ?? 12)),
     fps,
-    config: { damping: 14, stiffness: 80, mass: 0.8 },
+    config: resolveSpring(a.headline.spring),
   });
-  const headlineY = interpolate(headlineSpring, [0, 1], [50, 0]);
+  const headlineY = interpolate(headlineSpring, [0, 1], [a.headline.distance?.y ?? 50, 0]);
   const headlineOpacity = interpolate(headlineSpring, [0, 1], [0, 1]);
 
   // Detail fades in after headline
   const detailSpring = spring({
-    frame: Math.max(0, frame - 28),
+    frame: Math.max(0, frame - (a.detail.delay ?? 28)),
     fps,
-    config: { damping: 16, stiffness: 60, mass: 0.6 },
+    config: resolveSpring(a.detail.spring),
   });
   const detailOpacity = interpolate(detailSpring, [0, 1], [0, 1]);
-  const detailY = interpolate(detailSpring, [0, 1], [25, 0]);
+  const detailY = interpolate(detailSpring, [0, 1], [a.detail.distance?.y ?? 25, 0]);
 
   // Accent line grows
-  const lineWidth = interpolate(frame, [20, 50], [0, 120], {
+  const lineWidth = interpolate(frame, a.line.frames, [0, a.line.width], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });

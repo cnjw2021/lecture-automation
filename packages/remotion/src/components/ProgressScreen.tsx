@@ -1,27 +1,37 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
 import { theme } from '../theme';
+import { getAnimConfig, resolveSpring, type ProgressScreenAnim } from '../animation';
 
 interface ProgressScreenProps {
   steps: string[];
   currentStep: number;
   title?: string;
+  animation?: Partial<Record<keyof ProgressScreenAnim, Record<string, unknown>>>;
 }
 
 export const ProgressScreen: React.FC<ProgressScreenProps> = ({
   steps,
   currentStep,
   title,
+  animation,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const a = getAnimConfig<ProgressScreenAnim>('ProgressScreen', animation);
 
   // Title animation
   const titleSpring = spring({
     frame,
     fps,
-    config: { damping: 14, stiffness: 80, mass: 0.8 },
+    config: resolveSpring(a.title.spring),
   });
   const titleOpacity = interpolate(titleSpring, [0, 1], [0, 1]);
+
+  // Step stagger config
+  const stepBaseDelay = (a.step.baseDelay as number) ?? 10;
+  const stepInterval = a.step.staggerInterval ?? 15;
+  const pulseSpeed = a.pulse.speed ?? 0.08;
+  const pulseRange = a.pulse.range ?? [1, 1.02];
 
   return (
     <AbsoluteFill
@@ -49,14 +59,14 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
       {/* Steps */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         {steps.map((step, i) => {
-          const stepDelay = 10 + i * 15;
+          const stepDelay = stepBaseDelay + i * stepInterval;
           const stepSpring = spring({
             frame: Math.max(0, frame - stepDelay),
             fps,
-            config: { damping: 14, stiffness: 70, mass: 0.7 },
+            config: resolveSpring(a.step.spring),
           });
           const stepOpacity = interpolate(stepSpring, [0, 1], [0, 1]);
-          const stepX = interpolate(stepSpring, [0, 1], [-40, 0]);
+          const stepX = interpolate(stepSpring, [0, 1], [a.step.distance?.x ?? -40, 0]);
 
           const isActive = i + 1 === currentStep;
           const isPast = i + 1 < currentStep;
@@ -64,9 +74,9 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
           // Active step pulse
           const pulseScale = isActive
             ? interpolate(
-                Math.sin(frame * 0.08),
+                Math.sin(frame * pulseSpeed),
                 [-1, 1],
-                [1, 1.02]
+                pulseRange
               )
             : 1;
 

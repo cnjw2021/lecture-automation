@@ -1,43 +1,48 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
 import { theme } from '../theme';
+import { getAnimConfig, resolveSpring, type QuoteScreenAnim } from '../animation';
 
 interface QuoteScreenProps {
   quote: string;
   attribution?: string;
+  animation?: Partial<Record<keyof QuoteScreenAnim, Record<string, unknown>>>;
 }
 
-export const QuoteScreen: React.FC<QuoteScreenProps> = ({ quote, attribution }) => {
+export const QuoteScreen: React.FC<QuoteScreenProps> = ({ quote, attribution, animation }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const a = getAnimConfig<QuoteScreenAnim>('QuoteScreen', animation);
 
   // Opening quote mark scale-in
   const quoteMarkSpring = spring({
     frame,
     fps,
-    config: { damping: 10, stiffness: 80, mass: 0.6 },
+    config: resolveSpring(a.quoteMark.spring),
   });
-  const quoteMarkScale = interpolate(quoteMarkSpring, [0, 1], [0.3, 1]);
-  const quoteMarkOpacity = interpolate(quoteMarkSpring, [0, 1], [0, 0.15]);
+  const qmScale = a.quoteMark.scale ?? [0.3, 1];
+  const qmOpacity = a.quoteMark.opacity ?? [0, 0.15];
+  const quoteMarkScale = interpolate(quoteMarkSpring, [0, 1], qmScale);
+  const quoteMarkOpacity = interpolate(quoteMarkSpring, [0, 1], qmOpacity);
 
   // Quote text fade-in with slide
   const textSpring = spring({
-    frame: Math.max(0, frame - 10),
+    frame: Math.max(0, frame - (a.text.delay ?? 10)),
     fps,
-    config: { damping: 14, stiffness: 70, mass: 0.8 },
+    config: resolveSpring(a.text.spring),
   });
   const textOpacity = interpolate(textSpring, [0, 1], [0, 1]);
-  const textY = interpolate(textSpring, [0, 1], [40, 0]);
+  const textY = interpolate(textSpring, [0, 1], [a.text.distance?.y ?? 40, 0]);
 
   // Attribution fade-in
   const attrSpring = spring({
-    frame: Math.max(0, frame - 25),
+    frame: Math.max(0, frame - (a.attribution.delay ?? 25)),
     fps,
-    config: { damping: 16, stiffness: 60, mass: 0.6 },
+    config: resolveSpring(a.attribution.spring),
   });
   const attrOpacity = interpolate(attrSpring, [0, 1], [0, 1]);
 
   // Decorative line animation
-  const lineWidth = interpolate(frame, [15, 45], [0, 100], {
+  const lineWidth = interpolate(frame, a.line.frames, [0, a.line.width], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });

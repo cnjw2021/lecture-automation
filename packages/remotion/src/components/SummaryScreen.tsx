@@ -1,14 +1,17 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
 import { theme } from '../theme';
+import { getAnimConfig, resolveSpring, type SummaryScreenAnim } from '../animation';
 
 interface SummaryScreenProps {
   points: string[];
   title?: string;
+  animation?: Partial<Record<keyof SummaryScreenAnim, Record<string, unknown>>>;
 }
 
-export const SummaryScreen: React.FC<SummaryScreenProps> = ({ points, title }) => {
+export const SummaryScreen: React.FC<SummaryScreenProps> = ({ points, title, animation }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const a = getAnimConfig<SummaryScreenAnim>('SummaryScreen', animation);
 
   const displayTitle = title || 'Summary';
 
@@ -16,9 +19,9 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({ points, title }) =
   const titleSpring = spring({
     frame,
     fps,
-    config: { damping: 14, stiffness: 80, mass: 0.8 },
+    config: resolveSpring(a.title.spring),
   });
-  const titleX = interpolate(titleSpring, [0, 1], [-80, 0]);
+  const titleX = interpolate(titleSpring, [0, 1], [a.title.distance?.x ?? -80, 0]);
   const titleOpacity = interpolate(titleSpring, [0, 1], [0, 1]);
 
   return (
@@ -46,19 +49,23 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({ points, title }) =
       {/* Bullet points with staggered animation */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
         {points.map((point, i) => {
-          const staggerDelay = 15 + i * 20; // 20 frames apart
+          const baseDelay = (a.item.baseDelay as number) ?? 15;
+          const interval = a.item.staggerInterval ?? 20;
+          const staggerDelay = baseDelay + i * interval;
           const pointSpring = spring({
             frame: Math.max(0, frame - staggerDelay),
             fps,
-            config: { damping: 14, stiffness: 70, mass: 0.7 },
+            config: resolveSpring(a.item.spring),
           });
           const pointOpacity = interpolate(pointSpring, [0, 1], [0, 1]);
-          const pointX = interpolate(pointSpring, [0, 1], [-50, 0]);
-          const pointScale = interpolate(pointSpring, [0, 1], [0.95, 1]);
+          const pointX = interpolate(pointSpring, [0, 1], [a.item.distance?.x ?? -50, 0]);
+          const itemScale = a.item.scale ?? [0.95, 1];
+          const pointScale = interpolate(pointSpring, [0, 1], itemScale);
 
           // Checkmark appears slightly after text
-          const checkDelay = staggerDelay + 8;
-          const checkOpacity = interpolate(frame, [checkDelay, checkDelay + 10], [0, 1], {
+          const checkDelay = staggerDelay + (a.check.delay ?? 8);
+          const checkFade = a.check.fadeDuration ?? 10;
+          const checkOpacity = interpolate(frame, [checkDelay, checkDelay + checkFade], [0, 1], {
             extrapolateLeft: 'clamp',
             extrapolateRight: 'clamp',
           });

@@ -34,5 +34,58 @@
     "glow": {
       "title": "radial-gradient(circle, rgba(196,123,90,0.12) 0%, transparent 70%)"
     }
+  },
+  "animation": {
+    "spring": {
+      "default": { "damping": 14, "stiffness": 80, "mass": 0.8 },
+      "bouncy": { "damping": 10, "stiffness": 100, "mass": 0.6 },
+      "gentle": { "damping": 16, "stiffness": 60, "mass": 0.6 },
+      "snappy": { "damping": 10, "stiffness": 120, "mass": 0.5 },
+      "smooth": { "damping": 14, "stiffness": 70, "mass": 0.7 }
+    },
+    "TitleScreen": {
+      "bg": { "fadeFrames": [0, 15] },
+      "title": { "spring": "default", "distance": { "y": 60 } },
+      "sub": { "delay": 18, "spring": "gentle", "distance": { "y": 30 } },
+      "line": { "frames": [10, 40], "width": 200 }
+    },
+    "KeyPointScreen": {
+      "icon": { "spring": "bouncy", "scale": [0, 1] },
+      "headline": { "delay": 12, "spring": "default", "distance": { "y": 50 } },
+      "detail": { "delay": 28, "spring": "gentle", "distance": { "y": 25 } },
+      "line": { "frames": [20, 50], "width": 120 }
+    },
+    "QuoteScreen": {
+      "quoteMark": { "spring": "bouncy", "scale": [0.3, 1], "opacity": [0, 0.15] },
+      "text": { "delay": 10, "spring": "default", "distance": { "y": 40 } },
+      "attribution": { "delay": 25, "spring": "gentle" },
+      "line": { "frames": [15, 45], "width": 100 }
+    },
+    "SummaryScreen": {
+      "title": { "spring": "default", "distance": { "x": -80 } },
+      "item": { "baseDelay": 15, "staggerInterval": 20, "spring": "smooth", "distance": { "x": -50 }, "scale": [0.95, 1] },
+      "check": { "delay": 8, "fadeDuration": 10 }
+    },
+    "ComparisonScreen": {
+      "left": { "spring": "default", "distance": { "x": -120 } },
+      "right": { "delay": 8, "spring": "default", "distance": { "x": 120 } },
+      "vs": { "delay": 15, "spring": "snappy", "scale": [0, 1] },
+      "point": { "baseDelay": [20, 28], "staggerInterval": 15, "spring": "gentle" }
+    },
+    "DiagramScreen": {
+      "title": { "spring": "default", "distance": { "y": 30 } },
+      "node": { "baseDelay": 18, "staggerInterval": 16, "spring": "bouncy", "scale": [0, 1] },
+      "edge": { "extraDelay": 10, "drawDuration": 25 }
+    },
+    "ProgressScreen": {
+      "title": { "spring": "default" },
+      "step": { "baseDelay": 10, "staggerInterval": 15, "spring": "smooth", "distance": { "x": -40 } },
+      "pulse": { "speed": 0.08, "range": [1, 1.02] }
+    },
+    "SceneTransition": {
+      "enterDuration": 15,
+      "exitDuration": 10,
+      "distances": { "slideX": 60, "slideY": 40, "zoomScale": [0.9, 1], "zoomExitScale": [1, 1.1] }
+    }
   }
 }

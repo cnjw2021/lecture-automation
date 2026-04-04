@@ -1,5 +1,6 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
 import { theme } from '../theme';
+import { getAnimConfig, resolveSpring, type ComparisonScreenAnim } from '../animation';
 
 interface Side {
   title: string;
@@ -11,41 +12,49 @@ interface ComparisonScreenProps {
   left: Side;
   right: Side;
   vsLabel?: string;
+  animation?: Partial<Record<keyof ComparisonScreenAnim, Record<string, unknown>>>;
 }
 
 export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({
   left,
   right,
   vsLabel = 'VS',
+  animation,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const a = getAnimConfig<ComparisonScreenAnim>('ComparisonScreen', animation);
 
   // Left panel slides in from left
   const leftSpring = spring({
     frame,
     fps,
-    config: { damping: 14, stiffness: 70, mass: 0.8 },
+    config: resolveSpring(a.left.spring),
   });
-  const leftX = interpolate(leftSpring, [0, 1], [-120, 0]);
+  const leftX = interpolate(leftSpring, [0, 1], [a.left.distance?.x ?? -120, 0]);
   const leftOpacity = interpolate(leftSpring, [0, 1], [0, 1]);
 
   // Right panel slides in from right
   const rightSpring = spring({
-    frame: Math.max(0, frame - 8),
+    frame: Math.max(0, frame - (a.right.delay ?? 8)),
     fps,
-    config: { damping: 14, stiffness: 70, mass: 0.8 },
+    config: resolveSpring(a.right.spring),
   });
-  const rightX = interpolate(rightSpring, [0, 1], [120, 0]);
+  const rightX = interpolate(rightSpring, [0, 1], [a.right.distance?.x ?? 120, 0]);
   const rightOpacity = interpolate(rightSpring, [0, 1], [0, 1]);
 
   // VS label pops in
   const vsSpring = spring({
-    frame: Math.max(0, frame - 15),
+    frame: Math.max(0, frame - (a.vs.delay ?? 15)),
     fps,
-    config: { damping: 10, stiffness: 120, mass: 0.5 },
+    config: resolveSpring(a.vs.spring),
   });
-  const vsScale = interpolate(vsSpring, [0, 1], [0, 1]);
+  const vsScaleRange = a.vs.scale ?? [0, 1];
+  const vsScale = interpolate(vsSpring, [0, 1], vsScaleRange);
+
+  // Point stagger config
+  const pointBaseDelay = a.point.baseDelay as number[] ?? [20, 28];
+  const pointInterval = a.point.staggerInterval ?? 15;
 
   const renderSide = (side: Side, index: number) => {
     const isLeft = index === 0;
@@ -88,12 +97,12 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({
         {/* Points with stagger */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           {side.points.map((point, i) => {
-            const baseDelay = isLeft ? 20 : 28;
-            const pointDelay = baseDelay + i * 15;
+            const baseDelay = isLeft ? pointBaseDelay[0] : pointBaseDelay[1];
+            const pointDelay = baseDelay + i * pointInterval;
             const pointSpring = spring({
               frame: Math.max(0, frame - pointDelay),
               fps,
-              config: { damping: 14, stiffness: 70, mass: 0.6 },
+              config: resolveSpring(a.point.spring),
             });
             const pointOpacity = interpolate(pointSpring, [0, 1], [0, 1]);
 
