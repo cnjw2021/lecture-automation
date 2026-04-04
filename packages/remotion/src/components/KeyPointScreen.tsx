@@ -1,5 +1,6 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
 import { theme } from '../theme';
+import { NodeIcon } from './NodeIcon';
 
 interface KeyPointScreenProps {
   icon?: string;
@@ -80,13 +81,15 @@ export const KeyPointScreen: React.FC<KeyPointScreenProps> = ({
         {icon && (
           <div
             style={{
-              fontSize: 100,
               marginBottom: 30,
               opacity: iconOpacity,
               transform: `scale(${iconScale})`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
-            {icon}
+            <NodeIcon icon={icon} size={80} />
           </div>
         )}
 

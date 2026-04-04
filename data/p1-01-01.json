@@ -46,7 +46,7 @@
         "type": "remotion",
         "component": "KeyPointScreen",
         "props": {
-          "icon": "🎬",
+          "icon": "clapperboard",
           "headline": "コーダーではなく、ディレクターになる",
           "detail": "AIに指示し、検収し、修正する — それが新しいWeb制作",
           "color": "#6366f1"
@@ -112,9 +112,9 @@
         "props": {
           "title": "制作する3つのプロジェクト",
           "nodes": [
-            { "id": "p1", "label": "ポートフォリオ", "x": 250, "y": 300, "icon": "👤" },
-            { "id": "p2", "label": "カフェサイト", "x": 700, "y": 300, "icon": "☕" },
-            { "id": "p3", "label": "ランディングページ", "x": 1150, "y": 300, "icon": "🚀" }
+            { "id": "p1", "label": "ポートフォリオ", "x": 250, "y": 300, "icon": "user" },
+            { "id": "p2", "label": "カフェサイト", "x": 700, "y": 300, "icon": "coffee" },
+            { "id": "p3", "label": "ランディングページ", "x": 1150, "y": 300, "icon": "rocket" }
           ],
           "edges": [
             { "from": "p1", "to": "p2", "label": "ステップアップ" },
@@ -133,11 +133,11 @@
         "props": {
           "title": "活用するAIツール",
           "nodes": [
-            { "id": "claude", "label": "Claude", "x": 200, "y": 200, "icon": "🤖" },
-            { "id": "chatgpt", "label": "ChatGPT", "x": 200, "y": 500, "icon": "💬" },
-            { "id": "v0", "label": "v0.dev", "x": 700, "y": 200, "icon": "🎨" },
-            { "id": "cursor", "label": "Cursor", "x": 700, "y": 500, "icon": "✏️" },
-            { "id": "web", "label": "Webサイト完成", "x": 1200, "y": 350, "icon": "🌐" }
+            { "id": "claude", "label": "Claude", "x": 200, "y": 200, "icon": "claude" },
+            { "id": "chatgpt", "label": "ChatGPT", "x": 200, "y": 500, "icon": "chatgpt" },
+            { "id": "v0", "label": "v0.dev", "x": 700, "y": 200, "icon": "v0" },
+            { "id": "cursor", "label": "Cursor", "x": 700, "y": 500, "icon": "cursor" },
+            { "id": "web", "label": "Webサイト完成", "x": 1200, "y": 350, "icon": "globe" }
           ],
           "edges": [
             { "from": "claude", "to": "web", "label": "コード生成" },
@@ -172,7 +172,7 @@
         "type": "remotion",
         "component": "KeyPointScreen",
         "props": {
-          "icon": "💡",
+          "icon": "lightbulb",
           "headline": "3つのお約束",
           "detail": "焦らない・完璧を目指さない・手を動かす",
           "color": "#f59e0b"

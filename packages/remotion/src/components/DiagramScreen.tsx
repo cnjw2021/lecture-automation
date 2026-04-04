@@ -1,5 +1,6 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
 import { theme } from '../theme';
+import { NodeIcon } from './NodeIcon';
 
 interface DiagramNode {
   id: string;
@@ -252,13 +253,14 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
               }}
             >
               {node.icon && (
-                <span style={{
-                  fontSize: 36,
-                  marginBottom: 8,
-                  filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
+                <div style={{
+                  marginBottom: 10,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}>
-                  {node.icon}
-                </span>
+                  <NodeIcon icon={node.icon} size={44} />
+                </div>
               )}
               <span
                 style={{
