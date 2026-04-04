@@ -22,6 +22,10 @@ interface DiagramScreenProps {
   edges: DiagramEdge[];
 }
 
+const NODE_WIDTH = 180;
+const NODE_HEIGHT = 100;
+const EDGE_OFFSET = 95;
+
 export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edges }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -49,15 +53,16 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
         <h1
           style={{
             position: 'absolute',
-            top: 60,
+            top: 56,
             left: 0,
             right: 0,
             textAlign: 'center',
-            fontSize: 56,
+            fontSize: 52,
             fontWeight: 800,
             color: theme.color.textPrimary,
             opacity: titleOpacity,
             transform: `translateY(${titleY}px)`,
+            letterSpacing: '0.02em',
           }}
         >
           {title}
@@ -69,9 +74,9 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
         style={{
           position: 'absolute',
           top: title ? 160 : 80,
-          left: 120,
-          right: 120,
-          bottom: 80,
+          left: 100,
+          right: 100,
+          bottom: 60,
         }}
       >
         {/* SVG layer for edges */}
@@ -85,6 +90,30 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
             overflow: 'visible',
           }}
         >
+          <defs>
+            <marker
+              id="arrowhead"
+              markerWidth="12"
+              markerHeight="8"
+              refX="10"
+              refY="4"
+              orient="auto"
+              markerUnits="userSpaceOnUse"
+            >
+              <path
+                d="M 0 0 L 12 4 L 0 8 L 3 4 Z"
+                fill={theme.color.accent}
+                opacity={0.7}
+              />
+            </marker>
+            <filter id="edgeGlow">
+              <feGaussianBlur stdDeviation="2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
           {edges.map((edge, i) => {
             const fromNode = nodeMap.get(edge.from);
             const toNode = nodeMap.get(edge.to);
@@ -92,8 +121,8 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
 
             // Edge draws in after its source node appears
             const fromIndex = nodes.findIndex((n) => n.id === edge.from);
-            const edgeDelay = 15 + fromIndex * 18 + 10;
-            const edgeProgress = interpolate(frame, [edgeDelay, edgeDelay + 20], [0, 1], {
+            const edgeDelay = 18 + fromIndex * 16 + 10;
+            const edgeProgress = interpolate(frame, [edgeDelay, edgeDelay + 25], [0, 1], {
               extrapolateLeft: 'clamp',
               extrapolateRight: 'clamp',
             });
@@ -103,66 +132,85 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
             const x2 = toNode.x;
             const y2 = toNode.y;
 
-            // Calculate midpoint for label
-            const midX = (x1 + x2) / 2;
-            const midY = (y1 + y2) / 2;
-
-            // Arrow path with dashoffset animation
             const dx = x2 - x1;
             const dy = y2 - y1;
             const len = Math.sqrt(dx * dx + dy * dy);
             const ux = dx / len;
             const uy = dy / len;
 
-            // Offset start/end from node centers
-            const offset = 70;
-            const sx = x1 + ux * offset;
-            const sy = y1 + uy * offset;
-            const ex = x2 - ux * offset;
-            const ey = y2 - uy * offset;
+            // Offset from node edges
+            const sx = x1 + ux * EDGE_OFFSET;
+            const sy = y1 + uy * EDGE_OFFSET;
+            const ex = x2 - ux * EDGE_OFFSET;
+            const ey = y2 - uy * EDGE_OFFSET;
 
-            // Current visible end point
-            const cx = sx + (ex - sx) * edgeProgress;
-            const cy = sy + (ey - sy) * edgeProgress;
+            // Curved path — perpendicular offset for control point
+            const perpX = -uy;
+            const perpY = ux;
+            const curvature = Math.min(len * 0.12, 40);
+            const cpX = (sx + ex) / 2 + perpX * curvature;
+            const cpY = (sy + ey) / 2 + perpY * curvature;
+
+            // Label position (along curve midpoint, shifted above)
+            const labelX = (sx + 2 * cpX + ex) / 4;
+            const labelY = (sy + 2 * cpY + ey) / 4 - 18;
+
+            // Animated path using dasharray
+            const pathD = `M ${sx} ${sy} Q ${cpX} ${cpY} ${ex} ${ey}`;
+            const approxLen = len * 0.9;
+            const dashOffset = approxLen * (1 - edgeProgress);
 
             return (
-              <g key={i}>
-                {/* Line */}
-                <line
-                  x1={sx}
-                  y1={sy}
-                  x2={cx}
-                  y2={cy}
-                  stroke="rgba(196,123,90,0.5)"
-                  strokeWidth={3}
+              <g key={i} opacity={interpolate(edgeProgress, [0, 0.05], [0, 1], { extrapolateRight: 'clamp' })}>
+                {/* Shadow line */}
+                <path
+                  d={pathD}
+                  fill="none"
+                  stroke="rgba(196,123,90,0.08)"
+                  strokeWidth={8}
                   strokeLinecap="round"
                 />
+                {/* Main line */}
+                <path
+                  d={pathD}
+                  fill="none"
+                  stroke={theme.color.accent}
+                  strokeWidth={2.5}
+                  strokeLinecap="round"
+                  strokeDasharray={approxLen}
+                  strokeDashoffset={dashOffset}
+                  opacity={0.6}
+                  markerEnd="url(#arrowhead)"
+                />
 
-                {/* Arrowhead (appears at end) */}
-                {edgeProgress > 0.9 && (
-                  <polygon
-                    points={`${ex},${ey} ${ex - ux * 16 + uy * 8},${ey - uy * 16 - ux * 8} ${ex - ux * 16 - uy * 8},${ey - uy * 16 + ux * 8}`}
-                    fill="rgba(196,123,90,0.7)"
-                    opacity={interpolate(edgeProgress, [0.9, 1], [0, 1])}
-                  />
-                )}
-
-                {/* Edge label */}
+                {/* Edge label with background */}
                 {edge.label && edgeProgress > 0.5 && (
-                  <text
-                    x={midX}
-                    y={midY - 14}
-                    textAnchor="middle"
-                    fill={theme.color.accent}
-                    fontSize={22}
-                    fontWeight={500}
-                    opacity={interpolate(edgeProgress, [0.5, 0.8], [0, 1], {
-                      extrapolateLeft: 'clamp',
-                      extrapolateRight: 'clamp',
-                    })}
-                  >
-                    {edge.label}
-                  </text>
+                  <g opacity={interpolate(edgeProgress, [0.5, 0.8], [0, 1], {
+                    extrapolateLeft: 'clamp',
+                    extrapolateRight: 'clamp',
+                  })}>
+                    <rect
+                      x={labelX - edge.label.length * 7 - 10}
+                      y={labelY - 16}
+                      width={edge.label.length * 14 + 20}
+                      height={30}
+                      rx={8}
+                      fill="#FDF8F0"
+                      stroke="rgba(196,123,90,0.15)"
+                      strokeWidth={1}
+                    />
+                    <text
+                      x={labelX}
+                      y={labelY + 4}
+                      textAnchor="middle"
+                      fill={theme.color.accent}
+                      fontSize={18}
+                      fontWeight={600}
+                      fontFamily="system-ui, -apple-system, sans-serif"
+                    >
+                      {edge.label}
+                    </text>
+                  </g>
                 )}
               </g>
             );
@@ -171,7 +219,7 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
 
         {/* Nodes */}
         {nodes.map((node, i) => {
-          const nodeDelay = 15 + i * 18;
+          const nodeDelay = 18 + i * 16;
           const nodeSpring = spring({
             frame: Math.max(0, frame - nodeDelay),
             fps,
@@ -186,32 +234,40 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
               key={node.id}
               style={{
                 position: 'absolute',
-                left: node.x - 70,
-                top: node.y - 40,
-                width: 140,
-                minHeight: 80,
+                left: node.x - NODE_WIDTH / 2,
+                top: node.y - NODE_HEIGHT / 2,
+                width: NODE_WIDTH,
+                minHeight: NODE_HEIGHT,
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                background: `${nodeColor}12`,
-                border: `2px solid ${nodeColor}40`,
-                borderRadius: 16,
-                padding: '14px 16px',
+                background: `linear-gradient(145deg, #FFFFFF 0%, #FDF8F0 100%)`,
+                border: `1.5px solid ${nodeColor}30`,
+                borderRadius: 20,
+                padding: '16px 20px',
                 opacity: nodeOpacity,
                 transform: `scale(${nodeScale})`,
+                boxShadow: `0 4px 20px rgba(45,41,38,0.06), 0 1px 4px rgba(45,41,38,0.04), inset 0 1px 0 rgba(255,255,255,0.8)`,
               }}
             >
               {node.icon && (
-                <span style={{ fontSize: 30, marginBottom: 6 }}>{node.icon}</span>
+                <span style={{
+                  fontSize: 36,
+                  marginBottom: 8,
+                  filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
+                }}>
+                  {node.icon}
+                </span>
               )}
               <span
                 style={{
-                  fontSize: 22,
-                  fontWeight: 600,
+                  fontSize: 24,
+                  fontWeight: 700,
                   color: theme.color.textPrimary,
                   textAlign: 'center',
-                  lineHeight: 1.3,
+                  lineHeight: 1.35,
+                  letterSpacing: '0.01em',
                 }}
               >
                 {node.label}
