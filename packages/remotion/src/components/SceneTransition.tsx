@@ -25,19 +25,25 @@ export const SceneTransition: React.FC<SceneTransitionProps> = ({
   const exitDuration = exitDurationProp ?? a.exitDuration ?? 10;
   const d = a.distances ?? { slideX: 60, slideY: 40, zoomScale: [0.9, 1], zoomExitScale: [1, 1.1] };
 
-  const exitStart = durationInFrames - exitDuration;
+  const safeEnterDuration = Math.min(enterDuration, durationInFrames - 1);
+  const safeExitDuration = Math.min(exitDuration, durationInFrames - 1);
+  const exitStart = durationInFrames - safeExitDuration;
 
   // Enter animation
-  const enterProgress = interpolate(frame, [0, enterDuration], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
+  const enterProgress = safeEnterDuration > 0
+    ? interpolate(frame, [0, safeEnterDuration], [0, 1], {
+        extrapolateLeft: 'clamp',
+        extrapolateRight: 'clamp',
+      })
+    : 1;
 
   // Exit animation
-  const exitProgress = interpolate(frame, [exitStart, durationInFrames], [1, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
+  const exitProgress = safeExitDuration > 0 && exitStart < durationInFrames
+    ? interpolate(frame, [exitStart, durationInFrames], [1, 0], {
+        extrapolateLeft: 'clamp',
+        extrapolateRight: 'clamp',
+      })
+    : 1;
 
   const getEnterStyle = (): React.CSSProperties => {
     switch (enter) {
@@ -71,17 +77,17 @@ export const SceneTransition: React.FC<SceneTransitionProps> = ({
       case 'slide-right':
         return {
           opacity: exitProgress,
-          transform: `translateX(${interpolate(exitProgress, [1, 0], [0, d.slideX])}px)`,
+          transform: `translateX(${interpolate(exitProgress, [0, 1], [d.slideX, 0])}px)`,
         };
       case 'slide-down':
         return {
           opacity: exitProgress,
-          transform: `translateY(${interpolate(exitProgress, [1, 0], [0, d.slideY])}px)`,
+          transform: `translateY(${interpolate(exitProgress, [0, 1], [d.slideY, 0])}px)`,
         };
       case 'zoom':
         return {
           opacity: exitProgress,
-          transform: `scale(${interpolate(exitProgress, [1, 0], d.zoomExitScale)})`,
+          transform: `scale(${interpolate(exitProgress, [0, 1], [d.zoomExitScale[1], d.zoomExitScale[0]])})`,
         };
       case 'none':
       default:
