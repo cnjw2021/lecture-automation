@@ -113,14 +113,14 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
                   background: isActive
                     ? theme.color.accent
                     : isPast
-                      ? 'rgba(196,123,90,0.2)'
-                      : 'rgba(45,41,38,0.06)',
-                  color: isActive || isPast ? '#ffffff' : theme.color.textMuted,
+                      ? theme.color.stepPast
+                      : theme.color.stepInactive,
+                  color: isActive || isPast ? theme.color.textOnAccent : theme.color.textMuted,
                   border: isActive
                     ? 'none'
                     : isPast
                       ? `2px solid ${theme.color.surfaceBorder}`
-                      : '2px solid rgba(45,41,38,0.1)',
+                      : `2px solid ${theme.color.stepInactiveBorder}`,
                 }}
               >
                 {isPast ? '\u2713' : i + 1}

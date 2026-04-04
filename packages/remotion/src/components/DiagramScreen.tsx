@@ -182,7 +182,7 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
                 <path
                   d={pathD}
                   fill="none"
-                  stroke="rgba(196,123,90,0.08)"
+                  stroke={theme.color.edgeShadow}
                   strokeWidth={8}
                   strokeLinecap="round"
                 />
@@ -209,8 +209,8 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
                       width={edge.label.length * 14 + 20}
                       height={30}
                       rx={8}
-                      fill="#FDF8F0"
-                      stroke="rgba(196,123,90,0.15)"
+                      fill={theme.color.edgeLabelBg}
+                      stroke={theme.color.edgeLabelBorder}
                       strokeWidth={1}
                     />
                     <text
@@ -256,14 +256,14 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                background: `linear-gradient(145deg, #FFFFFF 0%, #FDF8F0 100%)`,
+                background: theme.color.nodeBackground,
                 border: `1.5px solid ${nodeColor}30`,
                 borderTop: `4px solid ${nodeColor}`,
                 borderRadius: 20,
                 padding: '24px 20px 20px',
                 opacity: nodeOpacity,
                 transform: `scale(${nodeScale})`,
-                boxShadow: `0 4px 20px rgba(45,41,38,0.06), 0 1px 4px rgba(45,41,38,0.04), inset 0 1px 0 rgba(255,255,255,0.8)`,
+                boxShadow: theme.color.nodeShadow,
                 overflow: 'hidden',
               }}
             >

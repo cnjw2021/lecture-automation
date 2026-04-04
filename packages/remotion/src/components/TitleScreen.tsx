@@ -80,7 +80,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ title, main, sub, anim
             marginBottom: 24,
             opacity: titleOpacity,
             transform: `translateY(${titleY}px)`,
-            textShadow: '0 2px 40px rgba(196,123,90,0.15)',
+            textShadow: `0 2px 40px ${theme.color.surface}`,
           }}
         >
           {displayTitle}

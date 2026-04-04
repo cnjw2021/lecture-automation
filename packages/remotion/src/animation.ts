@@ -1,6 +1,8 @@
 import videoConfig from '../../../config/video.json';
 
-const anim = videoConfig.animation;
+const templateName = videoConfig.activeTemplate ?? 'warm-cream';
+const template = (videoConfig.templates as Record<string, any>)[templateName];
+const anim = template.animation;
 
 // --- Types ---
 
