@@ -25,10 +25,12 @@ interface DiagramScreenProps {
   animation?: Partial<Record<keyof DiagramScreenAnim, Record<string, unknown>>>;
 }
 
-const NODE_MIN_WIDTH = 180;
+const NODE_MIN_WIDTH = 220;
 const NODE_CHAR_WIDTH = 28;
-const NODE_PADDING_X = 48;
-const NODE_HEIGHT = 100;
+const NODE_PADDING_X = 60;
+const NODE_HEIGHT = 150;
+const ICON_BG_SIZE = 72;
+const ICON_SIZE = 48;
 
 const getNodeWidth = (label: string): number => {
   return Math.max(NODE_MIN_WIDTH, label.length * NODE_CHAR_WIDTH + NODE_PADDING_X);
@@ -253,25 +255,50 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
                 minHeight: NODE_HEIGHT,
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'center',
                 alignItems: 'center',
                 background: `linear-gradient(145deg, #FFFFFF 0%, #FDF8F0 100%)`,
                 border: `1.5px solid ${nodeColor}30`,
+                borderTop: `4px solid ${nodeColor}`,
                 borderRadius: 20,
-                padding: '16px 20px',
+                padding: '24px 20px 20px',
                 opacity: nodeOpacity,
                 transform: `scale(${nodeScale})`,
                 boxShadow: `0 4px 20px rgba(45,41,38,0.06), 0 1px 4px rgba(45,41,38,0.04), inset 0 1px 0 rgba(255,255,255,0.8)`,
+                overflow: 'hidden',
               }}
             >
+              {/* Step badge */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 10,
+                  left: 14,
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: nodeColor,
+                  opacity: 0.7,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                STEP {i + 1}
+              </div>
+
+              {/* Icon with circle background */}
               {node.icon && (
                 <div style={{
-                  marginBottom: 10,
+                  marginTop: 10,
+                  marginBottom: 14,
+                  width: ICON_BG_SIZE,
+                  height: ICON_BG_SIZE,
+                  borderRadius: '50%',
+                  background: `${nodeColor}15`,
+                  border: `1.5px solid ${nodeColor}25`,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                  <NodeIcon icon={node.icon} size={44} />
+                  <NodeIcon icon={node.icon} size={ICON_SIZE} />
                 </div>
               )}
               <span

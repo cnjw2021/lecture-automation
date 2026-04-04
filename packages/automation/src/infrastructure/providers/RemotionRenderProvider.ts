@@ -36,7 +36,20 @@ export class RemotionRenderProvider implements IRenderProvider {
       });
 
       if (process.stdout) {
-        process.stdout.on('data', (data) => console.log(`  > ${data.trim()}`));
+        let lastLoggedFrame = -100;
+        process.stdout.on('data', (data) => {
+          const text = data.trim();
+          const frameMatch = text.match(/frame\s+(\d+)/i);
+          if (frameMatch) {
+            const frame = parseInt(frameMatch[1], 10);
+            if (frame - lastLoggedFrame >= 100) {
+              lastLoggedFrame = frame;
+              console.log(`  > ${text}`);
+            }
+          } else {
+            console.log(`  > ${text}`);
+          }
+        });
       }
     });
   }
