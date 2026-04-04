@@ -23,9 +23,14 @@ interface DiagramScreenProps {
   edges: DiagramEdge[];
 }
 
-const NODE_WIDTH = 180;
+const NODE_MIN_WIDTH = 180;
+const NODE_CHAR_WIDTH = 28;  // px per character (Japanese full-width)
+const NODE_PADDING_X = 48;
 const NODE_HEIGHT = 100;
-const EDGE_OFFSET = 95;
+
+const getNodeWidth = (label: string): number => {
+  return Math.max(NODE_MIN_WIDTH, label.length * NODE_CHAR_WIDTH + NODE_PADDING_X);
+};
 
 export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edges }) => {
   const frame = useCurrentFrame();
@@ -40,8 +45,8 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
   const titleOpacity = interpolate(titleSpring, [0, 1], [0, 1]);
   const titleY = interpolate(titleSpring, [0, 1], [30, 0]);
 
-  // Build node position map for edge drawing
-  const nodeMap = new Map(nodes.map((n) => [n.id, n]));
+  // Build node position map with computed widths for edge drawing
+  const nodeMap = new Map(nodes.map((n) => [n.id, { ...n, width: getNodeWidth(n.label) }]));
 
   return (
     <AbsoluteFill
@@ -139,11 +144,15 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
             const ux = dx / len;
             const uy = dy / len;
 
-            // Offset from node edges
-            const sx = x1 + ux * EDGE_OFFSET;
-            const sy = y1 + uy * EDGE_OFFSET;
-            const ex = x2 - ux * EDGE_OFFSET;
-            const ey = y2 - uy * EDGE_OFFSET;
+            // Offset from node edges (use half of node width)
+            const fromWidth = fromNode.width || NODE_MIN_WIDTH;
+            const toWidth = toNode.width || NODE_MIN_WIDTH;
+            const fromOffset = fromWidth / 2 + 10;
+            const toOffset = toWidth / 2 + 10;
+            const sx = x1 + ux * fromOffset;
+            const sy = y1 + uy * fromOffset;
+            const ex = x2 - ux * toOffset;
+            const ey = y2 - uy * toOffset;
 
             // Curved path — perpendicular offset for control point
             const perpX = -uy;
@@ -229,15 +238,16 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
           const nodeScale = interpolate(nodeSpring, [0, 1], [0, 1]);
           const nodeOpacity = interpolate(nodeSpring, [0, 1], [0, 1]);
           const nodeColor = node.color || theme.color.accent;
+          const nodeWidth = getNodeWidth(node.label);
 
           return (
             <div
               key={node.id}
               style={{
                 position: 'absolute',
-                left: node.x - NODE_WIDTH / 2,
+                left: node.x - nodeWidth / 2,
                 top: node.y - NODE_HEIGHT / 2,
-                width: NODE_WIDTH,
+                width: nodeWidth,
                 minHeight: NODE_HEIGHT,
                 display: 'flex',
                 flexDirection: 'column',
