@@ -11,7 +11,7 @@ export class RemotionRenderProvider implements IRenderProvider {
 
     const outPath = path.join(config.paths.output, `${lectureId}.mp4`);
     const durationsPath = path.join(config.paths.audio, lectureId, 'durations.json');
-    
+
     let audioDurations = {};
     if (await fs.pathExists(durationsPath)) {
       audioDurations = await fs.readJson(durationsPath);
@@ -19,13 +19,20 @@ export class RemotionRenderProvider implements IRenderProvider {
       console.warn('⚠️ durations.json이 없습니다. 오디오 없이 렌더링을 시도합니다.');
     }
 
-    const props = JSON.stringify({ lectureData, audioDurations });
-    const escapedProps = props.replace(/'/g, "'\\''");
+    // props를 임시 파일로 저장하여 커맨드 라인 길이 제한 회피 + 로그 노출 방지
+    const propsPath = path.join(config.paths.output, `${lectureId}-props.json`);
+    await fs.writeJson(propsPath, { lectureData, audioDurations });
 
-    const command = `npm run build -w packages/remotion -- FullLecture ${outPath} --props='${escapedProps}'`;
+    const command = `npm run build -w packages/remotion -- FullLecture ${outPath} --props="${propsPath}"`;
+
+    console.log(`📍 출력 경로: ${outPath}`);
+    console.log(`📊 총 씬 수: ${lectureData.sequence.length}`);
 
     return new Promise((resolve, reject) => {
-      const process = exec(command, (error, stdout, stderr) => {
+      const child = exec(command, (error, stdout, stderr) => {
+        // 임시 파일 정리
+        fs.removeSync(propsPath);
+
         if (error) {
           console.error(`❌ 렌더링 실패: ${error.message}`);
           return reject(error);
@@ -35,20 +42,31 @@ export class RemotionRenderProvider implements IRenderProvider {
         resolve();
       });
 
-      if (process.stdout) {
-        let lastLoggedFrame = -100;
-        process.stdout.on('data', (data) => {
+      if (child.stdout) {
+        let lastLoggedRendered = -100;
+        child.stdout.on('data', (data) => {
           const text = data.trim();
-          const frameMatch = text.match(/frame\s+(\d+)/i);
-          if (frameMatch) {
-            const frame = parseInt(frameMatch[1], 10);
-            if (frame - lastLoggedFrame >= 100) {
-              lastLoggedFrame = frame;
+          if (!text) return;
+
+          // "Rendered N/Total" 패턴 — 100프레임마다 출력
+          const renderMatch = text.match(/Rendered\s+(\d+)\/(\d+)/);
+          if (renderMatch) {
+            const current = parseInt(renderMatch[1], 10);
+            const total = parseInt(renderMatch[2], 10);
+            if (current === 0 || current === total || current - lastLoggedRendered >= 100) {
+              lastLoggedRendered = current;
               console.log(`  > ${text}`);
             }
-          } else {
-            console.log(`  > ${text}`);
+            return;
           }
+
+          // props 덤프나 너무 긴 라인은 생략
+          if (text.length > 300) {
+            console.log(`  > ${text.substring(0, 100)}...`);
+            return;
+          }
+
+          console.log(`  > ${text}`);
         });
       }
     });
