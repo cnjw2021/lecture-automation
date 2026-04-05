@@ -102,9 +102,10 @@ interface LectureProps {
 const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDurations }) => {
   const FPS = videoConfig.fps;
 
+  const scenePaddingSec = videoConfig.scenePaddingSec ?? 0.5;
   const getSceneDurationFrames = (sceneId: number): number => {
     const durationSec = audioDurations[sceneId.toString()] || 10;
-    return Math.ceil((durationSec + 0.5) * FPS);
+    return Math.ceil((durationSec + scenePaddingSec) * FPS);
   };
 
   const getSceneStartFrame = (index: number): number => {
@@ -199,9 +200,10 @@ export const RemotionRoot: React.FC = () => {
             return { durationInFrames: 300 };
           }
 
+          const scenePaddingSec = videoConfig.scenePaddingSec ?? 0.5;
           const getSceneDurationFrames = (sceneId: number): number => {
             const durationSec = audioDurations[sceneId.toString()] || 10;
-            return Math.ceil((durationSec + 0.5) * FPS);
+            return Math.ceil((durationSec + scenePaddingSec) * FPS);
           };
 
           const totalDurationFrames = lectureData.sequence.reduce(

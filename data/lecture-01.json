@@ -1,30 +1,30 @@
 {
-  "lectureId": "01",
-  "title": "オリエンテーション",
-  "part": 1,
-  "totalDurationSec": 1200,
-  "scenes": [
+  "lecture_id": "p1-01-01-jp",
+  "metadata": {
+    "title": "オリエンテーション — AI時代のWeb制作マスター",
+    "target_duration": "1200s",
+    "target_audience": "General Public (Non-experts)"
+  },
+  "sequence": [
     {
-      "id": "01-001",
+      "scene_id": 1,
       "narration": "皆さん、こんにちは。「AI時代のWeb制作マスター」へようこそ。",
-      "durationSec": 6,
       "visual": {
         "type": "remotion",
         "component": "TitleScreen",
         "props": {
           "title": "AI時代のWeb制作マスター",
           "sub": "オリエンテーション"
+        },
+        "transition": {
+          "enter": "zoom",
+          "exit": "fade"
         }
-      },
-      "transition": {
-        "enter": "zoom",
-        "exit": "fade"
       }
     },
     {
-      "id": "01-002",
+      "scene_id": 2,
       "narration": "この講座を選んでくださった皆さんには、きっとそれぞれの理由があると思います。自分のお店のホームページを作りたいという方。フリーランスとして活動していて、自己紹介のサイトが欲しいという方。副業としてWeb制作に興味があるという方。あるいは、「なんとなくWebのことを知っておきたいな」という気持ちで始めてみた方もいらっしゃるかもしれませんね。",
-      "durationSec": 30,
       "visual": {
         "type": "remotion",
         "component": "SectionBreakScreen",
@@ -32,17 +32,16 @@
           "section": "PART 1",
           "title": "AI時代のWeb、私たちの戦略",
           "subtitle": "全5パートの最初の一歩"
+        },
+        "transition": {
+          "enter": "zoom",
+          "exit": "fade"
         }
-      },
-      "transition": {
-        "enter": "zoom",
-        "exit": "fade"
       }
     },
     {
-      "id": "01-003",
+      "scene_id": 3,
       "narration": "どんな理由であっても、大丈夫です。この講座は、まさにそういった皆さんのために作りました。",
-      "durationSec": 9,
       "visual": {
         "type": "remotion",
         "component": "AgendaScreen",
@@ -78,9 +77,8 @@
       }
     },
     {
-      "id": "01-004",
+      "scene_id": 4,
       "narration": "ただ、最初にひとつだけお伝えしたいことがあります。これはとても大事なことなので、よく聞いてくださいね。この講座は、皆さんをプログラマーにするための講座ではありません。プログラミングの専門家を育てる講座ではないんです。",
-      "durationSec": 22,
       "visual": {
         "type": "remotion",
         "component": "CalloutScreen",
@@ -92,22 +90,20 @@
       }
     },
     {
-      "id": "01-005",
-      "narration": "「え、Webサイトを作るのにプログラミングは必要じゃないの？」と思いましたか？実は、2025年の今、状況は大きく変わっています。では、何を学ぶのか。それをこれから詳しくお話ししていきます。",
-      "durationSec": 19,
+      "scene_id": 5,
+      "narration": "「え、Webサイトを作るのにプログラミングは必要じゃないの？」と思いましたか？実は、2026年の今、状況は大きく変わっています。では、何を学ぶのか。それをこれから詳しくお話ししていきます。",
       "visual": {
         "type": "remotion",
         "component": "QnAScreen",
         "props": {
           "question": "Webサイトを作るのにプログラミングは必要じゃないの？",
-          "answer": "2025年の今、状況は大きく変わっています。何を学ぶのか、これから詳しくお話しします。"
+          "answer": "2026年の今、状況は大きく変わっています。何を学ぶのか、これから詳しくお話しします。"
         }
       }
     },
     {
-      "id": "01-006",
+      "scene_id": 6,
       "narration": "では、この講座のゴールをはっきりさせましょう。",
-      "durationSec": 5,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -115,17 +111,16 @@
           "icon": "🎯",
           "headline": "講座のゴールとは",
           "color": "#6366f1"
+        },
+        "transition": {
+          "enter": "slide-left",
+          "exit": "fade"
         }
-      },
-      "transition": {
-        "enter": "slide-left",
-        "exit": "fade"
       }
     },
     {
-      "id": "01-007",
+      "scene_id": 7,
       "narration": "先ほど言った通り、「コードをバリバリ書けるようになりましょう」という講座ではありません。もちろん、HTMLやCSSという、Webサイトを作るための言語は学びます。ですが、その目的は「自分でゼロから完璧なコードを書く」ためではないんです。",
-      "durationSec": 24,
       "visual": {
         "type": "remotion",
         "component": "CalloutScreen",
@@ -137,9 +132,8 @@
       }
     },
     {
-      "id": "01-008",
+      "scene_id": 8,
       "narration": "じゃあ何のために学ぶのか。それを理解するために、まず今のAIの状況を少しお話しさせてください。",
-      "durationSec": 9,
       "visual": {
         "type": "remotion",
         "component": "QnAScreen",
@@ -150,9 +144,8 @@
       }
     },
     {
-      "id": "01-009",
+      "scene_id": 9,
       "narration": "皆さん、ChatGPTやClaudeといったAIツールを使ったことはありますか？使ったことがなくても、名前くらいは聞いたことがあるのではないでしょうか。これらのAIに「こんなホームページを作ってください」と頼むと、実はもうかなりのレベルのコードを書いてくれるんです。ほんの数年前までは考えられなかったことですが、今ではAIがWebサイトのコードを生成できる時代になりました。",
-      "durationSec": 30,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -165,9 +158,8 @@
       }
     },
     {
-      "id": "01-010",
+      "scene_id": 10,
       "narration": "ということは、コードを一から全部自分で書く必要は、もうないんです。AIが書いてくれますから。でも、ここで大事なポイントがあります。AIは万能ではありません。AIに「いい感じのホームページを作って」と漠然と頼んでも、期待通りのものはなかなか出てきません。出てきたものに問題があっても、知識がなければ何が問題なのかすら気づけません。",
-      "durationSec": 30,
       "visual": {
         "type": "remotion",
         "component": "QuoteScreen",
@@ -178,9 +170,8 @@
       }
     },
     {
-      "id": "01-011",
+      "scene_id": 11,
       "narration": "つまり、これからの時代に必要なのは、「コードを書く力」ではなく、「AIにうまく指示を出して、出てきたものをチェックして、必要な部分を修正する力」なんです。",
-      "durationSec": 15,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -193,9 +184,8 @@
       }
     },
     {
-      "id": "01-012",
+      "scene_id": 12,
       "narration": "これを私は、「コーダーからディレクターへ」という言葉で表現しています。",
-      "durationSec": 7,
       "visual": {
         "type": "remotion",
         "component": "DefinitionScreen",
@@ -207,9 +197,8 @@
       }
     },
     {
-      "id": "01-013",
+      "scene_id": 13,
       "narration": "映画の世界で考えてみてください。映画監督——ディレクターは、自分でカメラを構えて撮影するわけではないですよね。演技をするのも監督の仕事ではありません。でも、映画のクオリティを最終的に決めるのは監督です。「このシーンはもっと明るい照明にして」「このセリフの言い方をもう少し柔らかくして」と、具体的に指示を出す。そして、出来上がったものを見て、OKかどうかを判断する。これが監督の仕事です。",
-      "durationSec": 30,
       "visual": {
         "type": "remotion",
         "component": "ComparisonScreen",
@@ -237,9 +226,8 @@
       }
     },
     {
-      "id": "01-014",
+      "scene_id": 14,
       "narration": "Web制作も、まったく同じ構図になりつつあります。AIというとても優秀なスタッフがいて、皆さんは監督として「こういうページにしてほしい」と指示を出す。AIが作ってくれたものを確認して、「ここの色を変えたい」「この部分のレイアウトが崩れている」と判断して修正を加える。これが、AI時代のWeb制作者の姿です。",
-      "durationSec": 30,
       "visual": {
         "type": "remotion",
         "component": "DiagramScreen",
@@ -300,9 +288,8 @@
       }
     },
     {
-      "id": "01-015",
+      "scene_id": 15,
       "narration": "でも、映画の監督も、映画の基礎知識がなければ良い作品は作れませんよね。カメラワークの基本も知らない、照明のことも何もわからない状態では、的確な指示は出せません。",
-      "durationSec": 16,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -315,9 +302,8 @@
       }
     },
     {
-      "id": "01-016",
+      "scene_id": 16,
       "narration": "だからこそ、この講座ではHTMLやCSSといったWebの基礎をしっかり学びます。繰り返しになりますが、暗記するためではありません。AIが作ったものを読んで理解するために学ぶんです。AIへの指示を正確に出すために学ぶんです。ここをぜひ覚えておいてください。",
-      "durationSec": 25,
       "visual": {
         "type": "remotion",
         "component": "CalloutScreen",
@@ -329,9 +315,8 @@
       }
     },
     {
-      "id": "01-017",
+      "scene_id": 17,
       "narration": "さて、この講座がどういう流れで進んでいくのか、全体像をお見せしましょう。画面に表示されているのが、全体のロードマップです。5つのパートに分かれていて、全部で約20時間の内容です。",
-      "durationSec": 18,
       "visual": {
         "type": "remotion",
         "component": "ProgressScreen",
@@ -345,17 +330,16 @@
             "PART 5: デプロイ"
           ],
           "currentStep": 0
+        },
+        "transition": {
+          "enter": "slide-left",
+          "exit": "fade"
         }
-      },
-      "transition": {
-        "enter": "slide-left",
-        "exit": "fade"
       }
     },
     {
-      "id": "01-018",
+      "scene_id": 18,
       "narration": "では、ひとつずつ見ていきますね。まず、今まさにご覧いただいているPART 1。タイトルは「AI時代のWeb、そして私たちの戦略」です。全部で7つの講義があります。ここでは、Webサイトがどういう仕組みで動いているのか、その全体像を理解します。そして、実際にコードを書くための環境をパソコンにセットアップして、最初のWebページを作るところまでいきます。",
-      "durationSec": 30,
       "visual": {
         "type": "remotion",
         "component": "BulletDetailScreen",
@@ -385,9 +369,8 @@
       }
     },
     {
-      "id": "01-019",
+      "scene_id": 19,
       "narration": "安心してください。PART 1の最後の講義が終わるまでに、皆さんの画面に「Hello World」——つまり、自分自身が作った生まれて初めてのWebページが表示されます。もうすぐです。楽しみにしていてください。",
-      "durationSec": 21,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -400,9 +383,8 @@
       }
     },
     {
-      "id": "01-020",
+      "scene_id": 20,
       "narration": "次に、PART 2。「HTML — Webの骨格を読む」です。HTMLというのは、Webページの構造——骨格にあたるものです。見出しはここ、段落はここ、画像はここ、というふうに、ページの中身を組み立てるための言語ですね。",
-      "durationSec": 21,
       "visual": {
         "type": "remotion",
         "component": "DefinitionScreen",
@@ -414,9 +396,8 @@
       }
     },
     {
-      "id": "01-021",
+      "scene_id": 21,
       "narration": "ここでのゴールは、HTMLのタグを全部暗記することではありません。暗記は不要です。そうではなくて、AIが作ったHTMLのコードを見たときに、「ああ、ここが見出しで、ここに画像が入っていて、こういう構造になっているんだな」と読めるようになることがゴールです。読めるようになると、「ここを直したい」というときに何を変えればいいかがわかるようになるんです。",
-      "durationSec": 30,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -429,9 +410,8 @@
       }
     },
     {
-      "id": "01-022",
+      "scene_id": 22,
       "narration": "PART 3は「CSS — Webに服を着せる」です。CSSはWebページの見た目を決めるものです。文字の色やサイズ、背景の色、レイアウト——要素を横に並べるとか、中央に配置するとか——こういったことは全部CSSで制御します。",
-      "durationSec": 22,
       "visual": {
         "type": "remotion",
         "component": "DefinitionScreen",
@@ -444,9 +424,8 @@
       }
     },
     {
-      "id": "01-023",
+      "scene_id": 23,
       "narration": "HTMLが骨格なら、CSSは服やインテリアのようなものですね。同じ骨格のページでも、CSSを変えるだけでまったく違う印象のサイトに変身します。おしゃれなカフェのサイトにもなるし、堅めの税理士事務所のサイトにもなる。その違いを作るのがCSSです。",
-      "durationSec": 24,
       "visual": {
         "type": "remotion",
         "component": "TwoColumnScreen",
@@ -468,9 +447,8 @@
       }
     },
     {
-      "id": "01-024",
+      "scene_id": 24,
       "narration": "ここでも、CSSをゼロから完璧に設計できるようになることが目的ではありません。AIが生成したCSSを見て、「この色を変えたい」「この間隔をもう少し広げたい」「スマホで見たときのレイアウトを直したい」と、自分の手で調整できるようになることが目的です。",
-      "durationSec": 25,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -483,9 +461,8 @@
       }
     },
     {
-      "id": "01-025",
+      "scene_id": 25,
       "narration": "そして、PART 4。ここがこの講座のメインイベントです。「AIと一緒に作る実践Webサイト」。PART 2と3で学んだ知識をフル活用して、実際のWebサイトを3つ作ります。",
-      "durationSec": 17,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -498,9 +475,8 @@
       }
     },
     {
-      "id": "01-026",
+      "scene_id": 26,
       "narration": "1つ目は、プロフィール・名刺サイト。自分を紹介する1ページのサイトです。名刺代わりに使えるWebページですね。自営業の方、フリーランスの方はもちろん、会社員の方でも自分の紹介ページを持っておくと何かと便利です。",
-      "durationSec": 21,
       "visual": {
         "type": "remotion",
         "component": "IconListScreen",
@@ -530,9 +506,8 @@
       }
     },
     {
-      "id": "01-027",
+      "scene_id": 27,
       "narration": "2つ目は、お店やサロンの紹介サイト。講座ではカフェを例に作っていきますが、美容室でも、整体院でも、英会話教室でも、どんな業種にもそのまま応用できる構成にしています。皆さんのご職業に合わせて、テキストと写真を入れ替えるだけで、自分のお店のサイトが完成するイメージです。",
-      "durationSec": 27,
       "visual": {
         "type": "remotion",
         "component": "ImagePlaceholderScreen",
@@ -546,9 +521,8 @@
       }
     },
     {
-      "id": "01-028",
+      "scene_id": 28,
       "narration": "3つ目は、サービスのランディングページ。これはマーケティングの視点も入ったページで、訪問者に「お問い合わせしてみよう」「申し込んでみよう」と思わせるためのページです。どれも練習用の作品ではなく、実際にそのまま使えるレベルのものを目指します。",
-      "durationSec": 24,
       "visual": {
         "type": "remotion",
         "component": "CalloutScreen",
@@ -560,9 +534,8 @@
       }
     },
     {
-      "id": "01-029",
+      "scene_id": 29,
       "narration": "最後のPART 5は「世界に公開する — デプロイと運用」です。PART 4で作ったサイトを、実際にインターネットに公開します。自分だけのURLを持って、世界中の誰でもアクセスできるようにする。さらに、Googleの検索結果にも表示されるように設定します。",
-      "durationSec": 25,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -575,9 +548,8 @@
       }
     },
     {
-      "id": "01-030",
+      "scene_id": 30,
       "narration": "「デプロイ」という言葉が出てきましたが、これは「作ったサイトをインターネット上に公開すること」だと思ってください。この講座では、こういった専門用語が出てくるたびに、必ずわかりやすく説明を添えますので、「知らない言葉が出てきた！」と焦る必要はありません。",
-      "durationSec": 25,
       "visual": {
         "type": "remotion",
         "component": "DefinitionScreen",
@@ -589,9 +561,8 @@
       }
     },
     {
-      "id": "01-031",
+      "scene_id": 31,
       "narration": "以上の5パート、合わせて約20時間。こうして並べると多く感じるかもしれませんが、一気にやる必要はありません。1つずつ、自分のペースで進めていけば大丈夫です。そして、1つ1つのステップは決して難しくありません。丁寧に、ゆっくり、一緒に進めていきましょう。",
-      "durationSec": 25,
       "visual": {
         "type": "remotion",
         "component": "StatScreen",
@@ -604,9 +575,8 @@
       }
     },
     {
-      "id": "01-032",
+      "scene_id": 32,
       "narration": "さて、全体の流れがつかめたところで、もう少し具体的な話をしましょう。20時間の学習を終えたとき、皆さんの手元には具体的に何が残るのか。漠然と「Webのことがわかるようになる」ではなく、目に見える形で3つのものが手に入ります。",
-      "durationSec": 22,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -615,17 +585,16 @@
           "headline": "手に入る3つのもの",
           "detail": "漠然とした理解ではなく、目に見える成果",
           "color": "#6366f1"
+        },
+        "transition": {
+          "enter": "slide-left",
+          "exit": "fade"
         }
-      },
-      "transition": {
-        "enter": "slide-left",
-        "exit": "fade"
       }
     },
     {
-      "id": "01-033",
+      "scene_id": 33,
       "narration": "1つ目。自分で作ったWebサイトが2つから3つ、手元に残ります。プロフィールサイト、お店の紹介サイト、ランディングページ。これらは練習で作って終わりではありません。実際にインターネット上に公開されて、URLを入力すれば誰でもアクセスできる状態になっています。",
-      "durationSec": 26,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -638,9 +607,8 @@
       }
     },
     {
-      "id": "01-034",
+      "scene_id": 34,
       "narration": "名刺の裏面に自分のサイトのURLを印刷することだってできますし、お店のお客さんに「うちのホームページはこちらです」とQRコードを渡すこともできます。LINEやInstagramのプロフィール欄に、自分のサイトのリンクを貼ることもできるようになりますね。",
-      "durationSec": 25,
       "visual": {
         "type": "remotion",
         "component": "FeatureGridScreen",
@@ -677,9 +645,8 @@
       }
     },
     {
-      "id": "01-035",
+      "scene_id": 35,
       "narration": "「ホームページを持ちたいけど、制作会社に頼むと数十万円はかかるし……」と悩んでいた方。この講座を終えれば、自分で作れるようになります。しかも、「ここの文章を変えたい」「写真を差し替えたい」と思ったときに、制作会社に追加料金を払わなくても自分ですぐ直せる。これは大きなメリットですよね。",
-      "durationSec": 28,
       "visual": {
         "type": "remotion",
         "component": "ComparisonScreen",
@@ -707,9 +674,8 @@
       }
     },
     {
-      "id": "01-036",
+      "scene_id": 36,
       "narration": "2つ目。これが実はいちばん大きな財産かもしれません。AIに対して的確な指示を出せる力が身につきます。具体的にどういうことか、イメージしやすいように例をお見せしますね。",
-      "durationSec": 17,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -722,9 +688,8 @@
       }
     },
     {
-      "id": "01-037",
+      "scene_id": 37,
       "narration": "たとえば、講座を受ける前の状態。AIに何かお願いするとき、「いい感じのホームページを作ってください」としか言えない。これだと、AIも困ってしまうんですね。何をもって「いい感じ」なのかがわからないですから。出てきた結果も、なんだかイメージと違う。でも何が違うのかうまく言葉にできない。これがビフォーの状態です。",
-      "durationSec": 30,
       "visual": {
         "type": "remotion",
         "component": "BeforeAfterScreen",
@@ -752,9 +717,8 @@
       }
     },
     {
-      "id": "01-038",
+      "scene_id": 38,
       "narration": "そして、講座を終えたあとのアフター。こんなふうに言えるようになります。「ヘッダーにナビゲーションバーを固定配置して、ヒーローセクションには背景画像をフルワイドで表示。その下にサービス紹介のカードをFlexboxで3列に並べて、モバイルでは1列に切り替わるようにレスポンシブ対応にしてください。カラーはネイビーとホワイトを基調にお願いします。」",
-      "durationSec": 30,
       "visual": {
         "type": "remotion",
         "component": "QuoteScreen",
@@ -764,9 +728,8 @@
       }
     },
     {
-      "id": "01-039",
+      "scene_id": 39,
       "narration": "今はこの文章の意味がさっぱりわからなくても、心配しないでください。講座が終わるころには、こういった言葉が自然と出てくるようになっています。そして、こういう具体的な指示を出せる人と出せない人とでは、AIから返ってくる結果の質が本当にまるで違います。",
-      "durationSec": 25,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -779,9 +742,8 @@
       }
     },
     {
-      "id": "01-040",
+      "scene_id": 40,
       "narration": "この「AIに正確に指示を出す力」は、ホームページ制作だけではなく、今後AIを使うあらゆる場面で活きてくるスキルです。",
-      "durationSec": 12,
       "visual": {
         "type": "remotion",
         "component": "CalloutScreen",
@@ -793,9 +755,8 @@
       }
     },
     {
-      "id": "01-041",
+      "scene_id": 41,
       "narration": "3つ目。自分だけのURLを持てるようになります。たとえば「https://○○○.netlify.app」のような、世界中のどこからでもアクセスできるアドレスです。",
-      "durationSec": 16,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -808,9 +769,8 @@
       }
     },
     {
-      "id": "01-042",
+      "scene_id": 42,
       "narration": "さらに希望される方には、独自ドメインの設定方法もお伝えします。独自ドメインというのは、「tanaka-salon.com」とか「yamada-tax.jp」のように、自分だけのオリジナルのアドレスを持つことです。これはPART 5で詳しくやります。",
-      "durationSec": 25,
       "visual": {
         "type": "remotion",
         "component": "TwoColumnScreen",
@@ -832,9 +792,8 @@
       }
     },
     {
-      "id": "01-043",
+      "scene_id": 43,
       "narration": "自分のサイトを作って、自分のURLで公開する。たったこれだけのことに聞こえるかもしれませんが、実際にやってみると「自分にもできた！」という達成感がすごくあるんですよ。",
-      "durationSec": 17,
       "visual": {
         "type": "remotion",
         "component": "CalloutScreen",
@@ -846,9 +805,8 @@
       }
     },
     {
-      "id": "01-044",
+      "scene_id": 44,
       "narration": "あ、ここで一つ、言葉の補足をさせてくださいね。今「ホームページ」と言いましたが、Web業界では同じものを「Webサイト」と呼ぶことが多いです。厳密に言うと少し違う意味もあるのですが、この講座では同じ意味として使います。日常会話では「ホームページ」、ちょっと専門的な文脈では「Webサイト」。どちらが出てきても「ああ、同じことだな」と思っていただければ大丈夫です。",
-      "durationSec": 30,
       "visual": {
         "type": "remotion",
         "component": "QuoteScreen",
@@ -859,9 +817,8 @@
       }
     },
     {
-      "id": "01-045",
+      "scene_id": 45,
       "narration": "さて、最後に、この講座を進めるにあたって必要なものを確認しておきましょう。用意していただくものは、たった3つです。",
-      "durationSec": 11,
       "visual": {
         "type": "remotion",
         "component": "NumberedListScreen",
@@ -881,17 +838,16 @@
               "description": "無料のWebブラウザ"
             }
           ]
+        },
+        "transition": {
+          "enter": "slide-left",
+          "exit": "fade"
         }
-      },
-      "transition": {
-        "enter": "slide-left",
-        "exit": "fade"
       }
     },
     {
-      "id": "01-046",
+      "scene_id": 46,
       "narration": "まず、パソコンです。WindowsでもMacでも、どちらでも大丈夫です。この講座ではWindowsとMac、両方の手順を説明する場面がありますので、どちらをお持ちでも安心して進められます。",
-      "durationSec": 19,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -904,9 +860,8 @@
       }
     },
     {
-      "id": "01-047",
+      "scene_id": 47,
       "narration": "ただし、タブレットやスマートフォンだけでは作業が難しいです。コードを書いたり、複数のウィンドウを切り替えながら作業したりするので、パソコンは必ずご用意ください。特別に高性能なものは必要ありませんよ。普段お仕事やインターネット閲覧に使っているもので十分です。",
-      "durationSec": 26,
       "visual": {
         "type": "remotion",
         "component": "CalloutScreen",
@@ -918,9 +873,8 @@
       }
     },
     {
-      "id": "01-048",
+      "scene_id": 48,
       "narration": "次に、安定したインターネット接続です。この動画を見ながら同時に作業する場面もありますし、AIツールを使うとき、作ったサイトをインターネットにアップロードするとき、いずれもインターネットが必要になります。",
-      "durationSec": 20,
       "visual": {
         "type": "remotion",
         "component": "IconListScreen",
@@ -947,9 +901,8 @@
       }
     },
     {
-      "id": "01-049",
+      "scene_id": 49,
       "narration": "3つ目、Webブラウザです。この講座ではGoogle Chromeを基本のブラウザとして使います。なぜChromeかというと、Webの開発に使う「開発者ツール」という機能がChromeだといちばん扱いやすいからです。後の講義でこの開発者ツールを使う場面が何度も出てきますので、まだChromeをインストールしていない方は、事前にインストールしておいてください。もちろん無料です。",
-      "durationSec": 30,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -962,9 +915,8 @@
       }
     },
     {
-      "id": "01-050",
+      "scene_id": 50,
       "narration": "そして、これがいちばん大事です。プログラミングの知識や経験は、一切不要です。「HTMLって聞いたことはあるけど、何のことかわからない」。まったく問題ありません。「パソコンでメールとインターネットくらいは使えるけど、それ以上はちょっと……」。大丈夫です。そこからスタートする前提で講座を設計しています。",
-      "durationSec": 30,
       "visual": {
         "type": "remotion",
         "component": "QuoteScreen",
@@ -975,9 +927,8 @@
       }
     },
     {
-      "id": "01-051",
+      "scene_id": 51,
       "narration": "必要なソフトウェアのインストールや、アカウントの作成などは、次の講義以降で画面をお見せしながら一つずつ一緒に進めていきます。今の段階で何かを先にやっておく必要はありません。パソコンとインターネットとChrome。この3つさえあれば、準備完了です。",
-      "durationSec": 25,
       "visual": {
         "type": "remotion",
         "component": "CalloutScreen",
@@ -989,9 +940,8 @@
       }
     },
     {
-      "id": "01-052",
+      "scene_id": 52,
       "narration": "それでは、今日の講義のポイントを3つにまとめます。",
-      "durationSec": 5,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -999,17 +949,16 @@
           "icon": "📌",
           "headline": "本日のまとめ",
           "color": "#6366f1"
+        },
+        "transition": {
+          "enter": "slide-left",
+          "exit": "fade"
         }
-      },
-      "transition": {
-        "enter": "slide-left",
-        "exit": "fade"
       }
     },
     {
-      "id": "01-053",
+      "scene_id": 53,
       "narration": "1つ目。この講座は「コードを書くプログラマー」を目指す講座ではなく、「AIに指示を出してWebサイトを作れるディレクター」を目指す講座です。2つ目。全5パート、約20時間かけて、実際に使えるWebサイトを2〜3個作り、インターネットに公開するところまでやり切ります。3つ目。必要なのはパソコンとインターネットとChromeだけ。プログラミングの経験はゼロで大丈夫です。",
-      "durationSec": 30,
       "visual": {
         "type": "remotion",
         "component": "SummaryScreen",
@@ -1024,9 +973,8 @@
       }
     },
     {
-      "id": "01-054",
+      "scene_id": 54,
       "narration": "次の講義では、「Webはどのように動くのか」をお話しします。皆さんが毎日当たり前のようにブラウザでWebサイトを見ていますよね。URLを入力してEnterキーを押すと、画面にページが表示される。たったそれだけのことに見えますが、実はその裏側では、いろいろなやりとりが行われているんです。サーバーとかドメインとか、聞いたことはあるけど意味はよくわからない……という言葉の正体も、次の講義でクリアになります。",
-      "durationSec": 30,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -1039,9 +987,8 @@
       }
     },
     {
-      "id": "01-055",
+      "scene_id": 55,
       "narration": "それでは、次の講義でお会いしましょう。",
-      "durationSec": 5,
       "visual": {
         "type": "remotion",
         "component": "EndScreen",
@@ -1049,11 +996,11 @@
           "title": "お疲れ様でした",
           "message": "次の講義でお会いしましょう",
           "nextPreview": "Webはどのように動くのか"
+        },
+        "transition": {
+          "enter": "fade",
+          "exit": "zoom"
         }
-      },
-      "transition": {
-        "enter": "fade",
-        "exit": "zoom"
       }
     }
   ]

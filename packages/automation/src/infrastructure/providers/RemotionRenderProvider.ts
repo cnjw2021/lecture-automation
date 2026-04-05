@@ -30,7 +30,7 @@ export class RemotionRenderProvider implements IRenderProvider {
     console.log(`📊 총 씬 수: ${lectureData.sequence.length}`);
 
     return new Promise((resolve, reject) => {
-      const child = exec(command, (error, stdout, stderr) => {
+      const child = exec(command, { maxBuffer: 1024 * 1024 * 100 }, (error, stdout, stderr) => {
         fs.removeSync(propsPath);
 
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);

@@ -9,6 +9,7 @@
     "channels": 1,
     "bitDepth": 16
   },
+  "scenePaddingSec": 1.5,
   "tts": {
     "speechRate": 0.85,
     "pauseBetweenSentences": "short"
