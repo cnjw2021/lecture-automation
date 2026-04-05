@@ -6,6 +6,7 @@ node_modules/
 # Media files
 remotion-project/public/audio/
 remotion-project/public/captures/
+packages/remotion/public/audio/
 videos/
 output/
 *.webm
