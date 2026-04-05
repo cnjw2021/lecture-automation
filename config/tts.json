@@ -1,0 +1,19 @@
+{
+  "activeProvider": "gemini_cloud_tts",
+  "providers": {
+    "gemini": {
+      "modelName": "gemini-2.5-flash-preview-tts",
+      "voice": "Kore",
+      "language": "Japanese"
+    },
+    "google_cloud_tts": {
+      "voiceName": "ja-JP-Chirp3-HD-Kore",
+      "languageCode": "ja-JP"
+    },
+    "gemini_cloud_tts": {
+      "modelName": "gemini-2.5-pro-tts",
+      "voiceName": "Orus",
+      "languageCode": "ja-JP"
+    }
+  }
+}
