@@ -126,12 +126,6 @@ export class GeminiCloudTtsProvider implements IAudioProvider {
 
     const { sampleRate, speechRate } = this.audioConfig;
 
-    const paceInstruction = speechRate <= 0.7
-      ? 'ゆっくり、はっきりと読み上げてください。'
-      : speechRate <= 0.85
-        ? '落ち着いたペースで、丁寧に読み上げてください。'
-        : '自然なペースで読み上げてください。';
-
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       if (attempt === 1) {
         console.log(`[Gemini Cloud TTS] Scene ${scene_id || 'unknown'} 음성 생성 시도 (${this.modelName}, Voice: ${this.voiceName})...`);
@@ -142,10 +136,7 @@ export class GeminiCloudTtsProvider implements IAudioProvider {
       }
 
       const payload = {
-        input: {
-          text,
-          prompt: paceInstruction,
-        },
+        input: { text },
         voice: {
           languageCode: this.languageCode,
           name: this.voiceName,
@@ -154,6 +145,7 @@ export class GeminiCloudTtsProvider implements IAudioProvider {
         audioConfig: {
           audioEncoding: 'LINEAR16',
           sampleRateHertz: sampleRate,
+          speakingRate: speechRate,
         },
       };
 
