@@ -41,6 +41,7 @@ export interface ScreenshotVisual {
   description?: string;
   layout?: 'left' | 'right' | 'full';
   waitMs?: number;
+  animation?: Record<string, any>;
   transition?: TransitionConfig;
 }
 

@@ -150,6 +150,7 @@ const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDura
             title={screenshotVisual.title}
             description={screenshotVisual.description}
             layout={screenshotVisual.layout}
+            animation={screenshotVisual.animation}
           />
         ) : Component ? (
           <Component {...(scene.visual.props || {})} componentName={scene.visual.component} />
