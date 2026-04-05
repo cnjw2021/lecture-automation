@@ -86,7 +86,12 @@ async function main() {
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
 
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-  const outFile = path.join(outDir, `sample-${providerName}-${timestamp}.wav`);
+  const voiceName = config.providers[providerName as keyof typeof config.providers]
+    ? (config.providers[providerName as keyof typeof config.providers] as any).voiceName
+      || (config.providers[providerName as keyof typeof config.providers] as any).voice
+      || 'unknown'
+    : 'unknown';
+  const outFile = path.join(outDir, `sample-${providerName}-${voiceName}-${timestamp}.wav`);
   await fs.writeFile(outFile, result.buffer);
 
   console.log(`\n🎧 샘플 생성 완료`);
