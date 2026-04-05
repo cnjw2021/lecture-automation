@@ -60,8 +60,10 @@ export const config = {
 
   getTtsConfig: () => {
     const tts = getTtsJson();
+    const activeProvider = tts.activeProvider;
+    const providerConfig = tts.providers[activeProvider];
     return {
-      speechRate: tts.speechRate,
+      speechRate: providerConfig.speechRate,
       pauseBetweenSentences: tts.pauseBetweenSentences,
     };
   },
