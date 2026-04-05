@@ -12,6 +12,7 @@ import { GenerateAudioUseCase } from '../../application/use-cases/GenerateAudioU
 import { RecordVisualUseCase } from '../../application/use-cases/RecordVisualUseCase';
 import { RenderVideoUseCase } from '../../application/use-cases/RenderVideoUseCase';
 import { ValidateLectureUseCase } from '../../application/use-cases/ValidateLectureUseCase';
+import { MergeAudioUseCase } from '../../application/use-cases/MergeAudioUseCase';
 import { CaptureScreenshotUseCase } from '../../application/use-cases/CaptureScreenshotUseCase';
 import { PlaywrightScreenshotProvider } from '../../infrastructure/providers/PlaywrightScreenshotProvider';
 import { Lecture } from '../../domain/entities/Lecture';
@@ -73,6 +74,7 @@ async function runAutomation(jsonFileName: string) {
   // 2. Instantiate Application Use Cases (Application)
   const validateLectureUseCase = new ValidateLectureUseCase();
   const generateAudioUseCase = new GenerateAudioUseCase(audioProvider, lectureRepository);
+  const mergeAudioUseCase = new MergeAudioUseCase();
   const captureScreenshotUseCase = new CaptureScreenshotUseCase(screenshotProvider, lectureRepository);
   const recordVisualUseCase = new RecordVisualUseCase(visualProvider, lectureRepository);
   const renderVideoUseCase = new RenderVideoUseCase(renderProvider);
@@ -97,6 +99,9 @@ async function runAutomation(jsonFileName: string) {
   try {
     console.log('\n--- 1단계: 나레이션 오디오 생성 ---');
     await generateAudioUseCase.execute(lectureData, { force: forceRegenerate });
+
+    console.log('\n--- 1.5단계: 전체 오디오 미리 듣기 머지 ---');
+    await mergeAudioUseCase.execute(lectureData);
 
     console.log('\n--- 2단계: 스크린샷 캡처 ---');
     await captureScreenshotUseCase.execute(lectureData, { force: forceRegenerate });
