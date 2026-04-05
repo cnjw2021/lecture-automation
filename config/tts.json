@@ -1,6 +1,6 @@
 {
   "activeProvider": "gemini_cloud_tts",
-  "speechRate": 0.9,
+  "speechRate": 0.85,
   "pauseBetweenSentences": "short",
   "providers": {
     "gemini": {
