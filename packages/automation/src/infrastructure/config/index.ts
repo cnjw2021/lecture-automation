@@ -59,7 +59,10 @@ export const config = {
   },
 
   getTtsConfig: () => {
-    const videoConfig = config.getVideoConfig();
-    return videoConfig.tts || { speechRate: 0.85 };
+    const tts = getTtsJson();
+    return {
+      speechRate: tts.speechRate,
+      pauseBetweenSentences: tts.pauseBetweenSentences,
+    };
   },
 };

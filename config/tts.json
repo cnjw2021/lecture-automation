@@ -1,5 +1,7 @@
 {
   "activeProvider": "gemini_cloud_tts",
+  "speechRate": 0.9,
+  "pauseBetweenSentences": "short",
   "providers": {
     "gemini": {
       "modelName": "gemini-2.5-flash-preview-tts",
