@@ -47,6 +47,7 @@ export const config = {
     data: path.join(ROOT_DIR, 'data'),
     audio: path.join(ROOT_DIR, 'packages/remotion/public/audio'),
     captures: path.join(ROOT_DIR, 'packages/remotion/public/captures'),
+    screenshots: path.join(ROOT_DIR, 'packages/remotion/public/screenshots'),
     output: path.join(ROOT_DIR, 'output'),
   },
 

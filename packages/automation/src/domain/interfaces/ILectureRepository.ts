@@ -7,4 +7,6 @@ export interface ILectureRepository {
   getAudioDurations(lectureId: string): Promise<Record<string, number> | null>;
   saveCapture(lectureId: string, sceneId: number, videoBuffer: Buffer): Promise<void>;
   getCapturePath(lectureId: string, sceneId: number): string;
+  existsScreenshot(lectureId: string, sceneId: number): Promise<boolean>;
+  getScreenshotPath(lectureId: string, sceneId: number): string;
 }

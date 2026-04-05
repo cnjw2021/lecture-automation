@@ -12,6 +12,8 @@ import { GenerateAudioUseCase } from '../../application/use-cases/GenerateAudioU
 import { RecordVisualUseCase } from '../../application/use-cases/RecordVisualUseCase';
 import { RenderVideoUseCase } from '../../application/use-cases/RenderVideoUseCase';
 import { ValidateLectureUseCase } from '../../application/use-cases/ValidateLectureUseCase';
+import { CaptureScreenshotUseCase } from '../../application/use-cases/CaptureScreenshotUseCase';
+import { PlaywrightScreenshotProvider } from '../../infrastructure/providers/PlaywrightScreenshotProvider';
 import { Lecture } from '../../domain/entities/Lecture';
 
 async function runAutomation(jsonFileName: string) {
@@ -65,11 +67,13 @@ async function runAutomation(jsonFileName: string) {
 
   console.log(`🔊 오디오 프로바이더: ${providerName}`);
   const visualProvider = new PlaywrightVisualProvider();
+  const screenshotProvider = new PlaywrightScreenshotProvider();
   const renderProvider = new RemotionRenderProvider();
 
   // 2. Instantiate Application Use Cases (Application)
   const validateLectureUseCase = new ValidateLectureUseCase();
   const generateAudioUseCase = new GenerateAudioUseCase(audioProvider, lectureRepository);
+  const captureScreenshotUseCase = new CaptureScreenshotUseCase(screenshotProvider, lectureRepository);
   const recordVisualUseCase = new RecordVisualUseCase(visualProvider, lectureRepository);
   const renderVideoUseCase = new RenderVideoUseCase(renderProvider);
 
@@ -94,10 +98,13 @@ async function runAutomation(jsonFileName: string) {
     console.log('\n--- 1단계: 나레이션 오디오 생성 ---');
     await generateAudioUseCase.execute(lectureData, { force: forceRegenerate });
 
-    console.log('\n--- 2단계: 시각 자료(브라우저) 녹화 ---');
+    console.log('\n--- 2단계: 스크린샷 캡처 ---');
+    await captureScreenshotUseCase.execute(lectureData, { force: forceRegenerate });
+
+    console.log('\n--- 3단계: 시각 자료(브라우저) 녹화 ---');
     await recordVisualUseCase.execute(lectureData, { force: forceRegenerate });
 
-    console.log('\n--- 3단계: 최종 동영상(MP4) 빌드 ---');
+    console.log('\n--- 4단계: 최종 동영상(MP4) 빌드 ---');
     await renderVideoUseCase.execute(lectureData.lecture_id, lectureData);
 
     console.log('\n✨ [완료] 전 공정이 성공적으로 마무리되었습니다!');

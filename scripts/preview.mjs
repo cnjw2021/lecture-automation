@@ -56,16 +56,38 @@ if (!scene) {
   process.exit(1);
 }
 
-const componentName = scene.visual.component || 'DefaultScreen';
-const componentProps = scene.visual.props || {};
+let componentName;
+let componentProps;
+
+if (scene.visual.type === 'screenshot') {
+  // 옵션A: 캡처된 실제 이미지를 ImageScreen으로 표시
+  const screenshotPath = join(ROOT, 'packages/remotion/public/screenshots', lectureData.lecture_id, `scene-${sceneId}.png`);
+  if (!existsSync(screenshotPath)) {
+    console.error(`❌ 스크린샷 파일이 없습니다: ${screenshotPath}`);
+    console.error(`먼저 아래 명령어로 캡처를 실행해주세요:`);
+    console.error(`  make capture-screenshots LECTURE=${lectureFile}`);
+    process.exit(1);
+  }
+  componentName = 'ImageScreen';
+  componentProps = {
+    src: `screenshots/${lectureData.lecture_id}/scene-${sceneId}.png`,
+    url: scene.visual.url,
+    title: scene.visual.title,
+    description: scene.visual.description,
+    layout: scene.visual.layout || 'right',
+  };
+} else {
+  componentName = scene.visual.component || 'DefaultScreen';
+  componentProps = scene.visual.props || {};
+}
 
 console.log(`📸 프리뷰 생성 중...`);
 console.log(`   씬: ${sceneId} (${componentName})`);
 console.log(`   프레임: ${frameNum}`);
 console.log(`   Props: ${JSON.stringify(componentProps).substring(0, 100)}...`);
 
-// 출력 디렉토리 확인
-const outputDir = join(ROOT, 'output', 'preview');
+// 출력 디렉토리 — 강의별 하위 폴더로 구분
+const outputDir = join(ROOT, 'output', 'preview', lectureData.lecture_id);
 if (!existsSync(outputDir)) {
   mkdirSync(outputDir, { recursive: true });
 }

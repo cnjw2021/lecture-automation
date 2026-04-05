@@ -1,9 +1,12 @@
 # Lecture Automation Makefile
 
-.PHONY: help install build run run-force regen-scene clean render-only preview tts-sample
+.PHONY: help install build run run-force regen-scene clean render-only preview tts-sample \
+        preview-browser-mock preview-screenshot capture-screenshots test-screenshot-options \
+        preview-springs
 
 # 기본 변수 설정
 LECTURE ?= p1-01-01.json
+SAMPLE_LECTURE ?= sample-screenshot-test.json
 ENGINE_PATH = packages/automation/dist/presentation/cli/main.js
 REMOTION_PATH = packages/remotion
 OUTPUT_DIR = output
@@ -22,6 +25,14 @@ help:
 	@echo "make tts-sample TTS=gemini_cloud_tts RATE=0.7 - 프로바이더/속도 지정"
 	@echo "make regen-scene LECTURE=xxx SCENE=5       - 특정 씬 오디오만 재생성"
 	@echo "make regen-scene LECTURE=xxx SCENE='5 12'  - 여러 씬 동시 재생성"
+	@echo ""
+	@echo "--- 스크린샷 옵션 테스트 ---"
+	@echo "make preview-browser-mock                       - [옵션B] BrowserMockScreen 프리뷰 (PNG)"
+	@echo "make capture-screenshots                        - [옵션A] Playwright 스크린샷 캡처만 실행"
+	@echo "make capture-screenshots LECTURE=my-lecture.json"
+	@echo "make preview-screenshot                         - [옵션A] 캡처 이미지로 ImageScreen 프리뷰 (PNG)"
+	@echo "make test-screenshot-options                    - [옵션A+B] 캡처 → 두 옵션 프리뷰 한번에 실행"
+	@echo "make preview-springs                            - 스프링 프리셋 5종 × 3프레임 비교 PNG 생성"
 	@echo "--------------------------------------------------"
 
 install:
@@ -67,5 +78,42 @@ clean:
 	@echo "🧹 생성된 에셋 및 결과물 정리 중..."
 	rm -rf packages/remotion/public/audio/*
 	rm -rf packages/remotion/public/captures/*
+	rm -rf packages/remotion/public/screenshots/*
 	rm -rf $(OUTPUT_DIR)/*.mp4
 	@echo "✅ 정리가 완료되었습니다."
+
+# --- 스크린샷 옵션 테스트 ---
+
+preview-browser-mock:
+	@echo "📸 [옵션B] BrowserMockScreen 프리뷰 생성 중..."
+	@echo "   샘플: $(SAMPLE_LECTURE) / Scene 1"
+	@node scripts/preview.mjs $(SAMPLE_LECTURE) 1 45
+
+capture-screenshots:
+	@echo "📷 [옵션A] Playwright 스크린샷 캡처 중..."
+	@echo "   강의: $(LECTURE)"
+	npx tsx scripts/capture-screenshots.ts $(LECTURE)
+
+preview-screenshot:
+	@echo "📸 [옵션A] ImageScreen(캡처 이미지) 프리뷰 생성 중..."
+	@echo "   샘플: $(SAMPLE_LECTURE) / Scene 2"
+	@node scripts/preview.mjs $(SAMPLE_LECTURE) 2 45
+
+preview-springs:
+	@echo "🌀 스프링 프리셋 비교 프리뷰 생성 중..."
+	@echo "   default · gentle · bouncy · snappy · smooth × 프레임 5·15·30"
+	@node scripts/preview-spring-compare.mjs
+
+test-screenshot-options:
+	@echo "🧪 스크린샷 옵션 테스트 시작"
+	@echo ""
+	@echo "━━━ [옵션B] BrowserMockScreen ━━━"
+	@$(MAKE) preview-browser-mock SAMPLE_LECTURE=$(SAMPLE_LECTURE)
+	@echo ""
+	@echo "━━━ [옵션A] Playwright 스크린샷 캡처 ━━━"
+	@$(MAKE) capture-screenshots LECTURE=$(SAMPLE_LECTURE)
+	@echo ""
+	@echo "━━━ [옵션A] ImageScreen 프리뷰 ━━━"
+	@$(MAKE) preview-screenshot SAMPLE_LECTURE=$(SAMPLE_LECTURE)
+	@echo ""
+	@echo "✅ 테스트 완료 — output/preview/ 폴더에서 PNG를 확인하세요"

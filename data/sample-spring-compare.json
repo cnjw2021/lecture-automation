@@ -1,0 +1,100 @@
+{
+  "lecture_id": "sample-spring-compare",
+  "metadata": {
+    "title": "スプリングアニメーション比較",
+    "target_duration": "30s",
+    "target_audience": "開発者"
+  },
+  "sequence": [
+    {
+      "scene_id": 1,
+      "narration": "default",
+      "visual": {
+        "type": "remotion",
+        "component": "BrowserMockScreen",
+        "props": {
+          "url": "https://www.google.com",
+          "title": "default",
+          "description": "damping=14 / stiffness=80 / mass=0.8",
+          "layout": "right",
+          "animation": {
+            "browser": { "spring": "default" },
+            "text":    { "spring": "default" }
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 2,
+      "narration": "gentle",
+      "visual": {
+        "type": "remotion",
+        "component": "BrowserMockScreen",
+        "props": {
+          "url": "https://www.google.com",
+          "title": "gentle",
+          "description": "damping=16 / stiffness=60 / mass=0.6",
+          "layout": "right",
+          "animation": {
+            "browser": { "spring": "gentle" },
+            "text":    { "spring": "gentle" }
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "bouncy",
+      "visual": {
+        "type": "remotion",
+        "component": "BrowserMockScreen",
+        "props": {
+          "url": "https://www.google.com",
+          "title": "bouncy",
+          "description": "damping=10 / stiffness=100 / mass=0.6",
+          "layout": "right",
+          "animation": {
+            "browser": { "spring": "bouncy" },
+            "text":    { "spring": "bouncy" }
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "snappy",
+      "visual": {
+        "type": "remotion",
+        "component": "BrowserMockScreen",
+        "props": {
+          "url": "https://www.google.com",
+          "title": "snappy",
+          "description": "damping=10 / stiffness=120 / mass=0.5",
+          "layout": "right",
+          "animation": {
+            "browser": { "spring": "snappy" },
+            "text":    { "spring": "snappy" }
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "smooth",
+      "visual": {
+        "type": "remotion",
+        "component": "BrowserMockScreen",
+        "props": {
+          "url": "https://www.google.com",
+          "title": "smooth",
+          "description": "damping=14 / stiffness=70 / mass=0.7",
+          "layout": "right",
+          "animation": {
+            "browser": { "spring": "smooth" },
+            "text":    { "spring": "smooth" }
+          }
+        }
+      }
+    }
+  ]
+}
