@@ -597,6 +597,9 @@
             { "from": "browser", "to": "server", "label": "②HTTPSでリクエスト" },
             { "from": "server", "to": "browser", "label": "③HTML/CSS/画像を返送" }
           ]
+        },
+        "transition": {
+          "enter": "slide-left"
         }
       }
     },
