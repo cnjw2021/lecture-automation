@@ -89,6 +89,11 @@ interface SceneData {
     component?: string;
     props?: Record<string, unknown>;
     transition?: TransitionConfig;
+    url?: string;
+    title?: string;
+    description?: string;
+    layout?: string;
+    animation?: Record<string, unknown>;
   };
 }
 
@@ -102,20 +107,64 @@ interface LectureProps {
   audioDurations: Record<string, number>;
 }
 
-// Main lecture composition
+interface SingleSceneProps {
+  lectureData: LectureData;
+  audioDurations: Record<string, number>;
+  sceneId: number;
+}
+
+// --- Shared helpers (SSoT) ---
+
+const calcSceneDurationFrames = (
+  sceneId: number,
+  audioDurations: Record<string, number>,
+  fps: number,
+  scenePaddingSec: number
+): number => {
+  const durationSec = audioDurations[sceneId.toString()] || 10;
+  return Math.ceil((durationSec + scenePaddingSec) * fps);
+};
+
+const SceneVisual: React.FC<{ scene: SceneData; lectureId: string }> = ({ scene, lectureId }) => {
+  const captureUrl = staticFile(`captures/${lectureId}/scene-${scene.scene_id}.webm`);
+  const Component = scene.visual.component
+    ? COMPONENT_MAP[scene.visual.component] || DefaultScreen
+    : null;
+
+  if (scene.visual.type === 'playwright') {
+    return <Video src={captureUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
+  }
+
+  if (scene.visual.type === 'screenshot') {
+    return (
+      <ImageScreen
+        src={`screenshots/${lectureId}/scene-${scene.scene_id}.png`}
+        url={scene.visual.url}
+        title={scene.visual.title}
+        description={scene.visual.description}
+        layout={scene.visual.layout}
+        animation={scene.visual.animation}
+      />
+    );
+  }
+
+  if (Component) {
+    return <Component {...(scene.visual.props || {})} componentName={scene.visual.component} />;
+  }
+
+  return <DefaultScreen componentName={scene.visual.component} />;
+};
+
+// --- Full lecture composition ---
+
 const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDurations }) => {
   const FPS = videoConfig.fps;
-
   const scenePaddingSec = videoConfig.scenePaddingSec ?? 0.5;
-  const getSceneDurationFrames = (sceneId: number): number => {
-    const durationSec = audioDurations[sceneId.toString()] || 10;
-    return Math.ceil((durationSec + scenePaddingSec) * FPS);
-  };
 
   const getSceneStartFrame = (index: number): number => {
     let startFrame = 0;
     for (let i = 0; i < index; i++) {
-      startFrame += getSceneDurationFrames(lectureData.sequence[i].scene_id);
+      startFrame += calcSceneDurationFrames(lectureData.sequence[i].scene_id, audioDurations, FPS, scenePaddingSec);
     }
     return startFrame;
   };
@@ -124,53 +173,18 @@ const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDura
     <AbsoluteFill>
       {lectureData.sequence.map((scene, index) => {
         const audioUrl = staticFile(`audio/${lectureData.lecture_id}/scene-${scene.scene_id}.wav`);
-        const captureUrl = staticFile(`captures/${lectureData.lecture_id}/scene-${scene.scene_id}.webm`);
-        const sceneDuration = getSceneDurationFrames(scene.scene_id);
+        const sceneDuration = calcSceneDurationFrames(scene.scene_id, audioDurations, FPS, scenePaddingSec);
         const sceneStart = getSceneStartFrame(index);
 
-        // Resolve transition config (defaults to fade)
         const transition = scene.visual.transition || {};
         const enter = transition.enter ?? 'fade';
         const exit = transition.exit ?? 'fade';
 
-        // Resolve component
-        const Component = scene.visual.component
-          ? COMPONENT_MAP[scene.visual.component] || DefaultScreen
-          : null;
-
-        const screenshotPath = `screenshots/${lectureData.lecture_id}/scene-${scene.scene_id}.png`;
-        const screenshotVisual = scene.visual as any;
-
-        const visualContent = scene.visual.type === 'playwright' ? (
-          <Video src={captureUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        ) : scene.visual.type === 'screenshot' ? (
-          <ImageScreen
-            src={screenshotPath}
-            url={screenshotVisual.url}
-            title={screenshotVisual.title}
-            description={screenshotVisual.description}
-            layout={screenshotVisual.layout}
-            animation={screenshotVisual.animation}
-          />
-        ) : Component ? (
-          <Component {...(scene.visual.props || {})} componentName={scene.visual.component} />
-        ) : (
-          <DefaultScreen componentName={scene.visual.component} />
-        );
-
         return (
-          <Sequence
-            key={scene.scene_id}
-            from={sceneStart}
-            durationInFrames={sceneDuration}
-          >
+          <Sequence key={scene.scene_id} from={sceneStart} durationInFrames={sceneDuration}>
             <AbsoluteFill>
-              <SceneTransition
-                durationInFrames={sceneDuration}
-                enter={enter}
-                exit={exit}
-              >
-                {visualContent}
+              <SceneTransition durationInFrames={sceneDuration} enter={enter} exit={exit}>
+                <SceneVisual scene={scene} lectureId={lectureData.lecture_id} />
               </SceneTransition>
               <Audio src={audioUrl} />
             </AbsoluteFill>
@@ -181,7 +195,36 @@ const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDura
   );
 };
 
-// --- Preview compositions for quick single-frame checks ---
+// --- Single scene composition (씬 클립 캐시용) ---
+
+const SingleSceneComposition: React.FC<SingleSceneProps> = ({ lectureData, audioDurations, sceneId }) => {
+  const FPS = videoConfig.fps;
+  const scenePaddingSec = videoConfig.scenePaddingSec ?? 0.5;
+
+  const scene = lectureData.sequence.find(s => s.scene_id === sceneId);
+  if (!scene) {
+    return <DefaultScreen componentName={`Scene ${sceneId} Not Found`} />;
+  }
+
+  const durationInFrames = calcSceneDurationFrames(sceneId, audioDurations, FPS, scenePaddingSec);
+  const audioUrl = staticFile(`audio/${lectureData.lecture_id}/scene-${sceneId}.wav`);
+
+  const transition = scene.visual.transition || {};
+  const enter = transition.enter ?? 'fade';
+  const exit = transition.exit ?? 'fade';
+
+  return (
+    <AbsoluteFill>
+      <SceneTransition durationInFrames={durationInFrames} enter={enter} exit={exit}>
+        <SceneVisual scene={scene} lectureId={lectureData.lecture_id} />
+      </SceneTransition>
+      <Audio src={audioUrl} />
+    </AbsoluteFill>
+  );
+};
+
+// --- Preview composition (개발용) ---
+
 interface PreviewProps {
   componentName: string;
   props: Record<string, unknown>;
@@ -195,6 +238,7 @@ const PreviewComposition: React.FC<PreviewProps> = ({ componentName, props: comp
 export const RemotionRoot: React.FC = () => {
   const { width, height } = videoConfig.resolution;
   const FPS = videoConfig.fps;
+  const scenePaddingSec = videoConfig.scenePaddingSec ?? 0.5;
 
   return (
     <>
@@ -211,29 +255,38 @@ export const RemotionRoot: React.FC = () => {
         } as LectureProps}
         calculateMetadata={async ({ props }) => {
           const { lectureData, audioDurations } = props as LectureProps;
-
-          if (!lectureData?.sequence?.length) {
-            return { durationInFrames: 300 };
-          }
-
-          const scenePaddingSec = videoConfig.scenePaddingSec ?? 0.5;
-          const getSceneDurationFrames = (sceneId: number): number => {
-            const durationSec = audioDurations[sceneId.toString()] || 10;
-            return Math.ceil((durationSec + scenePaddingSec) * FPS);
-          };
+          if (!lectureData?.sequence?.length) return { durationInFrames: 300 };
 
           const totalDurationFrames = lectureData.sequence.reduce(
-            (acc, scene) => acc + getSceneDurationFrames(scene.scene_id),
+            (acc, scene) => acc + calcSceneDurationFrames(scene.scene_id, audioDurations, FPS, scenePaddingSec),
             0
           );
+          return { durationInFrames: totalDurationFrames };
+        }}
+      />
+
+      <Composition
+        id="SingleScene"
+        component={SingleSceneComposition}
+        width={width}
+        height={height}
+        fps={FPS}
+        durationInFrames={300}
+        defaultProps={{
+          lectureData: { lecture_id: '', sequence: [] },
+          audioDurations: {},
+          sceneId: 1,
+        } as SingleSceneProps}
+        calculateMetadata={async ({ props }) => {
+          const { audioDurations, sceneId } = props as SingleSceneProps;
+          if (!audioDurations || !sceneId) return { durationInFrames: 300 };
 
           return {
-            durationInFrames: totalDurationFrames,
+            durationInFrames: calcSceneDurationFrames(sceneId, audioDurations, FPS, scenePaddingSec),
           };
         }}
       />
 
-      {/* Preview: render any component as a still image */}
       <Composition
         id="Preview"
         component={PreviewComposition}
