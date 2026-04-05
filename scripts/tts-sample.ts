@@ -91,7 +91,7 @@ async function main() {
       || (config.providers[providerName as keyof typeof config.providers] as any).voice
       || 'unknown'
     : 'unknown';
-  const outFile = path.join(outDir, `sample-${providerName}-${voiceName}-${timestamp}.wav`);
+  const outFile = path.join(outDir, `sample-${providerName}-${voiceName}-rate${effectiveRate}-${timestamp}.wav`);
   await fs.writeFile(outFile, result.buffer);
 
   console.log(`\n🎧 샘플 생성 완료`);
