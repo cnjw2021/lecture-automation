@@ -8,17 +8,10 @@ const ROOT_DIR = path.join(__dirname, '../../../../../');
 
 const getTtsJson = () => {
   const ttsConfigPath = path.join(ROOT_DIR, 'config/tts.json');
-  if (fs.existsSync(ttsConfigPath)) {
-    return fs.readJsonSync(ttsConfigPath);
+  if (!fs.existsSync(ttsConfigPath)) {
+    throw new Error(`config/tts.json 파일이 없습니다: ${ttsConfigPath}`);
   }
-  return {
-    activeProvider: 'gemini',
-    providers: {
-      gemini: { modelName: 'gemini-2.5-flash-preview-tts', voice: 'Kore', language: 'Japanese' },
-      google_cloud_tts: { voiceName: 'ja-JP-Chirp3-HD-Kore', languageCode: 'ja-JP' },
-      gemini_cloud_tts: { modelName: 'gemini-2.5-pro-tts', voiceName: 'Orus', languageCode: 'ja-JP' },
-    },
-  };
+  return fs.readJsonSync(ttsConfigPath);
 };
 
 export const config = {
@@ -59,10 +52,10 @@ export const config = {
 
   getVideoConfig: () => {
     const videoConfigPath = path.join(ROOT_DIR, 'config/video.json');
-    if (fs.existsSync(videoConfigPath)) {
-      return fs.readJsonSync(videoConfigPath);
+    if (!fs.existsSync(videoConfigPath)) {
+      throw new Error(`config/video.json 파일이 없습니다: ${videoConfigPath}`);
     }
-    return { audio: { sampleRate: 24000, channels: 1, bitDepth: 16 }, resolution: { width: 1920, height: 1080 }, tts: { speechRate: 0.85 } };
+    return fs.readJsonSync(videoConfigPath);
   },
 
   getTtsConfig: () => {
