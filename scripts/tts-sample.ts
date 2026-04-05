@@ -93,7 +93,8 @@ async function main() {
   const result = await provider.generate(SAMPLE_TEXT, { scene_id: 0 });
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
 
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+  const now = new Date();
+  const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}`;
   const voiceName = config.providers[providerName as keyof typeof config.providers]
     ? (config.providers[providerName as keyof typeof config.providers] as any).voiceName
       || (config.providers[providerName as keyof typeof config.providers] as any).voice
