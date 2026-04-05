@@ -1,7 +1,8 @@
 # Lecture Automation Makefile
 
 .PHONY: help install build run run-force regen-scene clean render-only preview tts-sample \
-        preview-browser-mock preview-screenshot capture-screenshots test-screenshot-options
+        preview-browser-mock preview-screenshot capture-screenshots test-screenshot-options \
+        preview-springs
 
 # 기본 변수 설정
 LECTURE ?= p1-01-01.json
@@ -31,6 +32,7 @@ help:
 	@echo "make capture-screenshots LECTURE=my-lecture.json"
 	@echo "make preview-screenshot                         - [옵션A] 캡처 이미지로 ImageScreen 프리뷰 (PNG)"
 	@echo "make test-screenshot-options                    - [옵션A+B] 캡처 → 두 옵션 프리뷰 한번에 실행"
+	@echo "make preview-springs                            - 스프링 프리셋 5종 × 3프레임 비교 PNG 생성"
 	@echo "--------------------------------------------------"
 
 install:
@@ -96,6 +98,11 @@ preview-screenshot:
 	@echo "📸 [옵션A] ImageScreen(캡처 이미지) 프리뷰 생성 중..."
 	@echo "   샘플: $(SAMPLE_LECTURE) / Scene 2"
 	@node scripts/preview.mjs $(SAMPLE_LECTURE) 2 45
+
+preview-springs:
+	@echo "🌀 스프링 프리셋 비교 프리뷰 생성 중..."
+	@echo "   default · gentle · bouncy · snappy · smooth × 프레임 5·15·30"
+	@node scripts/preview-spring-compare.mjs
 
 test-screenshot-options:
 	@echo "🧪 스크린샷 옵션 테스트 시작"
