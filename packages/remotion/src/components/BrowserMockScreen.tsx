@@ -2,41 +2,34 @@ import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } fr
 import { theme } from '../theme';
 import { getAnimConfig, resolveSpring } from '../animation';
 import type { ElementAnim } from '../animation';
+import { BrowserChrome } from './BrowserChrome';
 
 interface BrowserMockScreenProps {
   url: string;
   title?: string;
   description?: string;
   layout?: 'left' | 'right' | 'full';
-  highlightUrl?: boolean;
+  color?: string;
   animation?: Record<string, Partial<ElementAnim>>;
 }
 
 interface BrowserMockScreenAnim {
   browser: ElementAnim;
   text: ElementAnim;
-  urlBar: ElementAnim;
 }
-
-const BROWSER_BG = '#f5f5f5';
-const CHROME_BG = '#e8e8e8';
-const TAB_BG = '#ffffff';
-const URL_BAR_BG = '#ffffff';
-const DOT_RED = '#ff5f57';
-const DOT_YELLOW = '#febc2e';
-const DOT_GREEN = '#28c840';
 
 export const BrowserMockScreen: React.FC<BrowserMockScreenProps> = ({
   url,
   title,
   description,
   layout = 'right',
-  highlightUrl = true,
+  color,
   animation,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const a = getAnimConfig<BrowserMockScreenAnim>('BrowserMockScreen', animation);
+  const accentColor = color || theme.color.accent;
 
   const browserDelay = a.browser?.delay ?? 5;
   const browserSpring = spring({ frame: Math.max(0, frame - browserDelay), fps, config: resolveSpring(a.browser?.spring) });
@@ -47,10 +40,6 @@ export const BrowserMockScreen: React.FC<BrowserMockScreenProps> = ({
   const textSpring = spring({ frame: Math.max(0, frame - textDelay), fps, config: resolveSpring(a.text?.spring) });
   const textOpacity = interpolate(textSpring, [0, 1], [0, 1]);
   const textX = interpolate(textSpring, [0, 1], [layout === 'left' ? 40 : -40, 0]);
-
-  const urlDelay = a.urlBar?.delay ?? 25;
-  const urlSpring = spring({ frame: Math.max(0, frame - urlDelay), fps, config: resolveSpring(a.urlBar?.spring) });
-  const urlOpacity = interpolate(urlSpring, [0, 1], [0, 1]);
 
   const browserBlock = (
     <div
@@ -65,132 +54,25 @@ export const BrowserMockScreen: React.FC<BrowserMockScreenProps> = ({
         padding: layout === 'full' ? '40px 80px' : '20px',
       }}
     >
-      <div
-        style={{
-          width: '100%',
-          maxWidth: layout === 'full' ? 1400 : 900,
-          borderRadius: 12,
-          overflow: 'hidden',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.18)',
-          background: BROWSER_BG,
-        }}
-      >
-        {/* Chrome — title bar */}
-        <div
-          style={{
-            background: CHROME_BG,
-            padding: '10px 16px 0',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 8,
-          }}
-        >
-          {/* Traffic lights */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 7, paddingBottom: 6 }}>
-            {[DOT_RED, DOT_YELLOW, DOT_GREEN].map((color, i) => (
-              <div key={i} style={{ width: 13, height: 13, borderRadius: '50%', background: color }} />
-            ))}
-          </div>
-
-          {/* Tab row */}
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2 }}>
-            <div
-              style={{
-                background: TAB_BG,
-                borderRadius: '8px 8px 0 0',
-                padding: '6px 20px',
-                fontSize: 13,
-                color: '#333',
-                maxWidth: 200,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {title || url}
-            </div>
-          </div>
-        </div>
-
-        {/* Address bar */}
-        <div
-          style={{
-            background: CHROME_BG,
-            padding: '8px 14px 10px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-          }}
-        >
-          {/* Nav buttons */}
-          {['←', '→', '↻'].map((btn, i) => (
-            <div
-              key={i}
-              style={{
-                width: 28,
-                height: 28,
-                borderRadius: '50%',
-                background: '#d0d0d0',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 14,
-                color: '#666',
-                flexShrink: 0,
-              }}
-            >
-              {btn}
-            </div>
-          ))}
-
-          {/* URL input */}
+      <div style={{ width: '100%', maxWidth: layout === 'full' ? 1400 : 900 }}>
+        <BrowserChrome url={url} tabTitle={title}>
+          {/* 목업 페이지 콘텐츠 */}
           <div
             style={{
-              flex: 1,
-              background: URL_BAR_BG,
-              borderRadius: 20,
-              padding: '6px 16px',
+              background: '#ffffff',
+              height: layout === 'full' ? 400 : 420,
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              gap: 8,
-              opacity: urlOpacity,
-              border: highlightUrl ? `2px solid ${theme.color.accent}` : '2px solid transparent',
-              boxShadow: highlightUrl ? `0 0 0 3px ${theme.color.accent}22` : 'none',
+              justifyContent: 'center',
+              gap: 16,
+              borderTop: '1px solid #e0e0e0',
             }}
           >
-            {/* Lock icon */}
-            <span style={{ fontSize: 13, color: '#4CAF50', flexShrink: 0 }}>🔒</span>
-            <span
-              style={{
-                fontSize: 14,
-                color: '#333',
-                fontFamily: 'monospace',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {url}
-            </span>
+            <span style={{ fontSize: 52, opacity: 0.25 }}>🌐</span>
+            <span style={{ fontSize: 15, color: '#aaa', fontFamily: 'monospace' }}>{url}</span>
           </div>
-        </div>
-
-        {/* Page content area */}
-        <div
-          style={{
-            background: '#ffffff',
-            height: layout === 'full' ? 400 : 420,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderTop: '1px solid #e0e0e0',
-          }}
-        >
-          <div style={{ textAlign: 'center', color: '#ccc' }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>🌐</div>
-            <div style={{ fontSize: 16, color: '#bbb' }}>{url}</div>
-          </div>
-        </div>
+        </BrowserChrome>
       </div>
     </div>
   );
@@ -237,7 +119,7 @@ export const BrowserMockScreen: React.FC<BrowserMockScreenProps> = ({
       <h1 style={{ fontSize: 52, fontWeight: 800, color: theme.color.textPrimary, lineHeight: 1.3, marginBottom: 24 }}>
         {title}
       </h1>
-      <div style={{ width: 80, height: 4, background: theme.color.accent, borderRadius: 2, marginBottom: 28, opacity: 0.6 }} />
+      <div style={{ width: 80, height: 4, background: accentColor, borderRadius: 2, marginBottom: 28, opacity: 0.6 }} />
       {description && (
         <p style={{ fontSize: 30, color: theme.color.textSecondary, lineHeight: 1.7, margin: 0 }}>
           {description}
