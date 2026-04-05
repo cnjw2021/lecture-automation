@@ -25,3 +25,6 @@ list-models.js
 
 # Claude Code 메모리
 memory/
+
+# 임시
+tmp/
