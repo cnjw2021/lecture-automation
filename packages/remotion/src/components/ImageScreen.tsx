@@ -1,4 +1,4 @@
-import { AbsoluteFill, Img, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
+import { AbsoluteFill, Img, staticFile, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
 import { theme } from '../theme';
 import { getAnimConfig, resolveSpring } from '../animation';
 import type { ElementAnim } from '../animation';
@@ -62,7 +62,7 @@ export const ImageScreen: React.FC<ImageScreenProps> = ({
         }}
       >
         <Img
-          src={src}
+          src={src.startsWith('http') ? src : staticFile(src)}
           style={{ width: '100%', height: 'auto', display: 'block' }}
         />
       </div>

@@ -1,0 +1,39 @@
+{
+  "lecture_id": "sample-screenshot-test",
+  "metadata": {
+    "title": "スクリーンショットオプションテスト",
+    "target_duration": "30s",
+    "target_audience": "開発者"
+  },
+  "sequence": [
+    {
+      "scene_id": 1,
+      "narration": "これはオプションBのテストです。BrowserMockScreenコンポーネントは、実際のURLアクセスなしに、コードだけでブラウザの見た目を再現します。",
+      "visual": {
+        "type": "remotion",
+        "component": "BrowserMockScreen",
+        "props": {
+          "url": "https://example.com",
+          "title": "ブラウザの画面",
+          "description": "アドレスバーにURLが入力されている",
+          "layout": "right",
+          "highlightUrl": true
+        },
+        "transition": { "enter": "fade", "exit": "fade" }
+      }
+    },
+    {
+      "scene_id": 2,
+      "narration": "これはオプションAのテストです。Playwrightが自動でURLにアクセスし、スクリーンショットを撮影して映像に埋め込みます。",
+      "visual": {
+        "type": "screenshot",
+        "url": "https://example.com",
+        "title": "ブラウザの画面（自動キャプチャ）",
+        "description": "Playwrightが自動でキャプチャしました",
+        "layout": "right",
+        "waitMs": 1000,
+        "transition": { "enter": "fade", "exit": "fade" }
+      }
+    }
+  ]
+}
