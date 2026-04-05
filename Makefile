@@ -26,11 +26,15 @@ install:
 	@echo "📦 의존성 설치 중..."
 	npm install
 
-run:
+build:
+	@echo "🔨 automation 패키지 빌드 중..."
+	npm run build -w packages/automation
+
+run: build
 	@echo "🚀 강의 자동화 파이프라인 시작: $(LECTURE)"
 	node $(ENGINE_PATH) $(LECTURE)
 
-run-force:
+run-force: build
 	@echo "🔄 강제 재생성 모드로 파이프라인 시작: $(LECTURE)"
 	FORCE=1 node $(ENGINE_PATH) $(LECTURE)
 
