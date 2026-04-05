@@ -1,0 +1,340 @@
+{
+  "lecture_id": "03",
+  "title": "Webサイトの3要素：HTML、CSS、JavaScript",
+  "part": 1,
+  "totalDurationSec": 1200,
+  "sequence": [
+    {
+      "scene_id": 1,
+      "narration": "前回の講義では、ブラウザにURLを入力したときに裏側で何が起きているのかを見てきました。ブラウザがサーバーにリクエストを送って、サーバーがファイルを返してくれる。宅配便の例えで言えば、注文して荷物が届くまでの流れでしたよね。",
+      "durationSec": 20,
+      "visual": {
+        "type": "remotion",
+        "component": "TitleScreen",
+        "props": {
+          "title": "Webサイトの3要素",
+          "sub": "HTML・CSS・JavaScript"
+        },
+        "transition": {
+          "enter": "zoom"
+        }
+      }
+    },
+    {
+      "scene_id": 2,
+      "narration": "では、届いた荷物の中身は何でしょうか？サーバーから送られてきたファイルの正体は何なのか。今回はそこを見ていきます。実は、皆さんが毎日見ているWebサイトは、たった3つの技術の組み合わせでできています。たった3つです。今日はこの3つが何なのか、そしてそれぞれがどんな役割を果たしているのかを、実際のWebサイトを覗きながら確認していきましょう。",
+      "durationSec": 25,
+      "visual": {
+        "type": "remotion",
+        "component": "AgendaScreen",
+        "props": {
+          "title": "本日の内容",
+          "items": [
+            { "title": "Webサイトの3つの技術", "icon": "🏗️", "duration": "5分" },
+            { "title": "開発者ツールで覗いてみよう", "icon": "🔍", "duration": "10分" },
+            { "title": "全部テキストファイルである", "icon": "📄", "duration": "2分" }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "Webサイトを構成する3つの技術。それは、HTML、CSS、そしてJavaScriptです。この3つ、いきなり横文字が並ぶと難しく感じるかもしれませんが、大丈夫です。身近なもので例えてみましょう。",
+      "durationSec": 17,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🌐",
+          "headline": "Webサイトは3つでできている",
+          "detail": "HTML・CSS・JavaScriptの組み合わせ",
+          "color": "#6366f1"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "家を建てることをイメージしてください。まず、家には骨組みが必要ですよね。柱があって、壁があって、屋根がある。部屋がいくつあって、玄関はどこにあるか。この「構造」「骨組み」にあたるのが、HTML（エイチティーエムエル）です。HTMLは「ここに見出しがありますよ」「ここに文章がありますよ」「ここに画像がありますよ」という、ページの中身と構造を決めるものです。",
+      "durationSec": 27,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "HTML",
+          "reading": "エイチティーエムエル",
+          "definition": "ページの「構造・骨組み」を決める技術。見出し・文章・画像など「何があるか」を記述する。",
+          "example": "家で例えると：柱・壁・屋根などの骨組み"
+        }
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "次に、骨組みだけの家って住みたくないですよね。壁の色を塗ったり、おしゃれな照明をつけたり、家具を配置したりしますよね。この「見た目」「デザイン」にあたるのが、CSS（シーエスエス）です。CSSは「この文字は赤色にしよう」「この部分は画面の中央に配置しよう」「背景は白にしよう」という、見た目のスタイルを決めるものです。",
+      "durationSec": 27,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "CSS",
+          "reading": "シーエスエス",
+          "definition": "ページの「見た目・デザイン」を決める技術。色・レイアウト・フォントなど「どう見えるか」を記述する。",
+          "example": "家で例えると：壁の色・照明・家具の配置"
+        }
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "そして最後。家にはエアコンやテレビ、インターホンといった家電製品がありますよね。ボタンを押したら反応する。スイッチを入れたら動く。この「動き」「インタラクション」にあたるのが、JavaScript（ジャバスクリプト）です。JavaScriptは「ボタンをクリックしたらメニューが開く」「スクロールしたらアニメーションが動く」「フォームに入力したらエラーチェックする」という、動的な振る舞いを担当します。",
+      "durationSec": 28,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "JavaScript",
+          "reading": "ジャバスクリプト",
+          "definition": "ページの「動き・インタラクション」を担当する技術。クリック・スクロールなど「どう動くか」を記述する。",
+          "example": "家で例えると：エアコン・テレビ・インターホン"
+        }
+      }
+    },
+    {
+      "scene_id": 7,
+      "narration": "もう一度整理しますね。HTML — 構造、骨組み。「何があるか」を決める。CSS — 見た目、デザイン。「どう見えるか」を決める。JavaScript — 動き、インタラクション。「どう動くか」を決める。この3つが組み合わさって、皆さんが普段見ているWebサイトができあがっています。",
+      "durationSec": 23,
+      "visual": {
+        "type": "remotion",
+        "component": "BulletDetailScreen",
+        "props": {
+          "title": "Webサイトの3要素",
+          "items": [
+            { "icon": "🏗️", "title": "HTML", "detail": "構造・骨組み。「何があるか」を決める", "color": "#6366f1" },
+            { "icon": "🎨", "title": "CSS", "detail": "見た目・デザイン。「どう見えるか」を決める", "color": "#6366f1" },
+            { "icon": "⚡", "title": "JavaScript", "detail": "動き・インタラクション。「どう動くか」を決める", "color": "#6366f1" }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 8,
+      "narration": "ちなみに、この講座ではHTMLとCSSを中心に学びます。JavaScriptについては深くは扱いませんが、心配しなくて大丈夫です。実は、HTMLとCSSだけでも十分にきれいなWebサイトは作れます。そして、動きが必要な部分はAIに手伝ってもらえますから。",
+      "durationSec": 20,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "info",
+          "title": "この講座のスコープ",
+          "body": "HTMLとCSSを中心に学習します。JavaScriptはAIに任せるアプローチで、きれいなWebサイトを作ることができます。"
+        }
+      }
+    },
+    {
+      "scene_id": 9,
+      "narration": "さて、ここからが面白いところです。「HTMLとCSSとJavaScriptでできている」と言われても、実感がわかないですよね。じゃあ、実際に確かめてみましょう。ここからはブラウザの画面に切り替えますね。",
+      "durationSec": 15,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🔍",
+          "headline": "実際に確かめてみましょう",
+          "detail": "ブラウザの開発者ツールでWebサイトの中身を覗く",
+          "color": "#6366f1"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 10,
+      "narration": "今、Chromeブラウザを開いています。まず、Yahoo! JAPANのサイトにアクセスしてみましょう。皆さんにもぜひ一緒にやってみてほしいのですが、今日のところは画面を見ているだけでも大丈夫です。次の講義で実際に手を動かしますから、今は「へえ、こうなってるんだ」という感覚をつかんでもらえればOKです。では、Yahoo! JAPANのトップページが開きました。普段見慣れたページですよね。",
+      "durationSec": 28,
+      "visual": {
+        "type": "playwright",
+        "action": [
+          { "goto": "https://www.yahoo.co.jp" },
+          { "wait": 3000 }
+        ]
+      }
+    },
+    {
+      "scene_id": 11,
+      "narration": "ここで、キーボードのF12キーを押してみます。Macの方はCommand + Option + Iです。はい、画面の右側に何やらズラーっとコードのようなものが表示されましたね。これが開発者ツール、英語では「DevTools（デブツールズ）」と呼ばれるものです。怖がらなくて大丈夫ですよ。これはブラウザに最初から入っている機能で、Webサイトの中身を覗くための道具です。壊したりすることはありません。",
+      "durationSec": 27,
+      "visual": {
+        "type": "playwright",
+        "action": [
+          { "press": "F12" },
+          { "wait": 2000 }
+        ]
+      }
+    },
+    {
+      "scene_id": 12,
+      "narration": "この左側に表示されているのが、まさにHTMLです。タグと呼ばれる記号で構成されていて、ページの構造が全部ここに書かれています。ちょっとマウスを動かしてみますね。このHTMLの行にカーソルを合わせると……ほら、左側のページの対応する部分がハイライトされるの、わかりますか？この行がページのこの部分に対応している。この行がこの画像に対応している。HTMLとページが一対一で対応しているんですね。",
+      "durationSec": 28,
+      "visual": {
+        "type": "playwright",
+        "action": [
+          { "highlight": "body", "note": "HTMLがページの構造を定義している" },
+          { "wait": 2000 },
+          { "highlight": "h1", "note": "この行 = ページのこの部分" },
+          { "wait": 2000 }
+        ]
+      }
+    },
+    {
+      "scene_id": 13,
+      "narration": "今度は、少しAppleのサイトも見てみましょう。Appleのサイトって、すごくきれいでスタイリッシュですよね。でも中身を開発者ツールで見てみると……こちらもHTMLとCSSでできています。構造はHTMLで、あのおしゃれな見た目はCSSで実現しているわけです。",
+      "durationSec": 20,
+      "visual": {
+        "type": "playwright",
+        "action": [
+          { "goto": "https://www.apple.com/jp/" },
+          { "wait": 3000 },
+          { "press": "F12" },
+          { "wait": 2000 }
+        ]
+      }
+    },
+    {
+      "scene_id": 14,
+      "narration": "さて、ここで一つ面白い実験をしてみましょう。開発者ツールの中に「Styles」というタブがあります。ここに表示されているのがCSSです。このCSSを……ちょっと一時的に無効にしてみますね。見てください。一瞬でページの見た目が変わりました。",
+      "durationSec": 20,
+      "visual": {
+        "type": "playwright",
+        "action": [
+          { "highlight": ".styles-panel", "note": "ここに表示されているのがCSS" },
+          { "wait": 2000 },
+          { "focus": ".styles-panel" },
+          { "wait": 1000 }
+        ]
+      }
+    },
+    {
+      "scene_id": 15,
+      "narration": "おしゃれだったレイアウトが崩れて、文字と画像がただ上から下に並んでいるだけの状態になりましたよね。装飾が全部なくなって、内容だけが残っている。これが「HTMLだけの状態」です。骨組みだけの家ですね。CSSという服を脱がせると、こうなるわけです。もう一度CSSを有効にすると……はい、元のきれいなページに戻りました。どうですか？CSSの力、すごいですよね。同じHTMLでも、CSSが変わるだけで見た目がまったく違うものになるんです。",
+      "durationSec": 28,
+      "visual": {
+        "type": "remotion",
+        "component": "BeforeAfterScreen",
+        "props": {
+          "title": "CSSの力",
+          "before": {
+            "label": "CSSなし（HTMLのみ）",
+            "points": [
+              "文字と画像が上から下に並ぶだけ",
+              "装飾・レイアウトが一切ない",
+              "骨組みだけの状態"
+            ]
+          },
+          "after": {
+            "label": "CSS適用後",
+            "points": [
+              "美しいレイアウトに変わる",
+              "色・フォント・余白が整う",
+              "普段見ているページになる"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 16,
+      "narration": "さて、もう一つ大事なことをお伝えします。今見てきたHTML、CSS、JavaScript。これら全部、実はただのテキストファイルです。特別なソフトでしか開けないファイルではありません。皆さんがパソコンに入っているメモ帳やテキストエディタで開ける、普通のテキストファイルです。",
+      "durationSec": 22,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "📄",
+          "headline": "全部テキストファイル",
+          "detail": "メモ帳で開ける、普通のテキストファイル",
+          "color": "#6366f1"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 17,
+      "narration": "HTMLは「.html」という拡張子のテキストファイル。CSSは「.css」という拡張子のテキストファイル。JavaScriptは「.js」という拡張子のテキストファイル。つまりWebサイトを作るということは、突き詰めて言えば、テキストファイルを書くことなんです。",
+      "durationSec": 20,
+      "visual": {
+        "type": "remotion",
+        "component": "IconListScreen",
+        "props": {
+          "title": "すべてテキストファイル",
+          "items": [
+            { "icon": "🏗️", "title": ".html ファイル", "description": "HTMLを書いたテキストファイル", "color": "#6366f1" },
+            { "icon": "🎨", "title": ".css ファイル", "description": "CSSを書いたテキストファイル", "color": "#6366f1" },
+            { "icon": "⚡", "title": ".js ファイル", "description": "JavaScriptを書いたテキストファイル", "color": "#6366f1" }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 18,
+      "narration": "これ、すごく大事なポイントです。「プログラミング」や「Web開発」って聞くと、何か特別な能力が必要なんじゃないかと思いがちですが、やっていることはテキストファイルを書くこと。しかも、この講座ではそのテキストの大部分をAIに書いてもらいます。皆さんの役割は、AIが書いたテキストを読んで理解して、必要なところを直すこと。それがこの講座のアプローチです。",
+      "durationSec": 25,
+      "visual": {
+        "type": "remotion",
+        "component": "TwoColumnScreen",
+        "props": {
+          "title": "この講座のアプローチ",
+          "left": {
+            "title": "AIがやること",
+            "body": "テキストファイル（HTML・CSS・JS）を書く",
+            "icon": "🤖",
+            "color": "#6366f1"
+          },
+          "right": {
+            "title": "皆さんがやること",
+            "body": "AIが書いたテキストを読んで理解し、必要なところを直す",
+            "icon": "👤",
+            "color": "#6366f1"
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 19,
+      "narration": "今日のポイントを3つ、振り返りましょう。1つ目。Webサイトは、HTML（構造）、CSS（見た目）、JavaScript（動き）の3つでできている。2つ目。開発者ツールを使えば、どんなWebサイトでもその中身を覗くことができる。3つ目。HTML、CSS、JavaScriptは全部ただのテキストファイル。特別な道具は要らない。",
+      "durationSec": 25,
+      "visual": {
+        "type": "remotion",
+        "component": "SummaryScreen",
+        "props": {
+          "title": "本日のまとめ",
+          "points": [
+            "WebサイトはHTML（構造）・CSS（見た目）・JS（動き）の3つでできている",
+            "開発者ツールでどんなサイトの中身も覗くことができる",
+            "HTML・CSS・JSはすべて普通のテキストファイル"
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 20,
+      "narration": "次の講義では、「AIが変えたWeb制作の風景」というテーマで、AIツールを使うとWebサイト制作がどう変わるのかを見ていきます。実際にAIにWebサイトを作らせるライブデモもお見せしますので、楽しみにしていてください。",
+      "durationSec": 17,
+      "visual": {
+        "type": "remotion",
+        "component": "EndScreen",
+        "props": {
+          "title": "お疲れ様でした",
+          "message": "Webサイトの3要素、バッチリ理解できましたか？",
+          "nextPreview": "AIが変えたWeb制作の風景"
+        },
+        "transition": {
+          "exit": "zoom"
+        }
+      }
+    }
+  ]
+}
