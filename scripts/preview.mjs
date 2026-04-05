@@ -85,8 +85,8 @@ console.log(`   씬: ${sceneId} (${componentName})`);
 console.log(`   프레임: ${frameNum}`);
 console.log(`   Props: ${JSON.stringify(componentProps).substring(0, 100)}...`);
 
-// 출력 디렉토리 확인
-const outputDir = join(ROOT, 'output', 'preview');
+// 출력 디렉토리 — 강의별 하위 폴더로 구분
+const outputDir = join(ROOT, 'output', 'preview', lectureData.lecture_id);
 if (!existsSync(outputDir)) {
   mkdirSync(outputDir, { recursive: true });
 }
