@@ -29,6 +29,8 @@ import {
   IconListScreen,
   VennDiagramScreen,
   HierarchyScreen,
+  BrowserMockScreen,
+  ImageScreen,
 } from './components';
 import videoConfig from '../../../config/video.json';
 
@@ -69,6 +71,8 @@ const COMPONENT_MAP: Record<string, React.FC<any>> = {
   IconListScreen,
   VennDiagramScreen,
   HierarchyScreen,
+  BrowserMockScreen,
+  ImageScreen,
 };
 
 // Type definitions
@@ -134,8 +138,18 @@ const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDura
           ? COMPONENT_MAP[scene.visual.component] || DefaultScreen
           : null;
 
+        const screenshotUrl = staticFile(`screenshots/${lectureData.lecture_id}/scene-${scene.scene_id}.png`);
+        const screenshotVisual = scene.visual as any;
+
         const visualContent = scene.visual.type === 'playwright' ? (
           <Video src={captureUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        ) : scene.visual.type === 'screenshot' ? (
+          <ImageScreen
+            src={screenshotUrl}
+            title={screenshotVisual.title}
+            description={screenshotVisual.description}
+            layout={screenshotVisual.layout}
+          />
         ) : Component ? (
           <Component {...(scene.visual.props || {})} componentName={scene.visual.component} />
         ) : (

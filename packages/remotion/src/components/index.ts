@@ -26,3 +26,5 @@ export { NumberedListScreen } from './NumberedListScreen';
 export { IconListScreen } from './IconListScreen';
 export { VennDiagramScreen } from './VennDiagramScreen';
 export { HierarchyScreen } from './HierarchyScreen';
+export { BrowserMockScreen } from './BrowserMockScreen';
+export { ImageScreen } from './ImageScreen';

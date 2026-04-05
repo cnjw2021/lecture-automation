@@ -6,6 +6,7 @@ import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
 export class FileLectureRepository implements ILectureRepository {
   private audioBaseDir = config.paths.audio;
   private captureBaseDir = config.paths.captures;
+  private screenshotBaseDir = config.paths.screenshots;
 
   async saveAudio(lectureId: string, sceneId: number, audioBuffer: Buffer): Promise<void> {
     const dir = path.join(this.audioBaseDir, lectureId);
@@ -60,5 +61,14 @@ export class FileLectureRepository implements ILectureRepository {
     await fs.ensureDir(dir);
     const filePath = path.join(dir, `scene-${sceneId}.webm`);
     await fs.writeFile(filePath, videoBuffer);
+  }
+
+  async existsScreenshot(lectureId: string, sceneId: number): Promise<boolean> {
+    const filePath = path.join(this.screenshotBaseDir, lectureId, `scene-${sceneId}.png`);
+    return await fs.pathExists(filePath);
+  }
+
+  getScreenshotPath(lectureId: string, sceneId: number): string {
+    return path.join(this.screenshotBaseDir, lectureId, `scene-${sceneId}.png`);
   }
 }

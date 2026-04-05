@@ -34,7 +34,17 @@ export interface PlaywrightVisual {
   transition?: TransitionConfig;
 }
 
-export type VisualConfig = RemotionVisual | PlaywrightVisual;
+export interface ScreenshotVisual {
+  type: 'screenshot';
+  url: string;
+  title?: string;
+  description?: string;
+  layout?: 'left' | 'right' | 'full';
+  waitMs?: number;
+  transition?: TransitionConfig;
+}
+
+export type VisualConfig = RemotionVisual | PlaywrightVisual | ScreenshotVisual;
 
 export interface Scene {
   scene_id: number;
