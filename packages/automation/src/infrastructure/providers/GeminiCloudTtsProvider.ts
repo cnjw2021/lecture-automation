@@ -1,6 +1,7 @@
 import * as crypto from 'crypto';
 import * as fs from 'fs';
 import { IAudioProvider, GenerateAudioOptions, AudioGenerateResult, AudioConfig } from '../../domain/interfaces/IAudioProvider';
+import { pcmToWav } from './AudioUtils';
 
 interface ServiceAccountKey {
   client_email: string;
@@ -73,31 +74,6 @@ export class GeminiCloudTtsProvider implements IAudioProvider {
     this.accessToken = result.access_token;
     this.tokenExpiresAt = Date.now() + (result.expires_in - 60) * 1000;
     return this.accessToken!;
-  }
-
-  private pcmToWav(pcmData: Buffer, sampleRate: number): { buffer: Buffer; durationSec: number } {
-    const channels = 1;
-    const sampleWidth = 2;
-    const dataSize = pcmData.length;
-    const header = Buffer.alloc(44);
-
-    header.write('RIFF', 0);
-    header.writeUInt32LE(36 + dataSize, 4);
-    header.write('WAVE', 8);
-    header.write('fmt ', 12);
-    header.writeUInt32LE(16, 16);
-    header.writeUInt16LE(1, 20);
-    header.writeUInt16LE(channels, 22);
-    header.writeUInt32LE(sampleRate, 24);
-    header.writeUInt32LE(sampleRate * channels * sampleWidth, 28);
-    header.writeUInt16LE(channels * sampleWidth, 32);
-    header.writeUInt16LE(sampleWidth * 8, 34);
-    header.write('data', 36);
-    header.writeUInt32LE(dataSize, 40);
-
-    const buffer = Buffer.concat([header, pcmData]);
-    const durationSec = dataSize / (sampleRate * channels * sampleWidth);
-    return { buffer, durationSec };
   }
 
   private async sleep(ms: number): Promise<void> {
@@ -178,7 +154,7 @@ export class GeminiCloudTtsProvider implements IAudioProvider {
         }
 
         const pcmBuffer = Buffer.from(result.audioContent, 'base64');
-        const { buffer, durationSec } = this.pcmToWav(pcmBuffer, sampleRate);
+        const { buffer, durationSec } = pcmToWav(pcmBuffer, this.audioConfig);
         console.log(`  ✅ 오디오 생성 완료 (${pcmBuffer.length} bytes, ${durationSec.toFixed(2)}초, Model: ${this.modelName}, Voice: ${this.voiceName})`);
         return { buffer, durationSec };
       } catch (error) {

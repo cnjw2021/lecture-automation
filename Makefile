@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install run run-force clean render-only preview tts-sample
+.PHONY: help install build run run-force regen-scene clean render-only preview tts-sample
 
 # 기본 변수 설정
 LECTURE ?= p1-01-01.json
@@ -20,6 +20,8 @@ help:
 	@echo "make preview SCENE=6 - 특정 씬의 프리뷰 이미지 생성 (PNG)"
 	@echo "make tts-sample      - 현재 프로바이더로 TTS 샘플 생성"
 	@echo "make tts-sample TTS=gemini_cloud_tts RATE=0.7 - 프로바이더/속도 지정"
+	@echo "make regen-scene LECTURE=xxx SCENE=5       - 특정 씬 오디오만 재생성"
+	@echo "make regen-scene LECTURE=xxx SCENE='5 12'  - 여러 씬 동시 재생성"
 	@echo "--------------------------------------------------"
 
 install:
@@ -30,13 +32,22 @@ build:
 	@echo "🔨 automation 패키지 빌드 중..."
 	npm run build -w packages/automation
 
-run: build
+run:
 	@echo "🚀 강의 자동화 파이프라인 시작: $(LECTURE)"
 	node $(ENGINE_PATH) $(LECTURE)
 
-run-force: build
+run-force:
 	@echo "🔄 강제 재생성 모드로 파이프라인 시작: $(LECTURE)"
 	FORCE=1 node $(ENGINE_PATH) $(LECTURE)
+
+regen-scene:
+	@echo "🔄 특정 Scene 재생성: $(LECTURE) / Scene $(SCENE)"
+	@LECTURE_ID=$$(node -e "const d=require('./data/$(LECTURE)'); console.log(d.lecture_id)"); \
+	for scene in $(SCENE); do \
+		echo "  🗑️  scene-$$scene.wav 삭제 중..."; \
+		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene.wav; \
+	done
+	node $(ENGINE_PATH) $(LECTURE)
 
 render-only:
 	@echo "🎬 Remotion 렌더링만 실행 중..."

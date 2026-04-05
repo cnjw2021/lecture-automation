@@ -9,7 +9,7 @@
       "language": "Japanese"
     },
     "google_cloud_tts": {
-      "speechRate": 0.85,
+      "speechRate": 1.0,
       "voiceName": "ja-JP-Chirp3-HD-Charon",
       "languageCode": "ja-JP"
     },
