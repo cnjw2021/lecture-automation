@@ -13,7 +13,7 @@
         "type": "remotion",
         "component": "BrowserMockScreen",
         "props": {
-          "url": "https://example.com",
+          "url": "https://www.google.com",
           "title": "ブラウザの画面",
           "description": "アドレスバーにURLが入力されている",
           "layout": "right",
@@ -27,7 +27,7 @@
       "narration": "これはオプションAのテストです。Playwrightが自動でURLにアクセスし、スクリーンショットを撮影して映像に埋め込みます。",
       "visual": {
         "type": "screenshot",
-        "url": "https://example.com",
+        "url": "https://www.google.com",
         "title": "ブラウザの画面（自動キャプチャ）",
         "description": "Playwrightが自動でキャプチャしました",
         "layout": "right",

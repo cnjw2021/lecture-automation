@@ -13,7 +13,7 @@ const URL_BAR_BG = '#ffffff';
 
 interface BrowserChromeProps {
   url: string;
-  /** 탭에 표시할 제목. 미지정 시 url 사용 */
+  /** 탭에 표시할 실제 페이지 제목. 미지정 시 URL 호스트명 사용 */
   tabTitle?: string;
   children: React.ReactNode;
 }
@@ -40,7 +40,8 @@ const NavButton: React.FC<{ children: React.ReactNode; disabled?: boolean }> = (
 );
 
 export const BrowserChrome: React.FC<BrowserChromeProps> = ({ url, tabTitle, children }) => {
-  const displayTitle = tabTitle || url;
+  const hostname = (() => { try { return new URL(url).hostname; } catch { return url; } })();
+  const displayTitle = tabTitle || hostname;
 
   return (
     <div

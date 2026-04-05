@@ -49,7 +49,7 @@ export const ImageScreen: React.FC<ImageScreenProps> = ({
 
   const imageContent = url ? (
     <div style={{ width: '100%', maxWidth }}>
-      <BrowserChrome url={url} tabTitle={title}>
+      <BrowserChrome url={url}>
         <Img src={resolvedSrc} style={{ width: '100%', height: 'auto', display: 'block' }} />
       </BrowserChrome>
     </div>

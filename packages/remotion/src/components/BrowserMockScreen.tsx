@@ -55,7 +55,7 @@ export const BrowserMockScreen: React.FC<BrowserMockScreenProps> = ({
       }}
     >
       <div style={{ width: '100%', maxWidth: layout === 'full' ? 1400 : 900 }}>
-        <BrowserChrome url={url} tabTitle={title}>
+        <BrowserChrome url={url}>
           {/* 목업 페이지 콘텐츠 */}
           <div
             style={{
