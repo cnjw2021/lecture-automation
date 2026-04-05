@@ -6,28 +6,40 @@ dotenv.config();
 
 const ROOT_DIR = path.join(__dirname, '../../../../../');
 
-export const config = {
-  active_audio_provider: process.env.AUDIO_PROVIDER || 'gemini',
+const getTtsJson = () => {
+  const ttsConfigPath = path.join(ROOT_DIR, 'config/tts.json');
+  if (!fs.existsSync(ttsConfigPath)) {
+    throw new Error(`config/tts.json 파일이 없습니다: ${ttsConfigPath}`);
+  }
+  return fs.readJsonSync(ttsConfigPath);
+};
 
-  providers: {
-    gemini: {
-      apiKey: process.env.GEMINI_API_KEY || '',
-      modelName: "gemini-2.5-flash-preview-tts",
-      voice: process.env.TTS_VOICE || "Kore",
-      language: process.env.TTS_LANGUAGE || "Japanese",
-    },
-    google_cloud_tts: {
-      keyFilePath: process.env.GOOGLE_CLOUD_TTS_KEY_FILE || '',
-      voiceName: process.env.GOOGLE_CLOUD_TTS_VOICE || 'ja-JP-Chirp3-HD-Kore',
-      languageCode: process.env.GOOGLE_CLOUD_TTS_LANGUAGE_CODE || 'ja-JP',
-    },
-    gemini_cloud_tts: {
-      keyFilePath: process.env.GOOGLE_CLOUD_TTS_KEY_FILE || '',
-      // modelName: process.env.GEMINI_CLOUD_TTS_MODEL || 'gemini-2.5-flash-tts',
-      modelName: process.env.GEMINI_CLOUD_TTS_MODEL || 'gemini-2.5-pro-tts',
-      voiceName: process.env.GEMINI_CLOUD_TTS_VOICE || 'Orus',
-      languageCode: process.env.GEMINI_CLOUD_TTS_LANGUAGE_CODE || 'ja-JP',
-    },
+export const config = {
+  get active_audio_provider() {
+    return getTtsJson().activeProvider;
+  },
+
+  get providers() {
+    const tts = getTtsJson();
+    return {
+      gemini: {
+        apiKey: process.env.GEMINI_API_KEY || '',
+        modelName: tts.providers.gemini.modelName,
+        voice: tts.providers.gemini.voice,
+        language: tts.providers.gemini.language,
+      },
+      google_cloud_tts: {
+        keyFilePath: process.env.GOOGLE_CLOUD_TTS_KEY_FILE || '',
+        voiceName: tts.providers.google_cloud_tts.voiceName,
+        languageCode: tts.providers.google_cloud_tts.languageCode,
+      },
+      gemini_cloud_tts: {
+        keyFilePath: process.env.GOOGLE_CLOUD_TTS_KEY_FILE || '',
+        modelName: tts.providers.gemini_cloud_tts.modelName,
+        voiceName: tts.providers.gemini_cloud_tts.voiceName,
+        languageCode: tts.providers.gemini_cloud_tts.languageCode,
+      },
+    };
   },
 
   paths: {
@@ -40,14 +52,19 @@ export const config = {
 
   getVideoConfig: () => {
     const videoConfigPath = path.join(ROOT_DIR, 'config/video.json');
-    if (fs.existsSync(videoConfigPath)) {
-      return fs.readJsonSync(videoConfigPath);
+    if (!fs.existsSync(videoConfigPath)) {
+      throw new Error(`config/video.json 파일이 없습니다: ${videoConfigPath}`);
     }
-    return { audio: { sampleRate: 24000, channels: 1, bitDepth: 16 }, resolution: { width: 1920, height: 1080 }, tts: { speechRate: 0.85 } };
+    return fs.readJsonSync(videoConfigPath);
   },
 
   getTtsConfig: () => {
-    const videoConfig = config.getVideoConfig();
-    return videoConfig.tts || { speechRate: 0.85, pauseBetweenSentences: 'short' };
-  }
+    const tts = getTtsJson();
+    const activeProvider = tts.activeProvider;
+    const providerConfig = tts.providers[activeProvider];
+    return {
+      speechRate: providerConfig.speechRate,
+      pauseBetweenSentences: tts.pauseBetweenSentences,
+    };
+  },
 };

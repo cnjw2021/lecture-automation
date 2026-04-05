@@ -1,7 +1,6 @@
 import * as crypto from 'crypto';
 import * as fs from 'fs';
-import { IAudioProvider, GenerateAudioOptions, AudioGenerateResult } from '../../domain/interfaces/IAudioProvider';
-import { config } from '../config';
+import { IAudioProvider, GenerateAudioOptions, AudioGenerateResult, AudioConfig } from '../../domain/interfaces/IAudioProvider';
 
 interface ServiceAccountKey {
   client_email: string;
@@ -15,16 +14,18 @@ export class GeminiCloudTtsProvider implements IAudioProvider {
   private modelName: string;
   private voiceName: string;
   private languageCode: string;
+  private audioConfig: AudioConfig;
   private accessToken: string | null = null;
   private tokenExpiresAt = 0;
   private readonly baseUrl = 'https://texttospeech.googleapis.com/v1/text:synthesize';
 
-  constructor(keyFilePath: string, modelName: string, voiceName: string, languageCode: string) {
+  constructor(keyFilePath: string, modelName: string, voiceName: string, languageCode: string, audioConfig: AudioConfig) {
     const raw = fs.readFileSync(keyFilePath, 'utf8');
     this.serviceAccount = JSON.parse(raw);
     this.modelName = modelName;
     this.voiceName = voiceName;
     this.languageCode = languageCode;
+    this.audioConfig = audioConfig;
   }
 
   private createJwt(): string {
@@ -123,16 +124,7 @@ export class GeminiCloudTtsProvider implements IAudioProvider {
     const maxRetries = 3;
     const baseDelayMs = 2000;
 
-    const videoConfig = config.getVideoConfig();
-    const sampleRate = videoConfig.audio?.sampleRate || 24000;
-    const ttsConfig = config.getTtsConfig();
-    const speechRate = ttsConfig.speechRate || 0.85;
-
-    const paceInstruction = speechRate <= 0.7
-      ? 'ゆっくり、はっきりと読み上げてください。'
-      : speechRate <= 0.85
-        ? '落ち着いたペースで、丁寧に読み上げてください。'
-        : '自然なペースで読み上げてください。';
+    const { sampleRate, speechRate } = this.audioConfig;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       if (attempt === 1) {
@@ -144,10 +136,7 @@ export class GeminiCloudTtsProvider implements IAudioProvider {
       }
 
       const payload = {
-        input: {
-          text,
-          prompt: paceInstruction,
-        },
+        input: { text },
         voice: {
           languageCode: this.languageCode,
           name: this.voiceName,
@@ -156,6 +145,7 @@ export class GeminiCloudTtsProvider implements IAudioProvider {
         audioConfig: {
           audioEncoding: 'LINEAR16',
           sampleRateHertz: sampleRate,
+          speakingRate: speechRate,
         },
       };
 

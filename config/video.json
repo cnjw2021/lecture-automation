@@ -10,10 +10,6 @@
     "bitDepth": 16
   },
   "scenePaddingSec": 1.5,
-  "tts": {
-    "speechRate": 0.85,
-    "pauseBetweenSentences": "short"
-  },
   "activeTemplate": "warm-cream",
   "templates": {
     "warm-cream": {
