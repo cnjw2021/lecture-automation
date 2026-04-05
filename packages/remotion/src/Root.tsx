@@ -146,6 +146,7 @@ const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDura
         ) : scene.visual.type === 'screenshot' ? (
           <ImageScreen
             src={screenshotPath}
+            url={screenshotVisual.url}
             title={screenshotVisual.title}
             description={screenshotVisual.description}
             layout={screenshotVisual.layout}

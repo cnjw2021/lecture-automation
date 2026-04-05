@@ -71,6 +71,7 @@ if (scene.visual.type === 'screenshot') {
   componentName = 'ImageScreen';
   componentProps = {
     src: `screenshots/${lectureData.lecture_id}/scene-${sceneId}.png`,
+    url: scene.visual.url,
     title: scene.visual.title,
     description: scene.visual.description,
     layout: scene.visual.layout || 'right',
