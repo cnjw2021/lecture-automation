@@ -23,8 +23,9 @@ export const config = {
     },
     gemini_cloud_tts: {
       keyFilePath: process.env.GOOGLE_CLOUD_TTS_KEY_FILE || '',
-      modelName: process.env.GEMINI_CLOUD_TTS_MODEL || 'gemini-2.5-flash-tts',
-      voiceName: process.env.GEMINI_CLOUD_TTS_VOICE || 'Kore',
+      // modelName: process.env.GEMINI_CLOUD_TTS_MODEL || 'gemini-2.5-flash-tts',
+      modelName: process.env.GEMINI_CLOUD_TTS_MODEL || 'gemini-2.5-pro-tts',
+      voiceName: process.env.GEMINI_CLOUD_TTS_VOICE || 'Orus',
       languageCode: process.env.GEMINI_CLOUD_TTS_LANGUAGE_CODE || 'ja-JP',
     },
   },
