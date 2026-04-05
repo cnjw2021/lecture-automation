@@ -1,7 +1,6 @@
 import * as crypto from 'crypto';
 import * as fs from 'fs';
-import { IAudioProvider, GenerateAudioOptions, AudioGenerateResult } from '../../domain/interfaces/IAudioProvider';
-import { config } from '../config';
+import { IAudioProvider, GenerateAudioOptions, AudioGenerateResult, AudioConfig } from '../../domain/interfaces/IAudioProvider';
 
 interface ServiceAccountKey {
   client_email: string;
@@ -13,15 +12,17 @@ export class GoogleCloudTtsProvider implements IAudioProvider {
   private serviceAccount: ServiceAccountKey;
   private voiceName: string;
   private languageCode: string;
+  private audioConfig: AudioConfig;
   private accessToken: string | null = null;
   private tokenExpiresAt = 0;
   private readonly baseUrl = 'https://texttospeech.googleapis.com/v1/text:synthesize';
 
-  constructor(keyFilePath: string, voiceName: string, languageCode: string) {
+  constructor(keyFilePath: string, voiceName: string, languageCode: string, audioConfig: AudioConfig) {
     const raw = fs.readFileSync(keyFilePath, 'utf8');
     this.serviceAccount = JSON.parse(raw);
     this.voiceName = voiceName;
     this.languageCode = languageCode;
+    this.audioConfig = audioConfig;
   }
 
   private createJwt(): string {
@@ -120,10 +121,7 @@ export class GoogleCloudTtsProvider implements IAudioProvider {
     const maxRetries = 3;
     const baseDelayMs = 2000;
 
-    const videoConfig = config.getVideoConfig();
-    const sampleRate = videoConfig.audio?.sampleRate || 24000;
-    const ttsConfig = config.getTtsConfig();
-    const speakingRate = ttsConfig.speechRate || 0.85;
+    const { sampleRate, speechRate: speakingRate } = this.audioConfig;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       if (attempt === 1) {

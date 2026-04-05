@@ -28,6 +28,15 @@ async function runAutomation(jsonFileName: string) {
   const providerName = config.active_audio_provider;
   let audioProvider: IAudioProvider;
 
+  const videoConfig = config.getVideoConfig();
+  const ttsConfig = config.getTtsConfig();
+  const audioConfig = {
+    sampleRate: videoConfig.audio.sampleRate,
+    channels: videoConfig.audio.channels,
+    bitDepth: videoConfig.audio.bitDepth,
+    speechRate: ttsConfig.speechRate || 0.85,
+  };
+
   if (providerName === 'gemini_cloud_tts') {
     const gcConfig = config.providers.gemini_cloud_tts;
     if (!gcConfig.keyFilePath) {
@@ -35,7 +44,7 @@ async function runAutomation(jsonFileName: string) {
       console.error('루트 디렉토리의 .env 파일에 Service Account JSON 키 파일 경로를 입력해 주세요.\n');
       process.exit(1);
     }
-    audioProvider = new GeminiCloudTtsProvider(gcConfig.keyFilePath, gcConfig.modelName, gcConfig.voiceName, gcConfig.languageCode);
+    audioProvider = new GeminiCloudTtsProvider(gcConfig.keyFilePath, gcConfig.modelName, gcConfig.voiceName, gcConfig.languageCode, audioConfig);
   } else if (providerName === 'google_cloud_tts') {
     const gcConfig = config.providers.google_cloud_tts;
     if (!gcConfig.keyFilePath) {
@@ -43,7 +52,7 @@ async function runAutomation(jsonFileName: string) {
       console.error('루트 디렉토리의 .env 파일에 Service Account JSON 키 파일 경로를 입력해 주세요.\n');
       process.exit(1);
     }
-    audioProvider = new GoogleCloudTtsProvider(gcConfig.keyFilePath, gcConfig.voiceName, gcConfig.languageCode);
+    audioProvider = new GoogleCloudTtsProvider(gcConfig.keyFilePath, gcConfig.voiceName, gcConfig.languageCode, audioConfig);
   } else {
     const geminiConfig = config.providers.gemini;
     if (!geminiConfig.apiKey || geminiConfig.apiKey === 'YOUR_GEMINI_API_KEY_HERE') {
@@ -51,7 +60,7 @@ async function runAutomation(jsonFileName: string) {
       console.error('루트 디렉토리의 .env 파일에 올바른 API 키를 입력해 주세요.\n');
       process.exit(1);
     }
-    audioProvider = new GeminiAudioProvider(geminiConfig.apiKey, geminiConfig.modelName, geminiConfig.voice, geminiConfig.language);
+    audioProvider = new GeminiAudioProvider(geminiConfig.apiKey, geminiConfig.modelName, geminiConfig.voice, geminiConfig.language, audioConfig);
   }
 
   console.log(`🔊 오디오 프로바이더: ${providerName}`);

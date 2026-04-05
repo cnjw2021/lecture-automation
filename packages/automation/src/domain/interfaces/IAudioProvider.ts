@@ -7,6 +7,13 @@ export interface AudioGenerateResult {
   durationSec: number;
 }
 
+export interface AudioConfig {
+  sampleRate: number;
+  channels: number;
+  bitDepth: number;
+  speechRate: number;
+}
+
 export interface IAudioProvider {
   generate(text: string, options?: GenerateAudioOptions): Promise<AudioGenerateResult>;
 }

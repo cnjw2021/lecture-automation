@@ -1,23 +1,23 @@
-import { IAudioProvider, GenerateAudioOptions, AudioGenerateResult } from '../../domain/interfaces/IAudioProvider';
-import { config } from '../config';
+import { IAudioProvider, GenerateAudioOptions, AudioGenerateResult, AudioConfig } from '../../domain/interfaces/IAudioProvider';
 
 export class GeminiAudioProvider implements IAudioProvider {
   private apiKey: string;
   private modelName: string;
   private voice: string;
   private language: string;
+  private audioConfig: AudioConfig;
   private baseUrl = "https://generativelanguage.googleapis.com/v1beta/models";
 
-  constructor(apiKey: string, modelName: string, voice: string, language: string) {
+  constructor(apiKey: string, modelName: string, voice: string, language: string, audioConfig: AudioConfig) {
     this.apiKey = apiKey;
     this.modelName = modelName;
     this.voice = voice;
     this.language = language;
+    this.audioConfig = audioConfig;
   }
 
   private pcmToWav(pcmData: Buffer): { buffer: Buffer, durationSec: number } {
-    const videoConfig = config.getVideoConfig();
-    const { sampleRate, channels, bitDepth } = videoConfig.audio;
+    const { sampleRate, channels, bitDepth } = this.audioConfig;
     const sampleWidth = bitDepth / 8;
     const dataSize = pcmData.length;
     const header = Buffer.alloc(44);
@@ -78,8 +78,7 @@ export class GeminiAudioProvider implements IAudioProvider {
       const sanitizedText = text.length < 15 ? text + "..." : text;
       const url = `${this.baseUrl}/${this.modelName}:generateContent?key=${this.apiKey}`;
 
-      const ttsConfig = config.getTtsConfig();
-      const speechRate = ttsConfig.speechRate || 0.85;
+      const speechRate = this.audioConfig.speechRate;
       const paceInstruction = speechRate <= 0.8
         ? 'ゆっくり、はっきりと'
         : speechRate <= 0.9

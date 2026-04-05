@@ -13,7 +13,7 @@ import { config } from '../packages/automation/src/infrastructure/config';
 import { GeminiAudioProvider } from '../packages/automation/src/infrastructure/providers/GeminiAudioProvider';
 import { GoogleCloudTtsProvider } from '../packages/automation/src/infrastructure/providers/GoogleCloudTtsProvider';
 import { GeminiCloudTtsProvider } from '../packages/automation/src/infrastructure/providers/GeminiCloudTtsProvider';
-import { IAudioProvider } from '../packages/automation/src/domain/interfaces/IAudioProvider';
+import { IAudioProvider, AudioConfig } from '../packages/automation/src/domain/interfaces/IAudioProvider';
 
 // 실제 강의 스크립트(p1-01-01.json scene 1)에서 발췌 — 약 30초 분량
 const SAMPLE_TEXT =
@@ -24,7 +24,7 @@ const SAMPLE_TEXT =
   '最初にお伝えしたいことがあります。' +
   'この講座は、皆さんをプログラマーにするための講座ではありません。';
 
-function createProvider(name: string): IAudioProvider {
+function createProvider(name: string, audioConfig: AudioConfig): IAudioProvider {
   switch (name) {
     case 'gemini': {
       const c = config.providers.gemini;
@@ -32,7 +32,7 @@ function createProvider(name: string): IAudioProvider {
         console.error('❌ GEMINI_API_KEY가 설정되어 있지 않습니다.');
         process.exit(1);
       }
-      return new GeminiAudioProvider(c.apiKey, c.modelName, c.voice, c.language);
+      return new GeminiAudioProvider(c.apiKey, c.modelName, c.voice, c.language, audioConfig);
     }
     case 'google_cloud_tts': {
       const c = config.providers.google_cloud_tts;
@@ -40,7 +40,7 @@ function createProvider(name: string): IAudioProvider {
         console.error('❌ GOOGLE_CLOUD_TTS_KEY_FILE이 설정되어 있지 않습니다.');
         process.exit(1);
       }
-      return new GoogleCloudTtsProvider(c.keyFilePath, c.voiceName, c.languageCode);
+      return new GoogleCloudTtsProvider(c.keyFilePath, c.voiceName, c.languageCode, audioConfig);
     }
     case 'gemini_cloud_tts': {
       const c = config.providers.gemini_cloud_tts;
@@ -48,7 +48,7 @@ function createProvider(name: string): IAudioProvider {
         console.error('❌ GOOGLE_CLOUD_TTS_KEY_FILE이 설정되어 있지 않습니다.');
         process.exit(1);
       }
-      return new GeminiCloudTtsProvider(c.keyFilePath, c.modelName, c.voiceName, c.languageCode);
+      return new GeminiCloudTtsProvider(c.keyFilePath, c.modelName, c.voiceName, c.languageCode, audioConfig);
     }
     default:
       console.error(`❌ 알 수 없는 프로바이더: ${name}`);
@@ -71,6 +71,14 @@ async function main() {
   }
 
   const effectiveRate = config.getTtsConfig().speechRate;
+  const videoConfig = config.getVideoConfig();
+  const audioConfig = {
+    sampleRate: videoConfig.audio.sampleRate,
+    channels: videoConfig.audio.channels,
+    bitDepth: videoConfig.audio.bitDepth,
+    speechRate: effectiveRate,
+  };
+
   const outDir = path.join(config.paths.root, 'output', 'tts-samples');
   await fs.ensureDir(outDir);
 
@@ -80,7 +88,7 @@ async function main() {
   console.log(`   텍스트 길이: ${SAMPLE_TEXT.length}자`);
   console.log(`   출력 경로: ${outDir}\n`);
 
-  const provider = createProvider(providerName);
+  const provider = createProvider(providerName, audioConfig);
   const startTime = Date.now();
   const result = await provider.generate(SAMPLE_TEXT, { scene_id: 0 });
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
