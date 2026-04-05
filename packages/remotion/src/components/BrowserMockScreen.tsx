@@ -68,7 +68,7 @@ export const BrowserMockScreen: React.FC<BrowserMockScreenProps> = ({
       <div
         style={{
           width: '100%',
-          maxWidth: layout === 'full' ? 1400 : 620,
+          maxWidth: layout === 'full' ? 1400 : 900,
           borderRadius: 12,
           overflow: 'hidden',
           boxShadow: '0 20px 60px rgba(0,0,0,0.18)',
@@ -179,7 +179,7 @@ export const BrowserMockScreen: React.FC<BrowserMockScreenProps> = ({
         <div
           style={{
             background: '#ffffff',
-            height: layout === 'full' ? 400 : 260,
+            height: layout === 'full' ? 400 : 420,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

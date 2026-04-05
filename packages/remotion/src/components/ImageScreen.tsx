@@ -57,7 +57,7 @@ export const ImageScreen: React.FC<ImageScreenProps> = ({
           borderRadius: 16,
           overflow: 'hidden',
           boxShadow: '0 20px 60px rgba(0,0,0,0.18)',
-          maxWidth: layout === 'full' ? 1400 : 620,
+          maxWidth: layout === 'full' ? 1400 : 900,
           width: '100%',
         }}
       >
