@@ -31,6 +31,8 @@ export class ValidateLectureUseCase {
     'IconListScreen',
     'VennDiagramScreen',
     'HierarchyScreen',
+    'BrowserMockScreen',
+    'ImageScreen',
   ];
 
   execute(lecture: Lecture): void {
