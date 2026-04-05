@@ -22,3 +22,6 @@ remotion-project/out/
 # 디버깅 스크립트
 diagnose.js
 list-models.js
+
+# Claude Code 메모리
+memory/
