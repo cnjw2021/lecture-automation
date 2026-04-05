@@ -2,9 +2,10 @@
  * TTS 프로바이더별 샘플 음성 생성 스크립트
  *
  * 사용법:
- *   npx tsx scripts/tts-sample.ts [provider]
+ *   npx tsx scripts/tts-sample.ts [provider] [speechRate]
  *
  * provider: gemini | google_cloud_tts | gemini_cloud_tts (기본: 현재 AUDIO_PROVIDER)
+ * speechRate: 0.5~2.0 (기본: video.json의 tts.speechRate)
  */
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -58,11 +59,24 @@ function createProvider(name: string): IAudioProvider {
 
 async function main() {
   const providerName = process.argv[2] || config.active_audio_provider;
+  const speechRateArg = process.argv[3] ? parseFloat(process.argv[3]) : null;
+
+  // speechRate가 지정되면 video.json의 tts.speechRate를 런타임 오버라이드
+  if (speechRateArg !== null) {
+    const origGetTtsConfig = config.getTtsConfig;
+    config.getTtsConfig = () => {
+      const ttsConfig = origGetTtsConfig();
+      return { ...ttsConfig, speechRate: speechRateArg };
+    };
+  }
+
+  const effectiveRate = config.getTtsConfig().speechRate;
   const outDir = path.join(config.paths.root, 'output', 'tts-samples');
   await fs.ensureDir(outDir);
 
   console.log(`\n🎤 TTS 샘플 음성 생성`);
   console.log(`   프로바이더: ${providerName}`);
+  console.log(`   음성 속도: ${effectiveRate}`);
   console.log(`   텍스트 길이: ${SAMPLE_TEXT.length}자`);
   console.log(`   출력 경로: ${outDir}\n`);
 

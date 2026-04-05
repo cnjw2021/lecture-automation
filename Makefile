@@ -19,7 +19,7 @@ help:
 	@echo "make render-only     - 에셋이 있을 때 Remotion 렌더링만 실행"
 	@echo "make preview SCENE=6 - 특정 씬의 프리뷰 이미지 생성 (PNG)"
 	@echo "make tts-sample      - 현재 프로바이더로 TTS 샘플 생성"
-	@echo "make tts-sample TTS=gemini_cloud_tts - 특정 프로바이더 지정"
+	@echo "make tts-sample TTS=gemini_cloud_tts RATE=0.7 - 프로바이더/속도 지정"
 	@echo "--------------------------------------------------"
 
 install:
@@ -46,7 +46,7 @@ preview:
 
 tts-sample:
 	@echo "🎤 TTS 샘플 음성 생성 중..."
-	npx tsx scripts/tts-sample.ts $(TTS)
+	npx tsx scripts/tts-sample.ts $(TTS) $(RATE)
 
 clean:
 	@echo "🧹 생성된 에셋 및 결과물 정리 중..."
