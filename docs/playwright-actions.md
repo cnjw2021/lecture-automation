@@ -1,0 +1,229 @@
+# Playwright Action 명세서
+
+강의 JSON의 `"type": "playwright"` 씬에서 사용할 수 있는 모든 액션 목록입니다.
+
+## 사용 형식
+
+```json
+{
+  "scene_id": 10,
+  "narration": "...",
+  "visual": {
+    "type": "playwright",
+    "action": [
+      { "cmd": "액션명", "파라미터": "값" }
+    ]
+  }
+}
+```
+
+---
+
+## 액션 목록
+
+### `goto` — URL 이동
+
+지정한 URL로 이동합니다. 페이지 로드 완료(`load` 이벤트) 후 마우스 커서를 자동 주입합니다.
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `url` | string | ✅ | 이동할 URL |
+
+```json
+{ "cmd": "goto", "url": "https://www.yahoo.co.jp" }
+```
+
+> **주의**: 페이지 로드 후 커서(`__edu_cur__`)가 자동 삽입됩니다. `mouse_move`를 함께 사용해야 커서가 화면에 표시됩니다.
+
+---
+
+### `wait` — 대기
+
+지정한 시간(ms) 동안 대기합니다. 나레이션 타이밍 조절에 사용합니다.
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `ms` | number | ✅ | 대기 시간 (밀리초) |
+
+```json
+{ "cmd": "wait", "ms": 3000 }
+```
+
+---
+
+### `mouse_move` — 마우스 이동
+
+지정한 좌표로 마우스를 부드럽게 이동합니다 (30 steps). `goto` 이후 커서가 주입된 상태에서 커서가 화면에 표시됩니다.
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `to` | [x, y] | ✅ | 목적지 좌표 (뷰포트 기준, 1920×1080) |
+
+```json
+{ "cmd": "mouse_move", "to": [960, 400] }
+```
+
+> **좌표 참고**:
+> - 뷰포트: 1920 × 1080
+> - DevTools 패널 시작점 x ≈ 1190 (오른쪽 38%)
+> - DevTools HTML 트리 행 높이: 약 20px, 탭바 이후(y ≈ 45부터)
+
+---
+
+### `open_devtools` — DevTools 오버레이 표시
+
+실제 페이지 DOM을 파싱해 Chrome DevTools 외관의 패널을 페이지 오른쪽(38% 너비)에 주입합니다. 슬라이드인 애니메이션(0.25s) 포함.
+
+파라미터 없음.
+
+```json
+{ "cmd": "open_devtools" }
+```
+
+**패널 구성:**
+- 탭바: Elements(활성), Console, Sources, Network
+- 좌측: 실제 DOM 트리 (depth 4, 자식 5개 제한)
+- 우측: Styles 패널 (`id="__edu_devtools_styles__"`)
+
+> **재사용 팁**: `highlight` 액션으로 `#__edu_devtools_styles__`를 지정하면 Styles 패널을 강조할 수 있습니다.
+
+---
+
+### `highlight` — 요소 하이라이트
+
+CSS 셀렉터로 지정한 요소에 분홍색 아웃라인(`5px solid #ff007a`)을 적용합니다. 1500ms 후 자동으로 다음 액션으로 넘어갑니다.
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `selector` | string | ✅ | CSS 셀렉터 |
+| `note` | string | ❌ | 설명 (로그/참고용) |
+
+```json
+{ "cmd": "highlight", "selector": "body", "note": "HTML이 페이지 구조를 정의" }
+{ "cmd": "highlight", "selector": "#__edu_devtools_styles__", "note": "CSS 패널 강조" }
+```
+
+---
+
+### `disable_css` — CSS 비활성화
+
+페이지의 모든 스타일시트를 비활성화합니다. DevTools 오버레이(`__edu_*`)는 보호됩니다.
+
+파라미터 없음.
+
+```json
+{ "cmd": "disable_css" }
+```
+
+> **효과**: 페이지 레이아웃이 브라우저 기본 스타일만 남아 1990년대 스타일로 변합니다. "CSSを無効にしてみます" 시연에 사용합니다.
+
+---
+
+### `enable_css` — CSS 재활성화
+
+`disable_css`로 비활성화된 스타일시트를 전부 복원합니다.
+
+파라미터 없음.
+
+```json
+{ "cmd": "enable_css" }
+```
+
+---
+
+### `click` — 클릭
+
+지정한 요소를 클릭합니다.
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `selector` | string | ✅ | CSS 셀렉터 |
+
+```json
+{ "cmd": "click", "selector": "#submit-btn" }
+```
+
+---
+
+### `type` — 텍스트 입력
+
+지정한 입력 요소에 텍스트를 타이핑합니다 (딜레이 100ms/문자로 타이핑 효과 재현).
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `selector` | string | ✅ | 입력 요소 CSS 셀렉터 |
+| `key` | string | ✅ | 입력할 텍스트 |
+
+```json
+{ "cmd": "type", "selector": "#search-input", "key": "HTML とは" }
+```
+
+---
+
+### `press` — 키보드 키 입력
+
+키보드 키를 누릅니다.
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `key` | string | ✅ | 키 이름 (Playwright 키 이름 형식) |
+
+```json
+{ "cmd": "press", "key": "Enter" }
+{ "cmd": "press", "key": "Escape" }
+```
+
+> **주의**: `F12`는 headless 환경에서 DevTools를 열지 않습니다. DevTools 표시에는 `open_devtools`를 사용하세요.
+
+---
+
+### `focus` — 포커스
+
+지정한 요소에 포커스를 줍니다.
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `selector` | string | ✅ | CSS 셀렉터 |
+
+```json
+{ "cmd": "focus", "selector": "input[type='text']" }
+```
+
+---
+
+### `mouse_drag` — 마우스 드래그
+
+시작점에서 끝점으로 드래그합니다.
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `from` | [x, y] | ✅ | 드래그 시작 좌표 |
+| `to` | [x, y] | ✅ | 드래그 끝 좌표 |
+
+```json
+{ "cmd": "mouse_drag", "from": [200, 300], "to": [600, 300] }
+```
+
+---
+
+## 씬 타이밍 설계 가이드
+
+Playwright 녹화 시간이 오디오(`durationSec`)보다 짧으면 마지막 프레임이 고정됩니다.
+
+**총 액션 시간 ≥ `durationSec` - 2초** (마지막 2초는 자동 여백)
+
+```
+goto 소요 시간 예상치:
+  Yahoo Japan: ~4~8초 (load 기준)
+  Apple:       ~3~7초
+  일반 사이트: ~2~5초
+
+예시 (durationSec: 20):
+  goto(5s) + actions(11s) + 자동여백(2s) = 18s → 18 ≥ 18 ✅
+```
+
+---
+
+## 구현 위치
+
+`packages/automation/src/infrastructure/providers/PlaywrightVisualProvider.ts`
