@@ -151,34 +151,61 @@
     },
     {
       "scene_id": 10,
-      "narration": "では、ChromeブラウザでYahoo! JAPANのサイトにアクセスしてみましょう。皆さんにも一緒にやってみてほしいのですが、今日は画面を見ているだけでも大丈夫です。はい、Yahoo! JAPANのトップページが開きました。普段見慣れたページですよね。ここで、キーボードのF12キーを押してみます。Macの方はCommand + Option + Iです。はい、画面の右側にコードのようなものが表示されました。これが「開発者ツール」、英語で「DevTools（デブツールズ）」と呼ばれるものです。壊したりすることはないので安心してください。この左側に表示されているのが、まさにHTMLです。タグと呼ばれる記号で構成されていて、ページの構造が全部ここに書かれています。HTMLの行にマウスを合わせると、ページの対応する部分がハイライトされます。HTMLとページが一対一で対応しているんですね。",
-      "durationSec": 40,
+      "narration": "では、ChromeでYahoo! JAPANにアクセスしてみましょう。今日は画面を見ているだけで大丈夫です。次の講義で実際に手を動かしますから、今は感覚をつかんでもらえればOKです。Yahoo! JAPANのトップページが開きました。このような有名サイトも、HTML・CSS・JavaScriptの3つでできているんです。",
+      "durationSec": 20,
       "visual": {
         "type": "playwright",
         "action": [
           { "cmd": "goto", "url": "https://www.yahoo.co.jp" },
-          { "cmd": "mouse_move", "to": [960, 80], "note": "アドレスバー確認 - ページが開きました" },
-          { "cmd": "wait", "ms": 2000 },
-          { "cmd": "mouse_move", "to": [700, 350], "note": "ページ左側を眺める" },
-          { "cmd": "wait", "ms": 2000 },
-          { "cmd": "open_devtools", "note": "F12キーを押す" },
-          { "cmd": "mouse_move", "to": [1350, 200], "note": "DevTools HTMLツリー左パネルを見る" },
-          { "cmd": "wait", "ms": 8000 },
-          { "cmd": "mouse_move", "to": [1300, 300], "note": "HTMLツリー中段へ - この左側がHTMLです" },
-          { "cmd": "wait", "ms": 2000 },
-          { "cmd": "mouse_move", "to": [1260, 60], "note": "DevTools HTMLタグ行へ" },
+          { "cmd": "mouse_move", "to": [960, 80], "note": "アドレスバー確認" },
           { "cmd": "wait", "ms": 1000 },
-          { "cmd": "highlight", "selector": "body", "note": "bodyがページ全体に対応" },
-          { "cmd": "wait", "ms": 2000 },
-          { "cmd": "highlight", "selector": "img", "note": "この行がこの画像に対応" },
-          { "cmd": "wait", "ms": 8000 }
+          { "cmd": "mouse_move", "to": [700, 350], "note": "ページを眺める" },
+          { "cmd": "wait", "ms": 7000 }
         ]
       }
     },
     {
       "scene_id": 11,
-      "narration": "今度は、Appleのサイトも見てみましょう。Appleのサイトって、すごくきれいでスタイリッシュですよね。開発者ツールで中身を見てみると……こちらもHTMLとCSSでできています。構造はHTMLで、あのおしゃれな見た目はCSSで実現しているわけです。さて、ここでCSSを一時的に無効にしてみます。右側の「Styles」パネルに表示されているのがCSSです。見てください。一瞬でページの見た目が変わりました。おしゃれだったレイアウトが崩れて、文字と画像がただ上から下に並んでいるだけになりましたよね。これが「HTMLだけの状態」です。骨組みだけの家です。もう一度CSSを有効にすると……はい、元のきれいなページに戻りました。CSSの力、すごいですよね。",
-      "durationSec": 40,
+      "narration": "Yahoo! JAPANのページに戻って、F12キーを押してみます。Macの方はCommand + Option + Iです。はい、画面右側にコードのようなものが表示されました。これが「開発者ツール（DevTools）」です。ブラウザに標準で入っている機能で、Webサイトの中身を覗くための道具です。壊したりすることはありません。",
+      "durationSec": 24,
+      "visual": {
+        "type": "playwright",
+        "action": [
+          { "cmd": "goto", "url": "https://www.yahoo.co.jp" },
+          { "cmd": "mouse_move", "to": [700, 350], "note": "ページを見ている" },
+          { "cmd": "wait", "ms": 1500 },
+          { "cmd": "open_devtools", "note": "F12キーを押す" },
+          { "cmd": "mouse_move", "to": [1350, 200], "note": "DevToolsパネルを見る" },
+          { "cmd": "wait", "ms": 11000 }
+        ]
+      }
+    },
+    {
+      "scene_id": 12,
+      "narration": "さて、もう一度開発者ツールを開きます。この左側のパネルに表示されているのが、まさにHTMLです。タグと呼ばれる記号で構成されていて、ページの構造が全部ここに書かれています。マウスをHTMLの行に合わせると……ほら、ページの対応する部分がハイライトされます。HTMLとページが一対一で対応しているんですね。",
+      "durationSec": 28,
+      "visual": {
+        "type": "playwright",
+        "action": [
+          { "cmd": "goto", "url": "https://www.yahoo.co.jp" },
+          { "cmd": "open_devtools" },
+          { "cmd": "mouse_move", "to": [1350, 200], "note": "DevTools左パネル - HTMLです" },
+          { "cmd": "wait", "ms": 4000 },
+          { "cmd": "mouse_move", "to": [1300, 300], "note": "HTMLツリー中段へ" },
+          { "cmd": "wait", "ms": 2000 },
+          { "cmd": "mouse_move", "to": [1260, 60], "note": "HTMLタグ行へ" },
+          { "cmd": "wait", "ms": 1000 },
+          { "cmd": "highlight", "selector": "body", "note": "bodyがページ全体に対応" },
+          { "cmd": "wait", "ms": 2000 },
+          { "cmd": "highlight", "selector": "img", "note": "この行がこの画像に対応" },
+          { "cmd": "wait", "ms": 6000 }
+        ]
+      }
+    },
+    {
+      "scene_id": 13,
+      "narration": "今度はAppleのサイトを見てみましょう。すごくきれいでスタイリッシュですよね。開発者ツールで中身を見てみると……こちらもHTMLとCSSでできています。構造はHTMLで、あのおしゃれな見た目はCSSで実現しているわけです。",
+      "durationSec": 20,
       "visual": {
         "type": "playwright",
         "action": [
@@ -186,23 +213,49 @@
           { "cmd": "mouse_move", "to": [960, 400], "note": "Appleのページを眺める" },
           { "cmd": "wait", "ms": 3000 },
           { "cmd": "open_devtools" },
-          { "cmd": "mouse_move", "to": [1400, 200], "note": "DevToolsのHTMLを見る" },
-          { "cmd": "wait", "ms": 4000 },
+          { "cmd": "mouse_move", "to": [1350, 200], "note": "DevTools HTMLを見る" },
+          { "cmd": "wait", "ms": 6000 }
+        ]
+      }
+    },
+    {
+      "scene_id": 14,
+      "narration": "Appleのページに開発者ツールを開きます。右側の「Styles」パネルに表示されているのがCSSです。これを一時的に無効にしてみます。見てください！レイアウトが崩れて、HTMLだけの状態になりました。骨組みだけの家ですね。",
+      "durationSec": 20,
+      "visual": {
+        "type": "playwright",
+        "action": [
+          { "cmd": "goto", "url": "https://www.apple.com/jp/" },
+          { "cmd": "open_devtools" },
           { "cmd": "mouse_move", "to": [1820, 150], "note": "Stylesパネルへ移動" },
           { "cmd": "wait", "ms": 1500 },
           { "cmd": "highlight", "selector": "#__edu_devtools_styles__", "note": "CSSが表示されているStylesパネル" },
-          { "cmd": "wait", "ms": 1500 },
+          { "cmd": "wait", "ms": 2000 },
           { "cmd": "disable_css", "note": "CSSを無効化" },
-          { "cmd": "wait", "ms": 7000 },
+          { "cmd": "wait", "ms": 5000 }
+        ]
+      }
+    },
+    {
+      "scene_id": 15,
+      "narration": "いかがでしたか？このように、CSSを無効にするとレイアウトが崩れてしまいます。では、もう一度CSSを有効にすると……はい、元のきれいなページに戻りました！CSSの力、すごいですよね。",
+      "durationSec": 20,
+      "visual": {
+        "type": "playwright",
+        "action": [
+          { "cmd": "goto", "url": "https://www.apple.com/jp/" },
+          { "cmd": "open_devtools" },
+          { "cmd": "disable_css", "note": "前の状態を再現（即時）" },
+          { "cmd": "wait", "ms": 2000 },
           { "cmd": "enable_css", "note": "CSSを再有効化" },
           { "cmd": "wait", "ms": 9000 }
         ]
       }
     },
     {
-      "scene_id": 12,
-      "narration": "いかがでしたか？CSSを無効にするだけで、あのきれいなAppleのサイトが一瞬で崩れてしまいましたよね。装飾が全部なくなって、内容だけが残っている。骨組みだけの家にCSSという服を着せることで、あのおしゃれなデザインが生まれるわけです。同じHTMLでも、CSSが変わるだけで見た目がまったく違うものになる。これがWebデザインの面白さです。",
-      "durationSec": 24,
+      "scene_id": 16,
+      "narration": "どうですか？CSSの力、実感できましたか？HTMLで骨組みを作り、CSSで見た目をデザインする。同じHTMLでも、CSSが変わるだけで見た目がまったく違うものになります。これがWebデザインの面白さです。",
+      "durationSec": 22,
       "visual": {
         "type": "remotion",
         "component": "BeforeAfterScreen",
@@ -228,7 +281,7 @@
       }
     },
     {
-      "scene_id": 13,
+      "scene_id": 17,
       "narration": "さて、もう一つ大事なことをお伝えします。今見てきたHTML、CSS、JavaScript。これら全部、実はただのテキストファイルです。特別なソフトでしか開けないファイルではありません。皆さんがパソコンに入っているメモ帳やテキストエディタで開ける、普通のテキストファイルです。",
       "durationSec": 22,
       "visual": {
@@ -246,7 +299,7 @@
       }
     },
     {
-      "scene_id": 14,
+      "scene_id": 18,
       "narration": "HTMLは「.html」という拡張子のテキストファイル。CSSは「.css」という拡張子のテキストファイル。JavaScriptは「.js」という拡張子のテキストファイル。つまりWebサイトを作るということは、突き詰めて言えば、テキストファイルを書くことなんです。",
       "durationSec": 20,
       "visual": {
@@ -263,7 +316,7 @@
       }
     },
     {
-      "scene_id": 15,
+      "scene_id": 19,
       "narration": "これ、すごく大事なポイントです。「プログラミング」や「Web開発」って聞くと、何か特別な能力が必要なんじゃないかと思いがちですが、やっていることはテキストファイルを書くこと。しかも、この講座ではそのテキストの大部分をAIに書いてもらいます。皆さんの役割は、AIが書いたテキストを読んで理解して、必要なところを直すこと。それがこの講座のアプローチです。",
       "durationSec": 25,
       "visual": {
@@ -287,7 +340,7 @@
       }
     },
     {
-      "scene_id": 16,
+      "scene_id": 20,
       "narration": "今日のポイントを3つ、振り返りましょう。1つ目。Webサイトは、HTML（構造）、CSS（見た目）、JavaScript（動き）の3つでできている。2つ目。開発者ツールを使えば、どんなWebサイトでもその中身を覗くことができる。3つ目。HTML、CSS、JavaScriptは全部ただのテキストファイル。特別な道具は要らない。",
       "durationSec": 25,
       "visual": {
@@ -304,7 +357,7 @@
       }
     },
     {
-      "scene_id": 17,
+      "scene_id": 21,
       "narration": "次の講義では、「AIが変えたWeb制作の風景」というテーマで、AIツールを使うとWebサイト制作がどう変わるのかを見ていきます。実際にAIにWebサイトを作らせるライブデモもお見せしますので、楽しみにしていてください。",
       "durationSec": 17,
       "visual": {
