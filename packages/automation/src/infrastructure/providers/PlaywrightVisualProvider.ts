@@ -203,6 +203,12 @@ export class PlaywrightVisualProvider implements IVisualProvider {
                     </div>
                   </div>`;
 
+                // Chrome DevTools docked-right と同様に、ウェブサイト領域を左62%に縮小
+                document.documentElement.style.overflowX = 'hidden';
+                document.body.style.transition = 'margin-right 0.25s ease-out';
+                void document.body.offsetWidth; // reflow を強制してトランジションを発火
+                document.body.style.marginRight = '38vw';
+
                 document.body.appendChild(overlay);
               });
               await page.waitForTimeout(400);
