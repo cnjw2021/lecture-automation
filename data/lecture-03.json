@@ -151,99 +151,58 @@
     },
     {
       "scene_id": 10,
-      "narration": "今、Chromeブラウザを開いています。まず、Yahoo! JAPANのサイトにアクセスしてみましょう。皆さんにもぜひ一緒にやってみてほしいのですが、今日のところは画面を見ているだけでも大丈夫です。次の講義で実際に手を動かしますから、今は「へえ、こうなってるんだ」という感覚をつかんでもらえればOKです。では、Yahoo! JAPANのトップページが開きました。普段見慣れたページですよね。",
-      "durationSec": 28,
+      "narration": "では、ChromeブラウザでYahoo! JAPANのサイトにアクセスしてみましょう。皆さんにも一緒にやってみてほしいのですが、今日は画面を見ているだけでも大丈夫です。はい、Yahoo! JAPANのトップページが開きました。普段見慣れたページですよね。ここで、キーボードのF12キーを押してみます。Macの方はCommand + Option + Iです。はい、画面の右側にコードのようなものが表示されました。これが「開発者ツール」、英語で「DevTools（デブツールズ）」と呼ばれるものです。壊したりすることはないので安心してください。この左側に表示されているのが、まさにHTMLです。タグと呼ばれる記号で構成されていて、ページの構造が全部ここに書かれています。HTMLの行にマウスを合わせると、ページの対応する部分がハイライトされます。HTMLとページが一対一で対応しているんですね。",
+      "durationSec": 40,
       "visual": {
         "type": "playwright",
         "action": [
           { "cmd": "goto", "url": "https://www.yahoo.co.jp" },
-          { "cmd": "mouse_move", "to": [960, 80], "note": "アドレスバーを見る" },
+          { "cmd": "mouse_move", "to": [960, 80], "note": "アドレスバー確認 - ページが開きました" },
           { "cmd": "wait", "ms": 2000 },
           { "cmd": "mouse_move", "to": [700, 350], "note": "ページ左側を眺める" },
-          { "cmd": "wait", "ms": 3000 },
-          { "cmd": "mouse_move", "to": [400, 500], "note": "下部へ" },
-          { "cmd": "wait", "ms": 3000 },
-          { "cmd": "mouse_move", "to": [960, 300] },
-          { "cmd": "wait", "ms": 12000 }
-        ]
-      }
-    },
-    {
-      "scene_id": 11,
-      "narration": "ここで、キーボードのF12キーを押してみます。Macの方はCommand + Option + Iです。はい、画面の右側に何やらズラーっとコードのようなものが表示されましたね。これが開発者ツール、英語では「DevTools（デブツールズ）」と呼ばれるものです。怖がらなくて大丈夫ですよ。これはブラウザに最初から入っている機能で、Webサイトの中身を覗くための道具です。壊したりすることはありません。",
-      "durationSec": 27,
-      "visual": {
-        "type": "playwright",
-        "action": [
-          { "cmd": "goto", "url": "https://www.yahoo.co.jp" },
-          { "cmd": "mouse_move", "to": [960, 400] },
           { "cmd": "wait", "ms": 2000 },
           { "cmd": "open_devtools", "note": "F12キーを押す" },
-          { "cmd": "mouse_move", "to": [1400, 150], "note": "DevToolsパネルを見る" },
-          { "cmd": "wait", "ms": 16000 }
-        ]
-      }
-    },
-    {
-      "scene_id": 12,
-      "narration": "この左側に表示されているのが、まさにHTMLです。タグと呼ばれる記号で構成されていて、ページの構造が全部ここに書かれています。ちょっとマウスを動かしてみますね。このHTMLの行にカーソルを合わせると……ほら、左側のページの対応する部分がハイライトされるの、わかりますか？この行がページのこの部分に対応している。この行がこの画像に対応している。HTMLとページが一対一で対応しているんですね。",
-      "durationSec": 28,
-      "visual": {
-        "type": "playwright",
-        "action": [
-          { "cmd": "goto", "url": "https://www.yahoo.co.jp" },
-          { "cmd": "open_devtools" },
-          { "cmd": "mouse_move", "to": [600, 350], "note": "ページ左側を見ている" },
-          { "cmd": "wait", "ms": 2500 },
-          { "cmd": "mouse_move", "to": [1260, 50], "note": "DevTools htmlタグ行へ" },
-          { "cmd": "wait", "ms": 1500 },
-          { "cmd": "mouse_move", "to": [1275, 90], "note": "bodyタグ行へ移動" },
+          { "cmd": "mouse_move", "to": [1400, 200], "note": "DevToolsパネルを見る" },
+          { "cmd": "wait", "ms": 8000 },
+          { "cmd": "mouse_move", "to": [600, 350], "note": "ページ左側 - この左側がHTMLです" },
+          { "cmd": "wait", "ms": 2000 },
+          { "cmd": "mouse_move", "to": [1260, 60], "note": "DevTools HTMLタグ行へ" },
+          { "cmd": "wait", "ms": 1000 },
           { "cmd": "highlight", "selector": "body", "note": "bodyがページ全体に対応" },
-          { "cmd": "wait", "ms": 3000 },
-          { "cmd": "mouse_move", "to": [1290, 130], "note": "子要素の行へ移動" },
+          { "cmd": "wait", "ms": 2000 },
           { "cmd": "highlight", "selector": "img", "note": "この行がこの画像に対応" },
           { "cmd": "wait", "ms": 8000 }
         ]
       }
     },
     {
-      "scene_id": 13,
-      "narration": "今度は、少しAppleのサイトも見てみましょう。Appleのサイトって、すごくきれいでスタイリッシュですよね。でも中身を開発者ツールで見てみると……こちらもHTMLとCSSでできています。構造はHTMLで、あのおしゃれな見た目はCSSで実現しているわけです。",
-      "durationSec": 20,
+      "scene_id": 11,
+      "narration": "今度は、Appleのサイトも見てみましょう。Appleのサイトって、すごくきれいでスタイリッシュですよね。開発者ツールで中身を見てみると……こちらもHTMLとCSSでできています。構造はHTMLで、あのおしゃれな見た目はCSSで実現しているわけです。さて、ここでCSSを一時的に無効にしてみます。右側の「Styles」パネルに表示されているのがCSSです。見てください。一瞬でページの見た目が変わりました。おしゃれだったレイアウトが崩れて、文字と画像がただ上から下に並んでいるだけになりましたよね。これが「HTMLだけの状態」です。骨組みだけの家です。もう一度CSSを有効にすると……はい、元のきれいなページに戻りました。CSSの力、すごいですよね。",
+      "durationSec": 40,
       "visual": {
         "type": "playwright",
         "action": [
           { "cmd": "goto", "url": "https://www.apple.com/jp/" },
           { "cmd": "mouse_move", "to": [960, 400], "note": "Appleのページを眺める" },
-          { "cmd": "wait", "ms": 2500 },
-          { "cmd": "open_devtools", "note": "DevToolsを開く" },
-          { "cmd": "mouse_move", "to": [1400, 200], "note": "DevToolsのHTMLを見る" },
-          { "cmd": "wait", "ms": 7000 }
-        ]
-      }
-    },
-    {
-      "scene_id": 14,
-      "narration": "さて、ここで一つ面白い実験をしてみましょう。開発者ツールの中に「Styles」というタブがあります。ここに表示されているのがCSSです。このCSSを……ちょっと一時的に無効にしてみますね。見てください。一瞬でページの見た目が変わりました。",
-      "durationSec": 20,
-      "visual": {
-        "type": "playwright",
-        "action": [
-          { "cmd": "goto", "url": "https://www.apple.com/jp/" },
+          { "cmd": "wait", "ms": 3000 },
           { "cmd": "open_devtools" },
+          { "cmd": "mouse_move", "to": [1400, 200], "note": "DevToolsのHTMLを見る" },
+          { "cmd": "wait", "ms": 4000 },
           { "cmd": "mouse_move", "to": [1820, 150], "note": "Stylesパネルへ移動" },
-          { "cmd": "wait", "ms": 2000 },
-          { "cmd": "highlight", "selector": "#__edu_devtools_styles__", "note": "CSSが表示されているパネル" },
-          { "cmd": "wait", "ms": 2000 },
-          { "cmd": "disable_css", "note": "CSSを無効化 → レイアウト崩壊" },
-          { "cmd": "wait", "ms": 6000 }
+          { "cmd": "wait", "ms": 1500 },
+          { "cmd": "highlight", "selector": "#__edu_devtools_styles__", "note": "CSSが表示されているStylesパネル" },
+          { "cmd": "wait", "ms": 1500 },
+          { "cmd": "disable_css", "note": "CSSを無効化" },
+          { "cmd": "wait", "ms": 7000 },
+          { "cmd": "enable_css", "note": "CSSを再有効化" },
+          { "cmd": "wait", "ms": 9000 }
         ]
       }
     },
     {
-      "scene_id": 15,
-      "narration": "おしゃれだったレイアウトが崩れて、文字と画像がただ上から下に並んでいるだけの状態になりましたよね。装飾が全部なくなって、内容だけが残っている。これが「HTMLだけの状態」です。骨組みだけの家ですね。CSSという服を脱がせると、こうなるわけです。もう一度CSSを有効にすると……はい、元のきれいなページに戻りました。どうですか？CSSの力、すごいですよね。同じHTMLでも、CSSが変わるだけで見た目がまったく違うものになるんです。",
-      "durationSec": 28,
+      "scene_id": 12,
+      "narration": "いかがでしたか？CSSを無効にするだけで、あのきれいなAppleのサイトが一瞬で崩れてしまいましたよね。装飾が全部なくなって、内容だけが残っている。骨組みだけの家にCSSという服を着せることで、あのおしゃれなデザインが生まれるわけです。同じHTMLでも、CSSが変わるだけで見た目がまったく違うものになる。これがWebデザインの面白さです。",
+      "durationSec": 24,
       "visual": {
         "type": "remotion",
         "component": "BeforeAfterScreen",
@@ -269,7 +228,7 @@
       }
     },
     {
-      "scene_id": 16,
+      "scene_id": 13,
       "narration": "さて、もう一つ大事なことをお伝えします。今見てきたHTML、CSS、JavaScript。これら全部、実はただのテキストファイルです。特別なソフトでしか開けないファイルではありません。皆さんがパソコンに入っているメモ帳やテキストエディタで開ける、普通のテキストファイルです。",
       "durationSec": 22,
       "visual": {
@@ -287,7 +246,7 @@
       }
     },
     {
-      "scene_id": 17,
+      "scene_id": 14,
       "narration": "HTMLは「.html」という拡張子のテキストファイル。CSSは「.css」という拡張子のテキストファイル。JavaScriptは「.js」という拡張子のテキストファイル。つまりWebサイトを作るということは、突き詰めて言えば、テキストファイルを書くことなんです。",
       "durationSec": 20,
       "visual": {
@@ -304,7 +263,7 @@
       }
     },
     {
-      "scene_id": 18,
+      "scene_id": 15,
       "narration": "これ、すごく大事なポイントです。「プログラミング」や「Web開発」って聞くと、何か特別な能力が必要なんじゃないかと思いがちですが、やっていることはテキストファイルを書くこと。しかも、この講座ではそのテキストの大部分をAIに書いてもらいます。皆さんの役割は、AIが書いたテキストを読んで理解して、必要なところを直すこと。それがこの講座のアプローチです。",
       "durationSec": 25,
       "visual": {
@@ -328,7 +287,7 @@
       }
     },
     {
-      "scene_id": 19,
+      "scene_id": 16,
       "narration": "今日のポイントを3つ、振り返りましょう。1つ目。Webサイトは、HTML（構造）、CSS（見た目）、JavaScript（動き）の3つでできている。2つ目。開発者ツールを使えば、どんなWebサイトでもその中身を覗くことができる。3つ目。HTML、CSS、JavaScriptは全部ただのテキストファイル。特別な道具は要らない。",
       "durationSec": 25,
       "visual": {
@@ -345,7 +304,7 @@
       }
     },
     {
-      "scene_id": 20,
+      "scene_id": 17,
       "narration": "次の講義では、「AIが変えたWeb制作の風景」というテーマで、AIツールを使うとWebサイト制作がどう変わるのかを見ていきます。実際にAIにWebサイトを作らせるライブデモもお見せしますので、楽しみにしていてください。",
       "durationSec": 17,
       "visual": {
