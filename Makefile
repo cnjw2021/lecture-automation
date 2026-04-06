@@ -64,6 +64,8 @@ regen-scene:
 		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene.wav; \
 		echo "  🗑️  scene-$$scene.mp4 클립 삭제 중..."; \
 		rm -f $(OUTPUT_DIR)/clips/$$LECTURE_ID/scene-$$scene.mp4; \
+		echo "  🗑️  scene-$$scene.webm 캡처 삭제 중..."; \
+		rm -f packages/remotion/public/captures/$$LECTURE_ID/scene-$$scene.webm; \
 	done
 	node $(ENGINE_PATH) $(LECTURE)
 
