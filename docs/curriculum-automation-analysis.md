@@ -35,7 +35,7 @@
 07  HTML基本構造              ✅ Playwright (CodePen 활용)
 ```
 
-**PART 2 (3.5h) — HTML**
+**PART 2 (3h) — HTML**
 ```
 08  タグの約束                 ✅ Playwright (CodePen)
 09  テキストタグ               ✅ Playwright (CodePen)
@@ -47,7 +47,7 @@
 15  まとめ                     ✅ PPT (Remotion 슬라이드)
 ```
 
-**PART 3 (4h) — CSS**
+**PART 3 (3h45m) — CSS**
 ```
 16  CSSの仕組み               ✅ Playwright (CodePen CSS패인)
 17  セレクタ                   ✅ Playwright (CodePen)
@@ -61,7 +61,7 @@
 25  まとめ                     ✅ PPT (Remotion 슬라이드)
 ```
 
-**PART 4 (6h) — 실전 프로젝트**
+**PART 4 (5h40m) — 실전 프로젝트**
 ```
 26  AIツールガイド(前편)        ✅ PPT + Playwright (Claude/ChatGPT 데모)
 27  AIツールガイド(後편)        ✅ PPT + Playwright (StackBlitz 입문)
@@ -77,7 +77,7 @@
 37  総復習                     ✅ PPT (Remotion 슬라이드)
 ```
 
-**PART 5 (4h) — 배포·운용**
+**PART 5 (3h50m) — 배포·운용**
 ```
 38  GitHub Web                ✅ Playwright (StackBlitz → GitHub 연동)
 39  GitHub Pages + Netlify     ✅ Playwright (모두 브라우저)
