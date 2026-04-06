@@ -168,7 +168,7 @@
       "visual": {
         "type": "playwright",
         "action": [
-          { "cmd": "press", "key": "F12" },
+          { "cmd": "open_devtools" },
           { "cmd": "wait", "ms": 2000 }
         ]
       }
@@ -196,7 +196,7 @@
         "action": [
           { "cmd": "goto", "url": "https://www.apple.com/jp/" },
           { "cmd": "wait", "ms": 3000 },
-          { "cmd": "press", "key": "F12" },
+          { "cmd": "open_devtools" },
           { "cmd": "wait", "ms": 2000 }
         ]
       }
@@ -208,9 +208,8 @@
       "visual": {
         "type": "playwright",
         "action": [
-          { "cmd": "highlight", "selector": ".styles-panel", "note": "ここに表示されているのがCSS" },
+          { "cmd": "highlight", "selector": "#__edu_devtools_styles__", "note": "ここに表示されているのがCSS" },
           { "cmd": "wait", "ms": 2000 },
-          { "cmd": "focus", "selector": ".styles-panel" },
           { "cmd": "wait", "ms": 1000 }
         ]
       }
