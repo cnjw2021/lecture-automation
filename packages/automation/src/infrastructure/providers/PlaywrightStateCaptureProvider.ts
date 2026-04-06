@@ -288,7 +288,23 @@ export class PlaywrightStateCaptureProvider {
         // DevTools는 evaluate로 주입 후 스크린샷
         await page.evaluate(() => {
           if (document.getElementById('__edu_devtools__')) return;
-          // 간소화된 DevTools 패널 (실제 렌더링은 PlaywrightVisualProvider의 것과 동일)
+          // サイト表示領域を左側62%に制限するラッパー
+          if (!document.getElementById('__edu_site_wrapper__')) {
+            const siteWidthPx = Math.round(window.innerWidth * 0.62);
+            const wrapper = document.createElement('div');
+            wrapper.id = '__edu_site_wrapper__';
+            wrapper.style.cssText = [
+              'position:fixed', 'left:0', 'top:0',
+              'width:' + siteWidthPx + 'px', 'height:100vh',
+              'overflow-y:auto', 'overflow-x:hidden', 'z-index:1',
+            ].join(';');
+            while (document.body.firstChild) {
+              wrapper.appendChild(document.body.firstChild);
+            }
+            document.body.appendChild(wrapper);
+            document.body.style.overflow = 'hidden';
+            document.body.style.margin = '0';
+          }
           const overlay = document.createElement('div');
           overlay.id = '__edu_devtools__';
           overlay.style.cssText = [
@@ -297,12 +313,6 @@ export class PlaywrightStateCaptureProvider {
             'box-shadow:-4px 0 20px rgba(0,0,0,0.7)',
           ].join(';');
           overlay.innerHTML = '<div style="color:#9aa0a6;padding:12px;font-family:monospace;font-size:12px">Elements panel</div>';
-          if (!document.getElementById('__edu_viewport_resize__')) {
-            const rs = document.createElement('style');
-            rs.id = '__edu_viewport_resize__';
-            rs.textContent = 'html { max-width: 62vw; overflow-x: hidden; }';
-            document.head.appendChild(rs);
-          }
           document.body.appendChild(overlay);
         });
         await page.waitForTimeout(300);

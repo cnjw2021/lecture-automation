@@ -221,20 +221,25 @@ export class PlaywrightVisualProvider implements IVisualProvider {
                     </div>
                   </div>`;
 
-                // Chrome DevTools docked-right と同様に、html要素を62vw幅に制限する
-                // margin-right は body に width:100% が指定されているサイトでは効果がないため、
-                // max-width を使って html 要素そのものを縮小する方式を採用
-                if (!document.getElementById('__edu_viewport_resize__')) {
-                  const rs = document.createElement('style');
-                  rs.id = '__edu_viewport_resize__';
-                  // まず 100vw で初期状態を確定してトランジションを有効化
-                  rs.textContent = 'html { max-width: 100vw; overflow-x: hidden; transition: max-width 0.25s ease-out; }';
-                  document.head.appendChild(rs);
-                  void document.documentElement.offsetWidth; // reflow
-                  // 次フレームで 62vw へアニメーション
-                  requestAnimationFrame(() => requestAnimationFrame(() => {
-                    rs.textContent = 'html { max-width: 62vw; overflow-x: hidden; transition: max-width 0.25s ease-out; }';
-                  }));
+                // Chrome DevTools docked-right と同様に、ウェブサイト表示領域を左側62%に制限する。
+                // 既存の max-width 方式は position:fixed や 100vw 背景に無効だったため、
+                // body の子要素を固定幅ラッパーに移動する方式に変更。
+                if (!document.getElementById('__edu_site_wrapper__')) {
+                  const siteWidthPx = Math.round(window.innerWidth * 0.62);
+                  const wrapper = document.createElement('div');
+                  wrapper.id = '__edu_site_wrapper__';
+                  wrapper.style.cssText = [
+                    'position:fixed', 'left:0', 'top:0',
+                    'width:' + siteWidthPx + 'px', 'height:100vh',
+                    'overflow-y:auto', 'overflow-x:hidden', 'z-index:1',
+                  ].join(';');
+                  // body の既存子要素をラッパーに移動
+                  while (document.body.firstChild) {
+                    wrapper.appendChild(document.body.firstChild);
+                  }
+                  document.body.appendChild(wrapper);
+                  document.body.style.overflow = 'hidden';
+                  document.body.style.margin = '0';
                 }
 
                 document.body.appendChild(overlay);
