@@ -12,14 +12,14 @@ PART 2~5 실습 강의에서는 VS Code + 브라우저 조작이 중심이지만
 - **URL**: https://codepen.io
 - **일본어 지원**: UI 영어만. 다만 극히 심플하여 장벽 낮음
 - **무료 플랜**: 있음. HTML/CSS/JS 펜 작성·공유 무제한
-- **회원 가입**: 불필요(익명 펜 생성 가능). 저장 시 가입 필요(GitHub/Google 로그인 지원)
+- **회원 가입**: 펜 작성·저장에 로그인 필요(GitHub/Google 로그인 지원). 커리큘럼에서는 PART 1 초반에 계정 생성 단계를 포함
 - **특징**:
   - 3패인 구성(HTML / CSS / JS)이 직관적
   - 실시간 프리뷰로 즉시 결과 확인
   - Emmet 지원으로 입력 보조
   - URL 공유만으로 수강생 간 공유 가능
 - **Playwright 자동화**: ✅ 용이. 에디터 영역은 `textarea` 또는 CodeMirror 기반으로 셀렉터 지정 가능
-- **교육 적합성**: ★★★★★ — HTML/CSS 입문에 최적. 가입 불필요로 바로 시작 가능
+- **교육 적합성**: ★★★★★ — HTML/CSS 입문에 최적. GitHub/Google 계정으로 간편 가입
 
 ### 2. JSFiddle
 - **URL**: https://jsfiddle.net
@@ -71,18 +71,11 @@ PART 2~5 실습 강의에서는 VS Code + 브라우저 조작이 중심이지만
 - **Playwright 자동화**: ⚠️ 복잡. 독자 에디터 UI, 인증 필수
 - **교육 적합성**: ★★☆☆☆ — 무료 플랜 제한 강화로 교육 용도에 불안정. 과금 압박이 수강생에게 부담
 
-### 6. Glitch
+### 6. Glitch ⚠️ 서비스 종료
 - **URL**: https://glitch.com
-- **일본어 지원**: UI 영어만. 커뮤니티에 일본어 프로젝트 있음
-- **무료 플랜**: 있음. 프로젝트 수 무제한(단, 비활성 5분 후 슬립)
-- **회원 가입**: 불필요(익명 프로젝트 생성 가능). 저장 시 가입 필요
-- **특징**:
-  - 프로젝트 단위(복수 파일 대응)
-  - 파일 트리 있음(index.html / style.css / script.js 분리가 자연스러움)
-  - 라이브 프리뷰 URL 자동 발행
-  - 리믹스(포크) 문화로 학습하기 쉬움
-- **Playwright 자동화**: ✅ 비교적 용이. CodeMirror 기반 에디터
-- **교육 적합성**: ★★★★☆ — 복수 파일 구성을 배우는 단계에 최적. CodePen 다음 스텝으로
+- **상태**: **2025년 7월 서비스 종료**. 더 이상 사용 불가.
+- 과거에는 복수 파일 구성 학습에 적합했으나, 서비스 종료로 대안 필요
+- **대안**: StackBlitz (동일하게 복수 파일 대응, VS Code 기반 에디터, GitHub 연동)
 
 ### 7. W3Schools Tryit / MDN Playground
 - **URL**: https://www.w3schools.com/tryit/ / https://developer.mozilla.org/play
@@ -102,12 +95,12 @@ PART 2~5 실습 강의에서는 VS Code + 브라우저 조작이 중심이지만
 
 | 서비스 | 일본어 UI | 무료 플랜 | 가입 불필요 | 복수 파일 | Playwright 자동화 | 교육 적합성 |
 |--------|-----------|-----------|-------------|-----------|-------------------|-------------|
-| **CodePen** | ✕ | ◎ 무제한 | ◎ | ✕(1펜) | ◎ 용이 | ★★★★★ |
+| **CodePen** | ✕ | ◎ 무제한 | △(저장 시 가입) | ✕(1펜) | ◎ 용이 | ★★★★★ |
 | JSFiddle | ✕ | ◎ 무제한 | ◎ | ✕ | ○ 가능 | ★★★☆☆ |
 | **StackBlitz** | ✕ | ○ 퍼블릭 | ✕ | ◎ | △ 다소 복잡 | ★★★★☆ |
 | CodeSandbox | ✕ | △ 제한 있음 | ✕ | ◎ | △ 다소 복잡 | ★★★☆☆ |
 | Replit | ✕ | △ 대폭 제한 | ✕ | ◎ | ✕ 복잡 | ★★☆☆☆ |
-| **Glitch** | ✕ | ○ 무제한 | ◎ | ◎ | ○ 비교적 용이 | ★★★★☆ |
+| ~~Glitch~~ | — | — | — | — | — | ⚠️ 서비스 종료 |
 | W3Schools/MDN | △(MDN만) | ◎ 완전 무료 | ◎ | ✕ | ◎ 용이 | ★★★☆☆ |
 
 ---
@@ -118,28 +111,23 @@ PART 2~5 실습 강의에서는 VS Code + 브라우저 조작이 중심이지만
 
 **HTML/CSS 입문(PART 1~2)에 최적**
 
-- 가입 불필요로 바로 시작 가능 → 수강생이 환경 구축에서 막히지 않음
+- 펜 작성·저장 시 GitHub/Google 로그인 필요 → PART 1 초반에 계정 생성 단계 포함
 - 3패인 구성이 심플하여 초보자에게 직관적
 - Playwright 자동화 용이 → 강의 영상 자동 생성에 대응
 - URL 공유로 수강생 간 코드 공유도 간단
 
-### 🥈 2위: Glitch
+### 🥈 2위: StackBlitz
 
-**복수 파일 구성(PART 3~4)에 최적**
-
-- CodePen에서는 배울 수 없는 "파일 분리" 개념을 자연스럽게 도입
-- index.html / style.css / script.js의 실무적 구성으로 학습
-- 가입 불필요로 시작 가능
-- Playwright 자동화도 비교적 용이
-
-### 🥉 3위: StackBlitz
-
-**VS Code 이행 전 준비(PART 4 후반)에 최적**
+**복수 파일 프로젝트(PART 4)에 최적**
 
 - Monaco Editor(VS Code와 동일한 에디터 엔진)로 조작감 일치
 - 파일 트리·터미널 등 VS Code 개념을 웹에서 체험
-- GitHub 로그인 필수이나 PART 4 시점에서는 GitHub을 이미 학습 완료
+- 복수 파일 구성(index.html / style.css / script.js)을 자연스럽게 도입
+- GitHub 로그인 필수이나 PART 1에서 이미 계정 생성 완료
+- GitHub 연동(Connect Repository)으로 PART 5 배포와 자연스럽게 연결
 - Playwright 자동화는 다소 복잡하나 대응 가능
+
+> **참고**: 이전 버전에서 2위로 추천했던 Glitch는 2025년 7월 서비스 종료. StackBlitz가 대체.
 
 ---
 
@@ -148,37 +136,34 @@ PART 2~5 실습 강의에서는 VS Code + 브라우저 조작이 중심이지만
 커리큘럼 진행에 맞춰 단계적으로 도구를 이행한다:
 
 ```
-PART 1~2 (강의 01~14)
+PART 1~3 (강의 01~25)
   → CodePen
-  HTML/CSS 기본. 1파일로 완결되는 내용.
-  가입 불필요·즉시 시작으로 수강생 이탈 방지.
+  HTML/CSS 기본~중급. 1파일로 완결되는 내용.
+  GitHub/Google 계정으로 로그인하여 펜 저장·공유.
 
-PART 3~4 전반 (강의 15~28)
-  → Glitch
-  복수 파일 구성, 반응형, Flexbox.
-  실무에 가까운 파일 분리를 자연스럽게 학습.
+PART 4 (강의 26~37)
+  → StackBlitz
+  복수 파일 프로젝트. VS Code풍 에디터.
+  GitHub 연동(Connect Repository)으로 코드 관리.
 
-PART 4 후반~5 (강의 29~42)
-  → VS Code (로컬)
-  본격적인 개발 환경. 배포, Git 연동.
-  StackBlitz를 병용하여 VS Code 조작감에 익숙해진 후 이행도 가능.
+PART 5 (강의 38~42)
+  → GitHub Web + 배포 플랫폼
+  StackBlitz에서 GitHub으로 연동한 코드를 GitHub Pages/Netlify/Cloudflare로 배포.
 ```
 
 ### Playwright 자동화 관점
 
 | 단계 | 도구 | 자동화 난이도 | 비고 |
 |------|------|---------------|------|
-| PART 1~2 | CodePen | ◎ 용이 | textarea / CodeMirror 기반 |
-| PART 3~4 | Glitch | ○ 비교적 용이 | CodeMirror 기반, 복수 파일 전환 있음 |
-| PART 4~5 | VS Code | ✕ 불가 | 데스크톱 앱이므로 Playwright 대상 외 |
-| (대안) | StackBlitz | △ 다소 복잡 | Monaco Editor 특수 셀렉터 대응 필요 |
+| PART 1~3 | CodePen | ◎ 용이 | textarea / CodeMirror 기반 |
+| PART 4 | StackBlitz | △ 다소 복잡 | Monaco Editor 특수 셀렉터 대응 필요 |
+| PART 5 | GitHub Web + 배포 플랫폼 | ◎ 용이 | 모두 브라우저 기반 |
 
-PART 4 후반 이후 VS Code로 이행할 경우, Playwright 자동화 대신 아래 대안을 검토:
-- **상태 합성형 접근**(스크린샷 + 매니페스트)을 VS Code에도 적용
-- **headed 모드 + OS 화면 녹화**(ffmpeg 등)
-- **웹 버전 VS Code**(vscode.dev)를 Playwright로 조작
+**모든 단계가 브라우저 안에서 완결** → Playwright 하나로 전체 자동화 가능 (~95% 커버리지)
 
 ---
 
-*작성일: 2026-04-06*
+*작성일: 2026-04-06 (최종 수정: 2026-04-07)*
 *목적: 강의 자동화 파이프라인에서의 코드 에디터 선정 참고 자료*
+
+> **참고**: Glitch(glitch.com)는 2025년 7월 서비스 종료. 본 문서의 초기 버전에서 Glitch를 2위로 추천했으나, StackBlitz로 대체함.
