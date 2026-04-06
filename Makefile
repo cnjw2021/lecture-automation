@@ -62,6 +62,8 @@ regen-scene:
 	for scene in $(SCENE); do \
 		echo "  🗑️  scene-$$scene.wav 삭제 중..."; \
 		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene.wav; \
+		echo "  🗑️  scene-$$scene.mp4 클립 삭제 중..."; \
+		rm -f $(OUTPUT_DIR)/clips/$$LECTURE_ID/scene-$$scene.mp4; \
 	done
 	node $(ENGINE_PATH) $(LECTURE)
 
