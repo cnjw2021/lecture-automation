@@ -168,6 +168,8 @@
       "visual": {
         "type": "playwright",
         "action": [
+          { "cmd": "goto", "url": "https://www.yahoo.co.jp" },
+          { "cmd": "wait", "ms": 2000 },
           { "cmd": "open_devtools" },
           { "cmd": "wait", "ms": 2000 }
         ]
@@ -180,6 +182,9 @@
       "visual": {
         "type": "playwright",
         "action": [
+          { "cmd": "goto", "url": "https://www.yahoo.co.jp" },
+          { "cmd": "wait", "ms": 2000 },
+          { "cmd": "open_devtools" },
           { "cmd": "highlight", "selector": "body", "note": "HTMLがページの構造を定義している" },
           { "cmd": "wait", "ms": 2000 },
           { "cmd": "highlight", "selector": "h1", "note": "この行 = ページのこの部分" },
@@ -208,6 +213,9 @@
       "visual": {
         "type": "playwright",
         "action": [
+          { "cmd": "goto", "url": "https://www.apple.com/jp/" },
+          { "cmd": "wait", "ms": 2000 },
+          { "cmd": "open_devtools" },
           { "cmd": "highlight", "selector": "#__edu_devtools_styles__", "note": "ここに表示されているのがCSS" },
           { "cmd": "wait", "ms": 2000 },
           { "cmd": "wait", "ms": 1000 }

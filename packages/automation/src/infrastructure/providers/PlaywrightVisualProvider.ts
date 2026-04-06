@@ -108,46 +108,45 @@ export class PlaywrightVisualProvider implements IVisualProvider {
                 const overlay = document.createElement('div');
                 overlay.id = '__edu_devtools__';
                 overlay.style.cssText = [
-                  'position:fixed', 'bottom:0', 'left:0', 'right:0', 'height:45%',
+                  'position:fixed', 'right:0', 'top:0', 'bottom:0', 'width:38%',
                   'z-index:2147483647', 'display:flex', 'flex-direction:column',
-                  'box-shadow:0 -4px 20px rgba(0,0,0,0.7)',
+                  'box-shadow:-4px 0 20px rgba(0,0,0,0.7)',
                   'animation:__dt_slide 0.25s ease-out',
                 ].join(';');
 
                 overlay.innerHTML = `
                   <style>
-                    @keyframes __dt_slide { from { transform:translateY(100%); } to { transform:translateY(0); } }
+                    @keyframes __dt_slide { from { transform:translateX(100%); } to { transform:translateX(0); } }
                     #__edu_devtools__ * { box-sizing:border-box; margin:0; padding:0; }
                   </style>
-                  <div style="display:flex;align-items:center;background:#2b2b2b;border-top:2px solid #3c3c3c;height:32px;flex-shrink:0;overflow:hidden">
+                  <div style="display:flex;align-items:center;background:#2b2b2b;border-left:1px solid #3c3c3c;border-bottom:1px solid #3c3c3c;height:32px;flex-shrink:0;overflow:hidden">
                     <div style="display:flex;height:100%">
-                      <div style="color:#fff;background:#1e1e1e;border-top:2px solid #4a9eff;padding:0 16px;font-size:12px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center">Elements</div>
-                      <div style="color:#9aa0a6;padding:0 16px;font-size:12px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center">Console</div>
-                      <div style="color:#9aa0a6;padding:0 16px;font-size:12px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center">Sources</div>
-                      <div style="color:#9aa0a6;padding:0 16px;font-size:12px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center">Network</div>
-                      <div style="color:#9aa0a6;padding:0 16px;font-size:12px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center">Performance</div>
+                      <div style="color:#fff;background:#1e1e1e;border-top:2px solid #4a9eff;padding:0 12px;font-size:12px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center">Elements</div>
+                      <div style="color:#9aa0a6;padding:0 12px;font-size:12px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center">Console</div>
+                      <div style="color:#9aa0a6;padding:0 12px;font-size:12px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center">Sources</div>
+                      <div style="color:#9aa0a6;padding:0 12px;font-size:12px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center">Network</div>
                     </div>
-                    <div style="margin-left:auto;padding:0 14px;color:#9aa0a6;font-size:20px;display:flex;align-items:center;height:100%">⋮</div>
+                    <div style="margin-left:auto;padding:0 12px;color:#9aa0a6;font-size:20px;display:flex;align-items:center;height:100%">⋮</div>
                   </div>
-                  <div style="display:flex;flex:1;overflow:hidden;background:#1e1e1e;font-family:Menlo,Consolas,'Courier New',monospace;font-size:12px;color:#d4d4d4">
+                  <div style="display:flex;flex:1;overflow:hidden;background:#1e1e1e;font-family:Menlo,Consolas,'Courier New',monospace;font-size:12px;color:#d4d4d4;border-left:1px solid #3c3c3c">
                     <div style="flex:1;overflow:auto;padding:4px 0 4px 4px">
                       ${htmlTree}
                     </div>
-                    <div id="__edu_devtools_styles__" style="width:290px;border-left:1px solid #3c3c3c;overflow:auto;padding:10px">
-                      <div style="color:#9aa0a6;font-size:11px;font-family:-apple-system,sans-serif;padding-bottom:6px;border-bottom:1px solid #3c3c3c;margin-bottom:8px">Styles&nbsp;&nbsp;Computed&nbsp;&nbsp;Layout</div>
+                    <div id="__edu_devtools_styles__" style="width:200px;border-left:1px solid #3c3c3c;overflow:auto;padding:8px;flex-shrink:0">
+                      <div style="color:#9aa0a6;font-size:11px;font-family:-apple-system,sans-serif;padding-bottom:6px;border-bottom:1px solid #3c3c3c;margin-bottom:8px">Styles&nbsp;&nbsp;Computed</div>
                       <div style="margin-bottom:2px"><span style="color:#a8c7fa">element</span><span style="color:#9aa0a6">.style {</span></div>
                       <div style="color:#9aa0a6;margin-bottom:10px">}</div>
                       <div style="color:#9aa0a6;margin-bottom:4px">body {</div>
-                      <div style="padding-left:16px;margin-bottom:2px"><span style="color:#9cdcfe">font-family</span>: <span style="color:#ce9178">-apple-system, sans-serif</span>;</div>
-                      <div style="padding-left:16px;margin-bottom:2px"><span style="color:#9cdcfe">margin</span>: <span style="color:#b5cea8">0</span>;</div>
-                      <div style="padding-left:16px;margin-bottom:2px"><span style="color:#9cdcfe">padding</span>: <span style="color:#b5cea8">0</span>;</div>
+                      <div style="padding-left:14px;margin-bottom:2px"><span style="color:#9cdcfe">font-family</span>: <span style="color:#ce9178">-apple-system</span>;</div>
+                      <div style="padding-left:14px;margin-bottom:2px"><span style="color:#9cdcfe">margin</span>: <span style="color:#b5cea8">0</span>;</div>
+                      <div style="padding-left:14px;margin-bottom:2px"><span style="color:#9cdcfe">padding</span>: <span style="color:#b5cea8">0</span>;</div>
                       <div style="color:#9aa0a6;margin-bottom:10px">}</div>
-                      <div style="color:#9aa0a6;margin-bottom:4px">*, *::before, *::after {</div>
-                      <div style="padding-left:16px;margin-bottom:2px"><span style="color:#9cdcfe">box-sizing</span>: <span style="color:#ce9178">border-box</span>;</div>
+                      <div style="color:#9aa0a6;margin-bottom:4px">*, *::before {</div>
+                      <div style="padding-left:14px;margin-bottom:2px"><span style="color:#9cdcfe">box-sizing</span>: <span style="color:#ce9178">border-box</span>;</div>
                       <div style="color:#9aa0a6;margin-bottom:10px">}</div>
                       <div style="color:#9aa0a6;margin-bottom:4px">a {</div>
-                      <div style="padding-left:16px;margin-bottom:2px"><span style="color:#9cdcfe">color</span>: <span style="color:#ce9178">inherit</span>;</div>
-                      <div style="padding-left:16px;margin-bottom:2px"><span style="color:#9cdcfe">text-decoration</span>: <span style="color:#ce9178">none</span>;</div>
+                      <div style="padding-left:14px;margin-bottom:2px"><span style="color:#9cdcfe">color</span>: <span style="color:#ce9178">inherit</span>;</div>
+                      <div style="padding-left:14px;margin-bottom:2px"><span style="color:#9cdcfe">text-decoration</span>: <span style="color:#ce9178">none</span>;</div>
                       <div style="color:#9aa0a6">}</div>
                     </div>
                   </div>`;
