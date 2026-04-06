@@ -31,6 +31,7 @@ import {
   HierarchyScreen,
   BrowserMockScreen,
   ImageScreen,
+  PlaywrightSynthScene,
 } from './components';
 import videoConfig from '../../../config/video.json';
 
@@ -105,12 +106,15 @@ interface LectureData {
 interface LectureProps {
   lectureData: LectureData;
   audioDurations: Record<string, number>;
+  /** 상태 합성형 매니페스트 (sceneId → manifest). 존재하면 합성 모드 사용 */
+  synthManifests?: Record<string, unknown>;
 }
 
 interface SingleSceneProps {
   lectureData: LectureData;
   audioDurations: Record<string, number>;
   sceneId: number;
+  synthManifests?: Record<string, unknown>;
 }
 
 // --- Shared helpers (SSoT) ---
@@ -125,13 +129,18 @@ const calcSceneDurationFrames = (
   return Math.ceil((durationSec + scenePaddingSec) * fps);
 };
 
-const SceneVisual: React.FC<{ scene: SceneData; lectureId: string }> = ({ scene, lectureId }) => {
+const SceneVisual: React.FC<{ scene: SceneData; lectureId: string; synthManifest?: unknown }> = ({ scene, lectureId, synthManifest }) => {
   const captureUrl = staticFile(`captures/${lectureId}/scene-${scene.scene_id}.webm`);
   const Component = scene.visual.component
     ? COMPONENT_MAP[scene.visual.component] || DefaultScreen
     : null;
 
   if (scene.visual.type === 'playwright') {
+    // 상태 합성형 매니페스트가 있으면 합성 모드 사용
+    if (synthManifest) {
+      return <PlaywrightSynthScene manifest={synthManifest as any} lectureId={lectureId} />;
+    }
+    // 기존 raw video 모드 (하위 호환)
     return <Video src={captureUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
   }
 
@@ -157,7 +166,7 @@ const SceneVisual: React.FC<{ scene: SceneData; lectureId: string }> = ({ scene,
 
 // --- Full lecture composition ---
 
-const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDurations }) => {
+const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDurations, synthManifests }) => {
   const FPS = videoConfig.fps;
   const scenePaddingSec = videoConfig.scenePaddingSec ?? 0.5;
 
@@ -184,7 +193,11 @@ const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDura
           <Sequence key={scene.scene_id} from={sceneStart} durationInFrames={sceneDuration}>
             <AbsoluteFill>
               <SceneTransition durationInFrames={sceneDuration} enter={enter} exit={exit}>
-                <SceneVisual scene={scene} lectureId={lectureData.lecture_id} />
+                <SceneVisual
+                  scene={scene}
+                  lectureId={lectureData.lecture_id}
+                  synthManifest={synthManifests?.[scene.scene_id.toString()] as unknown}
+                />
               </SceneTransition>
               <Audio src={audioUrl} />
             </AbsoluteFill>
@@ -197,7 +210,7 @@ const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDura
 
 // --- Single scene composition (씬 클립 캐시용) ---
 
-const SingleSceneComposition: React.FC<SingleSceneProps> = ({ lectureData, audioDurations, sceneId }) => {
+const SingleSceneComposition: React.FC<SingleSceneProps> = ({ lectureData, audioDurations, sceneId, synthManifests }) => {
   const FPS = videoConfig.fps;
   const scenePaddingSec = videoConfig.scenePaddingSec ?? 0.5;
 
@@ -216,7 +229,11 @@ const SingleSceneComposition: React.FC<SingleSceneProps> = ({ lectureData, audio
   return (
     <AbsoluteFill>
       <SceneTransition durationInFrames={durationInFrames} enter={enter} exit={exit}>
-        <SceneVisual scene={scene} lectureId={lectureData.lecture_id} />
+        <SceneVisual
+          scene={scene}
+          lectureId={lectureData.lecture_id}
+          synthManifest={synthManifests?.[sceneId.toString()] as unknown}
+        />
       </SceneTransition>
       <Audio src={audioUrl} />
     </AbsoluteFill>

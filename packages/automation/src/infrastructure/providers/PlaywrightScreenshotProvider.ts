@@ -13,6 +13,10 @@ export class PlaywrightScreenshotProvider implements IScreenshotProvider {
     const context = await browser.newContext({
       viewport: { width, height },
       deviceScaleFactor: 1,
+      locale: 'ja-JP',
+      timezoneId: 'Asia/Tokyo',
+      colorScheme: 'light',
+      reducedMotion: 'no-preference',
     });
 
     const page = await context.newPage();

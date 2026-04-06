@@ -19,6 +19,7 @@ help:
 	@echo "make install         - 모든 패키지 의존성 설치"
 	@echo "make run             - 전 공정 실행 (기본: p1-01-01.json)"
 	@echo "make run LECTURE=xxx - 특정 강의 JSON 파일로 실행"
+	@echo "make run-synth       - 상태 합성형 모드로 실행 (스크린샷 기반)"
 	@echo "make run-force       - 기존 에셋 무시하고 전체 재생성"
 	@echo "make clean           - 생성된 모든 에셋 및 결과물 삭제"
 	@echo "make render-only     - 에셋이 있을 때 Remotion 렌더링만 실행"
@@ -51,6 +52,10 @@ build:
 run:
 	@echo "🚀 강의 자동화 파이프라인 시작: $(LECTURE)"
 	node $(ENGINE_PATH) $(LECTURE)
+
+run-synth:
+	@echo "🖼️ 상태 합성형 모드로 파이프라인 시작: $(LECTURE)"
+	SYNTH=1 node $(ENGINE_PATH) $(LECTURE)
 
 run-force:
 	@echo "🔄 강제 재생성 모드로 파이프라인 시작: $(LECTURE)"
@@ -95,6 +100,7 @@ clean:
 	@echo "🧹 생성된 에셋 및 결과물 정리 중..."
 	rm -rf packages/remotion/public/audio/*
 	rm -rf packages/remotion/public/captures/*
+	rm -rf packages/remotion/public/state-captures/*
 	rm -rf packages/remotion/public/screenshots/*
 	rm -rf $(OUTPUT_DIR)/clips
 	rm -rf $(OUTPUT_DIR)/*.mp4
