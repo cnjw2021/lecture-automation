@@ -12,14 +12,14 @@ PART 2~5 실습 강의에서는 VS Code + 브라우저 조작이 중심이지만
 - **URL**: https://codepen.io
 - **일본어 지원**: UI 영어만. 다만 극히 심플하여 장벽 낮음
 - **무료 플랜**: 있음. HTML/CSS/JS 펜 작성·공유 무제한
-- **회원 가입**: 펜 작성·저장에 로그인 필요(GitHub/Google 로그인 지원). 커리큘럼에서는 PART 1 초반에 계정 생성 단계를 포함
+- **회원 가입**: 펜 작성·저장에 로그인 필요(GitHub/Google 로그인 지원). 커리큘럼에서는 PART 1 초반에 GitHub 계정 생성 → CodePen 로그인 (StackBlitz도 같은 GitHub 계정 사용)
 - **특징**:
   - 3패인 구성(HTML / CSS / JS)이 직관적
   - 실시간 프리뷰로 즉시 결과 확인
   - Emmet 지원으로 입력 보조
   - URL 공유만으로 수강생 간 공유 가능
 - **Playwright 자동화**: ✅ 용이. 에디터 영역은 `textarea` 또는 CodeMirror 기반으로 셀렉터 지정 가능
-- **교육 적합성**: ★★★★★ — HTML/CSS 입문에 최적. GitHub/Google 계정으로 간편 가입
+- **교육 적합성**: ★★★★★ — HTML/CSS 입문에 최적. GitHub 계정으로 로그인 (StackBlitz 계정과 통일)
 
 ### 2. JSFiddle
 - **URL**: https://jsfiddle.net
@@ -111,7 +111,7 @@ PART 2~5 실습 강의에서는 VS Code + 브라우저 조작이 중심이지만
 
 **HTML/CSS 입문(PART 1~2)에 최적**
 
-- 펜 작성·저장 시 GitHub/Google 로그인 필요 → PART 1 초반에 계정 생성 단계 포함
+- GitHub 계정으로 로그인 필수 (PART 4 StackBlitz와 동일 계정 사용을 위해 GitHub 통일)
 - 3패인 구성이 심플하여 초보자에게 직관적
 - Playwright 자동화 용이 → 강의 영상 자동 생성에 대응
 - URL 공유로 수강생 간 코드 공유도 간단
@@ -139,7 +139,7 @@ PART 2~5 실습 강의에서는 VS Code + 브라우저 조작이 중심이지만
 PART 1~3 (강의 01~25)
   → CodePen
   HTML/CSS 기본~중급. 1파일로 완결되는 내용.
-  GitHub/Google 계정으로 로그인하여 펜 저장·공유.
+  GitHub 계정으로 로그인 (PART 4 StackBlitz와 동일 계정).
 
 PART 4 (강의 26~37)
   → StackBlitz

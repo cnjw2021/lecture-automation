@@ -94,7 +94,7 @@
 
 ```
 PART 1~3 (강의 01~25): CodePen
-  → 1파일 HTML/CSS 실습. GitHub 계정으로 로그인, Playwright 완전 자동화
+  → 1파일 HTML/CSS 실습. GitHub 계정으로 로그인(PART 4 StackBlitz와 동일 계정), Playwright 완전 자동화
 
 PART 4 (강의 26~37): StackBlitz
   → 복수 파일 프로젝트. VS Code풍 UI, GitHub 연동, Playwright 자동화 가능

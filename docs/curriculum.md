@@ -59,8 +59,11 @@
 ### 1-5. 開発環境セットアップ — CodePen入門（20分）[ライブ]
 - 「インストール不要、ブラウザだけで始められる」— 受講生の最大の障壁を除去
 - CodePen（https://codepen.io）にアクセス
-- アカウント作成（GitHub または Googleアカウントで簡単登録）
-  - ペンの作成・保存・共有にはアカウントが必要
+- GitHubアカウント作成（PART 4のStackBlitzでも同じアカウントを使用）
+  - GitHub（https://github.com）にアクセス → Sign up → メール認証
+  - 「このアカウントは講座の最後まで使います。大切に覚えておいてください」
+- CodePenにGitHubアカウントでログイン
+  - ペンの作成・保存・共有にはログインが必要
   - 「1分で終わります。一緒にやりましょう」
 - CodePenの画面構成
   - 3ペイン構成：HTML / CSS / JS — 「この3つがWebの3要素そのまま」
@@ -287,7 +290,7 @@
 #### StackBlitz入門 — 複数ファイルで作るWeb制作（15分）[ライブ]
 - PART 2〜3ではCodePenで1ペインずつ書いた → 本格的なサイトはファイルを分ける
 - StackBlitz（https://stackblitz.com）にアクセス
-  - GitHubアカウントでログイン（1-5で作成済み）
+  - GitHubアカウントでログイン（1-5でGitHubアカウント作成済み）
 - StackBlitzの画面構成
   - VS Code風エディタ：ファイルツリー + エディタ + プレビュー の3カラム
   - ファイルツリー：index.html、style.css、script.js — 「実務と同じ構成」
@@ -334,7 +337,7 @@
 #### カスタマイズ（30分）
 - 自分の情報にテキスト変更
 - プロフィール写真の変更
-  - StackBlitzのAssetsパネルに画像をアップロード → URLを取得 → `src`に貼り付け
+  - StackBlitzのファイルツリーに画像をドラッグ＆ドロップでアップロード → 相対パスを`src`に記述
   - 画像サイズの最適化のヒント（大きすぎる画像は表示が遅くなる）
 - カラーパレットの変更
 - フォント変更（Google Fonts）
@@ -437,16 +440,19 @@
 - 様々なブラウザでの確認（Chrome、Safari、Firefox）
 - StackBlitzからGitHubへの接続
   - StackBlitzはGitHubと直接連携可能（同じGitHubアカウントでログイン済み）
-  - 「Connect Repository」でGitHubリポジトリに接続 → コードが自動的にGitHubに反映
+  - 「Connect Repository」でGitHubリポジトリに接続
+  - 接続後、メニューバーに「Commit」ボタンが表示される → 変更をGitHubに反映するには手動でCommitが必要
+  - 「自動保存ではなく、自分のタイミングで"保存ボタンを押す"イメージです」
 
 ### 5-2. GitHubでコード管理 — 最小限だけ（40分）[ライブ]
 - [PPT 5分] Gitとは？「コードのタイムマシン」— バージョン管理の必要性
-- GitHubアカウントの確認（1-5で作成済み、StackBlitzログインにも使用中）
+- GitHubアカウントの確認（1-5で作成済み、CodePen・StackBlitzログインにも使用中）
 - リポジトリ（Repository）作成
   - GitHub Webインターフェースで新規リポジトリ作成
   - 「リポジトリ = プロジェクトの保管場所」
 - StackBlitzプロジェクトをGitHubリポジトリに接続
-  - 5-1で設定した「Connect Repository」を使って、プロジェクト1（ポートフォリオ）をGitHubに反映
+  - 5-1で設定した「Connect Repository」を使って、プロジェクト1（ポートフォリオ）をGitHubにCommit
+  - StackBlitzのメニューバー「Commit」ボタンをクリック → GitHubに反映
   - 「自分のコードがGitHubに保存された！」
 - 初めてのコミット：GitHub Web上でファイルを編集 → コミット
 - 修正 → コミットの繰り返し — 「こうやって履歴が積み重なる」
