@@ -33,7 +33,32 @@ export class PlaywrightVisualProvider implements IVisualProvider {
         try {
           switch (action.cmd) {
             case 'goto':
-              if (action.url) await page.goto(action.url, { waitUntil: 'networkidle', timeout: 15000 });
+              if (action.url) {
+                try {
+                  await page.goto(action.url, { waitUntil: 'load', timeout: 20000 });
+                } catch (_) {
+                  console.warn(`  ⚠️ goto 타임아웃, 현재 상태로 계속 진행`);
+                }
+                // 페이지 로드 후 커서 자동 주입
+                await page.evaluate(() => {
+                  if (document.getElementById('__edu_cur__')) return;
+                  const cur = document.createElement('div');
+                  cur.id = '__edu_cur__';
+                  cur.style.cssText = [
+                    'position:fixed', 'left:-100px', 'top:-100px',
+                    'width:14px', 'height:14px', 'border-radius:50%',
+                    'background:rgba(0,0,0,0.85)', 'border:2px solid rgba(255,255,255,0.9)',
+                    'box-shadow:0 0 0 1px rgba(0,0,0,0.4)',
+                    'pointer-events:none', 'z-index:2147483648',
+                    'transform:translate(-50%,-50%)',
+                  ].join(';');
+                  document.body.appendChild(cur);
+                  document.addEventListener('mousemove', (e: MouseEvent) => {
+                    cur.style.left = e.clientX + 'px';
+                    cur.style.top = e.clientY + 'px';
+                  });
+                });
+              }
               break;
             case 'wait':
               if (action.ms) await page.waitForTimeout(action.ms);
@@ -55,8 +80,35 @@ export class PlaywrightVisualProvider implements IVisualProvider {
                 await page.mouse.up();
               }
               break;
+            case 'mouse_move':
+              if (action.to) {
+                await page.mouse.move(action.to[0], action.to[1], { steps: 30 });
+                await page.waitForTimeout(200);
+              }
+              break;
             case 'press':
               if (action.key) await page.keyboard.press(action.key);
+              break;
+            case 'disable_css':
+              await page.evaluate(() => {
+                Array.from(document.styleSheets).forEach(sheet => {
+                  try {
+                    const owner = sheet.ownerNode as Element | null;
+                    if (owner?.id?.startsWith('__edu')) return;
+                    if (owner?.closest?.('#__edu_devtools__')) return;
+                    sheet.disabled = true;
+                  } catch (_) {}
+                });
+              });
+              await page.waitForTimeout(300);
+              break;
+            case 'enable_css':
+              await page.evaluate(() => {
+                Array.from(document.styleSheets).forEach(sheet => {
+                  try { sheet.disabled = false; } catch (_) {}
+                });
+              });
+              await page.waitForTimeout(300);
               break;
             case 'open_devtools':
               await page.evaluate(() => {

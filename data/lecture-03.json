@@ -157,7 +157,14 @@
         "type": "playwright",
         "action": [
           { "cmd": "goto", "url": "https://www.yahoo.co.jp" },
-          { "cmd": "wait", "ms": 3000 }
+          { "cmd": "mouse_move", "to": [960, 80], "note": "アドレスバーを見る" },
+          { "cmd": "wait", "ms": 2000 },
+          { "cmd": "mouse_move", "to": [700, 350], "note": "ページ左側を眺める" },
+          { "cmd": "wait", "ms": 3000 },
+          { "cmd": "mouse_move", "to": [400, 500], "note": "下部へ" },
+          { "cmd": "wait", "ms": 3000 },
+          { "cmd": "mouse_move", "to": [960, 300] },
+          { "cmd": "wait", "ms": 12000 }
         ]
       }
     },
@@ -169,9 +176,11 @@
         "type": "playwright",
         "action": [
           { "cmd": "goto", "url": "https://www.yahoo.co.jp" },
+          { "cmd": "mouse_move", "to": [960, 400] },
           { "cmd": "wait", "ms": 2000 },
-          { "cmd": "open_devtools" },
-          { "cmd": "wait", "ms": 2000 }
+          { "cmd": "open_devtools", "note": "F12キーを押す" },
+          { "cmd": "mouse_move", "to": [1400, 150], "note": "DevToolsパネルを見る" },
+          { "cmd": "wait", "ms": 16000 }
         ]
       }
     },
@@ -183,12 +192,17 @@
         "type": "playwright",
         "action": [
           { "cmd": "goto", "url": "https://www.yahoo.co.jp" },
-          { "cmd": "wait", "ms": 2000 },
           { "cmd": "open_devtools" },
-          { "cmd": "highlight", "selector": "body", "note": "HTMLがページの構造を定義している" },
-          { "cmd": "wait", "ms": 2000 },
-          { "cmd": "highlight", "selector": "h1", "note": "この行 = ページのこの部分" },
-          { "cmd": "wait", "ms": 2000 }
+          { "cmd": "mouse_move", "to": [600, 350], "note": "ページ左側を見ている" },
+          { "cmd": "wait", "ms": 2500 },
+          { "cmd": "mouse_move", "to": [1260, 50], "note": "DevTools htmlタグ行へ" },
+          { "cmd": "wait", "ms": 1500 },
+          { "cmd": "mouse_move", "to": [1275, 90], "note": "bodyタグ行へ移動" },
+          { "cmd": "highlight", "selector": "body", "note": "bodyがページ全体に対応" },
+          { "cmd": "wait", "ms": 3000 },
+          { "cmd": "mouse_move", "to": [1290, 130], "note": "子要素の行へ移動" },
+          { "cmd": "highlight", "selector": "img", "note": "この行がこの画像に対応" },
+          { "cmd": "wait", "ms": 8000 }
         ]
       }
     },
@@ -200,9 +214,11 @@
         "type": "playwright",
         "action": [
           { "cmd": "goto", "url": "https://www.apple.com/jp/" },
-          { "cmd": "wait", "ms": 3000 },
-          { "cmd": "open_devtools" },
-          { "cmd": "wait", "ms": 2000 }
+          { "cmd": "mouse_move", "to": [960, 400], "note": "Appleのページを眺める" },
+          { "cmd": "wait", "ms": 2500 },
+          { "cmd": "open_devtools", "note": "DevToolsを開く" },
+          { "cmd": "mouse_move", "to": [1400, 200], "note": "DevToolsのHTMLを見る" },
+          { "cmd": "wait", "ms": 7000 }
         ]
       }
     },
@@ -214,11 +230,13 @@
         "type": "playwright",
         "action": [
           { "cmd": "goto", "url": "https://www.apple.com/jp/" },
-          { "cmd": "wait", "ms": 2000 },
           { "cmd": "open_devtools" },
-          { "cmd": "highlight", "selector": "#__edu_devtools_styles__", "note": "ここに表示されているのがCSS" },
+          { "cmd": "mouse_move", "to": [1820, 150], "note": "Stylesパネルへ移動" },
           { "cmd": "wait", "ms": 2000 },
-          { "cmd": "wait", "ms": 1000 }
+          { "cmd": "highlight", "selector": "#__edu_devtools_styles__", "note": "CSSが表示されているパネル" },
+          { "cmd": "wait", "ms": 2000 },
+          { "cmd": "disable_css", "note": "CSSを無効化 → レイアウト崩壊" },
+          { "cmd": "wait", "ms": 6000 }
         ]
       }
     },
