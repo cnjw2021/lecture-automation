@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install build run run-force regen-scene clean render-only preview tts-sample \
+.PHONY: help install build run run-force regen-scene render-scene concat-scenes clean render-only preview tts-sample \
         preview-browser-mock preview-screenshot capture-screenshots test-screenshot-options \
         preview-springs
 
@@ -8,6 +8,8 @@
 LECTURE ?= p1-01-01.json
 SAMPLE_LECTURE ?= sample-screenshot-test.json
 ENGINE_PATH = packages/automation/dist/presentation/cli/main.js
+ENGINE_RENDER_SCENE = packages/automation/dist/presentation/cli/render-scene.js
+ENGINE_CONCAT_SCENES = packages/automation/dist/presentation/cli/concat-scenes.js
 REMOTION_PATH = packages/remotion
 OUTPUT_DIR = output
 
@@ -25,6 +27,9 @@ help:
 	@echo "make tts-sample TTS=gemini_cloud_tts RATE=0.7 - 프로바이더/속도 지정"
 	@echo "make regen-scene LECTURE=xxx SCENE=5       - 특정 씬 오디오만 재생성"
 	@echo "make regen-scene LECTURE=xxx SCENE='5 12'  - 여러 씬 동시 재생성"
+	@echo "make render-scene LECTURE=xxx SCENE=5      - 특정 씬 클립만 렌더링"
+	@echo "make render-scene LECTURE=xxx SCENE='5 12' - 여러 씬 클립 렌더링"
+	@echo "make concat-scenes LECTURE=xxx             - 씬 클립 이어붙여 최종 MP4 생성"
 	@echo ""
 	@echo "--- 스크린샷 옵션 테스트 ---"
 	@echo "make preview-browser-mock                       - [옵션B] BrowserMockScreen 프리뷰 (PNG)"
@@ -57,8 +62,20 @@ regen-scene:
 	for scene in $(SCENE); do \
 		echo "  🗑️  scene-$$scene.wav 삭제 중..."; \
 		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene.wav; \
+		echo "  🗑️  scene-$$scene.mp4 클립 삭제 중..."; \
+		rm -f $(OUTPUT_DIR)/clips/$$LECTURE_ID/scene-$$scene.mp4; \
+		echo "  🗑️  scene-$$scene.webm 캡처 삭제 중..."; \
+		rm -f packages/remotion/public/captures/$$LECTURE_ID/scene-$$scene.webm; \
 	done
 	node $(ENGINE_PATH) $(LECTURE)
+
+render-scene:
+	@echo "🎞️  씬 클립 렌더링: $(LECTURE) / Scene $(SCENE)"
+	node $(ENGINE_RENDER_SCENE) $(LECTURE) $(SCENE)
+
+concat-scenes:
+	@echo "🔗 씬 클립 이어붙이기: $(LECTURE)"
+	node $(ENGINE_CONCAT_SCENES) $(LECTURE)
 
 render-only:
 	@echo "🎬 Remotion 렌더링만 실행 중..."
@@ -79,6 +96,7 @@ clean:
 	rm -rf packages/remotion/public/audio/*
 	rm -rf packages/remotion/public/captures/*
 	rm -rf packages/remotion/public/screenshots/*
+	rm -rf $(OUTPUT_DIR)/clips
 	rm -rf $(OUTPUT_DIR)/*.mp4
 	@echo "✅ 정리가 완료되었습니다."
 

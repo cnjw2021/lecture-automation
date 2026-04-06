@@ -2,19 +2,22 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import { config } from '../../infrastructure/config';
 import { FileLectureRepository } from '../../infrastructure/repositories/FileLectureRepository';
+import { FileClipRepository } from '../../infrastructure/repositories/FileClipRepository';
 import { GeminiAudioProvider } from '../../infrastructure/providers/GeminiAudioProvider';
 import { GoogleCloudTtsProvider } from '../../infrastructure/providers/GoogleCloudTtsProvider';
 import { GeminiCloudTtsProvider } from '../../infrastructure/providers/GeminiCloudTtsProvider';
 import { PlaywrightVisualProvider } from '../../infrastructure/providers/PlaywrightVisualProvider';
-import { RemotionRenderProvider } from '../../infrastructure/providers/RemotionRenderProvider';
+import { PlaywrightScreenshotProvider } from '../../infrastructure/providers/PlaywrightScreenshotProvider';
+import { RemotionSceneClipRenderProvider } from '../../infrastructure/providers/RemotionSceneClipRenderProvider';
+import { FfmpegConcatProvider } from '../../infrastructure/providers/FfmpegConcatProvider';
 import { IAudioProvider } from '../../domain/interfaces/IAudioProvider';
 import { GenerateAudioUseCase } from '../../application/use-cases/GenerateAudioUseCase';
-import { RecordVisualUseCase } from '../../application/use-cases/RecordVisualUseCase';
-import { RenderVideoUseCase } from '../../application/use-cases/RenderVideoUseCase';
-import { ValidateLectureUseCase } from '../../application/use-cases/ValidateLectureUseCase';
 import { MergeAudioUseCase } from '../../application/use-cases/MergeAudioUseCase';
 import { CaptureScreenshotUseCase } from '../../application/use-cases/CaptureScreenshotUseCase';
-import { PlaywrightScreenshotProvider } from '../../infrastructure/providers/PlaywrightScreenshotProvider';
+import { RecordVisualUseCase } from '../../application/use-cases/RecordVisualUseCase';
+import { RenderSceneClipsUseCase } from '../../application/use-cases/RenderSceneClipsUseCase';
+import { ConcatClipsUseCase } from '../../application/use-cases/ConcatClipsUseCase';
+import { ValidateLectureUseCase } from '../../application/use-cases/ValidateLectureUseCase';
 import { Lecture } from '../../domain/entities/Lecture';
 
 async function runAutomation(jsonFileName: string) {
@@ -25,8 +28,9 @@ async function runAutomation(jsonFileName: string) {
 
   console.log('🚀 강의 자동화 파이프라인 가동 (Full-Cycle, Clean Architecture)...');
 
-  // 1. Composition Root: Instantiate Dependencies (Infrastructure)
+  // 1. Composition Root
   const lectureRepository = new FileLectureRepository();
+  const clipRepository = new FileClipRepository();
 
   const providerName = config.active_audio_provider;
   let audioProvider: IAudioProvider;
@@ -69,15 +73,17 @@ async function runAutomation(jsonFileName: string) {
   console.log(`🔊 오디오 프로바이더: ${providerName}`);
   const visualProvider = new PlaywrightVisualProvider();
   const screenshotProvider = new PlaywrightScreenshotProvider();
-  const renderProvider = new RemotionRenderProvider();
+  const sceneClipRenderProvider = new RemotionSceneClipRenderProvider();
+  const concatProvider = new FfmpegConcatProvider();
 
-  // 2. Instantiate Application Use Cases (Application)
+  // 2. Use Cases
   const validateLectureUseCase = new ValidateLectureUseCase();
   const generateAudioUseCase = new GenerateAudioUseCase(audioProvider, lectureRepository);
   const mergeAudioUseCase = new MergeAudioUseCase();
   const captureScreenshotUseCase = new CaptureScreenshotUseCase(screenshotProvider, lectureRepository);
   const recordVisualUseCase = new RecordVisualUseCase(visualProvider, lectureRepository);
-  const renderVideoUseCase = new RenderVideoUseCase(renderProvider);
+  const renderSceneClipsUseCase = new RenderSceneClipsUseCase(sceneClipRenderProvider, clipRepository, lectureRepository);
+  const concatClipsUseCase = new ConcatClipsUseCase(concatProvider, clipRepository);
 
   // 3. Load Data
   const filePath = path.join(config.paths.data, jsonFileName);
@@ -109,11 +115,14 @@ async function runAutomation(jsonFileName: string) {
     console.log('\n--- 3단계: 시각 자료(브라우저) 녹화 ---');
     await recordVisualUseCase.execute(lectureData, { force: forceRegenerate });
 
-    console.log('\n--- 4단계: 최종 동영상(MP4) 빌드 ---');
-    await renderVideoUseCase.execute(lectureData.lecture_id, lectureData);
+    console.log('\n--- 4단계: 씬별 클립 렌더링 ---');
+    await renderSceneClipsUseCase.execute(lectureData, { force: forceRegenerate });
+
+    console.log('\n--- 5단계: 클립 이어붙이기 ---');
+    const outputPath = await concatClipsUseCase.execute(lectureData);
 
     console.log('\n✨ [완료] 전 공정이 성공적으로 마무리되었습니다!');
-    console.log(`📍 최종 결과물: ${path.join(config.paths.output, `${lectureData.lecture_id}.mp4`)}`);
+    console.log(`📍 최종 결과물: ${outputPath}`);
   } catch (error) {
     console.error('\n❌ [자동화 중단] 치명적인 오류가 발생하여 공정을 중단합니다.');
     console.error(error);

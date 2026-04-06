@@ -49,6 +49,7 @@ export const config = {
     captures: path.join(ROOT_DIR, 'packages/remotion/public/captures'),
     screenshots: path.join(ROOT_DIR, 'packages/remotion/public/screenshots'),
     output: path.join(ROOT_DIR, 'output'),
+    clips: path.join(ROOT_DIR, 'output', 'clips'),
   },
 
   getVideoConfig: () => {

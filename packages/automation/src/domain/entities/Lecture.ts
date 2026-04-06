@@ -4,8 +4,23 @@ export interface Metadata {
   target_audience: string;
 }
 
+/** 사용 가능한 Playwright 액션 명령어 목록. 상세 명세: docs/playwright-actions.md */
+export type PlaywrightCmd =
+  | 'goto'         // URL 이동 (페이지 로드 후 커서 자동 주입)
+  | 'wait'         // 대기 (ms)
+  | 'mouse_move'   // 마우스 이동 (to: [x, y])
+  | 'click'        // 요소 클릭 (selector)
+  | 'type'         // 텍스트 입력 (selector, key)
+  | 'press'        // 키보드 키 입력 (key)
+  | 'focus'        // 요소 포커스 (selector)
+  | 'mouse_drag'   // 마우스 드래그 (from, to)
+  | 'highlight'    // 요소 분홍 아웃라인 강조 (selector)
+  | 'open_devtools' // Chrome DevTools 오버레이 주입
+  | 'disable_css'  // 모든 스타일시트 비활성화
+  | 'enable_css';  // 스타일시트 복원
+
 export interface PlaywrightAction {
-  cmd: string;
+  cmd: PlaywrightCmd;
   url?: string;
   ms?: number;
   selector?: string;
