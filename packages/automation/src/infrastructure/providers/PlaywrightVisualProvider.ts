@@ -55,6 +55,9 @@ export class PlaywrightVisualProvider implements IVisualProvider {
                 await page.mouse.up();
               }
               break;
+            case 'press':
+              if (action.key) await page.keyboard.press(action.key);
+              break;
             case 'highlight':
               if (action.selector) {
                 await page.evaluate((sel: string) => {

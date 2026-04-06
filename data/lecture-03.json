@@ -156,8 +156,8 @@
       "visual": {
         "type": "playwright",
         "action": [
-          { "goto": "https://www.yahoo.co.jp" },
-          { "wait": 3000 }
+          { "cmd": "goto", "url": "https://www.yahoo.co.jp" },
+          { "cmd": "wait", "ms": 3000 }
         ]
       }
     },
@@ -168,8 +168,8 @@
       "visual": {
         "type": "playwright",
         "action": [
-          { "press": "F12" },
-          { "wait": 2000 }
+          { "cmd": "press", "key": "F12" },
+          { "cmd": "wait", "ms": 2000 }
         ]
       }
     },
@@ -180,10 +180,10 @@
       "visual": {
         "type": "playwright",
         "action": [
-          { "highlight": "body", "note": "HTMLがページの構造を定義している" },
-          { "wait": 2000 },
-          { "highlight": "h1", "note": "この行 = ページのこの部分" },
-          { "wait": 2000 }
+          { "cmd": "highlight", "selector": "body", "note": "HTMLがページの構造を定義している" },
+          { "cmd": "wait", "ms": 2000 },
+          { "cmd": "highlight", "selector": "h1", "note": "この行 = ページのこの部分" },
+          { "cmd": "wait", "ms": 2000 }
         ]
       }
     },
@@ -194,10 +194,10 @@
       "visual": {
         "type": "playwright",
         "action": [
-          { "goto": "https://www.apple.com/jp/" },
-          { "wait": 3000 },
-          { "press": "F12" },
-          { "wait": 2000 }
+          { "cmd": "goto", "url": "https://www.apple.com/jp/" },
+          { "cmd": "wait", "ms": 3000 },
+          { "cmd": "press", "key": "F12" },
+          { "cmd": "wait", "ms": 2000 }
         ]
       }
     },
@@ -208,10 +208,10 @@
       "visual": {
         "type": "playwright",
         "action": [
-          { "highlight": ".styles-panel", "note": "ここに表示されているのがCSS" },
-          { "wait": 2000 },
-          { "focus": ".styles-panel" },
-          { "wait": 1000 }
+          { "cmd": "highlight", "selector": ".styles-panel", "note": "ここに表示されているのがCSS" },
+          { "cmd": "wait", "ms": 2000 },
+          { "cmd": "focus", "selector": ".styles-panel" },
+          { "cmd": "wait", "ms": 1000 }
         ]
       }
     },
