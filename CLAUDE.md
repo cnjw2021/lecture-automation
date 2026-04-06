@@ -105,3 +105,16 @@ make preview SCENE=6                      # 씬 프리뷰 PNG
 - [docs/playwright-actions.md](docs/playwright-actions.md) — Playwright 액션 명세서 (12종)
 - [docs/tts-voices.md](docs/tts-voices.md) — TTS 보이스 비교
 - [docs/curriculum.md](docs/curriculum.md) — 전체 커리큘럼
+
+## 강의 스크립트 작성 지침
+
+강의 스크립트 작성·수정·검토 작업 시 반드시 아래 문서를 참조한다:
+
+@docs/script-guidelines.md
+
+## 스크립트 → JSON 변환 지침
+
+확정된 스크립트를 Remotion 입력 JSON(`data/lecture-XX.json`)으로 변환하는 작업 시 반드시 아래 두 문서를 참조한다:
+
+@docs/json-conversion-rules.md
+@docs/component-props-reference.md
