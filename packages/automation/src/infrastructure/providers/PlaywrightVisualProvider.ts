@@ -14,18 +14,26 @@ export class PlaywrightVisualProvider implements IVisualProvider {
     const visualConfig = scene.visual as PlaywrightVisual;
     const videoConfig = config.getVideoConfig();
     const { width, height } = videoConfig.resolution;
-    
+
     const browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({
       viewport: { width, height },
       deviceScaleFactor: 1,
+      locale: 'ja-JP',
+      timezoneId: 'Asia/Tokyo',
+      colorScheme: 'light',
+      reducedMotion: 'no-preference',
       recordVideo: {
         dir: path.dirname(outputPath),
         size: { width, height },
       }
     });
 
+    // Trace 시작 — 실패 시 디버깅용
+    await context.tracing.start({ screenshots: true, snapshots: true });
+
     const page = await context.newPage();
+    let hasError = false;
 
     try {
       console.log(`- Scene ${scene.scene_id} 녹화 시작...`);
@@ -64,13 +72,23 @@ export class PlaywrightVisualProvider implements IVisualProvider {
               if (action.ms) await page.waitForTimeout(action.ms);
               break;
             case 'type':
-              if (action.selector && action.key) await page.type(action.selector, action.key, { delay: 100 });
+              if (action.selector && action.key) {
+                const typeLoc = page.locator(action.selector);
+                await typeLoc.waitFor({ state: 'visible', timeout: 10000 });
+                await typeLoc.pressSequentially(action.key, { delay: 100 });
+              }
               break;
             case 'click':
-              if (action.selector) await page.click(action.selector, { timeout: 10000 });
+              if (action.selector) {
+                await page.locator(action.selector).click({ timeout: 10000 });
+              }
               break;
             case 'focus':
-              if (action.selector) await page.focus(action.selector, { timeout: 10000 });
+              if (action.selector) {
+                const focusLoc = page.locator(action.selector);
+                await focusLoc.waitFor({ state: 'visible', timeout: 10000 });
+                await focusLoc.focus();
+              }
               break;
             case 'mouse_drag':
               if (action.from && action.to) {
@@ -203,20 +221,25 @@ export class PlaywrightVisualProvider implements IVisualProvider {
                     </div>
                   </div>`;
 
-                // Chrome DevTools docked-right と同様に、html要素を62vw幅に制限する
-                // margin-right は body に width:100% が指定されているサイトでは効果がないため、
-                // max-width を使って html 要素そのものを縮小する方式を採用
-                if (!document.getElementById('__edu_viewport_resize__')) {
-                  const rs = document.createElement('style');
-                  rs.id = '__edu_viewport_resize__';
-                  // まず 100vw で初期状態を確定してトランジションを有効化
-                  rs.textContent = 'html { max-width: 100vw; overflow-x: hidden; transition: max-width 0.25s ease-out; }';
-                  document.head.appendChild(rs);
-                  void document.documentElement.offsetWidth; // reflow
-                  // 次フレームで 62vw へアニメーション
-                  requestAnimationFrame(() => requestAnimationFrame(() => {
-                    rs.textContent = 'html { max-width: 62vw; overflow-x: hidden; transition: max-width 0.25s ease-out; }';
-                  }));
+                // Chrome DevTools docked-right と同様に、ウェブサイト表示領域を左側62%に制限する。
+                // 既存の max-width 方式は position:fixed や 100vw 背景に無効だったため、
+                // body の子要素を固定幅ラッパーに移動する方式に変更。
+                if (!document.getElementById('__edu_site_wrapper__')) {
+                  const siteWidthPx = Math.round(window.innerWidth * 0.62);
+                  const wrapper = document.createElement('div');
+                  wrapper.id = '__edu_site_wrapper__';
+                  wrapper.style.cssText = [
+                    'position:fixed', 'left:0', 'top:0',
+                    'width:' + siteWidthPx + 'px', 'height:100vh',
+                    'overflow-y:auto', 'overflow-x:hidden', 'z-index:1',
+                  ].join(';');
+                  // body の既存子要素をラッパーに移動
+                  while (document.body.firstChild) {
+                    wrapper.appendChild(document.body.firstChild);
+                  }
+                  document.body.appendChild(wrapper);
+                  document.body.style.overflow = 'hidden';
+                  document.body.style.margin = '0';
                 }
 
                 document.body.appendChild(overlay);
@@ -225,10 +248,11 @@ export class PlaywrightVisualProvider implements IVisualProvider {
               break;
             case 'highlight':
               if (action.selector) {
-                await page.evaluate((sel: string) => {
-                  const el = document.querySelector(sel) as HTMLElement;
-                  if (el) el.style.outline = '5px solid #ff007a';
-                }, action.selector);
+                const highlightLoc = page.locator(action.selector);
+                await highlightLoc.waitFor({ state: 'attached', timeout: 10000 });
+                await highlightLoc.evaluate((el: HTMLElement) => {
+                  el.style.outline = '5px solid #ff007a';
+                });
                 await page.waitForTimeout(1500);
               }
               break;
@@ -236,13 +260,26 @@ export class PlaywrightVisualProvider implements IVisualProvider {
               console.warn(`  ⚠️ 알려지지 않거나 미구현된 Action '${action.cmd}' (건너뜀)`);
           }
         } catch (actionError: any) {
+          hasError = true;
           console.warn(`  ⚠️ Action '${action.cmd}' 실패 (건너뜀): ${actionError.message}`);
         }
       }
-      await page.waitForTimeout(2000); 
+      await page.waitForTimeout(2000);
     } catch (error: any) {
+      hasError = true;
       console.error(`  > Scene ${scene.scene_id} 녹화 중 에러:`, error.message);
     } finally {
+      // Trace 저장 — 에러 발생 시에만 파일로 보존
+      if (hasError) {
+        const traceDir = path.join(config.paths.output, 'traces');
+        await fs.ensureDir(traceDir);
+        const tracePath = path.join(traceDir, `scene-${scene.scene_id}.zip`);
+        await context.tracing.stop({ path: tracePath });
+        console.log(`  > Trace 저장됨: ${tracePath} (npx playwright show-trace ${tracePath} 로 분석)`);
+      } else {
+        await context.tracing.stop();
+      }
+
       const video = page.video();
       const videoPath = video ? await video.path() : null;
       await context.close();

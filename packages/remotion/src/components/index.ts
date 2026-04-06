@@ -29,3 +29,4 @@ export { HierarchyScreen } from './HierarchyScreen';
 export { BrowserChrome } from './BrowserChrome';
 export { BrowserMockScreen } from './BrowserMockScreen';
 export { ImageScreen } from './ImageScreen';
+export { PlaywrightSynthScene } from './PlaywrightSynthScene';

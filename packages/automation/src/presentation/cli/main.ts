@@ -8,6 +8,7 @@ import { GoogleCloudTtsProvider } from '../../infrastructure/providers/GoogleClo
 import { GeminiCloudTtsProvider } from '../../infrastructure/providers/GeminiCloudTtsProvider';
 import { PlaywrightVisualProvider } from '../../infrastructure/providers/PlaywrightVisualProvider';
 import { PlaywrightScreenshotProvider } from '../../infrastructure/providers/PlaywrightScreenshotProvider';
+import { PlaywrightStateCaptureProvider } from '../../infrastructure/providers/PlaywrightStateCaptureProvider';
 import { RemotionSceneClipRenderProvider } from '../../infrastructure/providers/RemotionSceneClipRenderProvider';
 import { FfmpegConcatProvider } from '../../infrastructure/providers/FfmpegConcatProvider';
 import { IAudioProvider } from '../../domain/interfaces/IAudioProvider';
@@ -22,8 +23,12 @@ import { Lecture } from '../../domain/entities/Lecture';
 
 async function runAutomation(jsonFileName: string) {
   const forceRegenerate = process.env.FORCE === '1';
+  const useSynthCapture = process.env.SYNTH === '1';
   if (forceRegenerate) {
     console.log('🔄 강제 재생성 모드 활성화 - 기존 에셋을 무시합니다.');
+  }
+  if (useSynthCapture) {
+    console.log('🖼️ 상태 합성형 캡처 모드 활성화 - 스크린샷 기반 Playwright 씬 캡처');
   }
 
   console.log('🚀 강의 자동화 파이프라인 가동 (Full-Cycle, Clean Architecture)...');
@@ -72,6 +77,7 @@ async function runAutomation(jsonFileName: string) {
 
   console.log(`🔊 오디오 프로바이더: ${providerName}`);
   const visualProvider = new PlaywrightVisualProvider();
+  const stateCaptureProvider = new PlaywrightStateCaptureProvider();
   const screenshotProvider = new PlaywrightScreenshotProvider();
   const sceneClipRenderProvider = new RemotionSceneClipRenderProvider();
   const concatProvider = new FfmpegConcatProvider();
@@ -81,7 +87,7 @@ async function runAutomation(jsonFileName: string) {
   const generateAudioUseCase = new GenerateAudioUseCase(audioProvider, lectureRepository);
   const mergeAudioUseCase = new MergeAudioUseCase();
   const captureScreenshotUseCase = new CaptureScreenshotUseCase(screenshotProvider, lectureRepository);
-  const recordVisualUseCase = new RecordVisualUseCase(visualProvider, lectureRepository);
+  const recordVisualUseCase = new RecordVisualUseCase(visualProvider, lectureRepository, stateCaptureProvider);
   const renderSceneClipsUseCase = new RenderSceneClipsUseCase(sceneClipRenderProvider, clipRepository, lectureRepository);
   const concatClipsUseCase = new ConcatClipsUseCase(concatProvider, clipRepository);
 
@@ -113,7 +119,7 @@ async function runAutomation(jsonFileName: string) {
     await captureScreenshotUseCase.execute(lectureData, { force: forceRegenerate });
 
     console.log('\n--- 3단계: 시각 자료(브라우저) 녹화 ---');
-    await recordVisualUseCase.execute(lectureData, { force: forceRegenerate });
+    await recordVisualUseCase.execute(lectureData, { force: forceRegenerate, useSynthCapture });
 
     console.log('\n--- 4단계: 씬별 클립 렌더링 ---');
     await renderSceneClipsUseCase.execute(lectureData, { force: forceRegenerate });
