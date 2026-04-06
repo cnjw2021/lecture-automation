@@ -203,11 +203,21 @@ export class PlaywrightVisualProvider implements IVisualProvider {
                     </div>
                   </div>`;
 
-                // Chrome DevTools docked-right と同様に、ウェブサイト領域を左62%に縮小
-                document.documentElement.style.overflowX = 'hidden';
-                document.body.style.transition = 'margin-right 0.25s ease-out';
-                void document.body.offsetWidth; // reflow を強制してトランジションを発火
-                document.body.style.marginRight = '38vw';
+                // Chrome DevTools docked-right と同様に、html要素を62vw幅に制限する
+                // margin-right は body に width:100% が指定されているサイトでは効果がないため、
+                // max-width を使って html 要素そのものを縮小する方式を採用
+                if (!document.getElementById('__edu_viewport_resize__')) {
+                  const rs = document.createElement('style');
+                  rs.id = '__edu_viewport_resize__';
+                  // まず 100vw で初期状態を確定してトランジションを有効化
+                  rs.textContent = 'html { max-width: 100vw; overflow-x: hidden; transition: max-width 0.25s ease-out; }';
+                  document.head.appendChild(rs);
+                  void document.documentElement.offsetWidth; // reflow
+                  // 次フレームで 62vw へアニメーション
+                  requestAnimationFrame(() => requestAnimationFrame(() => {
+                    rs.textContent = 'html { max-width: 62vw; overflow-x: hidden; transition: max-width 0.25s ease-out; }';
+                  }));
+                }
 
                 document.body.appendChild(overlay);
               });
