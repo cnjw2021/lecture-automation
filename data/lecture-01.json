@@ -1,10 +1,8 @@
 {
-  "lecture_id": "p1-01-01-jp",
-  "metadata": {
-    "title": "オリエンテーション — AI時代のWeb制作マスター",
-    "target_duration": "1200s",
-    "target_audience": "General Public (Non-experts)"
-  },
+  "lecture_id": "01",
+  "title": "オリエンテーション — AI時代のWeb制作マスター",
+  "part": 1,
+  "totalDurationSec": 1200,
   "sequence": [
     {
       "scene_id": 1,
@@ -329,7 +327,7 @@
             "PART 4: 実践プロジェクト",
             "PART 5: デプロイ"
           ],
-          "currentStep": 0
+          "currentStep": 1
         },
         "transition": {
           "enter": "slide-left",
@@ -510,13 +508,13 @@
       "narration": "2つ目は、お店やサロンの紹介サイト。講座ではカフェを例に作っていきますが、美容室でも、整体院でも、英会話教室でも、どんな業種にもそのまま応用できる構成にしています。皆さんのご職業に合わせて、テキストと写真を入れ替えるだけで、自分のお店のサイトが完成するイメージです。",
       "visual": {
         "type": "remotion",
-        "component": "ImagePlaceholderScreen",
+        "component": "BrowserMockScreen",
         "props": {
+          "url": "https://example-cafe.com",
           "title": "お店紹介サイトの例",
           "description": "テキストと写真を入れ替えるだけで自分のお店のサイトに",
-          "icon": "🏪",
-          "label": "カフェサイトのモックアップ",
-          "layout": "right"
+          "layout": "right",
+          "color": "#10b981"
         }
       }
     },
