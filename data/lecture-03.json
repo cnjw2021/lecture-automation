@@ -502,6 +502,24 @@
             "cmd": "wait",
             "ms": 5000
           }
+        ],
+        "syncPoints": [
+          {
+            "actionIndex": 2,
+            "phrase": "これらひとつひとつが"
+          },
+          {
+            "actionIndex": 6,
+            "phrase": "グーグルのサイトを見てみましょう"
+          },
+          {
+            "actionIndex": 10,
+            "phrase": "こちらもエイチティーエムエルで構成されています"
+          },
+          {
+            "actionIndex": 12,
+            "phrase": "ユーザーに見せる主要な要素が"
+          }
         ]
       }
     },
@@ -557,6 +575,16 @@
           {
             "cmd": "wait",
             "ms": 7000
+          }
+        ],
+        "syncPoints": [
+          {
+            "actionIndex": 4,
+            "phrase": "こちらもエイチティーエムエルが並んでいます"
+          },
+          {
+            "actionIndex": 8,
+            "phrase": "シーエスエスの設計が違うからです"
           }
         ]
       }
@@ -618,6 +646,24 @@
           {
             "cmd": "wait",
             "ms": 6000
+          }
+        ],
+        "syncPoints": [
+          {
+            "actionIndex": 4,
+            "phrase": "右側の構造確認パネルは残したまま"
+          },
+          {
+            "actionIndex": 6,
+            "phrase": "見た目だけを崩して差を見ます"
+          },
+          {
+            "actionIndex": 8,
+            "phrase": "今このブラウザでの見え方を一時的に変えている"
+          },
+          {
+            "actionIndex": 10,
+            "phrase": "公開されているアップルのサイトそのものを"
           }
         ]
       }
