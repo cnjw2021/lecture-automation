@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install build run run-force regen-scene render-scene concat-scenes clean render-only preview tts-sample \
+.PHONY: help install build run run-force regen-scene render-scene record-webm concat-scenes clean render-only preview tts-sample \
         preview-browser-mock preview-screenshot capture-screenshots test-screenshot-options \
         preview-springs sync-playwright
 
@@ -9,6 +9,7 @@ LECTURE ?= p1-01-01.json
 SAMPLE_LECTURE ?= sample-screenshot-test.json
 ENGINE_PATH = packages/automation/dist/presentation/cli/main.js
 ENGINE_RENDER_SCENE = packages/automation/dist/presentation/cli/render-scene.js
+ENGINE_RECORD_WEBM = packages/automation/dist/presentation/cli/record-webm.js
 ENGINE_CONCAT_SCENES = packages/automation/dist/presentation/cli/concat-scenes.js
 REMOTION_PATH = packages/remotion
 OUTPUT_DIR = output
@@ -30,6 +31,8 @@ help:
 	@echo "make regen-scene LECTURE=xxx SCENE='5 12'  - 여러 씬 동시 재생성"
 	@echo "make render-scene LECTURE=xxx SCENE=5      - 특정 씬 클립만 렌더링"
 	@echo "make render-scene LECTURE=xxx SCENE='5 12' - 여러 씬 클립 렌더링"
+	@echo "make record-webm LECTURE=xxx SCENE=17      - 특정 Playwright 씬 webm 재생성"
+	@echo "make record-webm LECTURE=xxx SCENE='17 18' - 여러 Playwright 씬 webm 재생성"
 	@echo "make concat-scenes LECTURE=xxx             - 씬 클립 이어붙여 최종 MP4 생성"
 	@echo "make sync-playwright LECTURE=xxx           - Playwright 씬 narration-action 싱크 자동 조정"
 	@echo "make sync-playwright LECTURE=xxx SCENE=17  - 특정 씬만 싱크 조정"
@@ -79,6 +82,16 @@ regen-scene:
 render-scene:
 	@echo "🎞️  씬 클립 렌더링: $(LECTURE) / Scene $(SCENE)"
 	node $(ENGINE_RENDER_SCENE) $(LECTURE) $(SCENE)
+
+record-webm:
+	@echo "🎥 Playwright 씬 webm 녹화: $(LECTURE) / Scene $(SCENE)"
+	@if [ -z "$(SCENE)" ]; then \
+		echo "❌ SCENE 값을 지정해 주세요. 예: make record-webm LECTURE=lecture-03.json SCENE='17 18'"; \
+		exit 1; \
+	fi
+	@echo "🔨 automation 패키지 빌드 중..."
+	npm run build -w packages/automation
+	node $(ENGINE_RECORD_WEBM) $(LECTURE) $(SCENE)
 
 concat-scenes:
 	@echo "🔗 씬 클립 이어붙이기: $(LECTURE)"

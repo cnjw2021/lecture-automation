@@ -53,7 +53,12 @@ export function runEduDevtoolsCommand(args: EduDevtoolsCommandArgs): EduDevtools
   type DevtoolsState = {
     selectedPath: string | null;
     expandedPaths: string[];
-    highlightedPath: string | null;
+    focusPath: string | null;
+  };
+
+  type HighlightSnapshotElement = HTMLElement & {
+    __eduPrevOutline?: string;
+    __eduPrevOutlineOffset?: string;
   };
 
   const DEVTOOLS_ID = '__edu_devtools__';
@@ -61,10 +66,13 @@ export function runEduDevtoolsCommand(args: EduDevtoolsCommandArgs): EduDevtools
   const STYLES_ID = '__edu_devtools_styles__';
   const WRAPPER_ID = '__edu_site_wrapper__';
   const MAX_DEPTH = 6;
+  const AUTO_FOCUS_DEPTH = 4;
+  const MAX_FOCUS_CANDIDATES = 2;
+  const MAX_SCAN_NODES = 160;
 
   const win = window as Window & {
     __eduDevtoolsState__?: DevtoolsState;
-    __eduHighlightedElement__?: HTMLElement | null;
+    __eduHighlightedElement__?: HighlightSnapshotElement | null;
   };
 
   function escHtml(str: string): string {
@@ -86,10 +94,150 @@ export function runEduDevtoolsCommand(args: EduDevtoolsCommandArgs): EduDevtools
       win.__eduDevtoolsState__ = {
         selectedPath: null,
         expandedPaths: [''],
-        highlightedPath: null,
+        focusPath: null,
       };
     }
     return win.__eduDevtoolsState__;
+  }
+
+  function sanitizeStyleAttribute(el: Element, value: string): string {
+    const declarations = value
+      .split(';')
+      .map(part => part.trim())
+      .filter(Boolean);
+
+    const filtered = declarations.filter(part => {
+      const normalized = part.replace(/\s+/g, ' ').toLowerCase();
+      if (el === document.body && (normalized === 'overflow: hidden' || normalized === 'margin: 0' || normalized === 'margin: 0px')) {
+        return false;
+      }
+      return true;
+    });
+
+    return filtered.join('; ');
+  }
+
+  function getRenderableAttributes(el: Element): Array<{ name: string; value: string }> {
+    return Array.from(el.attributes).flatMap(attr => {
+      if (attr.name.startsWith('data-__edu') || attr.name.startsWith('data-edu-')) {
+        return [];
+      }
+
+      let value = attr.value;
+      if (attr.name === 'style') {
+        value = sanitizeStyleAttribute(el, value);
+      }
+
+      if (!value) {
+        return attr.name === 'style' ? [] : [{ name: attr.name, value: '' }];
+      }
+
+      return [{ name: attr.name, value }];
+    });
+  }
+
+  function hasMeaningfulText(el: Element): boolean {
+    const text = (el.textContent ?? '').replace(/\s+/g, ' ').trim();
+    return text.length >= 2;
+  }
+
+  function isTechnicalTag(tag: string): boolean {
+    return [
+      'script',
+      'style',
+      'link',
+      'meta',
+      'noscript',
+      'template',
+      'svg',
+      'path',
+      'use',
+      'defs',
+      'symbol',
+      'g',
+      'mask',
+      'clippath',
+      'source',
+      'track',
+      'canvas',
+    ].includes(tag);
+  }
+
+  function getTagTeachingScore(tag: string): number {
+    switch (tag) {
+      case 'main':
+      case 'header':
+      case 'nav':
+      case 'section':
+      case 'article':
+      case 'form':
+      case 'footer':
+        return 95;
+      case 'h1':
+      case 'h2':
+      case 'h3':
+      case 'p':
+      case 'button':
+      case 'input':
+      case 'textarea':
+      case 'select':
+      case 'img':
+      case 'picture':
+      case 'video':
+        return 82;
+      case 'a':
+      case 'ul':
+      case 'ol':
+      case 'li':
+      case 'figure':
+        return 68;
+      case 'div':
+      case 'span':
+        return 50;
+      case 'body':
+      case 'head':
+        return 36;
+      case 'iframe':
+        return 8;
+      case 'script':
+      case 'style':
+      case 'link':
+      case 'meta':
+      case 'noscript':
+      case 'template':
+        return -40;
+      default:
+        return 30;
+    }
+  }
+
+  function getElementTeachingScore(el: Element, depthFromRoot = 0): number {
+    const tag = el.tagName.toLowerCase();
+    let score = getTagTeachingScore(tag) - depthFromRoot * 4;
+    const text = (el.textContent ?? '').replace(/\s+/g, ' ').trim();
+
+    if (text) {
+      score += Math.min(18, Math.ceil(text.length / 12));
+    }
+    if (el.id) {
+      score += 10;
+    }
+    if (el.classList.length > 0) {
+      score += Math.min(12, el.classList.length * 4);
+    }
+    if (el instanceof HTMLElement) {
+      if (el.hidden || el.getAttribute('aria-hidden') === 'true') {
+        score -= 24;
+      }
+      if (el.offsetWidth === 0 && el.offsetHeight === 0 && !hasMeaningfulText(el)) {
+        score -= 10;
+      }
+    }
+    if (isTechnicalTag(tag)) {
+      score -= 18;
+    }
+
+    return score;
   }
 
   function ensureSiteWrapper(): void {
@@ -126,7 +274,6 @@ export function runEduDevtoolsCommand(args: EduDevtoolsCommandArgs): EduDevtools
     if (el === document.body) {
       const children: Element[] = [];
       for (const child of Array.from(document.body.children)) {
-        if (isEduElement(child)) continue;
         if (child.id === WRAPPER_ID) {
           for (const wrapped of Array.from(child.children)) {
             if (!isEduElement(wrapped)) {
@@ -135,6 +282,7 @@ export function runEduDevtoolsCommand(args: EduDevtoolsCommandArgs): EduDevtools
           }
           continue;
         }
+        if (isEduElement(child)) continue;
         children.push(child);
       }
       return children;
@@ -205,6 +353,10 @@ export function runEduDevtoolsCommand(args: EduDevtoolsCommandArgs): EduDevtools
     return ancestors;
   }
 
+  function getExpandedTrail(path: string): string[] {
+    return uniquePaths([...getAncestorPaths(path), path]);
+  }
+
   function getNextFocusIndex(currentPath: string, focusPath: string | null): number | null {
     if (!focusPath) return null;
     const currentParts = getPathSegments(currentPath);
@@ -226,23 +378,101 @@ export function runEduDevtoolsCommand(args: EduDevtoolsCommandArgs): EduDevtools
     }
 
     const focusIndex = getNextFocusIndex(path, focusPath);
-    if (focusIndex === null || focusIndex < maxChildren) {
-      return indexedChildren.slice(0, maxChildren);
+    const guaranteedLeadingCount = Math.min(depth <= 1 ? 4 : 3, indexedChildren.length);
+    const visibleIndexes = new Set<number>();
+
+    for (let index = 0; index < guaranteedLeadingCount; index++) {
+      visibleIndexes.add(index);
+    }
+    if (focusIndex !== null) {
+      visibleIndexes.add(focusIndex);
     }
 
-    const visible = indexedChildren.slice(0, Math.max(0, maxChildren - 1));
-    const focused = indexedChildren[focusIndex];
-    if (focused) visible.push(focused);
-    return visible.sort((a, b) => a.index - b.index);
+    const rankedChildren = indexedChildren
+      .map(({ child, index }) => ({
+        child,
+        index,
+        score: getElementTeachingScore(child, depth + 1),
+      }))
+      .sort((a, b) => b.score - a.score || a.index - b.index);
+
+    for (const candidate of rankedChildren) {
+      if (visibleIndexes.size >= maxChildren) break;
+      visibleIndexes.add(candidate.index);
+    }
+
+    return indexedChildren.filter(({ index }) => visibleIndexes.has(index)).sort((a, b) => a.index - b.index);
+  }
+
+  function getTopLevelBranchKey(path: string, rootPath: string): string {
+    const rootSegments = getPathSegments(rootPath);
+    const pathSegments = getPathSegments(path);
+    const branchIndex = pathSegments[rootSegments.length];
+    return branchIndex === undefined ? path : String(branchIndex);
+  }
+
+  function getTeachingFocusPaths(root: Element, rootPath: string): string[] {
+    const queue = getVirtualChildren(root).map((child, index) => ({
+      child,
+      path: rootPath ? `${rootPath}.${index}` : String(index),
+      depth: 1,
+    }));
+
+    const candidates: Array<{ path: string; depth: number; score: number; branchKey: string }> = [];
+    let scannedNodes = 0;
+
+    while (queue.length > 0 && scannedNodes < MAX_SCAN_NODES) {
+      const current = queue.shift();
+      if (!current) break;
+      scannedNodes += 1;
+
+      const { child, path, depth } = current;
+      const score = getElementTeachingScore(child, depth) + (getVirtualChildren(child).length > 0 ? 6 : 0);
+      const tag = child.tagName.toLowerCase();
+
+      if (!isTechnicalTag(tag) || score >= 40) {
+        candidates.push({
+          path,
+          depth,
+          score,
+          branchKey: getTopLevelBranchKey(path, rootPath),
+        });
+      }
+
+      if (depth >= AUTO_FOCUS_DEPTH) {
+        continue;
+      }
+
+      const nextChildren = getVirtualChildren(child);
+      nextChildren.forEach((grandChild, index) => {
+        queue.push({
+          child: grandChild,
+          path: `${path}.${index}`,
+          depth: depth + 1,
+        });
+      });
+    }
+
+    const ranked = candidates.sort((a, b) => b.score - a.score || a.depth - b.depth || a.path.localeCompare(b.path));
+    const selectedPaths: string[] = [];
+    const usedBranches = new Set<string>();
+
+    for (const candidate of ranked) {
+      if (selectedPaths.length >= MAX_FOCUS_CANDIDATES) break;
+      if (usedBranches.has(candidate.branchKey)) continue;
+      usedBranches.add(candidate.branchKey);
+      selectedPaths.push(candidate.path);
+    }
+
+    return selectedPaths;
   }
 
   function renderAttrs(el: Element): string {
-    return Array.from(el.attributes)
-      .filter(attr => !attr.name.startsWith('data-__edu'))
+    return getRenderableAttributes(el)
       .slice(0, 3)
-      .map(attr => {
-        const value = attr.value.length > 40 ? attr.value.substring(0, 40) + '…' : attr.value;
-        return ` <span class="__edu_dt_attr">${escHtml(attr.name)}</span>=<span class="__edu_dt_attr_value">"${escHtml(value)}"</span>`;
+      .map(({ name, value }) => {
+        const truncated = value.length > 40 ? value.substring(0, 40) + '…' : value;
+        return ` <span class="__edu_dt_attr">${escHtml(name)}</span>=<span class="__edu_dt_attr_value">"${escHtml(truncated)}"</span>`;
       })
       .join('');
   }
@@ -411,38 +641,41 @@ export function runEduDevtoolsCommand(args: EduDevtoolsCommandArgs): EduDevtools
     ensureOverlay();
     const tree = document.getElementById(TREE_ID);
     if (!tree) return;
-    tree.innerHTML = renderNode(document.documentElement, '', 0, focusPath ?? ensureState().selectedPath);
+    const state = ensureState();
+    const activeFocusPath = focusPath ?? state.focusPath ?? state.selectedPath;
+    tree.innerHTML = renderNode(document.documentElement, '', 0, activeFocusPath);
 
-    const selectedPath = ensureState().selectedPath;
+    const selectedPath = state.selectedPath;
     if (!selectedPath) return;
     const row = tree.querySelector(`[data-node-path="${selectedPath}"]`) as HTMLElement | null;
-    row?.scrollIntoView({ block: 'center' });
+    const shouldKeepChildrenVisible = Boolean(activeFocusPath && activeFocusPath !== selectedPath);
+    row?.scrollIntoView({ block: shouldKeepChildrenVisible ? 'start' : 'center' });
   }
 
   function clearHighlightedElement(): void {
     const prev = win.__eduHighlightedElement__;
     if (!prev) return;
-    prev.style.outline = prev.dataset.eduPrevOutline || '';
-    prev.style.outlineOffset = prev.dataset.eduPrevOutlineOffset || '';
-    delete prev.dataset.eduPrevOutline;
-    delete prev.dataset.eduPrevOutlineOffset;
+    prev.style.outline = prev.__eduPrevOutline || '';
+    prev.style.outlineOffset = prev.__eduPrevOutlineOffset || '';
+    delete prev.__eduPrevOutline;
+    delete prev.__eduPrevOutlineOffset;
     win.__eduHighlightedElement__ = null;
   }
 
   function highlightElement(el: Element): void {
     clearHighlightedElement();
 
-    let target = el as HTMLElement;
+    let target = el as HighlightSnapshotElement;
     if (el === document.body) {
       const wrapper = document.getElementById(WRAPPER_ID);
       if (wrapper instanceof HTMLElement) {
-        target = wrapper;
+        target = wrapper as HighlightSnapshotElement;
       }
     }
 
     if (!(target instanceof HTMLElement)) return;
-    target.dataset.eduPrevOutline = target.style.outline;
-    target.dataset.eduPrevOutlineOffset = target.style.outlineOffset;
+    target.__eduPrevOutline = target.style.outline;
+    target.__eduPrevOutlineOffset = target.style.outlineOffset;
     target.style.outline = '4px solid #4a9eff';
     target.style.outlineOffset = '2px';
     win.__eduHighlightedElement__ = target;
@@ -483,10 +716,15 @@ export function runEduDevtoolsCommand(args: EduDevtoolsCommandArgs): EduDevtools
       return { ok: false, reason: resolved.reason };
     }
 
+    const focusPaths = getTeachingFocusPaths(resolved.target, resolved.path);
     state.selectedPath = resolved.path;
-    state.highlightedPath = resolved.path;
-    state.expandedPaths = uniquePaths([...state.expandedPaths, ...getAncestorPaths(resolved.path)]);
-    renderOverlay(resolved.path);
+    state.focusPath = focusPaths[0] ?? resolved.path;
+    state.expandedPaths = uniquePaths([
+      '',
+      ...getExpandedTrail(resolved.path),
+      ...focusPaths.flatMap(getExpandedTrail),
+    ]);
+    renderOverlay(state.focusPath);
     highlightElement(resolved.target);
     return { ok: true, path: resolved.path };
   }
@@ -505,17 +743,26 @@ export function runEduDevtoolsCommand(args: EduDevtoolsCommandArgs): EduDevtools
       : mode;
 
     if (nextMode === 'expand') {
-      state.expandedPaths = uniquePaths([...state.expandedPaths, ...getAncestorPaths(path), path]);
+      const focusPaths = getTeachingFocusPaths(resolved.target, path);
+      state.focusPath = focusPaths[0] ?? state.focusPath ?? path;
+      state.expandedPaths = uniquePaths([
+        ...state.expandedPaths,
+        ...getExpandedTrail(path),
+        ...focusPaths.flatMap(getExpandedTrail),
+      ]);
     } else {
       state.expandedPaths = state.expandedPaths.filter(candidate => candidate !== path && !candidate.startsWith(path + '.'));
       state.expandedPaths = uniquePaths(['', ...state.expandedPaths]);
       if (state.selectedPath && state.selectedPath.startsWith(path + '.')) {
         state.selectedPath = path;
       }
+      if (state.focusPath && (state.focusPath === path || state.focusPath.startsWith(path + '.'))) {
+        state.focusPath = path;
+      }
     }
 
     state.selectedPath = state.selectedPath ?? path;
-    renderOverlay(state.selectedPath);
+    renderOverlay(state.focusPath ?? state.selectedPath);
     highlightElement(resolved.target);
     return { ok: true, path };
   }
