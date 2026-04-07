@@ -295,11 +295,12 @@
       "durationSec": 22,
       "visual": {
         "type": "remotion",
-        "component": "StatScreen",
+        "component": "KeyPointScreen",
         "props": {
-          "value": "142.250.196.110",
-          "label": "GoogleのIPアドレスの例",
-          "description": "インターネット上のすべてのコンピュータにはこのような住所がある"
+          "icon": "📍",
+          "headline": "142.250.196.110",
+          "detail": "グーグルのサーバーのアイピーアドレスの例。インターネット上のすべてのコンピュータにはこのような住所がある",
+          "color": "#6366f1"
         }
       }
     },
