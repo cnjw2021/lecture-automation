@@ -235,6 +235,64 @@ goto 소요 시간 예상치:
 
 부족하면 `wait ms` 값을 늘려서 보충한다.
 
+### syncPoints — narration-action 자동 싱크
+
+Playwright 씬은 `syncPoints` 필드를 정의하면, 파이프라인 실행 시 TTS WAV를 분석해 **wait ms를 자동으로 재계산**한다. JSON 변환 시 wait 값은 대략적으로 넣어도 된다.
+
+**언제 사용하는가**
+- `open_devtools`, `highlight`, `disable_css` 등 나레이션의 특정 발화 시점에 맞춰 발화해야 하는 action이 있는 씬
+
+**형식**
+```json
+"syncPoints": [
+  { "actionIndex": 4, "phrase": "パネルを表示してみましょう" },
+  { "actionIndex": 8, "phrase": "追ってみましょう" }
+]
+```
+
+- `actionIndex`: `action` 배열의 인덱스 (0-based)
+- `phrase`: 해당 action이 **발화되어야 할 나레이션 구절** — 이 구절이 TTS에서 읽히는 시점에 action이 실행되도록 wait가 조정된다
+
+**phrase 선택 기준**
+- 나레이션 안에서 **유일하게 특정되는** 부분 문자열을 고를 것
+- action이 실행되어야 하는 **발화 시점의 첫 단어 또는 어구**를 사용
+- 예: 나레이션이 "それでは、右側に構造を確認するためのパネルを表示してみましょう。" → phrase: `"パネルを表示してみましょう"`
+
+**작성 예시 (open_devtools + highlight 씬)**
+```json
+{
+  "scene_id": 17,
+  "narration": "まず、ヤフージャパンに...(생략)...パネルを表示してみましょう。...(생략)...追ってみましょう。...",
+  "durationSec": 47,
+  "visual": {
+    "type": "playwright",
+    "syncPoints": [
+      { "actionIndex": 4, "phrase": "パネルを表示してみましょう" },
+      { "actionIndex": 8, "phrase": "追ってみましょう" }
+    ],
+    "action": [
+      {"cmd": "goto", "url": "https://www.yahoo.co.jp"},
+      {"cmd": "wait", "ms": 5000},
+      {"cmd": "mouse_move", "to": [960, 400]},
+      {"cmd": "wait", "ms": 6000},
+      {"cmd": "open_devtools"},
+      {"cmd": "wait", "ms": 6000},
+      {"cmd": "mouse_move", "to": [1300, 200]},
+      {"cmd": "wait", "ms": 5000},
+      {"cmd": "highlight", "selector": "body", "note": "構造と画面の対応を確認"},
+      {"cmd": "wait", "ms": 8000},
+      {"cmd": "mouse_move", "to": [1300, 400]},
+      {"cmd": "wait", "ms": 6000}
+    ]
+  }
+}
+```
+
+**주의사항**
+- `goto` (action[0])는 항상 씬 시작(0ms)에 실행되므로 syncPoint 지정 불필요
+- syncPoints가 없는 씬은 수동으로 지정한 wait 값 그대로 사용
+- 파이프라인 1.7단계에서 자동 적용됨 — 별도 커맨드 불필요. 수동 실행은 `make sync-playwright LECTURE=xxx SCENE=N`
+
 ### 씬 구조 체크리스트
 
 - [ ] 씬 첫 액션은 반드시 `{"cmd": "goto", "url": "..."}`
@@ -242,6 +300,7 @@ goto 소요 시간 예상치:
 - [ ] 개발자 도구 표시 → `open_devtools` 사용 (F12 금지)
 - [ ] CSS 비활성화 → `disable_css` 사용 (콘솔 JS 실행 금지)
 - [ ] 총 액션 시간 ≥ durationSec - 2초
+- [ ] 나레이션 특정 발화 시점에 action을 맞춰야 할 경우 → `syncPoints` 정의
 
 ## PART別カラー
 color 속성에는 해당 PART의 색상을 적용:
@@ -263,6 +322,7 @@ color 속성에는 해당 PART의 색상을 적용:
 - ❌ Playwright 씬에서 `press F12`로 DevTools 열기 — `open_devtools` 액션 사용
 - ❌ Playwright 씬에서 콘솔 JS(`document.querySelectorAll...`)로 CSS 조작 — `disable_css` / `enable_css` 액션 사용
 - ❌ Playwright 씬에서 총 액션 시간이 `durationSec - 2초` 미만 — wait 추가로 보충
+- ❌ `syncPoints`의 phrase를 나레이션에 없는 문자열로 지정 — 나레이션 내 실제 구절만 사용
 
 ## 作業フロー
 1. 1강 단위로 스크립트를 받아 변환
