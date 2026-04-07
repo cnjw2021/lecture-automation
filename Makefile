@@ -2,7 +2,7 @@
 
 .PHONY: help install build run run-force regen-scene render-scene concat-scenes clean render-only preview tts-sample \
         preview-browser-mock preview-screenshot capture-screenshots test-screenshot-options \
-        preview-springs
+        preview-springs sync-playwright
 
 # 기본 변수 설정
 LECTURE ?= p1-01-01.json
@@ -31,6 +31,8 @@ help:
 	@echo "make render-scene LECTURE=xxx SCENE=5      - 특정 씬 클립만 렌더링"
 	@echo "make render-scene LECTURE=xxx SCENE='5 12' - 여러 씬 클립 렌더링"
 	@echo "make concat-scenes LECTURE=xxx             - 씬 클립 이어붙여 최종 MP4 생성"
+	@echo "make sync-playwright LECTURE=xxx           - Playwright 씬 narration-action 싱크 자동 조정"
+	@echo "make sync-playwright LECTURE=xxx SCENE=17  - 특정 씬만 싱크 조정"
 	@echo ""
 	@echo "--- 스크린샷 옵션 테스트 ---"
 	@echo "make preview-browser-mock                       - [옵션B] BrowserMockScreen 프리뷰 (PNG)"
@@ -95,6 +97,15 @@ preview:
 tts-sample:
 	@echo "🎤 TTS 샘플 음성 생성 중..."
 	npx tsx scripts/tts-sample.ts $(TTS) $(RATE)
+
+sync-playwright:
+	@echo "🎯 Playwright 씬 narration-action 싱크 조정: $(LECTURE)"
+	@if [ -n "$(SCENE)" ]; then \
+		echo "   대상 씬: $(SCENE)"; \
+		npx tsx packages/automation/src/presentation/cli/sync-playwright.ts $(LECTURE) $(SCENE); \
+	else \
+		npx tsx packages/automation/src/presentation/cli/sync-playwright.ts $(LECTURE); \
+	fi
 
 clean:
 	@echo "🧹 생성된 에셋 및 결과물 정리 중..."

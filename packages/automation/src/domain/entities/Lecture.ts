@@ -43,9 +43,21 @@ export interface RemotionVisual {
   transition?: TransitionConfig;
 }
 
+/**
+ * Playwright 씬의 나레이션-액션 싱크 포인트.
+ * actionIndex 번 액션이 narration 내 phrase 발화 시점에 맞춰 실행되도록 wait를 자동 조정한다.
+ * phrase는 나레이션 안에서 유일하게 특정되는 부분 문자열이어야 한다.
+ */
+export interface PlaywrightSyncPoint {
+  actionIndex: number;  // actions 배열의 인덱스 (0-based)
+  phrase: string;       // 이 액션이 발화되어야 할 나레이션 구절 (나레이션 내 고유 부분문자열)
+}
+
 export interface PlaywrightVisual {
   type: 'playwright';
   action: PlaywrightAction[];
+  /** 정의된 경우 sync-playwright 커맨드로 wait ms를 자동 재계산한다. */
+  syncPoints?: PlaywrightSyncPoint[];
   transition?: TransitionConfig;
 }
 

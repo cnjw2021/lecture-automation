@@ -370,7 +370,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 5000
+            "ms": 9255
           },
           {
             "cmd": "mouse_move",
@@ -381,14 +381,14 @@
           },
           {
             "cmd": "wait",
-            "ms": 6000
+            "ms": 11105
           },
           {
             "cmd": "open_devtools"
           },
           {
             "cmd": "wait",
-            "ms": 6000
+            "ms": 11918
           },
           {
             "cmd": "mouse_move",
@@ -399,7 +399,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 5000
+            "ms": 9931
           },
           {
             "cmd": "highlight",
@@ -408,7 +408,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 8000
+            "ms": 3453
           },
           {
             "cmd": "mouse_move",
@@ -419,7 +419,17 @@
           },
           {
             "cmd": "wait",
-            "ms": 6000
+            "ms": 2589
+          }
+        ],
+        "syncPoints": [
+          {
+            "actionIndex": 4,
+            "phrase": "パネルを表示してみましょう"
+          },
+          {
+            "actionIndex": 8,
+            "phrase": "追ってみましょう"
           }
         ]
       }
