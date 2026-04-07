@@ -1,10 +1,8 @@
 {
-  "lecture_id": "p1-01-01-jp",
-  "metadata": {
-    "title": "オリエンテーション — AI時代のWeb制作マスター",
-    "target_duration": "1200s",
-    "target_audience": "General Public (Non-experts)"
-  },
+  "lecture_id": "01",
+  "title": "オリエンテーション — AI時代のWeb制作マスター",
+  "part": 1,
+  "totalDurationSec": 1200,
   "sequence": [
     {
       "scene_id": 1,
@@ -329,7 +327,7 @@
             "PART 4: 実践プロジェクト",
             "PART 5: デプロイ"
           ],
-          "currentStep": 0
+          "currentStep": 1
         },
         "transition": {
           "enter": "slide-left",
@@ -370,7 +368,7 @@
     },
     {
       "scene_id": 19,
-      "narration": "安心してください。PART 1の最後の講義が終わるまでに、皆さんの画面に「Hello World」——つまり、自分自身が作った生まれて初めてのWebページが表示されます。もうすぐです。楽しみにしていてください。",
+      "narration": "安心してください。PART 1の最後の講義が終わるまでに、皆さんの画面に「Hello World」、つまり自分自身が作った生まれて初めてのWebページが表示されます。もうすぐです。楽しみにしていてください。",
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -384,7 +382,7 @@
     },
     {
       "scene_id": 20,
-      "narration": "次に、PART 2。「HTML — Webの骨格を読む」です。HTMLというのは、Webページの構造——骨格にあたるものです。見出しはここ、段落はここ、画像はここ、というふうに、ページの中身を組み立てるための言語ですね。",
+      "narration": "次に、PART 2。「HTML — Webの骨格を読む」です。HTMLというのは、Webページの構造、つまり骨格にあたるものです。見出しはここ、段落はここ、画像はここ、というふうに、ページの中身を組み立てるための言語ですね。",
       "visual": {
         "type": "remotion",
         "component": "DefinitionScreen",
@@ -411,7 +409,7 @@
     },
     {
       "scene_id": 22,
-      "narration": "PART 3は「CSS — Webに服を着せる」です。CSSはWebページの見た目を決めるものです。文字の色やサイズ、背景の色、レイアウト——要素を横に並べるとか、中央に配置するとか——こういったことは全部CSSで制御します。",
+      "narration": "PART 3は「CSS — Webに服を着せる」です。CSSはWebページの見た目を決めるものです。文字の色やサイズ、背景の色、レイアウト、たとえば要素を横に並べるとか、中央に配置するとか、こういったことは全部CSSで制御します。",
       "visual": {
         "type": "remotion",
         "component": "DefinitionScreen",
@@ -510,13 +508,13 @@
       "narration": "2つ目は、お店やサロンの紹介サイト。講座ではカフェを例に作っていきますが、美容室でも、整体院でも、英会話教室でも、どんな業種にもそのまま応用できる構成にしています。皆さんのご職業に合わせて、テキストと写真を入れ替えるだけで、自分のお店のサイトが完成するイメージです。",
       "visual": {
         "type": "remotion",
-        "component": "ImagePlaceholderScreen",
+        "component": "BrowserMockScreen",
         "props": {
+          "url": "https://example-cafe.com",
           "title": "お店紹介サイトの例",
           "description": "テキストと写真を入れ替えるだけで自分のお店のサイトに",
-          "icon": "🏪",
-          "label": "カフェサイトのモックアップ",
-          "layout": "right"
+          "layout": "right",
+          "color": "#10b981"
         }
       }
     },
