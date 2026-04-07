@@ -4,6 +4,7 @@ import * as fs from 'fs-extra';
 import { config } from '../config';
 import { Scene, PlaywrightVisual, PlaywrightAction } from '../../domain/entities/Lecture';
 import { SceneManifest, StepData, CursorPosition } from '../../domain/entities/StepManifest';
+import { executeEduDevtoolsAction, getEduDevtoolsActionDuration } from './playwrightEduDevtools';
 
 /**
  * 상태 합성형 Playwright 캡처 프로바이더.
@@ -284,46 +285,23 @@ export class PlaywrightStateCaptureProvider {
         };
       }
 
-      case 'open_devtools': {
-        // DevTools는 evaluate로 주입 후 스크린샷
-        await page.evaluate(() => {
-          if (document.getElementById('__edu_devtools__')) return;
-          // サイト表示領域を左側62%に制限するラッパー
-          if (!document.getElementById('__edu_site_wrapper__')) {
-            const siteWidthPx = Math.round(window.innerWidth * 0.62);
-            const wrapper = document.createElement('div');
-            wrapper.id = '__edu_site_wrapper__';
-            wrapper.style.cssText = [
-              'position:fixed', 'left:0', 'top:0',
-              'width:' + siteWidthPx + 'px', 'height:100vh',
-              'overflow-y:auto', 'overflow-x:hidden', 'z-index:1',
-            ].join(';');
-            while (document.body.firstChild) {
-              wrapper.appendChild(document.body.firstChild);
-            }
-            document.body.appendChild(wrapper);
-            document.body.style.overflow = 'hidden';
-            document.body.style.margin = '0';
-          }
-          const overlay = document.createElement('div');
-          overlay.id = '__edu_devtools__';
-          overlay.style.cssText = [
-            'position:fixed', 'right:0', 'top:0', 'bottom:0', 'width:38%',
-            'z-index:2147483647', 'background:#1e1e1e',
-            'box-shadow:-4px 0 20px rgba(0,0,0,0.7)',
-          ].join(';');
-          overlay.innerHTML = '<div style="color:#9aa0a6;padding:12px;font-family:monospace;font-size:12px">Elements panel</div>';
-          document.body.appendChild(overlay);
-        });
-        await page.waitForTimeout(300);
+      case 'open_devtools':
+      case 'select_devtools_node':
+      case 'toggle_devtools_node': {
+        const result = await executeEduDevtoolsAction(page, action);
+        if (!result?.ok) return null;
+        const durationMs = getEduDevtoolsActionDuration(action.cmd) ?? 0;
+        if (durationMs > 0) {
+          await page.waitForTimeout(Math.min(durationMs, 300));
+        }
         await page.screenshot({ path: screenshotPath });
         return {
           index: stepIndex,
-          cmd: 'open_devtools',
+          cmd: action.cmd,
           screenshot: screenshotName,
           cursorFrom: cursorPos,
           cursorTo: cursorPos,
-          durationMs: 500,
+          durationMs,
           note: action.note,
         };
       }

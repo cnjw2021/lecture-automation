@@ -64,6 +64,7 @@ packages/automation/src/
 ```typescript
 type PlaywrightCmd = 'goto' | 'wait' | 'mouse_move' | 'click' | 'type' |
   'press' | 'focus' | 'mouse_drag' | 'highlight' | 'open_devtools' |
+  'select_devtools_node' | 'toggle_devtools_node' |
   'disable_css' | 'enable_css';
 ```
 
