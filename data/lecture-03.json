@@ -365,30 +365,61 @@
         "type": "playwright",
         "action": [
           {
-            "goto": "https://www.yahoo.co.jp"
+            "cmd": "goto",
+            "url": "https://www.yahoo.co.jp"
           },
           {
-            "wait": 3000
+            "cmd": "wait",
+            "ms": 5000
           },
           {
-            "highlight": "body",
-            "note": "情報が整然と並んだヤフー ジャパン"
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              400
+            ]
           },
           {
-            "wait": 2000
+            "cmd": "wait",
+            "ms": 6000
           },
           {
-            "press": "F12"
+            "cmd": "open_devtools"
           },
           {
-            "wait": 2500
+            "cmd": "wait",
+            "ms": 6000
           },
           {
-            "highlight": "#ContentWrapper",
-            "note": "Elementsタブ（要素タブ）でHTMLを確認"
+            "cmd": "mouse_move",
+            "to": [
+              1300,
+              200
+            ]
           },
           {
-            "wait": 3000
+            "cmd": "wait",
+            "ms": 5000
+          },
+          {
+            "cmd": "highlight",
+            "selector": "body",
+            "note": "HTMLとページが一対一で対応"
+          },
+          {
+            "cmd": "wait",
+            "ms": 8000
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              1300,
+              400
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 6000
           }
         ]
       }
@@ -401,30 +432,65 @@
         "type": "playwright",
         "action": [
           {
-            "goto": "https://www.google.com"
+            "cmd": "goto",
+            "url": "https://www.yahoo.co.jp"
           },
           {
-            "wait": 3000
+            "cmd": "wait",
+            "ms": 2000
           },
           {
-            "highlight": "body",
-            "note": "シンプルなグーグルのトップページ"
+            "cmd": "open_devtools"
           },
           {
-            "wait": 2000
+            "cmd": "wait",
+            "ms": 5000
           },
           {
-            "press": "F12"
+            "cmd": "mouse_move",
+            "to": [
+              1300,
+              200
+            ]
           },
           {
-            "wait": 2500
+            "cmd": "wait",
+            "ms": 5000
           },
           {
-            "highlight": "input[name='q']",
-            "note": "要素が少ないシンプルな構造"
+            "cmd": "goto",
+            "url": "https://www.google.com"
           },
           {
-            "wait": 2000
+            "cmd": "wait",
+            "ms": 3000
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              400
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 3000
+          },
+          {
+            "cmd": "open_devtools"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4000
+          },
+          {
+            "cmd": "highlight",
+            "selector": "body",
+            "note": "シンプルな構造"
+          },
+          {
+            "cmd": "wait",
+            "ms": 5000
           }
         ]
       }
@@ -437,23 +503,50 @@
         "type": "playwright",
         "action": [
           {
-            "goto": "https://www.apple.com/jp/"
+            "cmd": "goto",
+            "url": "https://www.apple.com/jp/"
           },
           {
-            "wait": 3000
+            "cmd": "wait",
+            "ms": 4000
           },
           {
-            "highlight": "body",
-            "note": "スタイリッシュなアップルのサイト"
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              400
+            ]
           },
           {
-            "wait": 2000
+            "cmd": "wait",
+            "ms": 5000
           },
           {
-            "press": "F12"
+            "cmd": "open_devtools"
           },
           {
-            "wait": 2500
+            "cmd": "wait",
+            "ms": 5000
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              1300,
+              200
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 5000
+          },
+          {
+            "cmd": "highlight",
+            "selector": "body",
+            "note": "アップルもHTMLでできている"
+          },
+          {
+            "cmd": "wait",
+            "ms": 7000
           }
         ]
       }
@@ -466,39 +559,39 @@
         "type": "playwright",
         "action": [
           {
-            "goto": "https://www.apple.com/jp/"
+            "cmd": "goto",
+            "url": "https://www.apple.com/jp/"
           },
           {
-            "wait": 2000
+            "cmd": "wait",
+            "ms": 3000
           },
           {
-            "press": "F12"
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              400
+            ]
           },
           {
-            "wait": 2000
+            "cmd": "wait",
+            "ms": 2000
           },
           {
-            "click": "#tab-Console"
+            "cmd": "disable_css"
           },
           {
-            "wait": 1500
+            "cmd": "wait",
+            "ms": 5000
           },
           {
-            "focus": ".console-input"
+            "cmd": "highlight",
+            "selector": "body",
+            "note": "CSSを外すと装飾が消えた"
           },
           {
-            "type": ".console-input",
-            "key": "document.querySelectorAll('style, link[rel=\"stylesheet\"]').forEach(el => el.remove())"
-          },
-          {
-            "press": "Enter"
-          },
-          {
-            "wait": 3000
-          },
-          {
-            "highlight": "body",
-            "note": "CSSを外すと装飾が大きく減り、素朴な見た目に"
+            "cmd": "wait",
+            "ms": 6000
           }
         ]
       }

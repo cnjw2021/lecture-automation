@@ -176,6 +176,73 @@ props 상세는 `docs/component-props-reference.md` 참조.
 - 단계: 절차 → `NumberedListScreen` / 시간축 → `TimelineScreen` / 현재 위치 → `ProgressScreen`
 - 브라우저 UI: 이미지 없음 → `BrowserMockScreen` / 실제 캡처 이미지 있음 → `ImageScreen`
 
+## Playwright 씬 설계 규칙
+
+Playwright 씬(`"type": "playwright"`)을 작성할 때 반드시 준수해야 하는 규칙.
+
+### action 형식
+
+**모든 액션은 `{"cmd": "액션명", "파라미터": "값"}` 형식 필수.**
+
+```json
+// ✅ 올바른 형식
+{"cmd": "goto", "url": "https://www.yahoo.co.jp"}
+{"cmd": "wait", "ms": 3000}
+{"cmd": "highlight", "selector": "body", "note": "설명"}
+
+// ❌ 잘못된 형식 (액션 미인식 → 녹화 1~2초만에 종료됨)
+{"goto": "https://www.yahoo.co.jp"}
+{"wait": 3000}
+{"highlight": "body", "note": "설명"}
+```
+
+### 스크립트 내용 → action 패턴 매핑
+
+| 스크립트 내용 | 사용할 action | 금지 |
+|---|---|---|
+| "開発者ツールを開く" | `{"cmd": "open_devtools"}` | ❌ `{"cmd": "press", "key": "F12"}` — headless에서 비작동 |
+| "CSSを外してみる" / "スタイルを無効化" | `{"cmd": "disable_css"}` | ❌ 콘솔에서 JS 실행 — 실제 DevTools 콘솔 조작 불가 |
+| "CSSを元に戻す" | `{"cmd": "enable_css"}` | |
+| 페이지 이동 | `{"cmd": "goto", "url": "..."}` | |
+| 요소 강조 | `{"cmd": "highlight", "selector": "...", "note": "..."}` | |
+| 대기 | `{"cmd": "wait", "ms": 밀리초}` | |
+| 커서 표시 | `{"cmd": "mouse_move", "to": [x, y]}` — goto 후 필수 | |
+
+> **goto 이후 커서를 화면에 표시하려면 반드시 `mouse_move`를 함께 사용해야 한다.**
+
+### 씬 타이밍 계산
+
+**총 액션 시간 ≥ `durationSec` - 2초** (마지막 2초는 자동 여백)
+
+```
+goto 소요 시간 예상치:
+  Yahoo Japan: ~6~8초
+  Apple:       ~4~7초
+  일반 사이트: ~2~5초
+
+각 액션 소요 시간:
+  wait ms=5000  → 5초
+  open_devtools → 0.25초 (슬라이드인 애니메이션)
+  highlight     → 1.5초 (자동 종료)
+  mouse_move    → ~0초 (즉시)
+  disable_css   → ~0초 (즉시)
+
+예시 (durationSec: 35):
+  goto(6s) + wait(4s) + mouse_move(0s) + wait(5s) + open_devtools(0.25s)
+  + wait(5s) + mouse_move(0s) + wait(5s) + highlight(1.5s) + wait(7s)
+  = 33.75s ≥ 33s ✅
+```
+
+부족하면 `wait ms` 값을 늘려서 보충한다.
+
+### 씬 구조 체크리스트
+
+- [ ] 씬 첫 액션은 반드시 `{"cmd": "goto", "url": "..."}`
+- [ ] goto 후 `{"cmd": "mouse_move", "to": [960, 400]}` 추가 (커서 표시)
+- [ ] 개발자 도구 표시 → `open_devtools` 사용 (F12 금지)
+- [ ] CSS 비활성화 → `disable_css` 사용 (콘솔 JS 실행 금지)
+- [ ] 총 액션 시간 ≥ durationSec - 2초
+
 ## PART別カラー
 color 속성에는 해당 PART의 색상을 적용:
 - PART 1: `#6366f1` / PART 2: `#ef4444` / PART 3: `#3b82f6` / PART 4: `#10b981` / PART 5: `#f59e0b`
@@ -192,6 +259,10 @@ color 속성에는 해당 PART의 색상을 적용:
 - ❌ 나레이션에 `（）` 괄호로 보충 삽입 — TTS가 괄호 내용까지 읽음. 접속표현으로 대체
 - ❌ 실제 이미지 없이 `ImagePlaceholderScreen` 사용 — `BrowserMockScreen` 등 대체 컴포넌트 선택
 - ❌ `ProgressScreen`에서 단계 건너뜀 또는 씬 묶음 — 단계 수 = 씬 수
+- ❌ Playwright action에 `{"goto": "url"}` 구형 형식 — 반드시 `{"cmd": "goto", "url": "..."}` 형식 사용
+- ❌ Playwright 씬에서 `press F12`로 DevTools 열기 — `open_devtools` 액션 사용
+- ❌ Playwright 씬에서 콘솔 JS(`document.querySelectorAll...`)로 CSS 조작 — `disable_css` / `enable_css` 액션 사용
+- ❌ Playwright 씬에서 총 액션 시간이 `durationSec - 2초` 미만 — wait 추가로 보충
 
 ## 作業フロー
 1. 1강 단위로 스크립트를 받아 변환
