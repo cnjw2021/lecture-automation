@@ -9,4 +9,5 @@ export interface ILectureRepository {
   getCapturePath(lectureId: string, sceneId: number): string;
   existsScreenshot(lectureId: string, sceneId: number): Promise<boolean>;
   getScreenshotPath(lectureId: string, sceneId: number): string;
+  getAudioPath(lectureId: string, sceneId: number): string;
 }
