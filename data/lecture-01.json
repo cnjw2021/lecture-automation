@@ -368,7 +368,7 @@
     },
     {
       "scene_id": 19,
-      "narration": "安心してください。PART 1の最後の講義が終わるまでに、皆さんの画面に「Hello World」——つまり、自分自身が作った生まれて初めてのWebページが表示されます。もうすぐです。楽しみにしていてください。",
+      "narration": "安心してください。PART 1の最後の講義が終わるまでに、皆さんの画面に「Hello World」、つまり自分自身が作った生まれて初めてのWebページが表示されます。もうすぐです。楽しみにしていてください。",
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -382,7 +382,7 @@
     },
     {
       "scene_id": 20,
-      "narration": "次に、PART 2。「HTML — Webの骨格を読む」です。HTMLというのは、Webページの構造——骨格にあたるものです。見出しはここ、段落はここ、画像はここ、というふうに、ページの中身を組み立てるための言語ですね。",
+      "narration": "次に、PART 2。「HTML — Webの骨格を読む」です。HTMLというのは、Webページの構造、つまり骨格にあたるものです。見出しはここ、段落はここ、画像はここ、というふうに、ページの中身を組み立てるための言語ですね。",
       "visual": {
         "type": "remotion",
         "component": "DefinitionScreen",
@@ -409,7 +409,7 @@
     },
     {
       "scene_id": 22,
-      "narration": "PART 3は「CSS — Webに服を着せる」です。CSSはWebページの見た目を決めるものです。文字の色やサイズ、背景の色、レイアウト——要素を横に並べるとか、中央に配置するとか——こういったことは全部CSSで制御します。",
+      "narration": "PART 3は「CSS — Webに服を着せる」です。CSSはWebページの見た目を決めるものです。文字の色やサイズ、背景の色、レイアウト、たとえば要素を横に並べるとか、中央に配置するとか、こういったことは全部CSSで制御します。",
       "visual": {
         "type": "remotion",
         "component": "DefinitionScreen",
