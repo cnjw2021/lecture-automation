@@ -4,6 +4,7 @@ import * as fs from 'fs-extra';
 import { config } from '../config';
 import { IVisualProvider } from '../../domain/interfaces/IVisualProvider';
 import { Scene, PlaywrightVisual } from '../../domain/entities/Lecture';
+import { executeEduDevtoolsAction, getEduDevtoolsActionDuration } from './playwrightEduDevtools';
 
 export class PlaywrightVisualProvider implements IVisualProvider {
   async record(scene: Scene, outputPath: string): Promise<void> {
@@ -129,123 +130,18 @@ export class PlaywrightVisualProvider implements IVisualProvider {
               await page.waitForTimeout(300);
               break;
             case 'open_devtools':
-              await page.evaluate(() => {
-                if (document.getElementById('__edu_devtools__')) return;
-
-                function escHtml(str: string): string {
-                  return str
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;');
-                }
-
-                function renderAttrs(el: Element): string {
-                  return Array.from(el.attributes)
-                    .slice(0, 3)
-                    .map(a => {
-                      const val = a.value.length > 40 ? a.value.substring(0, 40) + '…' : a.value;
-                      return ` <span style="color:#9cdcfe">${escHtml(a.name)}</span>=<span style="color:#ce9178">"${escHtml(val)}"</span>`;
-                    })
-                    .join('');
-                }
-
-                function renderTree(el: Element, depth = 0): string {
-                  if (depth > 4 || !el.tagName) return '';
-                  const tag = el.tagName.toLowerCase();
-                  const attrs = renderAttrs(el);
-                  const indent = depth * 14;
-                  const children = Array.from(el.children).slice(0, 5);
-
-                  if (children.length === 0) {
-                    const raw = el.textContent?.trim() ?? '';
-                    const text = raw.length > 50 ? raw.substring(0, 50) + '…' : raw;
-                    return `<div style="padding-left:${indent}px;line-height:20px;white-space:nowrap;overflow:hidden">` +
-                      `<span style="color:#4ec9b0">&lt;${tag}</span>${attrs}<span style="color:#4ec9b0">&gt;</span>` +
-                      (text ? `<span style="color:#d4d4d4">${escHtml(text)}</span>` : '') +
-                      `<span style="color:#4ec9b0">&lt;/${tag}&gt;</span></div>`;
-                  }
-
-                  return `<div style="padding-left:${indent}px;line-height:20px;white-space:nowrap;overflow:hidden">` +
-                    `<span style="color:#6a9955">▶</span> ` +
-                    `<span style="color:#4ec9b0">&lt;${tag}</span>${attrs}<span style="color:#4ec9b0">&gt;</span></div>` +
-                    children.map(c => renderTree(c, depth + 1)).join('') +
-                    `<div style="padding-left:${indent}px;line-height:20px;white-space:nowrap"><span style="color:#4ec9b0">&lt;/${tag}&gt;</span></div>`;
-                }
-
-                const htmlTree = renderTree(document.documentElement);
-
-                const overlay = document.createElement('div');
-                overlay.id = '__edu_devtools__';
-                overlay.style.cssText = [
-                  'position:fixed', 'right:0', 'top:0', 'bottom:0', 'width:38%',
-                  'z-index:2147483647', 'display:flex', 'flex-direction:column',
-                  'box-shadow:-4px 0 20px rgba(0,0,0,0.7)',
-                  'animation:__dt_slide 0.25s ease-out',
-                ].join(';');
-
-                overlay.innerHTML = `
-                  <style>
-                    @keyframes __dt_slide { from { transform:translateX(100%); } to { transform:translateX(0); } }
-                    #__edu_devtools__ * { box-sizing:border-box; margin:0; padding:0; }
-                  </style>
-                  <div style="display:flex;align-items:center;background:#2b2b2b;border-left:1px solid #3c3c3c;border-bottom:1px solid #3c3c3c;height:32px;flex-shrink:0;overflow:hidden">
-                    <div style="display:flex;height:100%">
-                      <div style="color:#fff;background:#1e1e1e;border-top:2px solid #4a9eff;padding:0 12px;font-size:12px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center">Elements</div>
-                      <div style="color:#9aa0a6;padding:0 12px;font-size:12px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center">Console</div>
-                      <div style="color:#9aa0a6;padding:0 12px;font-size:12px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center">Sources</div>
-                      <div style="color:#9aa0a6;padding:0 12px;font-size:12px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center">Network</div>
-                    </div>
-                    <div style="margin-left:auto;padding:0 12px;color:#9aa0a6;font-size:20px;display:flex;align-items:center;height:100%">⋮</div>
-                  </div>
-                  <div style="display:flex;flex:1;overflow:hidden;background:#1e1e1e;font-family:Menlo,Consolas,'Courier New',monospace;font-size:12px;color:#d4d4d4;border-left:1px solid #3c3c3c">
-                    <div style="flex:1;overflow:auto;padding:4px 0 4px 4px">
-                      ${htmlTree}
-                    </div>
-                    <div id="__edu_devtools_styles__" style="width:200px;border-left:1px solid #3c3c3c;overflow:auto;padding:8px;flex-shrink:0">
-                      <div style="color:#9aa0a6;font-size:11px;font-family:-apple-system,sans-serif;padding-bottom:6px;border-bottom:1px solid #3c3c3c;margin-bottom:8px">Styles&nbsp;&nbsp;Computed</div>
-                      <div style="margin-bottom:2px"><span style="color:#a8c7fa">element</span><span style="color:#9aa0a6">.style {</span></div>
-                      <div style="color:#9aa0a6;margin-bottom:10px">}</div>
-                      <div style="color:#9aa0a6;margin-bottom:4px">body {</div>
-                      <div style="padding-left:14px;margin-bottom:2px"><span style="color:#9cdcfe">font-family</span>: <span style="color:#ce9178">-apple-system</span>;</div>
-                      <div style="padding-left:14px;margin-bottom:2px"><span style="color:#9cdcfe">margin</span>: <span style="color:#b5cea8">0</span>;</div>
-                      <div style="padding-left:14px;margin-bottom:2px"><span style="color:#9cdcfe">padding</span>: <span style="color:#b5cea8">0</span>;</div>
-                      <div style="color:#9aa0a6;margin-bottom:10px">}</div>
-                      <div style="color:#9aa0a6;margin-bottom:4px">*, *::before {</div>
-                      <div style="padding-left:14px;margin-bottom:2px"><span style="color:#9cdcfe">box-sizing</span>: <span style="color:#ce9178">border-box</span>;</div>
-                      <div style="color:#9aa0a6;margin-bottom:10px">}</div>
-                      <div style="color:#9aa0a6;margin-bottom:4px">a {</div>
-                      <div style="padding-left:14px;margin-bottom:2px"><span style="color:#9cdcfe">color</span>: <span style="color:#ce9178">inherit</span>;</div>
-                      <div style="padding-left:14px;margin-bottom:2px"><span style="color:#9cdcfe">text-decoration</span>: <span style="color:#ce9178">none</span>;</div>
-                      <div style="color:#9aa0a6">}</div>
-                    </div>
-                  </div>`;
-
-                // Chrome DevTools docked-right と同様に、ウェブサイト表示領域を左側62%に制限する。
-                // 既存の max-width 方式は position:fixed や 100vw 背景に無効だったため、
-                // body の子要素を固定幅ラッパーに移動する方式に変更。
-                if (!document.getElementById('__edu_site_wrapper__')) {
-                  const siteWidthPx = Math.round(window.innerWidth * 0.62);
-                  const wrapper = document.createElement('div');
-                  wrapper.id = '__edu_site_wrapper__';
-                  wrapper.style.cssText = [
-                    'position:fixed', 'left:0', 'top:0',
-                    'width:' + siteWidthPx + 'px', 'height:100vh',
-                    'overflow-y:auto', 'overflow-x:hidden', 'z-index:1',
-                  ].join(';');
-                  // body の既存子要素をラッパーに移動
-                  while (document.body.firstChild) {
-                    wrapper.appendChild(document.body.firstChild);
-                  }
-                  document.body.appendChild(wrapper);
-                  document.body.style.overflow = 'hidden';
-                  document.body.style.margin = '0';
-                }
-
-                document.body.appendChild(overlay);
-              });
-              await page.waitForTimeout(400);
+            case 'select_devtools_node':
+            case 'toggle_devtools_node': {
+              const result = await executeEduDevtoolsAction(page, action);
+              if (!result?.ok) {
+                throw new Error(result?.reason || `DevTools action failed: ${action.cmd}`);
+              }
+              const settleMs = getEduDevtoolsActionDuration(action.cmd) ?? 0;
+              if (settleMs > 0) {
+                await page.waitForTimeout(settleMs);
+              }
               break;
+            }
             case 'highlight':
               if (action.selector) {
                 const highlightLoc = page.locator(action.selector);

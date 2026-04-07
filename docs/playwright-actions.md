@@ -82,10 +82,48 @@
 
 **패널 구성:**
 - 탭바: Elements(활성), Console, Sources, Network
-- 좌측: 실제 DOM 트리 (depth 4, 자식 5개 제한)
+- 좌측: 실제 DOM 트리
 - 우측: Styles 패널 (`id="__edu_devtools_styles__"`)
 
 > **재사용 팁**: `highlight` 액션으로 `#__edu_devtools_styles__`를 지정하면 Styles 패널을 강조할 수 있습니다.
+
+> **교육용 기능**: `select_devtools_node`, `toggle_devtools_node`를 함께 사용하면 `head`, `body`, 특정 `h1`/`img` 같은 실제 요소에 대응하는 트리 노드를 선택하거나 펼칠 수 있습니다.
+
+---
+
+### `select_devtools_node` — DevTools 트리에서 실제 DOM 노드 선택
+
+실제 페이지의 CSS 셀렉터를 기준으로 대응하는 DevTools 트리 노드를 선택합니다. 필요하면 조상 노드를 자동으로 펼치고, 해당 행을 스크롤해 보여줍니다.
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `selector` | string | ✅ | 실제 페이지 요소를 찾기 위한 CSS 셀렉터 |
+| `note` | string | ❌ | 설명 (로그/참고용) |
+
+```json
+{ "cmd": "select_devtools_node", "selector": "head", "note": "head 노드 선택" }
+{ "cmd": "select_devtools_node", "selector": "body", "note": "body 노드 선택" }
+{ "cmd": "select_devtools_node", "selector": "h1", "note": "보이는 제목 요소와 연결" }
+```
+
+> **권장 사용처**: `head는 설정`, `body는 화면에 보이는 중身`, `CodePen의 HTML欄 ≒ body` 같은 설명을 시각적으로 연결할 때 적합합니다.
+
+---
+
+### `toggle_devtools_node` — DevTools 트리 노드 펼침/접힘
+
+대상 노드의 펼침 상태를 바꾸거나, 명시적으로 펼치거나 접습니다. `selector`를 생략하면 현재 선택된 노드에 적용합니다.
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `selector` | string | ❌ | 실제 페이지 요소를 찾기 위한 CSS 셀렉터 |
+| `mode` | `"toggle" \| "expand" \| "collapse"` | ❌ | 기본값은 `toggle` |
+| `note` | string | ❌ | 설명 (로그/참고용) |
+
+```json
+{ "cmd": "toggle_devtools_node", "selector": "body", "mode": "expand" }
+{ "cmd": "toggle_devtools_node", "mode": "collapse" }
+```
 
 ---
 

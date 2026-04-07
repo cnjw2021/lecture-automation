@@ -14,6 +14,7 @@
 import * as fs from 'fs-extra';
 import { Lecture, Scene, PlaywrightVisual, PlaywrightAction, PlaywrightSyncPoint } from '../../domain/entities/Lecture';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
+import { EDU_DEVTOOLS_ACTION_DURATION_MS } from '../../domain/constants/EduDevtoolsActionDurations';
 
 // 각 action cmd의 고정 소요시간 추정치 (ms).  wait는 조정 대상이므로 여기서 제외.
 const FIXED_DURATION_MS: Partial<Record<string, number>> = {
@@ -25,7 +26,7 @@ const FIXED_DURATION_MS: Partial<Record<string, number>> = {
   focus:        100,
   mouse_drag:   1000,
   highlight:    1500,  // 자동 해제까지 1.5초
-  open_devtools: 250,
+  ...EDU_DEVTOOLS_ACTION_DURATION_MS,
   disable_css:  0,
   enable_css:   0,
 };

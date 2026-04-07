@@ -16,6 +16,8 @@ export type PlaywrightCmd =
   | 'mouse_drag'   // 마우스 드래그 (from, to)
   | 'highlight'    // 요소 분홍 아웃라인 강조 (selector)
   | 'open_devtools' // Chrome DevTools 오버레이 주입
+  | 'select_devtools_node' // DevTools 트리에서 실제 DOM 노드 선택
+  | 'toggle_devtools_node' // DevTools 트리 노드 펼침/접힘
   | 'disable_css'  // 모든 스타일시트 비활성화
   | 'enable_css';  // 스타일시트 복원
 
@@ -27,6 +29,7 @@ export interface PlaywrightAction {
   from?: [number, number];
   to?: [number, number];
   key?: string;
+  mode?: 'toggle' | 'expand' | 'collapse';
   note?: string;
 }
 
