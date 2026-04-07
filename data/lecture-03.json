@@ -370,7 +370,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 9255
+            "ms": 7823
           },
           {
             "cmd": "mouse_move",
@@ -381,14 +381,14 @@
           },
           {
             "cmd": "wait",
-            "ms": 11105
+            "ms": 9386
           },
           {
             "cmd": "open_devtools"
           },
           {
             "cmd": "wait",
-            "ms": 11918
+            "ms": 14100
           },
           {
             "cmd": "mouse_move",
@@ -399,7 +399,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 9931
+            "ms": 11750
           },
           {
             "cmd": "highlight",
@@ -408,7 +408,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 3453
+            "ms": 384
           },
           {
             "cmd": "mouse_move",
@@ -419,7 +419,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 2589
+            "ms": 288
           }
         ],
         "syncPoints": [

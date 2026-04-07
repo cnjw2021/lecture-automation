@@ -19,7 +19,8 @@ import { RecordVisualUseCase } from '../../application/use-cases/RecordVisualUse
 import { RenderSceneClipsUseCase } from '../../application/use-cases/RenderSceneClipsUseCase';
 import { ConcatClipsUseCase } from '../../application/use-cases/ConcatClipsUseCase';
 import { ValidateLectureUseCase } from '../../application/use-cases/ValidateLectureUseCase';
-import { Lecture } from '../../domain/entities/Lecture';
+import { SyncPlaywrightUseCase } from '../../application/use-cases/SyncPlaywrightUseCase';
+import { Lecture, PlaywrightVisual } from '../../domain/entities/Lecture';
 
 async function runAutomation(jsonFileName: string) {
   const forceRegenerate = process.env.FORCE === '1';
@@ -98,7 +99,7 @@ async function runAutomation(jsonFileName: string) {
     process.exit(1);
   }
   const rawData = await fs.readFile(filePath, 'utf8');
-  const lectureData: Lecture = JSON.parse(rawData);
+  let lectureData: Lecture = JSON.parse(rawData);
 
   // 4. Validate before proceeding (Fail-Fast)
   try {
@@ -114,6 +115,24 @@ async function runAutomation(jsonFileName: string) {
 
     console.log('\n--- 1.5단계: 전체 오디오 미리 듣기 머지 ---');
     await mergeAudioUseCase.execute(lectureData);
+
+    // 1.7단계: Playwright 씬 narration-action 싱크 자동 보정
+    // syncPoints가 정의된 playwright 씬이 있을 때만 실행
+    const hasSyncableScenes = lectureData.sequence.some(s =>
+      s.visual.type === 'playwright' &&
+      ((s.visual as PlaywrightVisual).syncPoints?.length ?? 0) > 0
+    );
+    if (hasSyncableScenes) {
+      console.log('\n--- 1.7단계: Playwright 씬 싱크 자동 보정 ---');
+      const syncUseCase = new SyncPlaywrightUseCase(lectureRepository);
+      const { updatedLecture, changedSceneIds } = await syncUseCase.execute(lectureData);
+      if (changedSceneIds.length > 0) {
+        lectureData = updatedLecture;
+        // 보정된 wait 값을 JSON에 반영 (이후 regen-scene 등에서도 활용 가능하도록)
+        await fs.writeJson(filePath, lectureData, { spaces: 2 });
+        console.log(`  ✅ 씬 ${changedSceneIds.join(', ')} wait 보정 완료 → ${filePath}`);
+      }
+    }
 
     console.log('\n--- 2단계: 스크린샷 캡처 ---');
     await captureScreenshotUseCase.execute(lectureData, { force: forceRegenerate });

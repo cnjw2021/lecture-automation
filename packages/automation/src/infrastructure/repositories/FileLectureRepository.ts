@@ -71,4 +71,8 @@ export class FileLectureRepository implements ILectureRepository {
   getScreenshotPath(lectureId: string, sceneId: number): string {
     return path.join(this.screenshotBaseDir, lectureId, `scene-${sceneId}.png`);
   }
+
+  getAudioPath(lectureId: string, sceneId: number): string {
+    return path.join(this.audioBaseDir, lectureId, `scene-${sceneId}.wav`);
+  }
 }
