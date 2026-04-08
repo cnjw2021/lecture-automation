@@ -17,14 +17,14 @@ make run LECTURE=lecture-02.json
 make install-align-deps
 ```
 
-정렬은 `faster-whisper + ctranslate2`의 CPU 경로를 기준으로 구성했습니다. `torch`는 필수 의존성이 아니므로 정렬 전용 가상환경에는 기본 포함하지 않습니다.
+정렬은 `faster-whisper + ctranslate2`의 CPU 경로를 기준으로 구성했습니다. `ctranslate2`는 재현성 있는 디버깅을 위해 `requirements-align.txt`에서 명시 버전으로 고정합니다. `torch`는 필수 의존성이 아니므로 정렬 전용 가상환경에는 기본 포함하지 않습니다.
 
 ## 주요 명령어
 
 | 명령어 | 설명 |
 |--------|------|
-| `make run LECTURE=xxx.json` | 전체 파이프라인 실행 |
-| `make run-force LECTURE=xxx.json` | 모든 캐시 무시하고 강제 재생성 |
+| `make run LECTURE=xxx.json` | 전체 파이프라인 실행. `input/master-audio/<lecture>/master.wav`가 있으면 정렬/분할을 먼저 자동 실행 |
+| `make run-force LECTURE=xxx.json` | 모든 캐시 무시하고 강제 재생성. 마스터 오디오가 있으면 정렬/분할도 강제로 재실행 |
 | `make regen-scene LECTURE=xxx SCENE='5 12'` | 특정 씬 오디오·클립 재생성 후 전체 concat |
 | `make render-scene LECTURE=xxx SCENE=5` | 특정 씬 클립만 렌더링 |
 | `make align-master-audio LECTURE=xxx AUDIO=... [MODEL=small]` | master.wav에서 alignment.json 생성 |

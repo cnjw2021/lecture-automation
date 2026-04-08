@@ -1,2 +1,3 @@
 numpy<2
+ctranslate2==4.7.1
 faster-whisper>=1.2.1,<2

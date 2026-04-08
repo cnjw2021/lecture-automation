@@ -23,6 +23,7 @@ help:
 	@echo "make install-align-deps - 마스터 오디오 정렬용 Python 가상환경 생성"
 	@echo "make run             - 전 공정 실행 (기본: p1-01-01.json)"
 	@echo "make run LECTURE=xxx - 특정 강의 JSON 파일로 실행"
+	@echo "                       input/master-audio/<lecture>/master.wav가 있으면 정렬/분할을 먼저 자동 실행"
 	@echo "make run-synth       - 상태 합성형 모드로 실행 (스크린샷 기반)"
 	@echo "make run-force       - 기존 에셋 무시하고 전체 재생성"
 	@echo "make clean           - 생성된 모든 에셋 및 결과물 삭제"
@@ -68,15 +69,15 @@ build:
 
 run:
 	@echo "🚀 강의 자동화 파이프라인 시작: $(LECTURE)"
-	node $(ENGINE_PATH) $(LECTURE)
+	MASTER_AUDIO="$(MASTER_AUDIO)" MASTER_ALIGNMENT="$(MASTER_ALIGNMENT)" ALIGN="$(ALIGN)" ALIGN_MODEL="$(ALIGN_MODEL)" MODEL="$(MODEL)" node $(ENGINE_PATH) $(LECTURE)
 
 run-synth:
 	@echo "🖼️ 상태 합성형 모드로 파이프라인 시작: $(LECTURE)"
-	SYNTH=1 node $(ENGINE_PATH) $(LECTURE)
+	SYNTH=1 MASTER_AUDIO="$(MASTER_AUDIO)" MASTER_ALIGNMENT="$(MASTER_ALIGNMENT)" ALIGN="$(ALIGN)" ALIGN_MODEL="$(ALIGN_MODEL)" MODEL="$(MODEL)" node $(ENGINE_PATH) $(LECTURE)
 
 run-force:
 	@echo "🔄 강제 재생성 모드로 파이프라인 시작: $(LECTURE)"
-	FORCE=1 node $(ENGINE_PATH) $(LECTURE)
+	FORCE=1 MASTER_AUDIO="$(MASTER_AUDIO)" MASTER_ALIGNMENT="$(MASTER_ALIGNMENT)" ALIGN="$(ALIGN)" ALIGN_MODEL="$(ALIGN_MODEL)" MODEL="$(MODEL)" node $(ENGINE_PATH) $(LECTURE)
 
 regen-scene:
 	@echo "🔄 특정 Scene 재생성: $(LECTURE) / Scene $(SCENE)"
