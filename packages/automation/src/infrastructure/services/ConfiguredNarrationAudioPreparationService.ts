@@ -1,7 +1,9 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { GenerateAudioUseCase } from '../../application/use-cases/GenerateAudioUseCase';
+import { GenerateMasterAudioUseCase } from '../../application/use-cases/GenerateMasterAudioUseCase';
 import { ImportMasterAudioUseCase } from '../../application/use-cases/ImportMasterAudioUseCase';
+import { MasterAudioManifest } from '../../domain/entities/MasterAudioManifest';
 import { Lecture } from '../../domain/entities/Lecture';
 import { IAudioProviderFactory } from '../../domain/interfaces/IAudioProviderFactory';
 import { IAudioSegmentProvider } from '../../domain/interfaces/IAudioSegmentProvider';
@@ -12,9 +14,20 @@ import {
   NarrationAudioPreparationParams,
   NarrationAudioPreparationResult,
 } from '../../domain/interfaces/INarrationAudioPreparationService';
+import {
+  buildMasterAudioScript,
+  computeMasterAudioHash,
+  isSameMasterAudioGenerator,
+} from '../../domain/utils/MasterAudioUtils';
 import { config } from '../config';
 import { printAlignmentFailureHints, resolveAlignmentPythonCommand } from '../providers/PythonMasterAudioAlignmentProvider';
-import { resolveAlignmentModel, resolveAlignmentPath, resolveMasterAudioPath } from '../config/masterAudioPaths';
+import {
+  resolveAlignmentModel,
+  resolveAlignmentPath,
+  resolveMasterAudioManifestPath,
+  resolveMasterAudioPath,
+  resolveMasterAudioScriptPath,
+} from '../config/masterAudioPaths';
 
 async function getFileMtimeMs(targetPath: string): Promise<number | null> {
   if (!await fs.pathExists(targetPath)) {
@@ -78,13 +91,14 @@ export class ConfiguredNarrationAudioPreparationService implements INarrationAud
   constructor(
     private readonly lectureRepository: ILectureRepository,
     private readonly audioProviderFactory: IAudioProviderFactory,
+    private readonly generateMasterAudioUseCase: GenerateMasterAudioUseCase | null,
     private readonly masterAudioAlignmentProvider: IMasterAudioAlignmentProvider,
     private readonly audioSegmentProvider: IAudioSegmentProvider,
   ) {}
 
   async prepare(params: NarrationAudioPreparationParams): Promise<NarrationAudioPreparationResult> {
-    const masterAudioPath = resolveMasterAudioPath(config.paths.root, params.jsonFileName);
-    if (await fs.pathExists(masterAudioPath)) {
+    const masterAudioPath = await this.ensureMasterAudio(params);
+    if (masterAudioPath) {
       await this.prepareFromMasterAudio(params, masterAudioPath);
       return { source: 'master-audio' };
     }
@@ -95,6 +109,68 @@ export class ConfiguredNarrationAudioPreparationService implements INarrationAud
     const generateAudioUseCase = new GenerateAudioUseCase(provider, this.lectureRepository);
     await generateAudioUseCase.execute(params.lecture, { force: params.forceRegenerate });
     return { source: 'tts', providerName };
+  }
+
+  private async ensureMasterAudio(params: NarrationAudioPreparationParams): Promise<string | null> {
+    const masterAudioPath = resolveMasterAudioPath(config.paths.root, params.jsonFileName);
+    const manualOverride = Boolean(process.env.MASTER_AUDIO);
+    const masterAudioExists = await fs.pathExists(masterAudioPath);
+
+    if (!manualOverride && this.generateMasterAudioUseCase) {
+      const shouldGenerate = await this.shouldGenerateMasterAudio(params, masterAudioPath);
+      if (shouldGenerate) {
+        console.log('\n--- 0단계: 강의 JSON으로 마스터 오디오 생성 ---');
+        console.log(`🎤 마스터 오디오 생성 대상: ${masterAudioPath}`);
+        const manifest = await this.generateMasterAudioUseCase.execute(params.lecture, {
+          jsonFileName: params.jsonFileName,
+          outputPath: masterAudioPath,
+          manifestPath: resolveMasterAudioManifestPath(masterAudioPath),
+          scriptPath: resolveMasterAudioScriptPath(masterAudioPath),
+        });
+        console.log(`✅ 마스터 오디오 생성 완료 (${manifest.generator.modelName}, Voice: ${manifest.generator.voiceName})`);
+      }
+      return await fs.pathExists(masterAudioPath) ? masterAudioPath : null;
+    }
+
+    if (masterAudioExists) {
+      return masterAudioPath;
+    }
+
+    return null;
+  }
+
+  private async shouldGenerateMasterAudio(
+    params: NarrationAudioPreparationParams,
+    masterAudioPath: string,
+  ): Promise<boolean> {
+    if (!this.generateMasterAudioUseCase) {
+      return false;
+    }
+    if (params.forceRegenerate) {
+      return true;
+    }
+    if (!await fs.pathExists(masterAudioPath)) {
+      return true;
+    }
+
+    const manifestPath = resolveMasterAudioManifestPath(masterAudioPath);
+    if (!await fs.pathExists(manifestPath)) {
+      return true;
+    }
+
+    const currentScript = buildMasterAudioScript(params.lecture);
+    const expectedScriptHash = computeMasterAudioHash(currentScript);
+    const expectedGenerator = this.generateMasterAudioUseCase.getDescriptor();
+    const actualManifest = await fs.readJson(manifestPath) as MasterAudioManifest;
+
+    if (actualManifest.scriptHash !== expectedScriptHash) {
+      return true;
+    }
+    if (!isSameMasterAudioGenerator(actualManifest.generator, expectedGenerator)) {
+      return true;
+    }
+
+    return false;
   }
 
   private async prepareFromMasterAudio(params: NarrationAudioPreparationParams, masterAudioPath: string): Promise<void> {

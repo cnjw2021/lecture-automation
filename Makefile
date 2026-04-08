@@ -23,7 +23,7 @@ help:
 	@echo "make install-align-deps - 마스터 오디오 정렬용 Python 가상환경 생성"
 	@echo "make run             - 전 공정 실행 (기본: p1-01-01.json)"
 	@echo "make run LECTURE=xxx - 특정 강의 JSON 파일로 실행"
-	@echo "                       input/master-audio/<lecture>/master.wav가 있으면 정렬/분할을 먼저 자동 실행"
+	@echo "                       master.wav가 있으면 재사용하고, 없으면 config/tts.json의 masterAudio 설정으로 자동 생성 후 정렬/분할"
 	@echo "make run-synth       - 상태 합성형 모드로 실행 (스크린샷 기반)"
 	@echo "make run-force       - 기존 에셋 무시하고 전체 재생성"
 	@echo "make clean           - 생성된 모든 에셋 및 결과물 삭제"

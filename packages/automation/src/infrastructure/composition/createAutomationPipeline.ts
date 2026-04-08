@@ -1,3 +1,4 @@
+import { GenerateMasterAudioUseCase } from '../../application/use-cases/GenerateMasterAudioUseCase';
 import { RunAutomationPipelineUseCase } from '../../application/use-cases/RunAutomationPipelineUseCase';
 import { CaptureScreenshotUseCase } from '../../application/use-cases/CaptureScreenshotUseCase';
 import { ConcatClipsUseCase } from '../../application/use-cases/ConcatClipsUseCase';
@@ -7,6 +8,7 @@ import { RenderSceneClipsUseCase } from '../../application/use-cases/RenderScene
 import { SyncPlaywrightUseCase } from '../../application/use-cases/SyncPlaywrightUseCase';
 import { ValidateLectureUseCase } from '../../application/use-cases/ValidateLectureUseCase';
 import { ConfiguredAudioProviderFactory } from '../factories/ConfiguredAudioProviderFactory';
+import { ConfiguredMasterAudioGeneratorFactory } from '../factories/ConfiguredMasterAudioGeneratorFactory';
 import { FfmpegAudioSegmentProvider } from '../providers/FfmpegAudioSegmentProvider';
 import { FfmpegConcatProvider } from '../providers/FfmpegConcatProvider';
 import { PlaywrightScreenshotProvider } from '../providers/PlaywrightScreenshotProvider';
@@ -22,11 +24,13 @@ export function createAutomationPipeline(): RunAutomationPipelineUseCase {
   const lectureRepository = new FileLectureRepository();
   const clipRepository = new FileClipRepository();
   const audioProviderFactory = new ConfiguredAudioProviderFactory();
+  const masterAudioGenerator = new ConfiguredMasterAudioGeneratorFactory().create();
   const masterAudioAlignmentProvider = new PythonMasterAudioAlignmentProvider();
   const audioSegmentProvider = new FfmpegAudioSegmentProvider();
   const narrationAudioPreparationService = new ConfiguredNarrationAudioPreparationService(
     lectureRepository,
     audioProviderFactory,
+    masterAudioGenerator ? new GenerateMasterAudioUseCase(masterAudioGenerator) : null,
     masterAudioAlignmentProvider,
     audioSegmentProvider,
   );

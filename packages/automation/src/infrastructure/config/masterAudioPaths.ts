@@ -14,6 +14,14 @@ export function resolveMasterAudioPath(rootDir: string, jsonFileName: string, en
   return path.join(rootDir, 'input', 'master-audio', lectureStem, 'master.wav');
 }
 
+export function resolveMasterAudioManifestPath(masterAudioPath: string): string {
+  return path.join(path.dirname(masterAudioPath), 'manifest.json');
+}
+
+export function resolveMasterAudioScriptPath(masterAudioPath: string): string {
+  return path.join(path.dirname(masterAudioPath), 'script.txt');
+}
+
 export function resolveAlignmentPath(rootDir: string, jsonFileName: string, env: NodeJS.ProcessEnv = process.env): string {
   const override = env.MASTER_ALIGNMENT || env.ALIGN;
   return override ? path.resolve(override) : resolveDefaultAlignmentPath(rootDir, jsonFileName);
