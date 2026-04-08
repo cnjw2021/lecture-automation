@@ -3,21 +3,55 @@
 일본어 Web 제작 강의 영상을 자동 생성하는 파이프라인입니다.
 강의 JSON 하나로 TTS 음성 생성 → 브라우저 녹화 → 영상 렌더링 → 최종 MP4 출력까지 전 공정을 자동화합니다.
 
-## 빠른 시작
+## 환경 구축
+
+### 1. 시스템 사전 설치
+
+| 도구 | 용도 | 비고 |
+|------|------|------|
+| **Node.js** v18+ | 파이프라인 엔진 전체 | Playwright용 Chromium은 `npm install` 시 자동 설치 |
+| **ffmpeg** | 오디오 분할, 영상 concat | PATH에 등록 필요 |
+| **Python** 3.9+ | 마스터 오디오 정렬 기능 | 정렬 기능 미사용 시 불필요 |
+
+### 2. 의존성 설치
 
 ```bash
+# Node.js 패키지 + Playwright Chromium 자동 설치
 npm install
-cp .env.example .env   # API 키 설정
-make run LECTURE=lecture-02.json
+
+# TypeScript 빌드
+npm run build -w packages/automation
 ```
 
-마스터 오디오 자동 정렬 기능은 전용 Python 가상환경으로 분리해 두는 편이 안전합니다. 현재 저장소는 `.venv-align`이 있으면 그 Python을 우선 사용합니다.
+마스터 오디오 자동 정렬 기능을 사용하는 경우, 전용 Python 가상환경을 별도로 구성합니다. 저장소 루트에 `.venv-align`이 있으면 파이프라인이 해당 Python을 우선 사용합니다.
 
 ```bash
 make install-align-deps
 ```
 
 정렬은 `faster-whisper + ctranslate2`의 CPU 경로를 기준으로 구성했습니다. `ctranslate2`는 재현성 있는 디버깅을 위해 `requirements-align.txt`에서 명시 버전으로 고정합니다. `torch`는 필수 의존성이 아니므로 정렬 전용 가상환경에는 기본 포함하지 않습니다.
+
+### 3. 환경변수 설정
+
+`.env` 파일을 생성하고 API 키를 입력합니다.
+
+```bash
+# .env
+AUDIO_PROVIDER=gemini              # gemini | google_cloud_tts
+
+GEMINI_API_KEY=your_key_here       # https://aistudio.google.com/app/apikey
+
+# Google Cloud TTS 사용 시 추가 설정
+GOOGLE_CLOUD_TTS_KEY_FILE=path/to/service-account.json
+GOOGLE_CLOUD_TTS_VOICE=
+GOOGLE_CLOUD_TTS_LANGUAGE_CODE=
+```
+
+### 빠른 시작
+
+```bash
+make run LECTURE=lecture-02.json
+```
 
 `config/tts.json`의 `masterAudio.enabled`가 `true`이면 `make run`이 lecture JSON의 `sequence[].narration`만 추출해 Gemini TTS API로 `input/master-audio/<lecture>/master.wav`를 자동 생성하고, `manifest.json`의 `scriptHash`, `styleVersion`, `temperature`, `seed`, `promptHash`로 JSON과 마스터 오디오 간 drift를 관리합니다.
 
