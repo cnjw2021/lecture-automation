@@ -19,6 +19,9 @@ make run LECTURE=lecture-02.json
 | `make run-force LECTURE=xxx.json` | 모든 캐시 무시하고 강제 재생성 |
 | `make regen-scene LECTURE=xxx SCENE='5 12'` | 특정 씬 오디오·클립 재생성 후 전체 concat |
 | `make render-scene LECTURE=xxx SCENE=5` | 특정 씬 클립만 렌더링 |
+| `make align-master-audio LECTURE=xxx AUDIO=... [MODEL=small]` | master.wav에서 alignment.json 생성 |
+| `make import-master-audio LECTURE=xxx AUDIO=... ALIGN=...` | 강의 단위 TTS 마스터 오디오를 씬별 WAV로 분할 |
+| `make import-master-audio-auto LECTURE=xxx AUDIO=... [MODEL=small]` | alignment 생성 후 씬별 WAV 자동 분할 |
 | `make concat-scenes LECTURE=xxx` | 기존 클립으로 최종 MP4 생성 (~5초) |
 | `make preview SCENE=6` | 특정 씬 프리뷰 이미지(PNG) 생성 |
 | `make clean` | 생성된 모든 에셋 삭제 |
@@ -29,6 +32,7 @@ make run LECTURE=lecture-02.json
 data/lecture-XX.json
     │
     ├─ 1단계: TTS 오디오 생성      → packages/remotion/public/audio/
+    ├─ 대체: 마스터 오디오 분할     → packages/remotion/public/audio/
     ├─ 1.5단계: 오디오 미리듣기 머지 → output/XX-audio-preview.wav
     ├─ 2단계: 스크린샷 캡처         → packages/remotion/public/screenshots/
     ├─ 3단계: Playwright 브라우저 녹화 → packages/remotion/public/captures/
@@ -49,6 +53,7 @@ lecture-automation/
 │   └── tts.json             # TTS 프로바이더 설정
 ├── docs/                    # 문서
 │   ├── playwright-actions.md  # Playwright 액션 명세서
+│   ├── master-audio-segmentation.md # 마스터 오디오 기반 씬 분할 설계
 │   ├── curriculum.md          # 전체 커리큘럼
 │   └── tts-voices.md          # TTS 보이스 비교
 ├── packages/

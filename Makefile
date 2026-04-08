@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install build run run-force regen-scene render-scene record-webm concat-scenes clean render-only preview tts-sample \
+.PHONY: help install build run run-force regen-scene render-scene record-webm align-master-audio import-master-audio import-master-audio-auto concat-scenes clean render-only preview tts-sample \
         preview-browser-mock preview-screenshot capture-screenshots test-screenshot-options \
         preview-springs sync-playwright
 
@@ -10,6 +10,8 @@ SAMPLE_LECTURE ?= sample-screenshot-test.json
 ENGINE_PATH = packages/automation/dist/presentation/cli/main.js
 ENGINE_RENDER_SCENE = packages/automation/dist/presentation/cli/render-scene.js
 ENGINE_RECORD_WEBM = packages/automation/dist/presentation/cli/record-webm.js
+ENGINE_ALIGN_MASTER_AUDIO = packages/automation/dist/presentation/cli/align-master-audio.js
+ENGINE_IMPORT_MASTER_AUDIO = packages/automation/dist/presentation/cli/import-master-audio.js
 ENGINE_CONCAT_SCENES = packages/automation/dist/presentation/cli/concat-scenes.js
 REMOTION_PATH = packages/remotion
 OUTPUT_DIR = output
@@ -33,6 +35,9 @@ help:
 	@echo "make render-scene LECTURE=xxx SCENE='5 12' - 여러 씬 클립 렌더링"
 	@echo "make record-webm LECTURE=xxx SCENE=17      - 특정 Playwright 씬 webm 재생성"
 	@echo "make record-webm LECTURE=xxx SCENE='17 18' - 여러 Playwright 씬 webm 재생성"
+	@echo "make align-master-audio LECTURE=xxx AUDIO=... [MODEL=small] - master.wav에서 alignment.json 생성"
+	@echo "make import-master-audio LECTURE=xxx AUDIO=... ALIGN=... - 강의 단위 TTS를 씬별 WAV로 분할"
+	@echo "make import-master-audio-auto LECTURE=xxx AUDIO=... [MODEL=small] - alignment 생성 후 씬별 WAV 분할"
 	@echo "make concat-scenes LECTURE=xxx             - 씬 클립 이어붙여 최종 MP4 생성"
 	@echo "make sync-playwright LECTURE=xxx           - Playwright 씬 narration-action 싱크 자동 조정"
 	@echo "make sync-playwright LECTURE=xxx SCENE=17  - 특정 씬만 싱크 조정"
@@ -92,6 +97,45 @@ record-webm:
 	@echo "🔨 automation 패키지 빌드 중..."
 	npm run build -w packages/automation
 	node $(ENGINE_RECORD_WEBM) $(LECTURE) $(SCENE)
+
+align-master-audio:
+	@echo "🧭 마스터 오디오 alignment 생성: $(LECTURE)"
+	@if [ -z "$(AUDIO)" ]; then \
+		echo "❌ AUDIO 값을 지정해 주세요. 예: make align-master-audio LECTURE=lecture-03.json AUDIO=input/master-audio/lecture-03/master.wav MODEL=small"; \
+		exit 1; \
+	fi
+	@echo "🔨 automation 패키지 빌드 중..."
+	npm run build -w packages/automation
+	@ALIGN_PATH=$${ALIGN:-tmp/audio-segmentation/$$(basename "$(LECTURE)" .json)/alignment.json}; \
+	echo "   - alignment 출력: $$ALIGN_PATH"; \
+	node $(ENGINE_ALIGN_MASTER_AUDIO) $(LECTURE) $(AUDIO) $$ALIGN_PATH $(MODEL)
+
+import-master-audio:
+	@echo "🎙️ 마스터 오디오 씬 분할: $(LECTURE)"
+	@if [ -z "$(AUDIO)" ]; then \
+		echo "❌ AUDIO 값을 지정해 주세요. 예: make import-master-audio LECTURE=lecture-03.json AUDIO=input/master-audio/lecture-03/master.wav ALIGN=tmp/audio-segmentation/lecture-03/alignment.json"; \
+		exit 1; \
+	fi
+	@if [ -z "$(ALIGN)" ]; then \
+		echo "❌ ALIGN 값을 지정해 주세요. 예: make import-master-audio LECTURE=lecture-03.json AUDIO=input/master-audio/lecture-03/master.wav ALIGN=tmp/audio-segmentation/lecture-03/alignment.json"; \
+		exit 1; \
+	fi
+	@echo "🔨 automation 패키지 빌드 중..."
+	npm run build -w packages/automation
+	node $(ENGINE_IMPORT_MASTER_AUDIO) $(LECTURE) $(AUDIO) $(ALIGN)
+
+import-master-audio-auto:
+	@echo "🎙️ 마스터 오디오 자동 분할: $(LECTURE)"
+	@if [ -z "$(AUDIO)" ]; then \
+		echo "❌ AUDIO 값을 지정해 주세요. 예: make import-master-audio-auto LECTURE=lecture-03.json AUDIO=input/master-audio/lecture-03/master.wav MODEL=small"; \
+		exit 1; \
+	fi
+	@echo "🔨 automation 패키지 빌드 중..."
+	npm run build -w packages/automation
+	@ALIGN_PATH=$${ALIGN:-tmp/audio-segmentation/$$(basename "$(LECTURE)" .json)/alignment.json}; \
+	echo "   - alignment 출력: $$ALIGN_PATH"; \
+	node $(ENGINE_ALIGN_MASTER_AUDIO) $(LECTURE) $(AUDIO) $$ALIGN_PATH $(MODEL); \
+	node $(ENGINE_IMPORT_MASTER_AUDIO) $(LECTURE) $(AUDIO) $$ALIGN_PATH
 
 concat-scenes:
 	@echo "🔗 씬 클립 이어붙이기: $(LECTURE)"
