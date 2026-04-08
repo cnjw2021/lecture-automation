@@ -1,30 +1,27 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { Lecture } from '../../domain/entities/Lecture';
+import { createAutomationPipeline } from '../../infrastructure/composition/createAutomationPipeline';
 import { config } from '../../infrastructure/config';
-import { FileLectureRepository } from '../../infrastructure/repositories/FileLectureRepository';
-import { FileClipRepository } from '../../infrastructure/repositories/FileClipRepository';
-import { GeminiAudioProvider } from '../../infrastructure/providers/GeminiAudioProvider';
-import { GoogleCloudTtsProvider } from '../../infrastructure/providers/GoogleCloudTtsProvider';
-import { GeminiCloudTtsProvider } from '../../infrastructure/providers/GeminiCloudTtsProvider';
-import { PlaywrightVisualProvider } from '../../infrastructure/providers/PlaywrightVisualProvider';
-import { PlaywrightScreenshotProvider } from '../../infrastructure/providers/PlaywrightScreenshotProvider';
-import { PlaywrightStateCaptureProvider } from '../../infrastructure/providers/PlaywrightStateCaptureProvider';
-import { RemotionSceneClipRenderProvider } from '../../infrastructure/providers/RemotionSceneClipRenderProvider';
-import { FfmpegConcatProvider } from '../../infrastructure/providers/FfmpegConcatProvider';
-import { IAudioProvider } from '../../domain/interfaces/IAudioProvider';
-import { GenerateAudioUseCase } from '../../application/use-cases/GenerateAudioUseCase';
-import { MergeAudioUseCase } from '../../application/use-cases/MergeAudioUseCase';
-import { CaptureScreenshotUseCase } from '../../application/use-cases/CaptureScreenshotUseCase';
-import { RecordVisualUseCase } from '../../application/use-cases/RecordVisualUseCase';
-import { RenderSceneClipsUseCase } from '../../application/use-cases/RenderSceneClipsUseCase';
-import { ConcatClipsUseCase } from '../../application/use-cases/ConcatClipsUseCase';
-import { ValidateLectureUseCase } from '../../application/use-cases/ValidateLectureUseCase';
-import { SyncPlaywrightUseCase } from '../../application/use-cases/SyncPlaywrightUseCase';
-import { Lecture, PlaywrightVisual } from '../../domain/entities/Lecture';
+
+async function loadLecture(jsonFileName: string): Promise<{ lecture: Lecture; lecturePath: string }> {
+  const lecturePath = path.join(config.paths.data, jsonFileName);
+  if (!await fs.pathExists(lecturePath)) {
+    console.error(`\n❌ [에러] 파일을 찾을 수 없습니다: ${lecturePath}`);
+    process.exit(1);
+  }
+
+  const rawData = await fs.readFile(lecturePath, 'utf8');
+  return {
+    lecture: JSON.parse(rawData) as Lecture,
+    lecturePath,
+  };
+}
 
 async function runAutomation(jsonFileName: string) {
   const forceRegenerate = process.env.FORCE === '1';
   const useSynthCapture = process.env.SYNTH === '1';
+
   if (forceRegenerate) {
     console.log('🔄 강제 재생성 모드 활성화 - 기존 에셋을 무시합니다.');
   }
@@ -34,117 +31,20 @@ async function runAutomation(jsonFileName: string) {
 
   console.log('🚀 강의 자동화 파이프라인 가동 (Full-Cycle, Clean Architecture)...');
 
-  // 1. Composition Root
-  const lectureRepository = new FileLectureRepository();
-  const clipRepository = new FileClipRepository();
+  const { lecture, lecturePath } = await loadLecture(jsonFileName);
+  const automationPipeline = createAutomationPipeline();
 
-  const providerName = config.active_audio_provider;
-  let audioProvider: IAudioProvider;
-
-  const videoConfig = config.getVideoConfig();
-  const ttsConfig = config.getTtsConfig();
-  const audioConfig = {
-    sampleRate: videoConfig.audio.sampleRate,
-    channels: videoConfig.audio.channels,
-    bitDepth: videoConfig.audio.bitDepth,
-    speechRate: ttsConfig.speechRate || 0.85,
-  };
-
-  if (providerName === 'gemini_cloud_tts') {
-    const gcConfig = config.providers.gemini_cloud_tts;
-    if (!gcConfig.keyFilePath) {
-      console.error('\n❌ [에러] GOOGLE_CLOUD_TTS_KEY_FILE이 설정되어 있지 않습니다.');
-      console.error('루트 디렉토리의 .env 파일에 Service Account JSON 키 파일 경로를 입력해 주세요.\n');
-      process.exit(1);
-    }
-    audioProvider = new GeminiCloudTtsProvider(gcConfig.keyFilePath, gcConfig.modelName, gcConfig.voiceName, gcConfig.languageCode, audioConfig);
-  } else if (providerName === 'google_cloud_tts') {
-    const gcConfig = config.providers.google_cloud_tts;
-    if (!gcConfig.keyFilePath) {
-      console.error('\n❌ [에러] GOOGLE_CLOUD_TTS_KEY_FILE이 설정되어 있지 않습니다.');
-      console.error('루트 디렉토리의 .env 파일에 Service Account JSON 키 파일 경로를 입력해 주세요.\n');
-      process.exit(1);
-    }
-    audioProvider = new GoogleCloudTtsProvider(gcConfig.keyFilePath, gcConfig.voiceName, gcConfig.languageCode, audioConfig);
-  } else {
-    const geminiConfig = config.providers.gemini;
-    if (!geminiConfig.apiKey || geminiConfig.apiKey === 'YOUR_GEMINI_API_KEY_HERE') {
-      console.error('\n❌ [에러] GEMINI_API_KEY가 설정되어 있지 않습니다.');
-      console.error('루트 디렉토리의 .env 파일에 올바른 API 키를 입력해 주세요.\n');
-      process.exit(1);
-    }
-    audioProvider = new GeminiAudioProvider(geminiConfig.apiKey, geminiConfig.modelName, geminiConfig.voice, geminiConfig.language, audioConfig);
-  }
-
-  console.log(`🔊 오디오 프로바이더: ${providerName}`);
-  const visualProvider = new PlaywrightVisualProvider();
-  const stateCaptureProvider = new PlaywrightStateCaptureProvider();
-  const screenshotProvider = new PlaywrightScreenshotProvider();
-  const sceneClipRenderProvider = new RemotionSceneClipRenderProvider();
-  const concatProvider = new FfmpegConcatProvider();
-
-  // 2. Use Cases
-  const validateLectureUseCase = new ValidateLectureUseCase();
-  const generateAudioUseCase = new GenerateAudioUseCase(audioProvider, lectureRepository);
-  const mergeAudioUseCase = new MergeAudioUseCase();
-  const captureScreenshotUseCase = new CaptureScreenshotUseCase(screenshotProvider, lectureRepository);
-  const recordVisualUseCase = new RecordVisualUseCase(visualProvider, lectureRepository, stateCaptureProvider);
-  const renderSceneClipsUseCase = new RenderSceneClipsUseCase(sceneClipRenderProvider, clipRepository, lectureRepository);
-  const concatClipsUseCase = new ConcatClipsUseCase(concatProvider, clipRepository);
-
-  // 3. Load Data
-  const filePath = path.join(config.paths.data, jsonFileName);
-  if (!await fs.pathExists(filePath)) {
-    console.error(`\n❌ [에러] 파일을 찾을 수 없습니다: ${filePath}`);
-    process.exit(1);
-  }
-  const rawData = await fs.readFile(filePath, 'utf8');
-  let lectureData: Lecture = JSON.parse(rawData);
-
-  // 4. Validate before proceeding (Fail-Fast)
   try {
-    validateLectureUseCase.execute(lectureData);
-  } catch (error) {
-    process.exit(1);
-  }
-
-  // 5. Execute Pipeline
-  try {
-    console.log('\n--- 1단계: 나레이션 오디오 생성 ---');
-    await generateAudioUseCase.execute(lectureData, { force: forceRegenerate });
-
-    console.log('\n--- 1.5단계: 전체 오디오 미리 듣기 머지 ---');
-    await mergeAudioUseCase.execute(lectureData);
-
-    // 1.7단계: Playwright 씬 narration-action 싱크 자동 보정
-    // syncPoints가 정의된 playwright 씬이 있을 때만 실행
-    const hasSyncableScenes = lectureData.sequence.some(s =>
-      s.visual.type === 'playwright' &&
-      ((s.visual as PlaywrightVisual).syncPoints?.length ?? 0) > 0
-    );
-    if (hasSyncableScenes) {
-      console.log('\n--- 1.7단계: Playwright 씬 싱크 자동 보정 ---');
-      const syncUseCase = new SyncPlaywrightUseCase(lectureRepository);
-      const { updatedLecture, changedSceneIds } = await syncUseCase.execute(lectureData);
-      if (changedSceneIds.length > 0) {
-        lectureData = updatedLecture;
-        // 보정된 wait 값을 JSON에 반영 (이후 regen-scene 등에서도 활용 가능하도록)
-        await fs.writeJson(filePath, lectureData, { spaces: 2 });
-        console.log(`  ✅ 씬 ${changedSceneIds.join(', ')} wait 보정 완료 → ${filePath}`);
-      }
-    }
-
-    console.log('\n--- 2단계: 스크린샷 캡처 ---');
-    await captureScreenshotUseCase.execute(lectureData, { force: forceRegenerate });
-
-    console.log('\n--- 3단계: 시각 자료(브라우저) 녹화 ---');
-    await recordVisualUseCase.execute(lectureData, { force: forceRegenerate, useSynthCapture });
-
-    console.log('\n--- 4단계: 씬별 클립 렌더링 ---');
-    await renderSceneClipsUseCase.execute(lectureData, { force: forceRegenerate });
-
-    console.log('\n--- 5단계: 클립 이어붙이기 ---');
-    const outputPath = await concatClipsUseCase.execute(lectureData);
+    const { outputPath } = await automationPipeline.execute({
+      lecture,
+      jsonFileName,
+      lecturePath,
+      forceRegenerate,
+      useSynthCapture,
+      persistLecture: async updatedLecture => {
+        await fs.writeJson(lecturePath, updatedLecture, { spaces: 2 });
+      },
+    });
 
     console.log('\n✨ [완료] 전 공정이 성공적으로 마무리되었습니다!');
     console.log(`📍 최종 결과물: ${outputPath}`);

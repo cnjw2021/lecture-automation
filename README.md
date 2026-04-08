@@ -11,14 +11,27 @@ cp .env.example .env   # API 키 설정
 make run LECTURE=lecture-02.json
 ```
 
+마스터 오디오 자동 정렬 기능은 전용 Python 가상환경으로 분리해 두는 편이 안전합니다. 현재 저장소는 `.venv-align`이 있으면 그 Python을 우선 사용합니다.
+
+```bash
+make install-align-deps
+```
+
+정렬은 `faster-whisper + ctranslate2`의 CPU 경로를 기준으로 구성했습니다. `ctranslate2`는 재현성 있는 디버깅을 위해 `requirements-align.txt`에서 명시 버전으로 고정합니다. `torch`는 필수 의존성이 아니므로 정렬 전용 가상환경에는 기본 포함하지 않습니다.
+
+`config/tts.json`의 `masterAudio.enabled`가 `true`이면 `make run`이 lecture JSON의 `sequence[].narration`만 추출해 Gemini TTS API로 `input/master-audio/<lecture>/master.wav`를 자동 생성하고, `manifest.json`의 `scriptHash`, `styleVersion`, `temperature`, `seed`, `promptHash`로 JSON과 마스터 오디오 간 drift를 관리합니다.
+
 ## 주요 명령어
 
 | 명령어 | 설명 |
 |--------|------|
-| `make run LECTURE=xxx.json` | 전체 파이프라인 실행 |
-| `make run-force LECTURE=xxx.json` | 모든 캐시 무시하고 강제 재생성 |
+| `make run LECTURE=xxx.json` | 전체 파이프라인 실행. `masterAudio.enabled=true`면 JSON narration으로 master.wav를 자동 생성 또는 재사용한 뒤 정렬/분할 |
+| `make run-force LECTURE=xxx.json` | 모든 캐시 무시하고 강제 재생성. master.wav, alignment, 씬별 WAV도 함께 재생성 |
 | `make regen-scene LECTURE=xxx SCENE='5 12'` | 특정 씬 오디오·클립 재생성 후 전체 concat |
 | `make render-scene LECTURE=xxx SCENE=5` | 특정 씬 클립만 렌더링 |
+| `make align-master-audio LECTURE=xxx AUDIO=... [MODEL=small]` | master.wav에서 alignment.json 생성 |
+| `make import-master-audio LECTURE=xxx AUDIO=... ALIGN=...` | 강의 단위 TTS 마스터 오디오를 씬별 WAV로 분할 |
+| `make import-master-audio-auto LECTURE=xxx AUDIO=... [MODEL=small]` | alignment 생성 후 씬별 WAV 자동 분할 |
 | `make concat-scenes LECTURE=xxx` | 기존 클립으로 최종 MP4 생성 (~5초) |
 | `make preview SCENE=6` | 특정 씬 프리뷰 이미지(PNG) 생성 |
 | `make clean` | 생성된 모든 에셋 삭제 |
@@ -29,6 +42,7 @@ make run LECTURE=lecture-02.json
 data/lecture-XX.json
     │
     ├─ 1단계: TTS 오디오 생성      → packages/remotion/public/audio/
+    ├─ 대체: 마스터 오디오 분할     → packages/remotion/public/audio/
     ├─ 1.5단계: 오디오 미리듣기 머지 → output/XX-audio-preview.wav
     ├─ 2단계: 스크린샷 캡처         → packages/remotion/public/screenshots/
     ├─ 3단계: Playwright 브라우저 녹화 → packages/remotion/public/captures/
@@ -49,6 +63,7 @@ lecture-automation/
 │   └── tts.json             # TTS 프로바이더 설정
 ├── docs/                    # 문서
 │   ├── playwright-actions.md  # Playwright 액션 명세서
+│   ├── master-audio-segmentation.md # 마스터 오디오 기반 씬 분할 설계
 │   ├── curriculum.md          # 전체 커리큘럼
 │   └── tts-voices.md          # TTS 보이스 비교
 ├── packages/
