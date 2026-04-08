@@ -11,6 +11,12 @@ cp .env.example .env   # API 키 설정
 make run LECTURE=lecture-02.json
 ```
 
+마스터 오디오 자동 정렬 기능을 사용할 때는 Python 패키지를 한 번 설치해야 합니다.
+
+```bash
+pip3 install -r scripts/requirements-align.txt
+```
+
 ## 주요 명령어
 
 | 명령어 | 설명 |
