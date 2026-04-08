@@ -31,11 +31,20 @@
 
 ---
 
+## ElevenLabs — eleven_v3
+
+표현력이 강하고 품질이 우수한 편. 이 저장소에서는 ElevenLabs 기본 모델로 `eleven_v3`를 사용합니다. `stability`, `similarity_boost`, `style`, `seed`를 함께 조정할 수 있음.
+
+설정 위치: `config/tts.json` → `providers.elevenlabs`
+
+---
+
 ## 샘플 생성
 
 ```bash
 make tts-sample TTS=google_cloud_tts
 make tts-sample TTS=gemini_cloud_tts
+make tts-sample TTS=elevenlabs
 ```
 
 출력 파일: `output/tts-samples/sample-{provider}-{voice}-rate{rate}-{timestamp}.wav`

@@ -22,6 +22,26 @@ function getRequiredMasterAudioPrompt(tts: any): string {
   return prompt;
 }
 
+function getOptionalGeminiPrompt(tts: any): string {
+  const prompt = tts.providers?.gemini?.prompt;
+  return typeof prompt === 'string' ? prompt.trim() : '';
+}
+
+function getOptionalGeminiCloudTtsPrompt(tts: any): string {
+  const prompt = tts.providers?.gemini_cloud_tts?.prompt;
+  return typeof prompt === 'string' ? prompt.trim() : '';
+}
+
+function getOptionalElevenLabsVoiceSettings(provider: any) {
+  return {
+    stability: typeof provider?.stability === 'number' ? provider.stability : 0.85,
+    similarity_boost: typeof provider?.similarity_boost === 'number' ? provider.similarity_boost : 0.9,
+    style: typeof provider?.style === 'number' ? provider.style : 0,
+    use_speaker_boost: typeof provider?.use_speaker_boost === 'boolean' ? provider.use_speaker_boost : true,
+    speed: typeof provider?.speed === 'number' ? provider.speed : 1,
+  };
+}
+
 export const config = {
   get active_audio_provider() {
     return getTtsJson().activeProvider;
@@ -35,6 +55,9 @@ export const config = {
         modelName: tts.providers.gemini.modelName,
         voice: tts.providers.gemini.voice,
         language: tts.providers.gemini.language,
+        temperature: typeof tts.providers.gemini.temperature === 'number' ? tts.providers.gemini.temperature : 0,
+        seed: typeof tts.providers.gemini.seed === 'number' ? tts.providers.gemini.seed : undefined,
+        prompt: getOptionalGeminiPrompt(tts),
       },
       google_cloud_tts: {
         keyFilePath: process.env.GOOGLE_CLOUD_TTS_KEY_FILE || '',
@@ -46,6 +69,15 @@ export const config = {
         modelName: tts.providers.gemini_cloud_tts.modelName,
         voiceName: tts.providers.gemini_cloud_tts.voiceName,
         languageCode: tts.providers.gemini_cloud_tts.languageCode,
+        prompt: getOptionalGeminiCloudTtsPrompt(tts),
+      },
+      elevenlabs: {
+        apiKey: process.env.ELEVENLABS_API_KEY || '',
+        voiceId: tts.providers.elevenlabs.voiceId,
+        modelId: tts.providers.elevenlabs.modelId,
+        languageCode: tts.providers.elevenlabs.languageCode,
+        seed: typeof tts.providers.elevenlabs.seed === 'number' ? tts.providers.elevenlabs.seed : undefined,
+        voiceSettings: getOptionalElevenLabsVoiceSettings(tts.providers.elevenlabs),
       },
     };
   },
@@ -72,8 +104,13 @@ export const config = {
     const tts = getTtsJson();
     const activeProvider = tts.activeProvider;
     const providerConfig = tts.providers[activeProvider];
+    const speechRate = typeof providerConfig.speechRate === 'number'
+      ? providerConfig.speechRate
+      : typeof providerConfig.speed === 'number'
+        ? providerConfig.speed
+        : undefined;
     return {
-      speechRate: providerConfig.speechRate,
+      speechRate,
       pauseBetweenSentences: tts.pauseBetweenSentences,
     };
   },

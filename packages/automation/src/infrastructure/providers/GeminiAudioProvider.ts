@@ -1,3 +1,4 @@
+import * as https from 'https';
 import { IAudioProvider, GenerateAudioOptions, AudioGenerateResult, AudioConfig } from '../../domain/interfaces/IAudioProvider';
 import { pcmToWav } from './AudioUtils';
 
@@ -6,19 +7,91 @@ export class GeminiAudioProvider implements IAudioProvider {
   private modelName: string;
   private voice: string;
   private language: string;
+  private prompt: string;
   private audioConfig: AudioConfig;
+  private temperature: number;
+  private seed?: number;
   private baseUrl = "https://generativelanguage.googleapis.com/v1beta/models";
+  private readonly requestTimeoutMs = 2 * 60 * 1000;
 
-  constructor(apiKey: string, modelName: string, voice: string, language: string, audioConfig: AudioConfig) {
+  constructor(
+    apiKey: string,
+    modelName: string,
+    voice: string,
+    language: string,
+    prompt: string,
+    audioConfig: AudioConfig,
+    temperature = 0,
+    seed?: number,
+  ) {
     this.apiKey = apiKey;
     this.modelName = modelName;
     this.voice = voice;
     this.language = language;
+    this.prompt = prompt;
     this.audioConfig = audioConfig;
+    this.temperature = temperature;
+    this.seed = seed;
   }
 
   private async sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  private async postJson(url: string, payload: unknown): Promise<{ status: number; ok: boolean; json: any }> {
+    const body = JSON.stringify(payload);
+    const targetUrl = new URL(url);
+
+    return await new Promise((resolve, reject) => {
+      const request = https.request({
+        protocol: targetUrl.protocol,
+        hostname: targetUrl.hostname,
+        port: targetUrl.port || undefined,
+        path: `${targetUrl.pathname}${targetUrl.search}`,
+        method: 'POST',
+        family: 4,
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(body),
+        },
+      }, response => {
+        const chunks: Buffer[] = [];
+
+        response.on('data', chunk => {
+          chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+        });
+
+        response.on('end', () => {
+          const raw = Buffer.concat(chunks).toString('utf8');
+          if (!raw) {
+            resolve({
+              status: response.statusCode ?? 0,
+              ok: (response.statusCode ?? 0) >= 200 && (response.statusCode ?? 0) < 300,
+              json: {},
+            });
+            return;
+          }
+
+          try {
+            resolve({
+              status: response.statusCode ?? 0,
+              ok: (response.statusCode ?? 0) >= 200 && (response.statusCode ?? 0) < 300,
+              json: JSON.parse(raw),
+            });
+          } catch (error) {
+            reject(new Error(`Gemini TTS 응답 JSON 파싱 실패: ${raw.substring(0, 300)}`, { cause: error }));
+          }
+        });
+      });
+
+      request.setTimeout(this.requestTimeoutMs, () => {
+        request.destroy(new Error(`Gemini TTS 요청 타임아웃 (${this.requestTimeoutMs}ms)`));
+      });
+
+      request.on('error', reject);
+      request.write(body);
+      request.end();
+    });
   }
 
   private isRetryableError(error: unknown): boolean {
@@ -27,6 +100,7 @@ export class GeminiAudioProvider implements IAudioProvider {
       const cause = (error as any).cause;
       const causeCode = cause?.code || '';
       return msg.includes('fetch failed')
+        || msg.includes('timeout')
         || causeCode === 'ECONNRESET'
         || causeCode === 'ETIMEDOUT'
         || causeCode === 'ENOTFOUND'
@@ -59,13 +133,19 @@ export class GeminiAudioProvider implements IAudioProvider {
         : speechRate <= 0.9
           ? '落ち着いたペースで、丁寧に'
           : '自然なペースで';
+      const instructionParts = [
+        this.prompt,
+        `${paceInstruction}、${this.language}で読み上げてください。`,
+      ].filter(Boolean);
+      const promptText = `${instructionParts.join(' ')}\n\n原稿:\n${sanitizedText}`;
 
       const payload = {
         contents: [{
-          parts: [{ text: `${paceInstruction}、${this.language}で読み上げてください: ` + sanitizedText }]
+          parts: [{ text: promptText }]
         }],
         generationConfig: {
           responseModalities: ["AUDIO"],
+          temperature: this.temperature,
           speechConfig: {
             voiceConfig: {
               prebuiltVoiceConfig: {
@@ -75,15 +155,13 @@ export class GeminiAudioProvider implements IAudioProvider {
           }
         }
       };
+      if (typeof this.seed === 'number') {
+        (payload.generationConfig as Record<string, unknown>).seed = this.seed;
+      }
 
       try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        const result = await response.json();
+        const response = await this.postJson(url, payload);
+        const result = response.json;
 
         if (!response.ok) {
           if (response.status === 404) {
@@ -103,7 +181,7 @@ export class GeminiAudioProvider implements IAudioProvider {
           if (audioPart) {
             const pcmBuffer = Buffer.from(audioPart.inlineData.data, 'base64');
             const { buffer, durationSec } = pcmToWav(pcmBuffer, this.audioConfig);
-            console.log(`  ✅ 오디오 생성 완료 (${pcmBuffer.length} bytes, ${durationSec.toFixed(2)}초, Voice: ${this.voice})`);
+            console.log(`  ✅ 오디오 생성 완료 (${pcmBuffer.length} bytes, ${durationSec.toFixed(2)}초, Voice: ${this.voice}, temp: ${this.temperature})`);
             return { buffer, durationSec };
           }
         }

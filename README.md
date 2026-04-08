@@ -45,6 +45,9 @@ GEMINI_API_KEY=your_key_here       # https://aistudio.google.com/app/apikey
 GOOGLE_CLOUD_TTS_KEY_FILE=path/to/service-account.json
 GOOGLE_CLOUD_TTS_VOICE=
 GOOGLE_CLOUD_TTS_LANGUAGE_CODE=
+
+# ElevenLabs 사용 시 추가 설정
+ELEVENLABS_API_KEY=your_key_here
 ```
 
 ### 빠른 시작
@@ -53,14 +56,24 @@ GOOGLE_CLOUD_TTS_LANGUAGE_CODE=
 make run LECTURE=lecture-02.json
 ```
 
-`config/tts.json`의 `masterAudio.enabled`가 `true`이면 `make run`이 lecture JSON의 `sequence[].narration`만 추출해 Gemini TTS API로 `input/master-audio/<lecture>/master.wav`를 자동 생성하고, `manifest.json`의 `scriptHash`, `styleVersion`, `temperature`, `seed`, `promptHash`로 JSON과 마스터 오디오 간 drift를 관리합니다.
+`make run`은 `config/tts.json`의 `activeProvider`를 사용해 씬별 TTS를 생성합니다.
+
+마스터 오디오 기반으로 실행하려면 다음처럼 명시적으로 호출합니다.
+
+```bash
+make run-master LECTURE=lecture-02.json
+```
+
+`make run-master`는 `config/tts.json`의 `masterAudio.enabled`가 `true`일 때 lecture JSON의 `sequence[].narration`만 추출해 `input/master-audio/<lecture>/master.wav`를 자동 생성하거나 재사용하고, `manifest.json`의 `scriptHash`, `styleVersion`, `temperature`, `seed`, `promptHash`로 JSON과 마스터 오디오 간 drift를 관리합니다. 이미 생성한 파일을 쓰고 싶으면 `MASTER_AUDIO=/path/to/master.wav`를 함께 넘기면 됩니다.
 
 ## 주요 명령어
 
 | 명령어 | 설명 |
 |--------|------|
-| `make run LECTURE=xxx.json` | 전체 파이프라인 실행. `masterAudio.enabled=true`면 JSON narration으로 master.wav를 자동 생성 또는 재사용한 뒤 정렬/분할 |
-| `make run-force LECTURE=xxx.json` | 모든 캐시 무시하고 강제 재생성. master.wav, alignment, 씬별 WAV도 함께 재생성 |
+| `make run LECTURE=xxx.json` | 전체 파이프라인 실행. `config/tts.json`의 `activeProvider`로 씬별 TTS 생성 |
+| `make run-master LECTURE=xxx.json` | master.wav를 재사용하거나 `masterAudio` 설정으로 생성한 뒤 정렬/분할 |
+| `make run-force LECTURE=xxx.json` | 모든 캐시 무시하고 씬별 TTS를 강제 재생성 |
+| `make run-master-force LECTURE=xxx.json` | 모든 캐시 무시하고 master audio를 강제 재생성한 뒤 정렬/분할 |
 | `make regen-scene LECTURE=xxx SCENE='5 12'` | 특정 씬 오디오·클립 재생성 후 전체 concat |
 | `make render-scene LECTURE=xxx SCENE=5` | 특정 씬 클립만 렌더링 |
 | `make align-master-audio LECTURE=xxx AUDIO=... [MODEL=small]` | master.wav에서 alignment.json 생성 |
@@ -177,7 +190,12 @@ lecture-automation/
 |-----------|------|------|
 | `google_cloud_tts` | ⭐⭐⭐⭐⭐ | 유료 |
 | `gemini_cloud_tts` | ⭐⭐⭐⭐ | 유료 |
+| `elevenlabs` | ⭐⭐⭐⭐⭐ | 유료 |
 | `gemini` | ⭐⭐⭐ | 무료(API 키) |
+
+`make run`에서 `activeProvider=gemini`를 사용할 경우, `config/tts.json`의 `providers.gemini.prompt`, `temperature`, `seed`를 함께 사용해 요청마다 최대한 비슷한 강의 톤으로 읽도록 고정합니다. `activeProvider=gemini_cloud_tts`를 사용할 경우에도 `providers.gemini_cloud_tts.prompt`를 함께 보내 같은 강의 톤을 유지하도록 합니다.
+
+`activeProvider=elevenlabs`를 사용할 경우 `ELEVENLABS_API_KEY` 환경변수와 `config/tts.json`의 `providers.elevenlabs.voiceId`가 필요합니다. 기본 모델은 `eleven_v3`이며, `stability`, `similarity_boost`, `style`, `use_speaker_boost`, `seed`를 함께 사용해 일관성을 조정합니다.
 
 보이스 비교: [docs/tts-voices.md](docs/tts-voices.md)
 

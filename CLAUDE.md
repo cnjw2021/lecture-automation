@@ -74,7 +74,9 @@ type PlaywrightCmd = 'goto' | 'wait' | 'mouse_move' | 'click' | 'type' |
 ## 자주 쓰는 make 명령어
 
 ```bash
-make run LECTURE=lecture-02.json          # 전체 파이프라인
+make run LECTURE=lecture-02.json          # activeProvider로 전체 파이프라인
+make run-master LECTURE=lecture-02.json   # master audio 기반 전체 파이프라인
+make run-master-force LECTURE=lecture-02.json  # master audio 강제 재생성
 make regen-scene LECTURE=lecture-03.json SCENE='11 12 14'  # 특정 씬 재생성 + concat
 make render-scene LECTURE=lecture-03.json SCENE=11         # 클립 렌더링만
 make concat-scenes LECTURE=lecture-02.json                 # concat만 (~5초)

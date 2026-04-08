@@ -1,12 +1,15 @@
 {
-  "activeProvider": "google_cloud_tts",
+  "activeProvider": "elevenlabs",
   "pauseBetweenSentences": "short",
   "providers": {
     "gemini": {
-      "speechRate": 0.85,
-      "modelName": "gemini-2.5-flash-preview-tts",
-      "voice": "Kore",
-      "language": "Japanese"
+      "speechRate": 1.0,
+      "modelName": "gemini-2.5-pro-preview-tts",
+      "voice": "Puck",
+      "language": "Japanese",
+      "temperature": 0,
+      "seed": 42,
+      "prompt": "日本のIT入門講座のナレーションとして、落ち着いた講師トーンで一定の調子を保って読んでください。感情表現や演技は加えず、抑揚の変化を小さくし、標準的な日本語で入力文をそのまま読んでください。"
     },
     "google_cloud_tts": {
       "speechRate": 1.0,
@@ -14,10 +17,22 @@
       "languageCode": "ja-JP"
     },
     "gemini_cloud_tts": {
-      "speechRate": 0.85,
+      "speechRate": 1.0,
       "modelName": "gemini-2.5-pro-tts",
-      "voiceName": "Orus",
-      "languageCode": "ja-JP"
+      "voiceName": "Puck",
+      "languageCode": "ja-JP",
+      "prompt": "日本のIT入門講座のナレーションとして、落ち着いた講師トーンで一定の調子を保って読んでください。感情表現や演技は加えず、抑揚の変化を小さくし、標準的な日本語で入力文をそのまま読んでください。"
+    },
+    "elevenlabs": {
+      "modelId": "eleven_v3",
+      "voiceId": "6wdSVG3CMjPfAthsnMv9",
+      "languageCode": "ja",
+      "seed": 42,
+      "stability": 0.85,
+      "similarity_boost": 0.9,
+      "style": 0,
+      "use_speaker_boost": true,
+      "speed": 1.0
     }
   },
   "masterAudio": {

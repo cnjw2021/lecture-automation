@@ -4,12 +4,13 @@
  * 사용법:
  *   npx tsx scripts/tts-sample.ts [provider] [speechRate]
  *
- * provider: gemini | google_cloud_tts | gemini_cloud_tts (기본: 현재 AUDIO_PROVIDER)
+ * provider: gemini | google_cloud_tts | gemini_cloud_tts | elevenlabs (기본: 현재 AUDIO_PROVIDER)
  * speechRate: 0.5~2.0 (기본: video.json의 tts.speechRate)
  */
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { config } from '../packages/automation/src/infrastructure/config';
+import { ElevenLabsAudioProvider } from '../packages/automation/src/infrastructure/providers/ElevenLabsAudioProvider';
 import { GeminiAudioProvider } from '../packages/automation/src/infrastructure/providers/GeminiAudioProvider';
 import { GoogleCloudTtsProvider } from '../packages/automation/src/infrastructure/providers/GoogleCloudTtsProvider';
 import { GeminiCloudTtsProvider } from '../packages/automation/src/infrastructure/providers/GeminiCloudTtsProvider';
@@ -32,7 +33,16 @@ function createProvider(name: string, audioConfig: AudioConfig): IAudioProvider 
         console.error('❌ GEMINI_API_KEY가 설정되어 있지 않습니다.');
         process.exit(1);
       }
-      return new GeminiAudioProvider(c.apiKey, c.modelName, c.voice, c.language, audioConfig);
+      return new GeminiAudioProvider(
+        c.apiKey,
+        c.modelName,
+        c.voice,
+        c.language,
+        c.prompt,
+        audioConfig,
+        c.temperature,
+        c.seed,
+      );
     }
     case 'google_cloud_tts': {
       const c = config.providers.google_cloud_tts;
@@ -48,11 +58,38 @@ function createProvider(name: string, audioConfig: AudioConfig): IAudioProvider 
         console.error('❌ GOOGLE_CLOUD_TTS_KEY_FILE이 설정되어 있지 않습니다.');
         process.exit(1);
       }
-      return new GeminiCloudTtsProvider(c.keyFilePath, c.modelName, c.voiceName, c.languageCode, audioConfig);
+      return new GeminiCloudTtsProvider(
+        c.keyFilePath,
+        c.modelName,
+        c.voiceName,
+        c.languageCode,
+        c.prompt,
+        audioConfig,
+      );
+    }
+    case 'elevenlabs': {
+      const c = config.providers.elevenlabs;
+      if (!c.apiKey) {
+        console.error('❌ ELEVENLABS_API_KEY가 설정되어 있지 않습니다.');
+        process.exit(1);
+      }
+      if (!c.voiceId || c.voiceId === 'YOUR_ELEVENLABS_VOICE_ID') {
+        console.error('❌ config/tts.json의 providers.elevenlabs.voiceId를 설정해 주세요.');
+        process.exit(1);
+      }
+      return new ElevenLabsAudioProvider(
+        c.apiKey,
+        c.voiceId,
+        c.modelId,
+        c.languageCode,
+        c.seed,
+        c.voiceSettings,
+        audioConfig,
+      );
     }
     default:
       console.error(`❌ 알 수 없는 프로바이더: ${name}`);
-      console.error('   사용 가능: gemini | google_cloud_tts | gemini_cloud_tts');
+      console.error('   사용 가능: gemini | google_cloud_tts | gemini_cloud_tts | elevenlabs');
       process.exit(1);
   }
 }
@@ -97,6 +134,7 @@ async function main() {
   const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}`;
   const voiceName = config.providers[providerName as keyof typeof config.providers]
     ? (config.providers[providerName as keyof typeof config.providers] as any).voiceName
+      || (config.providers[providerName as keyof typeof config.providers] as any).voiceId
       || (config.providers[providerName as keyof typeof config.providers] as any).voice
       || 'unknown'
     : 'unknown';

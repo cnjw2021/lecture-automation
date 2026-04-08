@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install install-align-deps build run run-force regen-scene render-scene record-webm align-master-audio import-master-audio import-master-audio-auto concat-scenes clean render-only preview tts-sample \
+.PHONY: help install install-align-deps build run run-master run-force run-master-force regen-scene render-scene record-webm align-master-audio import-master-audio import-master-audio-auto concat-scenes clean render-only preview tts-sample \
         preview-browser-mock preview-screenshot capture-screenshots test-screenshot-options \
         preview-springs sync-playwright
 
@@ -16,6 +16,7 @@ ENGINE_CONCAT_SCENES = packages/automation/dist/presentation/cli/concat-scenes.j
 REMOTION_PATH = packages/remotion
 OUTPUT_DIR = output
 RUN_ENV_VARS = $(if $(strip $(MASTER_AUDIO)),MASTER_AUDIO="$(MASTER_AUDIO)") \
+               $(if $(strip $(NARRATION_SOURCE)),NARRATION_SOURCE="$(NARRATION_SOURCE)") \
                $(if $(strip $(MASTER_ALIGNMENT)),MASTER_ALIGNMENT="$(MASTER_ALIGNMENT)") \
                $(if $(strip $(ALIGN)),ALIGN="$(ALIGN)") \
                $(if $(strip $(ALIGN_MODEL)),ALIGN_MODEL="$(ALIGN_MODEL)") \
@@ -28,9 +29,11 @@ help:
 	@echo "make install-align-deps - 마스터 오디오 정렬용 Python 가상환경 생성"
 	@echo "make run             - 전 공정 실행 (기본: p1-01-01.json)"
 	@echo "make run LECTURE=xxx - 특정 강의 JSON 파일로 실행"
-	@echo "                       master.wav가 있으면 재사용하고, 없으면 config/tts.json의 masterAudio 설정으로 자동 생성 후 정렬/분할"
+	@echo "                       config/tts.json의 activeProvider로 씬별 TTS 생성"
+	@echo "make run-master LECTURE=xxx - master.wav 재사용 또는 config/tts.json의 masterAudio로 생성 후 정렬/분할"
+	@echo "make run-force       - 기존 에셋 무시하고 전체 재생성 (기본: activeProvider TTS)"
+	@echo "make run-master-force LECTURE=xxx - master audio를 강제로 재생성 후 정렬/분할"
 	@echo "make run-synth       - 상태 합성형 모드로 실행 (스크린샷 기반)"
-	@echo "make run-force       - 기존 에셋 무시하고 전체 재생성"
 	@echo "make clean           - 생성된 모든 에셋 및 결과물 삭제"
 	@echo "make render-only     - 에셋이 있을 때 Remotion 렌더링만 실행"
 	@echo "make preview SCENE=6 - 특정 씬의 프리뷰 이미지 생성 (PNG)"
@@ -76,6 +79,10 @@ run:
 	@echo "🚀 강의 자동화 파이프라인 시작: $(LECTURE)"
 	env $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
+run-master:
+	@echo "🎙️ 마스터 오디오 기반 파이프라인 시작: $(LECTURE)"
+	env $(RUN_ENV_VARS) NARRATION_SOURCE=master node $(ENGINE_PATH) $(LECTURE)
+
 run-synth:
 	@echo "🖼️ 상태 합성형 모드로 파이프라인 시작: $(LECTURE)"
 	env SYNTH=1 $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
@@ -83,6 +90,10 @@ run-synth:
 run-force:
 	@echo "🔄 강제 재생성 모드로 파이프라인 시작: $(LECTURE)"
 	env FORCE=1 $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
+
+run-master-force:
+	@echo "🎙️🔄 마스터 오디오 강제 재생성 파이프라인 시작: $(LECTURE)"
+	env FORCE=1 $(RUN_ENV_VARS) NARRATION_SOURCE=master node $(ENGINE_PATH) $(LECTURE)
 
 regen-scene:
 	@echo "🔄 특정 Scene 재생성: $(LECTURE) / Scene $(SCENE)"
