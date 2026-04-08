@@ -171,6 +171,8 @@ Scene 3: ウェブサイトを作る技術は...
 4. 각 씬 narration의 시작/끝 시각을 계산
 5. `alignment.json` 저장
 
+실행 안정성을 위해 정렬 의존성은 별도 가상환경 `.venv-align`에 설치하는 것을 권장한다. CLI는 `.venv-align/bin/python`이 있으면 그 경로를 우선 사용하고, 없으면 `python3`를 사용한다.
+
 최소 요구 형식은 다음과 같다.
 
 ```json

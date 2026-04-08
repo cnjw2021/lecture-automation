@@ -11,11 +11,13 @@ cp .env.example .env   # API 키 설정
 make run LECTURE=lecture-02.json
 ```
 
-마스터 오디오 자동 정렬 기능을 사용할 때는 Python 패키지를 한 번 설치해야 합니다.
+마스터 오디오 자동 정렬 기능은 전용 Python 가상환경으로 분리해 두는 편이 안전합니다. 현재 저장소는 `.venv-align`이 있으면 그 Python을 우선 사용합니다.
 
 ```bash
-pip3 install -r scripts/requirements-align.txt
+make install-align-deps
 ```
+
+정렬은 `faster-whisper + ctranslate2`의 CPU 경로를 기준으로 구성했습니다. `torch`는 필수 의존성이 아니므로 정렬 전용 가상환경에는 기본 포함하지 않습니다.
 
 ## 주요 명령어
 

@@ -1,10 +1,10 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { Lecture } from '../../domain/entities/Lecture';
+import { IAudioSegmentProvider } from '../../domain/interfaces/IAudioSegmentProvider';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
+import { computeRmsFrames, readWavMetadata } from '../../domain/utils/WavAnalysisUtils';
 import { config } from '../../infrastructure/config';
-import { FfmpegAudioSegmentProvider } from '../../infrastructure/providers/FfmpegAudioSegmentProvider';
-import { computeRmsFrames, readWavMetadata } from '../../infrastructure/providers/WavAnalysisUtils';
 
 type AlignmentWord = {
   text: string;
@@ -58,9 +58,9 @@ function normalizeText(text: string): string {
   return text
     .normalize('NFKC')
     .replace(/\r\n/g, '\n')
-    .replace(/\s+/g, '')
     .replace(/…/g, '...')
-    .replace(/[\u200B-\u200D\uFEFF]/g, '');
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
+    .replace(/\s+/gu, '');
 }
 
 function assertValidAlignmentManifest(value: unknown): asserts value is AlignmentManifest {
@@ -169,6 +169,8 @@ function findLowestEnergyBoundary(
     return Math.max(minMs, Math.min(maxMs, targetMs));
   }
 
+  // adjustSceneBoundaries에서 min/max를 SEARCH_WINDOW_MS 기준으로 제한하므로
+  // 여기서는 "허용된 근접 구간 안에서 가장 조용한 프레임"을 고른다.
   const candidates = frames.filter(frame => frame.startMs >= minMs && frame.endMs <= maxMs);
   if (candidates.length === 0) {
     return Math.round(Math.max(minMs, Math.min(maxMs, targetMs)));
@@ -230,7 +232,7 @@ function getDebugDir(lectureId: string): string {
 
 export class ImportMasterAudioUseCase {
   constructor(
-    private readonly audioSegmentProvider: FfmpegAudioSegmentProvider,
+    private readonly audioSegmentProvider: IAudioSegmentProvider,
     private readonly lectureRepository: ILectureRepository,
   ) {}
 

@@ -1,7 +1,9 @@
 import { execFile } from 'child_process';
+import { randomUUID } from 'crypto';
 import * as fs from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
+import { IAudioSegmentProvider } from '../../domain/interfaces/IAudioSegmentProvider';
 import { config } from '../config';
 
 function runFfmpeg(args: string[]): Promise<void> {
@@ -16,14 +18,14 @@ function runFfmpeg(args: string[]): Promise<void> {
   });
 }
 
-export class FfmpegAudioSegmentProvider {
+export class FfmpegAudioSegmentProvider implements IAudioSegmentProvider {
   async normalizeToMonoWav(inputPath: string): Promise<string> {
     if (!await fs.pathExists(inputPath)) {
       throw new Error(`마스터 오디오 파일이 존재하지 않습니다: ${inputPath}`);
     }
 
     const videoAudio = config.getVideoConfig().audio;
-    const tempPath = path.join(os.tmpdir(), `lecture-master-audio-${Date.now()}.wav`);
+    const tempPath = path.join(os.tmpdir(), `lecture-master-audio-${randomUUID()}.wav`);
     await runFfmpeg([
       '-y',
       '-i',

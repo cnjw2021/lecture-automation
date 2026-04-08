@@ -1,23 +1,27 @@
 #!/usr/bin/env python3
 import argparse
 import json
-import math
+import os
+import re
 import sys
 import unicodedata
 from dataclasses import dataclass
 from difflib import SequenceMatcher
 from pathlib import Path
 
+os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "TRUE")
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+
 try:
     from faster_whisper import WhisperModel
 except ImportError as exc:
     raise SystemExit(
-        "faster-whisper가 설치되어 있지 않습니다. `pip3 install faster-whisper` 후 다시 실행해 주세요."
+        "faster-whisper가 설치되어 있지 않습니다. `.venv-align` 또는 Python 환경에 정렬 의존성을 설치한 뒤 다시 실행해 주세요."
     ) from exc
 
 
 def normalize_text(text: str) -> str:
-    return (
+    normalized = (
         unicodedata.normalize("NFKC", text)
         .replace("\r\n", "\n")
         .replace("…", "...")
@@ -25,7 +29,8 @@ def normalize_text(text: str) -> str:
         .replace("\u200c", "")
         .replace("\u200d", "")
         .replace("\ufeff", "")
-    ).translate({ord(ch): None for ch in " \t\n\r"})
+    )
+    return re.sub(r"\s+", "", normalized, flags=re.UNICODE)
 
 
 @dataclass

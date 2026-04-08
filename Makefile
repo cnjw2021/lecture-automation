@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install build run run-force regen-scene render-scene record-webm align-master-audio import-master-audio import-master-audio-auto concat-scenes clean render-only preview tts-sample \
+.PHONY: help install install-align-deps build run run-force regen-scene render-scene record-webm align-master-audio import-master-audio import-master-audio-auto concat-scenes clean render-only preview tts-sample \
         preview-browser-mock preview-screenshot capture-screenshots test-screenshot-options \
         preview-springs sync-playwright
 
@@ -20,6 +20,7 @@ help:
 	@echo "🎓 Lecture Automation CLI"
 	@echo "--------------------------------------------------"
 	@echo "make install         - 모든 패키지 의존성 설치"
+	@echo "make install-align-deps - 마스터 오디오 정렬용 Python 가상환경 생성"
 	@echo "make run             - 전 공정 실행 (기본: p1-01-01.json)"
 	@echo "make run LECTURE=xxx - 특정 강의 JSON 파일로 실행"
 	@echo "make run-synth       - 상태 합성형 모드로 실행 (스크린샷 기반)"
@@ -54,6 +55,12 @@ help:
 install:
 	@echo "📦 의존성 설치 중..."
 	npm install
+
+install-align-deps:
+	@echo "🐍 정렬용 Python 가상환경 생성 중..."
+	python3 -m venv .venv-align
+	.venv-align/bin/pip install --upgrade pip
+	.venv-align/bin/pip install -r scripts/requirements-align.txt
 
 build:
 	@echo "🔨 automation 패키지 빌드 중..."
@@ -108,7 +115,7 @@ align-master-audio:
 	npm run build -w packages/automation
 	@ALIGN_PATH=$${ALIGN:-tmp/audio-segmentation/$$(basename "$(LECTURE)" .json)/alignment.json}; \
 	echo "   - alignment 출력: $$ALIGN_PATH"; \
-	node $(ENGINE_ALIGN_MASTER_AUDIO) $(LECTURE) $(AUDIO) $$ALIGN_PATH $(MODEL)
+	node $(ENGINE_ALIGN_MASTER_AUDIO) $(LECTURE) $(AUDIO) --output $$ALIGN_PATH --model $${MODEL:-small}
 
 import-master-audio:
 	@echo "🎙️ 마스터 오디오 씬 분할: $(LECTURE)"
@@ -134,7 +141,7 @@ import-master-audio-auto:
 	npm run build -w packages/automation
 	@ALIGN_PATH=$${ALIGN:-tmp/audio-segmentation/$$(basename "$(LECTURE)" .json)/alignment.json}; \
 	echo "   - alignment 출력: $$ALIGN_PATH"; \
-	node $(ENGINE_ALIGN_MASTER_AUDIO) $(LECTURE) $(AUDIO) $$ALIGN_PATH $(MODEL); \
+	node $(ENGINE_ALIGN_MASTER_AUDIO) $(LECTURE) $(AUDIO) --output $$ALIGN_PATH --model $${MODEL:-small}; \
 	node $(ENGINE_IMPORT_MASTER_AUDIO) $(LECTURE) $(AUDIO) $$ALIGN_PATH
 
 concat-scenes:
