@@ -6,8 +6,9 @@ export function resolveDefaultAlignmentPath(rootDir: string, jsonFileName: strin
 }
 
 export function resolveMasterAudioPath(rootDir: string, jsonFileName: string, env: NodeJS.ProcessEnv = process.env): string {
-  if (env.MASTER_AUDIO) {
-    return path.resolve(env.MASTER_AUDIO);
+  const masterAudioOverride = env.MASTER_AUDIO?.trim();
+  if (masterAudioOverride) {
+    return path.resolve(masterAudioOverride);
   }
 
   const lectureStem = path.basename(jsonFileName, path.extname(jsonFileName));
@@ -23,10 +24,10 @@ export function resolveMasterAudioScriptPath(masterAudioPath: string): string {
 }
 
 export function resolveAlignmentPath(rootDir: string, jsonFileName: string, env: NodeJS.ProcessEnv = process.env): string {
-  const override = env.MASTER_ALIGNMENT || env.ALIGN;
+  const override = env.MASTER_ALIGNMENT?.trim() || env.ALIGN?.trim();
   return override ? path.resolve(override) : resolveDefaultAlignmentPath(rootDir, jsonFileName);
 }
 
 export function resolveAlignmentModel(env: NodeJS.ProcessEnv = process.env): string {
-  return env.ALIGN_MODEL || env.MODEL || 'small';
+  return env.ALIGN_MODEL?.trim() || env.MODEL?.trim() || 'small';
 }

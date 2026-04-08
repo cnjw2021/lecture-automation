@@ -15,6 +15,11 @@ ENGINE_IMPORT_MASTER_AUDIO = packages/automation/dist/presentation/cli/import-ma
 ENGINE_CONCAT_SCENES = packages/automation/dist/presentation/cli/concat-scenes.js
 REMOTION_PATH = packages/remotion
 OUTPUT_DIR = output
+RUN_ENV_VARS = $(if $(strip $(MASTER_AUDIO)),MASTER_AUDIO="$(MASTER_AUDIO)") \
+               $(if $(strip $(MASTER_ALIGNMENT)),MASTER_ALIGNMENT="$(MASTER_ALIGNMENT)") \
+               $(if $(strip $(ALIGN)),ALIGN="$(ALIGN)") \
+               $(if $(strip $(ALIGN_MODEL)),ALIGN_MODEL="$(ALIGN_MODEL)") \
+               $(if $(strip $(MODEL)),MODEL="$(MODEL)")
 
 help:
 	@echo "🎓 Lecture Automation CLI"
@@ -69,15 +74,15 @@ build:
 
 run:
 	@echo "🚀 강의 자동화 파이프라인 시작: $(LECTURE)"
-	MASTER_AUDIO="$(MASTER_AUDIO)" MASTER_ALIGNMENT="$(MASTER_ALIGNMENT)" ALIGN="$(ALIGN)" ALIGN_MODEL="$(ALIGN_MODEL)" MODEL="$(MODEL)" node $(ENGINE_PATH) $(LECTURE)
+	env $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
 run-synth:
 	@echo "🖼️ 상태 합성형 모드로 파이프라인 시작: $(LECTURE)"
-	SYNTH=1 MASTER_AUDIO="$(MASTER_AUDIO)" MASTER_ALIGNMENT="$(MASTER_ALIGNMENT)" ALIGN="$(ALIGN)" ALIGN_MODEL="$(ALIGN_MODEL)" MODEL="$(MODEL)" node $(ENGINE_PATH) $(LECTURE)
+	env SYNTH=1 $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
 run-force:
 	@echo "🔄 강제 재생성 모드로 파이프라인 시작: $(LECTURE)"
-	FORCE=1 MASTER_AUDIO="$(MASTER_AUDIO)" MASTER_ALIGNMENT="$(MASTER_ALIGNMENT)" ALIGN="$(ALIGN)" ALIGN_MODEL="$(ALIGN_MODEL)" MODEL="$(MODEL)" node $(ENGINE_PATH) $(LECTURE)
+	env FORCE=1 $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
 regen-scene:
 	@echo "🔄 특정 Scene 재생성: $(LECTURE) / Scene $(SCENE)"

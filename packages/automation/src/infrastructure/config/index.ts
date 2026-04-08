@@ -14,7 +14,13 @@ const getTtsJson = () => {
   return fs.readJsonSync(ttsConfigPath);
 };
 
-const DEFAULT_MASTER_AUDIO_PROMPT = '次の日本語原稿を、実在の人物を模倣しない範囲で、日本のIT入門講座を担当するプロ講師のような雰囲気で読んでください。落ち着きがあり、信頼感のある標準的な日本語で、初学者にもわかりやすいように、はっきり丁寧に読んでください。実際のオンライン講義のように自然で親しみやすい話し方にし、大げさな演技、広告っぽい語り、アニメ声は避けてください。大事なポイントだけを軽く強調し、文と文の間、段落の切り替わりでは短く自然な間を入れてください。HTML、CSS、JavaScript、APIなどのIT用語は自然かつ正確に発音してください。';
+function getRequiredMasterAudioPrompt(tts: any): string {
+  const prompt = tts.masterAudio?.prompt;
+  if (typeof prompt !== 'string' || prompt.trim().length === 0) {
+    throw new Error('config/tts.json의 masterAudio.prompt는 필수 문자열입니다.');
+  }
+  return prompt;
+}
 
 export const config = {
   get active_audio_provider() {
@@ -75,8 +81,9 @@ export const config = {
   getMasterAudioConfig: () => {
     const tts = getTtsJson();
     const masterAudio = tts.masterAudio || {};
+    const enabled = masterAudio.enabled ?? false;
     return {
-      enabled: masterAudio.enabled ?? false,
+      enabled,
       provider: masterAudio.provider || 'gemini',
       apiKey: process.env.GEMINI_API_KEY || '',
       modelName: masterAudio.modelName || 'gemini-2.5-pro-preview-tts',
@@ -84,7 +91,7 @@ export const config = {
       styleVersion: masterAudio.styleVersion || 'v1',
       speechRate: masterAudio.speechRate ?? 1,
       temperature: typeof masterAudio.temperature === 'number' ? masterAudio.temperature : 0,
-      prompt: masterAudio.prompt || DEFAULT_MASTER_AUDIO_PROMPT,
+      prompt: enabled ? getRequiredMasterAudioPrompt(tts) : '',
       seed: typeof masterAudio.seed === 'number' ? masterAudio.seed : undefined,
     };
   },

@@ -113,7 +113,7 @@ export class ConfiguredNarrationAudioPreparationService implements INarrationAud
 
   private async ensureMasterAudio(params: NarrationAudioPreparationParams): Promise<string | null> {
     const masterAudioPath = resolveMasterAudioPath(config.paths.root, params.jsonFileName);
-    const manualOverride = Boolean(process.env.MASTER_AUDIO);
+    const manualOverride = Boolean(process.env.MASTER_AUDIO?.trim());
     const masterAudioExists = await fs.pathExists(masterAudioPath);
 
     if (!manualOverride && this.generateMasterAudioUseCase) {
