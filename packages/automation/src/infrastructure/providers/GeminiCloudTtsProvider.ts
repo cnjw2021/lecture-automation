@@ -15,17 +15,26 @@ export class GeminiCloudTtsProvider implements IAudioProvider {
   private modelName: string;
   private voiceName: string;
   private languageCode: string;
+  private prompt: string;
   private audioConfig: AudioConfig;
   private accessToken: string | null = null;
   private tokenExpiresAt = 0;
   private readonly baseUrl = 'https://texttospeech.googleapis.com/v1/text:synthesize';
 
-  constructor(keyFilePath: string, modelName: string, voiceName: string, languageCode: string, audioConfig: AudioConfig) {
+  constructor(
+    keyFilePath: string,
+    modelName: string,
+    voiceName: string,
+    languageCode: string,
+    prompt: string,
+    audioConfig: AudioConfig,
+  ) {
     const raw = fs.readFileSync(keyFilePath, 'utf8');
     this.serviceAccount = JSON.parse(raw);
     this.modelName = modelName;
     this.voiceName = voiceName;
     this.languageCode = languageCode;
+    this.prompt = prompt;
     this.audioConfig = audioConfig;
   }
 
@@ -112,7 +121,10 @@ export class GeminiCloudTtsProvider implements IAudioProvider {
       }
 
       const payload = {
-        input: { text },
+        input: {
+          text,
+          ...(this.prompt ? { prompt: this.prompt } : {}),
+        },
         voice: {
           languageCode: this.languageCode,
           name: this.voiceName,

@@ -8,7 +8,11 @@ import { RenderSceneClipsUseCase } from '../../application/use-cases/RenderScene
 import { SyncPlaywrightUseCase } from '../../application/use-cases/SyncPlaywrightUseCase';
 import { ValidateLectureUseCase } from '../../application/use-cases/ValidateLectureUseCase';
 import { ConfiguredAudioProviderFactory } from '../factories/ConfiguredAudioProviderFactory';
+import { ElevenLabsConfiguredAudioProviderBuilder } from '../factories/ElevenLabsConfiguredAudioProviderBuilder';
 import { ConfiguredMasterAudioGeneratorFactory } from '../factories/ConfiguredMasterAudioGeneratorFactory';
+import { GeminiCloudTtsConfiguredAudioProviderBuilder } from '../factories/GeminiCloudTtsConfiguredAudioProviderBuilder';
+import { GeminiConfiguredAudioProviderBuilder } from '../factories/GeminiConfiguredAudioProviderBuilder';
+import { GoogleCloudTtsConfiguredAudioProviderBuilder } from '../factories/GoogleCloudTtsConfiguredAudioProviderBuilder';
 import { FfmpegAudioSegmentProvider } from '../providers/FfmpegAudioSegmentProvider';
 import { FfmpegConcatProvider } from '../providers/FfmpegConcatProvider';
 import { PlaywrightScreenshotProvider } from '../providers/PlaywrightScreenshotProvider';
@@ -23,7 +27,12 @@ import { ConfiguredNarrationAudioPreparationService } from '../services/Configur
 export function createAutomationPipeline(): RunAutomationPipelineUseCase {
   const lectureRepository = new FileLectureRepository();
   const clipRepository = new FileClipRepository();
-  const audioProviderFactory = new ConfiguredAudioProviderFactory();
+  const audioProviderFactory = new ConfiguredAudioProviderFactory([
+    new GeminiConfiguredAudioProviderBuilder(),
+    new GoogleCloudTtsConfiguredAudioProviderBuilder(),
+    new GeminiCloudTtsConfiguredAudioProviderBuilder(),
+    new ElevenLabsConfiguredAudioProviderBuilder(),
+  ]);
   const masterAudioGenerator = new ConfiguredMasterAudioGeneratorFactory().create();
   const masterAudioAlignmentProvider = new PythonMasterAudioAlignmentProvider();
   const audioSegmentProvider = new FfmpegAudioSegmentProvider();
