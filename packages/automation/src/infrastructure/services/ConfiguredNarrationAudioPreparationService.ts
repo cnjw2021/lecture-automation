@@ -22,6 +22,7 @@ import {
 import { config } from '../config';
 import { printAlignmentFailureHints, resolveAlignmentPythonCommand } from '../providers/PythonMasterAudioAlignmentProvider';
 import {
+  resolveNarrationAudioSource,
   resolveAlignmentModel,
   resolveAlignmentPath,
   resolveMasterAudioManifestPath,
@@ -97,8 +98,14 @@ export class ConfiguredNarrationAudioPreparationService implements INarrationAud
   ) {}
 
   async prepare(params: NarrationAudioPreparationParams): Promise<NarrationAudioPreparationResult> {
-    const masterAudioPath = await this.ensureMasterAudio(params);
-    if (masterAudioPath) {
+    const narrationSource = resolveNarrationAudioSource();
+    if (narrationSource === 'master') {
+      const masterAudioPath = await this.ensureMasterAudio(params);
+      if (!masterAudioPath) {
+        throw new Error(
+          'master audio 사용이 요청되었지만 사용할 master.wav를 찾지 못했습니다. MASTER_AUDIO를 지정하거나 config/tts.json의 masterAudio 설정과 GEMINI_API_KEY를 확인하세요.',
+        );
+      }
       await this.prepareFromMasterAudio(params, masterAudioPath);
       return { source: 'master-audio' };
     }

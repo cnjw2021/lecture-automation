@@ -1,5 +1,28 @@
 import * as path from 'path';
 
+export type NarrationAudioSource = 'tts' | 'master';
+
+export function resolveNarrationAudioSource(env: NodeJS.ProcessEnv = process.env): NarrationAudioSource {
+  if (env.MASTER_AUDIO?.trim()) {
+    return 'master';
+  }
+
+  const source = env.NARRATION_SOURCE?.trim().toLowerCase();
+  if (!source) {
+    return 'tts';
+  }
+
+  if (source === 'master' || source === 'master-audio' || source === 'master_audio') {
+    return 'master';
+  }
+
+  if (source === 'tts' || source === 'provider' || source === 'providers') {
+    return 'tts';
+  }
+
+  throw new Error(`지원하지 않는 NARRATION_SOURCE입니다: ${env.NARRATION_SOURCE}`);
+}
+
 export function resolveDefaultAlignmentPath(rootDir: string, jsonFileName: string): string {
   const lectureStem = path.basename(jsonFileName, path.extname(jsonFileName));
   return path.join(rootDir, 'tmp', 'audio-segmentation', lectureStem, 'alignment.json');
