@@ -8,6 +8,8 @@ export interface Metadata {
 export type PlaywrightCmd =
   | 'goto'         // URL 이동 (페이지 로드 후 커서 자동 주입)
   | 'wait'         // 대기 (ms)
+  | 'wait_for'     // 셀렉터 대기 (selector, state, timeout) — setup 전용
+  | 'scroll'       // 페이지 스크롤 (deltaY: 양수=아래, 음수=위)
   | 'mouse_move'   // 마우스 이동 (to: [x, y])
   | 'click'        // 요소 클릭 (selector)
   | 'type'         // 텍스트 입력 (selector, key)
@@ -19,7 +21,8 @@ export type PlaywrightCmd =
   | 'select_devtools_node' // DevTools 트리에서 실제 DOM 노드 선택
   | 'toggle_devtools_node' // DevTools 트리 노드 펼침/접힘
   | 'disable_css'  // 모든 스타일시트 비활성화
-  | 'enable_css';  // 스타일시트 복원
+  | 'enable_css'   // 스타일시트 복원
+  | 'render_code_block'; // 페이지 내 마지막 코드 블록을 추출하여 새 탭에서 렌더
 
 export interface PlaywrightAction {
   cmd: PlaywrightCmd;
@@ -31,6 +34,12 @@ export interface PlaywrightAction {
   key?: string;
   mode?: 'toggle' | 'expand' | 'collapse';
   note?: string;
+  /** wait_for: 대기할 상태 (기본 'visible') */
+  state?: 'visible' | 'hidden' | 'attached' | 'detached';
+  /** wait_for: 타임아웃 ms (기본 30000) */
+  timeout?: number;
+  /** scroll: 스크롤 량 (양수=아래, 음수=위, 기본 300) */
+  deltaY?: number;
 }
 
 export interface TransitionConfig {
@@ -62,6 +71,8 @@ export interface PlaywrightVisual {
   /** 정의된 경우 sync-playwright 커맨드로 wait ms를 자동 재계산한다. */
   syncPoints?: PlaywrightSyncPoint[];
   transition?: TransitionConfig;
+  /** 브라우저 인증 상태 파일 경로 (예: "config/auth/claude.json"). 프로젝트 루트 상대 경로. */
+  storageState?: string;
 }
 
 export interface ScreenshotVisual {

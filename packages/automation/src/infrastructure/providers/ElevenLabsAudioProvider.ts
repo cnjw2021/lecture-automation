@@ -1,4 +1,4 @@
-import { AudioConfig, AudioGenerateResult, GenerateAudioOptions, IAudioProvider } from '../../domain/interfaces/IAudioProvider';
+import { AudioConfig, AudioAlignment, AudioGenerateResult, GenerateAudioOptions, IAudioProvider } from '../../domain/interfaces/IAudioProvider';
 import { pcmToWav } from './AudioUtils';
 
 interface ElevenLabsVoiceSettings {
@@ -11,6 +11,7 @@ interface ElevenLabsVoiceSettings {
 
 export class ElevenLabsAudioProvider implements IAudioProvider {
   private readonly baseUrl = 'https://api.elevenlabs.io/v1/text-to-speech';
+  private readonly withTimestampsUrl = 'https://api.elevenlabs.io/v1/text-to-speech';
 
   constructor(
     private readonly apiKey: string,
@@ -70,7 +71,9 @@ export class ElevenLabsAudioProvider implements IAudioProvider {
       }
 
       try {
-        const response = await fetch(`${this.baseUrl}/${this.voiceId}?output_format=${outputFormat}`, {
+        // with-timestamps 엔드포인트: JSON 응답으로 오디오 + 문자 단위 타임스탬프
+        const url = `${this.withTimestampsUrl}/${this.voiceId}/with-timestamps?output_format=${outputFormat}`;
+        const response = await fetch(url, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -88,10 +91,26 @@ export class ElevenLabsAudioProvider implements IAudioProvider {
           throw new Error(`ElevenLabs TTS Error (${this.modelId}): ${response.status} - ${errorText}`);
         }
 
-        const pcmBuffer = Buffer.from(await response.arrayBuffer());
+        const json = await response.json() as {
+          audio_base64: string;
+          alignment?: {
+            characters: string[];
+            character_start_times_seconds: number[];
+            character_end_times_seconds: number[];
+          };
+        };
+
+        const pcmBuffer = Buffer.from(json.audio_base64, 'base64');
         const { buffer, durationSec } = pcmToWav(pcmBuffer, this.audioConfig);
-        console.log(`  ✅ 오디오 생성 완료 (${pcmBuffer.length} bytes, ${durationSec.toFixed(2)}초, Voice ID: ${this.voiceId})`);
-        return { buffer, durationSec };
+
+        let alignment: AudioAlignment | undefined;
+        if (json.alignment) {
+          alignment = json.alignment;
+          console.log(`  ✅ 오디오 생성 완료 (${pcmBuffer.length} bytes, ${durationSec.toFixed(2)}초, alignment: ${alignment.characters.length}자)`);
+        } else {
+          console.log(`  ✅ 오디오 생성 완료 (${pcmBuffer.length} bytes, ${durationSec.toFixed(2)}초, alignment 없음)`);
+        }
+        return { buffer, durationSec, alignment };
       } catch (error) {
         if (this.isRetryableError(error) && attempt < maxRetries) {
           console.warn(`  ⚠️ 네트워크 에러 발생, 재시도합니다... (${(error as Error).message})`);

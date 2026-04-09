@@ -1,0 +1,114 @@
+{
+  "sceneId": 28,
+  "totalDurationMs": 148606,
+  "actionTimestamps": [
+    {
+      "index": 0,
+      "cmd": "goto",
+      "startMs": 0,
+      "endMs": 4621
+    },
+    {
+      "index": 1,
+      "cmd": "mouse_move",
+      "startMs": 4621,
+      "endMs": 7234
+    },
+    {
+      "index": 2,
+      "cmd": "wait",
+      "startMs": 7234,
+      "endMs": 10251
+    },
+    {
+      "index": 3,
+      "cmd": "type",
+      "startMs": 10251,
+      "endMs": 23562
+    },
+    {
+      "index": 4,
+      "cmd": "wait",
+      "startMs": 23563,
+      "endMs": 25576
+    },
+    {
+      "index": 5,
+      "cmd": "wait",
+      "startMs": 25576,
+      "endMs": 30589
+    },
+    {
+      "index": 6,
+      "cmd": "press",
+      "startMs": 30589,
+      "endMs": 30700
+    },
+    {
+      "index": 7,
+      "cmd": "wait_for",
+      "startMs": 30700,
+      "endMs": 34238
+    },
+    {
+      "index": 8,
+      "cmd": "wait_for",
+      "startMs": 34238,
+      "endMs": 121492
+    },
+    {
+      "index": 9,
+      "cmd": "wait",
+      "startMs": 121492,
+      "endMs": 126511
+    },
+    {
+      "index": 10,
+      "cmd": "wait",
+      "startMs": 126511,
+      "endMs": 129527
+    },
+    {
+      "index": 11,
+      "cmd": "mouse_move",
+      "startMs": 129527,
+      "endMs": 130478
+    },
+    {
+      "index": 12,
+      "cmd": "scroll",
+      "startMs": 130478,
+      "endMs": 130842
+    },
+    {
+      "index": 13,
+      "cmd": "wait",
+      "startMs": 130842,
+      "endMs": 135858
+    },
+    {
+      "index": 14,
+      "cmd": "scroll",
+      "startMs": 135858,
+      "endMs": 136199
+    },
+    {
+      "index": 15,
+      "cmd": "wait",
+      "startMs": 136199,
+      "endMs": 141223
+    },
+    {
+      "index": 16,
+      "cmd": "scroll",
+      "startMs": 141223,
+      "endMs": 141580
+    },
+    {
+      "index": 17,
+      "cmd": "wait",
+      "startMs": 141580,
+      "endMs": 146606
+    }
+  ]
+}

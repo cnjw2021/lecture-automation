@@ -2,7 +2,7 @@
 
 .PHONY: help install install-align-deps build run run-master run-force run-master-force regen-scene render-scene record-webm align-master-audio import-master-audio import-master-audio-auto concat-scenes clean render-only preview tts-sample \
         preview-browser-mock preview-screenshot capture-screenshots test-screenshot-options \
-        preview-springs sync-playwright
+        preview-springs sync-playwright save-auth
 
 # 기본 변수 설정
 LECTURE ?= p1-01-01.json
@@ -51,6 +51,7 @@ help:
 	@echo "make concat-scenes LECTURE=xxx             - 씬 클립 이어붙여 최종 MP4 생성"
 	@echo "make sync-playwright LECTURE=xxx           - Playwright 씬 narration-action 싱크 자동 조정"
 	@echo "make sync-playwright LECTURE=xxx SCENE=17  - 특정 씬만 싱크 조정"
+	@echo "make save-auth SERVICE=claude             - 브라우저 인증 상태 저장 (Claude/ChatGPT 등)"
 	@echo ""
 	@echo "--- 스크린샷 옵션 테스트 ---"
 	@echo "make preview-browser-mock                       - [옵션B] BrowserMockScreen 프리뷰 (PNG)"
@@ -187,6 +188,14 @@ sync-playwright:
 	else \
 		npx tsx packages/automation/src/presentation/cli/sync-playwright.ts $(LECTURE); \
 	fi
+
+save-auth:
+	@echo "🔐 브라우저 인증 상태 저장: $(SERVICE)"
+	@if [ -z "$(SERVICE)" ]; then \
+		echo "❌ SERVICE 값을 지정해 주세요. 예: make save-auth SERVICE=claude"; \
+		exit 1; \
+	fi
+	npx tsx packages/automation/src/presentation/cli/save-auth.ts $(SERVICE)
 
 clean:
 	@echo "🧹 생성된 에셋 및 결과물 정리 중..."
