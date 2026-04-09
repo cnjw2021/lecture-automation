@@ -45,6 +45,20 @@ export class ReverseSyncPlaywrightUseCase {
       }
     }
 
+    // 조정된 씬의 duration 메타데이터 갱신 (클립 렌더링 시 조정된 WAV 길이 사용)
+    if (adjustedSceneIds.length > 0) {
+      const existingDurations = await this.lectureRepository.getAudioDurations(lecture.lecture_id) || {};
+      for (const sceneId of adjustedSceneIds) {
+        const newDuration = await this.lectureRepository.getAudioDuration(lecture.lecture_id, sceneId);
+        if (newDuration !== null) {
+          existingDurations[sceneId.toString()] = newDuration;
+          console.log(`  📏 Scene ${sceneId} duration 갱신: ${newDuration.toFixed(2)}초`);
+        }
+      }
+      await this.lectureRepository.saveAudioDurations(lecture.lecture_id, existingDurations);
+      console.log(`  ✅ durations.json 갱신 완료`);
+    }
+
     return { adjustedSceneIds };
   }
 
