@@ -59,6 +59,76 @@ export function readWavMetadata(buffer: Buffer): WavMetadata {
   };
 }
 
+/**
+ * WAV PCM 데이터를 특정 시점에서 분할하고 무음을 삽입하여 재조립한다.
+ *
+ * @param wavBuffer 원본 WAV 파일 버퍼
+ * @param insertions 삽입 지점 배열 (splitMs: 분할 시점, silenceMs: 삽입할 무음 길이). splitMs 오름차순 필수.
+ * @returns 무음이 삽입된 새 WAV 버퍼
+ */
+export function insertSilenceIntoWav(
+  wavBuffer: Buffer,
+  insertions: { splitMs: number; silenceMs: number }[],
+): Buffer {
+  const meta = readWavMetadata(wavBuffer);
+  const bytesPerMs = (meta.sampleRate * meta.channels * (meta.bitDepth / 8)) / 1000;
+  const pcm = wavBuffer.subarray(meta.dataOffset, meta.dataOffset + meta.dataSize);
+
+  const parts: Buffer[] = [];
+  let prevByteOffset = 0;
+
+  for (const { splitMs, silenceMs } of insertions) {
+    if (silenceMs <= 0) continue;
+
+    // splitMs 지점까지의 PCM 복사
+    const splitByte = Math.min(Math.round(splitMs * bytesPerMs), pcm.length);
+    // 2바이트 경계 정렬
+    const alignedSplitByte = splitByte - (splitByte % 2);
+
+    if (alignedSplitByte > prevByteOffset) {
+      parts.push(pcm.subarray(prevByteOffset, alignedSplitByte));
+    }
+
+    // 무음 삽입
+    const silenceBytes = Math.round(silenceMs * bytesPerMs);
+    const alignedSilenceBytes = silenceBytes - (silenceBytes % 2);
+    parts.push(Buffer.alloc(alignedSilenceBytes, 0));
+
+    prevByteOffset = alignedSplitByte;
+  }
+
+  // 나머지 PCM
+  if (prevByteOffset < pcm.length) {
+    parts.push(pcm.subarray(prevByteOffset));
+  }
+
+  const newPcm = Buffer.concat(parts);
+  return buildWav(newPcm, meta.sampleRate, meta.channels, meta.bitDepth);
+}
+
+/** PCM 데이터로부터 WAV 파일 버퍼를 생성한다. */
+function buildWav(pcm: Buffer, sampleRate: number, channels: number, bitDepth: number): Buffer {
+  const header = Buffer.alloc(44);
+  const byteRate = sampleRate * channels * (bitDepth / 8);
+  const blockAlign = channels * (bitDepth / 8);
+
+  header.write('RIFF', 0);
+  header.writeUInt32LE(36 + pcm.length, 4);
+  header.write('WAVE', 8);
+  header.write('fmt ', 12);
+  header.writeUInt32LE(16, 16);        // fmt chunk size
+  header.writeUInt16LE(1, 20);         // PCM format
+  header.writeUInt16LE(channels, 22);
+  header.writeUInt32LE(sampleRate, 24);
+  header.writeUInt32LE(byteRate, 28);
+  header.writeUInt16LE(blockAlign, 32);
+  header.writeUInt16LE(bitDepth, 34);
+  header.write('data', 36);
+  header.writeUInt32LE(pcm.length, 40);
+
+  return Buffer.concat([header, pcm]);
+}
+
 export function computeRmsFrames(buffer: Buffer, metadata: WavMetadata, windowMs = 20): RmsFrame[] {
   if (metadata.bitDepth !== 16) {
     throw new Error(`16-bit PCM WAV만 RMS 계산을 지원합니다. bitDepth=${metadata.bitDepth}`);

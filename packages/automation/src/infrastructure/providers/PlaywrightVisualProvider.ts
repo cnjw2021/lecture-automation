@@ -1,10 +1,24 @@
-import { chromium, BrowserContext, Page } from 'playwright';
+import { chromium, Page } from 'playwright';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { config } from '../config';
 import { IVisualProvider } from '../../domain/interfaces/IVisualProvider';
 import { Scene, PlaywrightVisual, PlaywrightAction } from '../../domain/entities/Lecture';
 import { executeEduDevtoolsAction, getEduDevtoolsActionDuration } from './playwrightEduDevtools';
+
+/** 녹화 매니페스트: 각 액션의 실행 타임스탬프를 기록 */
+export interface RecordingActionTimestamp {
+  index: number;
+  cmd: string;
+  startMs: number;
+  endMs: number;
+}
+
+export interface RecordingManifest {
+  sceneId: number;
+  totalDurationMs: number;
+  actionTimestamps: RecordingActionTimestamp[];
+}
 
 export class PlaywrightVisualProvider implements IVisualProvider {
   async record(scene: Scene, outputPath: string): Promise<void> {
@@ -17,34 +31,6 @@ export class PlaywrightVisualProvider implements IVisualProvider {
     const { width, height } = videoConfig.resolution;
     const storageStatePath = this.resolveStorageState(visualConfig.storageState);
 
-    // --- setup 단계: 녹화 없이 액션 실행 → URL 캡처 ---
-    let setupUrl: string | null = null;
-    if (visualConfig.setup?.length) {
-      console.log(`- Scene ${scene.scene_id} setup 시작 (녹화 없음)...`);
-      const browser = await chromium.launch({ headless: true });
-      const context = await browser.newContext({
-        viewport: { width, height },
-        deviceScaleFactor: 1,
-        locale: 'ja-JP',
-        timezoneId: 'Asia/Tokyo',
-        colorScheme: 'light',
-        ...(storageStatePath ? { storageState: storageStatePath } : {}),
-      });
-      const page = await context.newPage();
-
-      try {
-        await this.executeActions(page, visualConfig.setup, scene.scene_id, 'setup');
-        setupUrl = page.url();
-        console.log(`  > setup 완료, 캡처 URL: ${setupUrl}`);
-      } catch (error: any) {
-        console.error(`  > Scene ${scene.scene_id} setup 에러:`, error.message);
-      } finally {
-        await context.close();
-        await browser.close();
-      }
-    }
-
-    // --- 녹화 단계 ---
     const browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({
       viewport: { width, height },
@@ -67,19 +53,23 @@ export class PlaywrightVisualProvider implements IVisualProvider {
 
     try {
       console.log(`- Scene ${scene.scene_id} 녹화 시작...`);
-
-      // setup에서 캡처된 URL로 자동 이동
-      if (setupUrl) {
-        try {
-          await page.goto(setupUrl, { waitUntil: 'load', timeout: 20000 });
-        } catch (_) {
-          console.warn(`  ⚠️ setup URL goto 타임아웃, 현재 상태로 계속 진행`);
-        }
-        await this.injectCursor(page);
-      }
-
-      await this.executeActions(page, visualConfig.action, scene.scene_id, 'record');
+      const { timestamps, totalDurationMs } = await this.executeActions(
+        page, visualConfig.action, scene.scene_id, 'record',
+      );
       await page.waitForTimeout(2000);
+
+      // 매니페스트 저장 (wait_for가 있는 라이브 데모 씬용)
+      const hasWaitFor = visualConfig.action.some(a => a.cmd === 'wait_for');
+      if (hasWaitFor) {
+        const manifest: RecordingManifest = {
+          sceneId: scene.scene_id,
+          totalDurationMs: totalDurationMs + 2000,
+          actionTimestamps: timestamps,
+        };
+        const manifestPath = outputPath.replace(/\.\w+$/, '.manifest.json');
+        await fs.writeJson(manifestPath, manifest, { spaces: 2 });
+        console.log(`  > 녹화 매니페스트 저장: ${manifestPath}`);
+      }
     } catch (error: any) {
       hasError = true;
       console.error(`  > Scene ${scene.scene_id} 녹화 중 에러:`, error.message);
@@ -141,9 +131,15 @@ export class PlaywrightVisualProvider implements IVisualProvider {
     page: Page,
     actions: PlaywrightAction[],
     sceneId: number,
-    phase: 'setup' | 'record',
-  ): Promise<void> {
-    for (const action of actions) {
+    phase: 'record',
+  ): Promise<{ timestamps: RecordingActionTimestamp[]; totalDurationMs: number }> {
+    const timestamps: RecordingActionTimestamp[] = [];
+    const recordingStart = Date.now();
+
+    for (let i = 0; i < actions.length; i++) {
+      const action = actions[i];
+      const startMs = Date.now() - recordingStart;
+
       try {
         switch (action.cmd) {
           case 'goto':
@@ -257,11 +253,13 @@ export class PlaywrightVisualProvider implements IVisualProvider {
             console.warn(`  ⚠️ 알려지지 않거나 미구현된 Action '${action.cmd}' (건너뜀)`);
         }
       } catch (actionError: any) {
-        if (phase === 'setup') {
-          throw actionError;
-        }
         console.warn(`  ⚠️ Action '${action.cmd}' 실패 (건너뜀): ${actionError.message}`);
       }
+
+      const endMs = Date.now() - recordingStart;
+      timestamps.push({ index: i, cmd: action.cmd, startMs, endMs });
     }
+
+    return { timestamps, totalDurationMs: Date.now() - recordingStart };
   }
 }

@@ -72,12 +72,6 @@ export interface PlaywrightVisual {
   transition?: TransitionConfig;
   /** 브라우저 인증 상태 파일 경로 (예: "config/auth/claude.json"). 프로젝트 루트 상대 경로. */
   storageState?: string;
-  /**
-   * 녹화 전에 실행할 액션 배열.
-   * 녹화 없이 실행되며, 완료 후 현재 URL을 캡처하여 녹화 시 자동 이동한다.
-   * 용도: AI 서비스에 프롬프트 전송 → 응답 완료 대기 등.
-   */
-  setup?: PlaywrightAction[];
 }
 
 export interface ScreenshotVisual {

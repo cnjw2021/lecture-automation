@@ -1,4 +1,4 @@
-import { Lecture } from '../../domain/entities/Lecture';
+import { Lecture, PlaywrightVisual } from '../../domain/entities/Lecture';
 import { IVisualProvider } from '../../domain/interfaces/IVisualProvider';
 import { IStateCaptureProvider } from '../../domain/interfaces/IStateCaptureProvider';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
@@ -9,6 +9,8 @@ export interface RecordVisualUseCaseOptions {
   force?: boolean;
   /** true이면 상태 합성형 캡처 모드 사용 (기본: false → 기존 raw video 모드) */
   useSynthCapture?: boolean;
+  /** true이면 라이브 데모 씬(wait_for 포함)만 처리. false/미지정이면 라이브 데모 씬 제외. */
+  filterLiveDemo?: boolean;
 }
 
 export class RecordVisualUseCase {
@@ -19,12 +21,17 @@ export class RecordVisualUseCase {
   ) {}
 
   async execute(lecture: Lecture, options: RecordVisualUseCaseOptions = {}): Promise<void> {
-    const { force = false, useSynthCapture = false } = options;
+    const { force = false, useSynthCapture = false, filterLiveDemo } = options;
     const mode = useSynthCapture && this.stateCaptureProvider ? '상태 합성형' : 'raw video';
     console.log(`[${lecture.lecture_id}] 시각 자료 녹화 공정 시작 (모드: ${mode})`);
 
     for (const scene of lecture.sequence) {
       if (scene.visual.type !== 'playwright') continue;
+
+      // 라이브 데모 씬 필터링
+      const isLiveDemo = (scene.visual as PlaywrightVisual).action.some(a => a.cmd === 'wait_for');
+      if (filterLiveDemo === true && !isLiveDemo) continue;   // 라이브 데모만 처리
+      if (filterLiveDemo !== true && isLiveDemo) continue;     // 라이브 데모 제외
 
       if (useSynthCapture && this.stateCaptureProvider) {
         // 상태 합성형 모드

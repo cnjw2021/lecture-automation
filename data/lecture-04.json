@@ -787,10 +787,20 @@
       "visual": {
         "type": "playwright",
         "storageState": "config/auth/claude.json",
-        "setup": [
+        "syncPoints": [
+          {
+            "actionIndex": 5,
+            "phrase": "出てきましたね"
+          }
+        ],
+        "action": [
           {
             "cmd": "goto",
             "url": "https://claude.ai"
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [960, 400]
           },
           {
             "cmd": "wait",
@@ -810,22 +820,10 @@
             "selector": "button[aria-label='Send Message']",
             "state": "visible",
             "timeout": 120000
-          }
-        ],
-        "syncPoints": [
-          {
-            "actionIndex": 2,
-            "phrase": "出てきましたね"
-          }
-        ],
-        "action": [
-          {
-            "cmd": "mouse_move",
-            "to": [960, 400]
           },
           {
             "cmd": "wait",
-            "ms": 5000
+            "ms": 2000
           },
           {
             "cmd": "highlight",
