@@ -756,16 +756,16 @@
         "storageState": "config/auth/claude.json",
         "syncPoints": [
           {
-            "actionIndex": 5,
-            "phrase": "送信してみましょう"
+            "actionIndex": 6,
+            "phrase": "では、送信してみましょう"
           },
           {
-            "actionIndex": 9,
+            "actionIndex": 10,
             "phrase": "出てきましたね"
           },
           {
-            "actionIndex": 12,
-            "phrase": "全体を大きく見てみましょう"
+            "actionIndex": 13,
+            "phrase": "では、全体を大きく見てみましょう"
           }
         ],
         "action": [
@@ -782,7 +782,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 2000
+            "ms": 3000
           },
           {
             "cmd": "type",
@@ -791,7 +791,12 @@
           },
           {
             "cmd": "wait",
-            "ms": 1000
+            "ms": 2000
+          },
+          {
+            "cmd": "wait",
+            "ms": 5000,
+            "note": "나레이션 전반부(~20s)와 type+wait 시간(~17s)의 차이를 보충"
           },
           {
             "cmd": "press",
