@@ -1,3 +1,5 @@
+import { AudioAlignment } from './IAudioProvider';
+
 export interface ILectureRepository {
   saveAudio(lectureId: string, sceneId: number, audioBuffer: Buffer): Promise<void>;
   existsAudio(lectureId: string, sceneId: number): Promise<boolean>;
@@ -10,4 +12,6 @@ export interface ILectureRepository {
   existsScreenshot(lectureId: string, sceneId: number): Promise<boolean>;
   getScreenshotPath(lectureId: string, sceneId: number): string;
   getAudioPath(lectureId: string, sceneId: number): string;
+  saveAlignment(lectureId: string, sceneId: number, alignment: AudioAlignment): Promise<void>;
+  getAlignment(lectureId: string, sceneId: number): Promise<AudioAlignment | null>;
 }
