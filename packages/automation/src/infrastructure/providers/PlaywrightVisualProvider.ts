@@ -307,6 +307,29 @@ export class PlaywrightVisualProvider implements IVisualProvider {
               await page.waitForTimeout(1500);
             }
             break;
+          case 'render_code_block': {
+            // 페이지 내 마지막 <pre> 코드 블록 텍스트를 추출하여 같은 페이지에 렌더
+            const codeHtml = await page.evaluate(() => {
+              const pres = document.querySelectorAll('pre');
+              if (pres.length === 0) return null;
+              // 가장 긴 코드 블록 선택 (HTML 전체가 담긴 블록)
+              let longest = '';
+              pres.forEach(pre => {
+                const text = pre.textContent || '';
+                if (text.length > longest.length) longest = text;
+              });
+              return longest;
+            });
+            if (codeHtml) {
+              console.log(`  > render_code_block: ${codeHtml.length}자 코드 추출 → 렌더`);
+              await page.goto('about:blank');
+              await page.setContent(codeHtml, { waitUntil: 'load' });
+              await page.waitForTimeout(1000);
+            } else {
+              console.warn('  ⚠️ render_code_block: 코드 블록을 찾을 수 없음');
+            }
+            break;
+          }
           default:
             console.warn(`  ⚠️ 알려지지 않거나 미구현된 Action '${action.cmd}' (건너뜀)`);
         }

@@ -21,7 +21,8 @@ export type PlaywrightCmd =
   | 'select_devtools_node' // DevTools 트리에서 실제 DOM 노드 선택
   | 'toggle_devtools_node' // DevTools 트리 노드 펼침/접힘
   | 'disable_css'  // 모든 스타일시트 비활성화
-  | 'enable_css';  // 스타일시트 복원
+  | 'enable_css'   // 스타일시트 복원
+  | 'render_code_block'; // 페이지 내 마지막 코드 블록을 추출하여 새 탭에서 렌더
 
 export interface PlaywrightAction {
   cmd: PlaywrightCmd;
