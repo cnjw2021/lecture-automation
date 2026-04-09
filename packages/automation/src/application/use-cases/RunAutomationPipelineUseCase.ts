@@ -85,6 +85,7 @@ export class RunAutomationPipelineUseCase {
     await this.recordVisualUseCase.execute(lecture, {
       force: options.forceRegenerate,
       useSynthCapture: options.useSynthCapture,
+      filterLiveDemo: false,
     });
 
     console.log('\n--- 4단계: 씬별 클립 렌더링 ---');

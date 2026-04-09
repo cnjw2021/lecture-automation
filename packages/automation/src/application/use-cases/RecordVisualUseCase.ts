@@ -28,10 +28,12 @@ export class RecordVisualUseCase {
     for (const scene of lecture.sequence) {
       if (scene.visual.type !== 'playwright') continue;
 
-      // 라이브 데모 씬 필터링
-      const isLiveDemo = (scene.visual as PlaywrightVisual).action.some(a => a.cmd === 'wait_for');
-      if (filterLiveDemo === true && !isLiveDemo) continue;   // 라이브 데모만 처리
-      if (filterLiveDemo !== true && isLiveDemo) continue;     // 라이브 데모 제외
+      // 라이브 데모 씬 필터링 (filterLiveDemo가 명시된 경우에만)
+      if (filterLiveDemo !== undefined) {
+        const isLiveDemo = (scene.visual as PlaywrightVisual).action.some(a => a.cmd === 'wait_for');
+        if (filterLiveDemo && !isLiveDemo) continue;    // 라이브 데모만 처리
+        if (!filterLiveDemo && isLiveDemo) continue;     // 라이브 데모 제외
+      }
 
       if (useSynthCapture && this.stateCaptureProvider) {
         // 상태 합성형 모드

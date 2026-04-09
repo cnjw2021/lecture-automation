@@ -31,7 +31,15 @@ export class PlaywrightVisualProvider implements IVisualProvider {
     const { width, height } = videoConfig.resolution;
     const storageStatePath = this.resolveStorageState(visualConfig.storageState);
 
-    const browser = await chromium.launch({ headless: true });
+    // storageState 사용 시 실제 Chrome + 봇 감지 회피 옵션 적용
+    const useRealChrome = !!storageStatePath;
+    const browser = await chromium.launch({
+      headless: true,
+      ...(useRealChrome ? {
+        channel: 'chrome',
+        args: ['--disable-blink-features=AutomationControlled'],
+      } : {}),
+    });
     const context = await browser.newContext({
       viewport: { width, height },
       deviceScaleFactor: 1,
