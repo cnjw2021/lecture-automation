@@ -54,12 +54,21 @@ export class PlaywrightVisualProvider implements IVisualProvider {
       ...(storageStatePath ? { storageState: storageStatePath } : {}),
     });
 
-    // storageState 씬: 사이드바(대화 목록) 렌더링 전에 숨김
+    // storageState 씬: 사이드바(대화 목록)를 SPA 렌더링 즉시 숨김
     if (storageStatePath) {
       await context.addInitScript(() => {
-        const style = document.createElement('style');
-        style.textContent = '.z-sidebar { display: none !important; }';
-        (document.head || document.documentElement).appendChild(style);
+        const css = document.createElement('style');
+        css.textContent = [
+          '.z-sidebar { display:none!important; width:0!important; overflow:hidden!important; }',
+          'nav.flex.flex-col { display:none!important; }',
+        ].join('\n');
+        (document.head || document.documentElement).appendChild(css);
+        // SPA가 DOM을 재구성해도 숨김 유지
+        new MutationObserver(() => {
+          document.querySelectorAll('.z-sidebar, nav.flex.flex-col').forEach(el => {
+            (el as HTMLElement).style.setProperty('display', 'none', 'important');
+          });
+        }).observe(document.documentElement, { childList: true, subtree: true });
       });
     }
 
