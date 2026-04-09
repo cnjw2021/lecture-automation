@@ -54,6 +54,15 @@ export class PlaywrightVisualProvider implements IVisualProvider {
       ...(storageStatePath ? { storageState: storageStatePath } : {}),
     });
 
+    // storageState 씬: 사이드바(대화 목록) 렌더링 전에 숨김
+    if (storageStatePath) {
+      await context.addInitScript(() => {
+        const style = document.createElement('style');
+        style.textContent = '.z-sidebar { display: none !important; }';
+        (document.head || document.documentElement).appendChild(style);
+      });
+    }
+
     await context.tracing.start({ screenshots: true, snapshots: true });
 
     const page = await context.newPage();

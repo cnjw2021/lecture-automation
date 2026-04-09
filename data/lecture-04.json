@@ -696,14 +696,6 @@
             "url": "https://claude.ai/new"
           },
           {
-            "cmd": "click",
-            "selector": "[data-testid='pin-sidebar-toggle']"
-          },
-          {
-            "cmd": "wait",
-            "ms": 500
-          },
-          {
             "cmd": "mouse_move",
             "to": [
               960,
@@ -712,7 +704,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 10548
+            "ms": 11048
           },
           {
             "cmd": "highlight",
@@ -797,7 +789,7 @@
         "storageState": "config/auth/claude.json",
         "syncPoints": [
           {
-            "actionIndex": 7,
+            "actionIndex": 5,
             "phrase": "出てきましたね"
           }
         ],
@@ -807,20 +799,12 @@
             "url": "https://claude.ai/new"
           },
           {
-            "cmd": "click",
-            "selector": "[data-testid='pin-sidebar-toggle']"
-          },
-          {
-            "cmd": "wait",
-            "ms": 500
-          },
-          {
             "cmd": "mouse_move",
             "to": [960, 400]
           },
           {
             "cmd": "wait",
-            "ms": 2500
+            "ms": 3000
           },
           {
             "cmd": "type",
@@ -843,7 +827,7 @@
           },
           {
             "cmd": "highlight",
-            "selector": "div[data-is-streaming='false']",
+            "selector": "[data-testid='action-bar-copy']",
             "note": "AIが生成したホームページのコード"
           },
           {
