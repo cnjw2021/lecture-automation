@@ -1,4 +1,4 @@
-import { chromium, Page } from 'playwright';
+import { chromium, Page, LaunchOptions } from 'playwright';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { config } from '../config';
@@ -33,13 +33,23 @@ export class PlaywrightVisualProvider implements IVisualProvider {
 
     // storageState 사용 시 실제 Chrome + headed 모드 (Cloudflare Turnstile 통과 필수)
     const useRealChrome = !!storageStatePath;
-    const browser = await chromium.launch({
+    const launchOptions = {
       headless: !useRealChrome,
       ...(useRealChrome ? {
-        channel: 'chrome',
+        channel: 'chrome' as const,
         args: ['--disable-blink-features=AutomationControlled'],
       } : {}),
-    });
+    };
+
+    // storageState 씬: 녹화 전 프리플라이트로 사이드바 닫힌 상태의 storageState 생성
+    let effectiveStorageState: string | undefined = storageStatePath;
+    if (storageStatePath) {
+      effectiveStorageState = await this.preflightCloseSidebar(
+        launchOptions, storageStatePath, width, height,
+      );
+    }
+
+    const browser = await chromium.launch(launchOptions);
     const context = await browser.newContext({
       viewport: { width, height },
       deviceScaleFactor: 1,
@@ -51,26 +61,8 @@ export class PlaywrightVisualProvider implements IVisualProvider {
         dir: path.dirname(outputPath),
         size: { width, height },
       },
-      ...(storageStatePath ? { storageState: storageStatePath } : {}),
+      ...(effectiveStorageState ? { storageState: effectiveStorageState } : {}),
     });
-
-    // storageState 씬: 사이드바(대화 목록)를 SPA 렌더링 즉시 숨김
-    if (storageStatePath) {
-      await context.addInitScript(() => {
-        const css = document.createElement('style');
-        css.textContent = [
-          '.z-sidebar { display:none!important; width:0!important; overflow:hidden!important; }',
-          'nav.flex.flex-col { display:none!important; }',
-        ].join('\n');
-        (document.head || document.documentElement).appendChild(css);
-        // SPA가 DOM을 재구성해도 숨김 유지
-        new MutationObserver(() => {
-          document.querySelectorAll('.z-sidebar, nav.flex.flex-col').forEach(el => {
-            (el as HTMLElement).style.setProperty('display', 'none', 'important');
-          });
-        }).observe(document.documentElement, { childList: true, subtree: true });
-      });
-    }
 
     await context.tracing.start({ screenshots: true, snapshots: true });
 
@@ -131,6 +123,78 @@ export class PlaywrightVisualProvider implements IVisualProvider {
       return undefined;
     }
     return resolved;
+  }
+
+  /**
+   * 녹화 전 프리플라이트: 사이드바를 닫은 상태의 storageState를 생성한다.
+   * 임시 브라우저로 대상 사이트를 열어 localStorage의 사이드바 키를 찾아 false로 설정,
+   * 갱신된 storageState를 임시 파일로 저장하여 반환한다.
+   */
+  private async preflightCloseSidebar(
+    launchOptions: LaunchOptions,
+    storageStatePath: string,
+    width: number,
+    height: number,
+  ): Promise<string> {
+    console.log('  > 프리플라이트: 사이드바 닫힌 상태 설정 중...');
+    const browser = await chromium.launch(launchOptions);
+    try {
+      const ctx = await browser.newContext({
+        viewport: { width, height },
+        storageState: storageStatePath,
+      });
+      const page = await ctx.newPage();
+      try {
+        await page.goto('https://claude.ai/new', { waitUntil: 'domcontentloaded', timeout: 15000 });
+      } catch (_) {}
+
+      // SPA 렌더링 대기
+      await page.waitForTimeout(3000);
+
+      // 사이드바 토글 버튼을 클릭하여 SPA 자체가 상태를 저장하게 함
+      const toggled = await page.evaluate(() => {
+        // 방법 1: data-testid로 토글 버튼 탐색
+        const toggleBtn = document.querySelector('[data-testid="sidebar-toggle"]')
+          || document.querySelector('[data-testid="close-sidebar"]')
+          || document.querySelector('button[aria-label*="sidebar" i]')
+          || document.querySelector('button[aria-label*="サイドバー"]');
+        if (toggleBtn) {
+          (toggleBtn as HTMLElement).click();
+          return 'button-click';
+        }
+        // 방법 2: localStorage 키를 직접 찾아 설정
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.includes('chatControlsSidebarIsOpen')) {
+            localStorage.setItem(key, 'false');
+            return 'key-set: ' + key;
+          }
+        }
+        // 방법 3: LSS 접두사 UUID를 다른 키에서 추출하여 키 생성
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith('LSS-')) {
+            const uuid = key.split(':')[0]; // "LSS-xxxx-..."
+            const sidebarKey = uuid + ':chatControlsSidebarIsOpen';
+            localStorage.setItem(sidebarKey, 'false');
+            return 'key-created: ' + sidebarKey;
+          }
+        }
+        return 'no-action';
+      });
+      console.log(`  > 프리플라이트 사이드바 처리: ${toggled}`);
+
+      await page.waitForTimeout(1000);
+
+      // 갱신된 storageState를 임시 파일로 저장
+      const updatedPath = storageStatePath.replace(/\.json$/, '.sidebar-closed.json');
+      await ctx.storageState({ path: updatedPath });
+      await ctx.close();
+      console.log('  > 프리플라이트 완료: 사이드바 닫힌 상태 저장됨');
+      return updatedPath;
+    } finally {
+      await browser.close();
+    }
   }
 
   /**
