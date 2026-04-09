@@ -789,11 +789,11 @@
         "storageState": "config/auth/claude.json",
         "syncPoints": [
           {
-            "actionIndex": 6,
+            "actionIndex": 10,
             "phrase": "出てきましたね"
           },
           {
-            "actionIndex": 10,
+            "actionIndex": 15,
             "phrase": "見てみましょう"
           }
         ],
@@ -811,7 +811,23 @@
           },
           {
             "cmd": "wait",
-            "ms": 3000
+            "ms": 2000
+          },
+          {
+            "cmd": "click",
+            "selector": "[data-testid='model-selector-dropdown']"
+          },
+          {
+            "cmd": "wait",
+            "ms": 500
+          },
+          {
+            "cmd": "click",
+            "selector": "[role='menuitem']:has-text('Haiku')"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1000
           },
           {
             "cmd": "type",
@@ -835,8 +851,14 @@
             "timeout": 180000
           },
           {
+            "cmd": "wait_for",
+            "selector": "iframe[src*='claudemcpcontent']",
+            "state": "attached",
+            "timeout": 30000
+          },
+          {
             "cmd": "wait",
-            "ms": 2000
+            "ms": 3000
           },
           {
             "cmd": "scroll",
@@ -844,7 +866,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 3000
+            "ms": 2000
           },
           {
             "cmd": "render_code_block"
