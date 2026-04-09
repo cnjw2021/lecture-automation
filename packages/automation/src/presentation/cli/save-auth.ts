@@ -15,6 +15,7 @@
 import { chromium } from 'playwright';
 import * as path from 'path';
 import * as fs from 'fs-extra';
+import * as os from 'os';
 import * as readline from 'readline';
 
 const ROOT_DIR = path.resolve(__dirname, '../../../../..');
@@ -38,18 +39,23 @@ async function main() {
   console.log(`   저장 경로: ${outputPath}`);
   console.log('');
 
-  const browser = await chromium.launch({
-    headless: false,
-    args: ['--start-maximized'],
-  });
+  // 임시 유저 데이터 디렉토리 — persistent context로 자동화 플래그 제거
+  const userDataDir = path.join(os.tmpdir(), `pw-auth-${service}-${Date.now()}`);
 
-  const context = await browser.newContext({
-    viewport: null, // maximized에 맞춤
+  const context = await chromium.launchPersistentContext(userDataDir, {
+    headless: false,
+    channel: 'chrome',
+    viewport: null,
     locale: 'ja-JP',
     timezoneId: 'Asia/Tokyo',
+    args: [
+      '--start-maximized',
+      '--disable-blink-features=AutomationControlled',
+    ],
+    ignoreDefaultArgs: ['--enable-automation', '--no-sandbox'],
   });
 
-  const page = await context.newPage();
+  const page = context.pages()[0] || await context.newPage();
   await page.goto(url, { waitUntil: 'load', timeout: 30000 });
 
   console.log('🌐 브라우저가 열렸습니다. 로그인을 완료한 뒤 터미널에서 Enter를 눌러 주세요.');
@@ -60,7 +66,10 @@ async function main() {
   await context.storageState({ path: outputPath });
   console.log(`✅ 인증 상태 저장 완료: ${outputPath}`);
 
-  await browser.close();
+  await context.close();
+
+  // 임시 디렉토리 정리
+  await fs.remove(userDataDir).catch(() => {});
 }
 
 function getDefaultUrl(service?: string): string {
