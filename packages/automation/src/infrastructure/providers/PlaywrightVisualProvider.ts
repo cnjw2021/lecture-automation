@@ -55,6 +55,7 @@ export class PlaywrightVisualProvider implements IVisualProvider {
       console.log(`- Scene ${scene.scene_id} 녹화 시작...`);
       const { timestamps, totalDurationMs } = await this.executeActions(
         page, visualConfig.action, scene.scene_id, 'record',
+        { hasStorageState: !!storageStatePath },
       );
       await page.waitForTimeout(2000);
 
@@ -106,6 +107,32 @@ export class PlaywrightVisualProvider implements IVisualProvider {
     return resolved;
   }
 
+  /**
+   * goto 후 URL을 확인하여 로그인 페이지로 리다이렉트되었는지 감지한다.
+   * 세션 만료 시 wait_for 타임아웃(최대 2분)까지 낭비하지 않고 즉시 실패.
+   */
+  private checkSessionExpired(page: Page, originalUrl: string): void {
+    const currentUrl = page.url().toLowerCase();
+    const loginPatterns = ['/login', '/signin', '/sign-in', '/auth', '/oauth', '/sso'];
+    const isLoginPage = loginPatterns.some(p => currentUrl.includes(p));
+
+    if (isLoginPage) {
+      const service = this.guessServiceName(originalUrl);
+      throw new Error(
+        `세션 만료 감지: ${originalUrl} → ${page.url()}\n` +
+        `  로그인 페이지로 리다이렉트되었습니다.\n` +
+        `  다음 명령어로 세션을 갱신해 주세요:\n` +
+        `  → make save-auth SERVICE=${service}`
+      );
+    }
+  }
+
+  private guessServiceName(url: string): string {
+    if (url.includes('claude.ai')) return 'claude';
+    if (url.includes('chatgpt.com') || url.includes('openai.com')) return 'chatgpt';
+    try { return new URL(url).hostname.split('.')[0]; } catch { return 'unknown'; }
+  }
+
   private async injectCursor(page: Page): Promise<void> {
     await page.evaluate(() => {
       if (document.getElementById('__edu_cur__')) return;
@@ -132,6 +159,7 @@ export class PlaywrightVisualProvider implements IVisualProvider {
     actions: PlaywrightAction[],
     sceneId: number,
     phase: 'record',
+    options: { hasStorageState?: boolean } = {},
   ): Promise<{ timestamps: RecordingActionTimestamp[]; totalDurationMs: number }> {
     const timestamps: RecordingActionTimestamp[] = [];
     const recordingStart = Date.now();
@@ -148,6 +176,10 @@ export class PlaywrightVisualProvider implements IVisualProvider {
                 await page.goto(action.url, { waitUntil: 'load', timeout: 20000 });
               } catch (_) {
                 console.warn(`  ⚠️ goto 타임아웃, 현재 상태로 계속 진행`);
+              }
+              // storageState 사용 씬: 세션 만료 조기 감지
+              if (options.hasStorageState) {
+                this.checkSessionExpired(page, action.url);
               }
               await this.injectCursor(page);
             }
