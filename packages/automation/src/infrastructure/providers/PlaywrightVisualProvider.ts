@@ -372,28 +372,39 @@ export class PlaywrightVisualProvider implements IVisualProvider {
             }
             break;
           case 'render_code_block': {
-            // 1차: Artifact iframe에서 HTML 추출 (Claude/ChatGPT 등 AI 서비스)
-            // 2차: <pre> 코드 블록에서 추출 (일반 페이지)
+            // Artifact iframe을 폴링하여 HTML 추출 (최대 30초 대기)
+            // 폴백: <pre> 코드 블록에서 가장 긴 텍스트 추출
             let extractedHtml: string | null = null;
 
-            // Artifact iframe 탐색 — 가장 큰 visible iframe에서 콘텐츠 추출
-            const artifactFrame = page.frames().find(f => {
-              const url = f.url();
-              return url.includes('claudemcpcontent.com') || url.includes('isolated-segment');
-            });
-            if (artifactFrame) {
-              extractedHtml = await artifactFrame.evaluate(() => {
-                // MCP Proxy 내부 iframe이 있으면 그 안의 HTML 사용
-                const inner = document.querySelector('iframe');
-                if (inner?.contentDocument?.documentElement) {
-                  return inner.contentDocument.documentElement.outerHTML;
-                }
-                return document.documentElement.outerHTML;
-              }).catch(() => null);
+            const maxRetries = 15; // 2초 간격 × 15회 = 최대 30초
+            for (let attempt = 0; attempt < maxRetries; attempt++) {
+              const artifactFrame = page.frames().find(f => {
+                const url = f.url();
+                return url.includes('claudemcpcontent.com') || url.includes('isolated-segment');
+              });
+              if (artifactFrame) {
+                extractedHtml = await artifactFrame.evaluate(() => {
+                  const inner = document.querySelector('iframe');
+                  if (inner?.contentDocument?.documentElement) {
+                    return inner.contentDocument.documentElement.outerHTML;
+                  }
+                  return document.documentElement.outerHTML;
+                }).catch(() => null);
+              }
+              if (extractedHtml && extractedHtml.length > 100) {
+                console.log(`  > render_code_block: Artifact iframe 발견 (${attempt + 1}회 시도)`);
+                break;
+              }
+              extractedHtml = null;
+              if (attempt < maxRetries - 1) {
+                console.log(`  > render_code_block: Artifact iframe 대기 중... (${attempt + 1}/${maxRetries})`);
+                await page.waitForTimeout(2000);
+              }
             }
 
             // Artifact 없으면 <pre> 코드 블록 폴백
             if (!extractedHtml) {
+              console.log('  > render_code_block: Artifact 미발견, <pre> 폴백 시도');
               extractedHtml = await page.evaluate(() => {
                 const pres = document.querySelectorAll('pre');
                 let longest = '';
