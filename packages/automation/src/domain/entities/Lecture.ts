@@ -8,6 +8,8 @@ export interface Metadata {
 export type PlaywrightCmd =
   | 'goto'         // URL 이동 (페이지 로드 후 커서 자동 주입)
   | 'wait'         // 대기 (ms)
+  | 'wait_for'     // 셀렉터 대기 (selector, state, timeout) — setup 전용
+  | 'scroll'       // 페이지 스크롤 (deltaY: 양수=아래, 음수=위)
   | 'mouse_move'   // 마우스 이동 (to: [x, y])
   | 'click'        // 요소 클릭 (selector)
   | 'type'         // 텍스트 입력 (selector, key)
@@ -31,6 +33,12 @@ export interface PlaywrightAction {
   key?: string;
   mode?: 'toggle' | 'expand' | 'collapse';
   note?: string;
+  /** wait_for: 대기할 상태 (기본 'visible') */
+  state?: 'visible' | 'hidden' | 'attached' | 'detached';
+  /** wait_for: 타임아웃 ms (기본 30000) */
+  timeout?: number;
+  /** scroll: 스크롤 량 (양수=아래, 음수=위, 기본 300) */
+  deltaY?: number;
 }
 
 export interface TransitionConfig {
@@ -62,6 +70,14 @@ export interface PlaywrightVisual {
   /** 정의된 경우 sync-playwright 커맨드로 wait ms를 자동 재계산한다. */
   syncPoints?: PlaywrightSyncPoint[];
   transition?: TransitionConfig;
+  /** 브라우저 인증 상태 파일 경로 (예: "config/auth/claude.json"). 프로젝트 루트 상대 경로. */
+  storageState?: string;
+  /**
+   * 녹화 전에 실행할 액션 배열.
+   * 녹화 없이 실행되며, 완료 후 현재 URL을 캡처하여 녹화 시 자동 이동한다.
+   * 용도: AI 서비스에 프롬프트 전송 → 응답 완료 대기 등.
+   */
+  setup?: PlaywrightAction[];
 }
 
 export interface ScreenshotVisual {
