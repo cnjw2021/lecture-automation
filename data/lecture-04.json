@@ -693,7 +693,7 @@
         "action": [
           {
             "cmd": "goto",
-            "url": "https://claude.ai"
+            "url": "https://claude.ai/new"
           },
           {
             "cmd": "mouse_move",
@@ -796,7 +796,7 @@
         "action": [
           {
             "cmd": "goto",
-            "url": "https://claude.ai"
+            "url": "https://claude.ai/new"
           },
           {
             "cmd": "mouse_move",
@@ -808,16 +808,16 @@
           },
           {
             "cmd": "type",
-            "selector": "[contenteditable]",
+            "selector": "div.ProseMirror",
             "key": "落ち着いた雰囲気のカフェのホームページをHTMLとCSSで作ってください。トップに大きなキャッチコピー、おすすめメニュー3つ、店舗情報、アクセス、お問い合わせボタンを入れてください。スマートフォンでも見やすいシンプルなデザインにしてください。"
           },
           {
-            "cmd": "click",
-            "selector": "button[aria-label='Send Message']"
+            "cmd": "press",
+            "key": "Enter"
           },
           {
             "cmd": "wait_for",
-            "selector": "button[aria-label='Send Message']",
+            "selector": "[data-testid='action-bar-copy']",
             "state": "visible",
             "timeout": 120000
           },
@@ -827,7 +827,7 @@
           },
           {
             "cmd": "highlight",
-            "selector": ".font-claude-message",
+            "selector": "div[data-is-streaming='false']",
             "note": "AIが生成したホームページのコード"
           },
           {

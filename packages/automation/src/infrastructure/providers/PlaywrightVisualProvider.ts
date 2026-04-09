@@ -31,10 +31,10 @@ export class PlaywrightVisualProvider implements IVisualProvider {
     const { width, height } = videoConfig.resolution;
     const storageStatePath = this.resolveStorageState(visualConfig.storageState);
 
-    // storageState 사용 시 실제 Chrome + 봇 감지 회피 옵션 적용
+    // storageState 사용 시 실제 Chrome + headed 모드 (Cloudflare Turnstile 통과 필수)
     const useRealChrome = !!storageStatePath;
     const browser = await chromium.launch({
-      headless: true,
+      headless: !useRealChrome,
       ...(useRealChrome ? {
         channel: 'chrome',
         args: ['--disable-blink-features=AutomationControlled'],
