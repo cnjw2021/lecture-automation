@@ -129,7 +129,7 @@ export class ReverseSyncPlaywrightUseCase {
 
       console.log(`  action[${sp.actionIndex}] "${sp.phrase.slice(0, 16)}...": ${Math.round(silenceMs)}ms 무음 삽입 (video=${videoTargetMs}ms, audio=${adjustedAudioMs}ms)`);
       insertions.push({
-        splitMs: audioCurrentMs + cumulativeSilence,
+        splitMs: audioCurrentMs,
         silenceMs: Math.round(silenceMs),
       });
     }
