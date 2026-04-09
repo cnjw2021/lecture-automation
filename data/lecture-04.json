@@ -789,11 +789,11 @@
         "storageState": "config/auth/claude.json",
         "syncPoints": [
           {
-            "actionIndex": 5,
+            "actionIndex": 6,
             "phrase": "出てきましたね"
           },
           {
-            "actionIndex": 9,
+            "actionIndex": 10,
             "phrase": "見てみましょう"
           }
         ],
@@ -816,7 +816,7 @@
           {
             "cmd": "type",
             "selector": "div.ProseMirror",
-            "key": "落ち着いた雰囲気のカフェのホームページをHTMLとCSSで作ってください。トップに大きなキャッチコピー、おすすめメニュー3つ、店舗情報、アクセス、お問い合わせボタンを入れてください。スマートフォンでも見やすいシンプルなデザインにしてください。HTMLとCSSを1つのHTMLファイルにまとめて、````htmlコードブロックで出力してください。"
+            "key": "落ち着いた雰囲気のカフェのホームページをHTMLとCSSで作ってください。トップに大きなキャッチコピー、おすすめメニュー3つ、店舗情報、アクセス、お問い合わせボタンを入れてください。スマートフォンでも見やすいシンプルなデザインにしてください。"
           },
           {
             "cmd": "press",
@@ -824,9 +824,15 @@
           },
           {
             "cmd": "wait_for",
-            "selector": "[data-testid='action-bar-copy']",
-            "state": "visible",
-            "timeout": 120000
+            "selector": "[data-is-streaming='true']",
+            "state": "attached",
+            "timeout": 60000
+          },
+          {
+            "cmd": "wait_for",
+            "selector": "[data-is-streaming='false']",
+            "state": "attached",
+            "timeout": 180000
           },
           {
             "cmd": "wait",

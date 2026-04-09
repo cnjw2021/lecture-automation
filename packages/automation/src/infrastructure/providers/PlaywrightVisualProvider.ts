@@ -308,25 +308,46 @@ export class PlaywrightVisualProvider implements IVisualProvider {
             }
             break;
           case 'render_code_block': {
-            // 페이지 내 마지막 <pre> 코드 블록 텍스트를 추출하여 같은 페이지에 렌더
-            const codeHtml = await page.evaluate(() => {
-              const pres = document.querySelectorAll('pre');
-              if (pres.length === 0) return null;
-              // 가장 긴 코드 블록 선택 (HTML 전체가 담긴 블록)
-              let longest = '';
-              pres.forEach(pre => {
-                const text = pre.textContent || '';
-                if (text.length > longest.length) longest = text;
-              });
-              return longest;
+            // 1차: Artifact iframe에서 HTML 추출 (Claude/ChatGPT 등 AI 서비스)
+            // 2차: <pre> 코드 블록에서 추출 (일반 페이지)
+            let extractedHtml: string | null = null;
+
+            // Artifact iframe 탐색 — 가장 큰 visible iframe에서 콘텐츠 추출
+            const artifactFrame = page.frames().find(f => {
+              const url = f.url();
+              return url.includes('claudemcpcontent.com') || url.includes('isolated-segment');
             });
-            if (codeHtml) {
-              console.log(`  > render_code_block: ${codeHtml.length}자 코드 추출 → 렌더`);
+            if (artifactFrame) {
+              extractedHtml = await artifactFrame.evaluate(() => {
+                // MCP Proxy 내부 iframe이 있으면 그 안의 HTML 사용
+                const inner = document.querySelector('iframe');
+                if (inner?.contentDocument?.documentElement) {
+                  return inner.contentDocument.documentElement.outerHTML;
+                }
+                return document.documentElement.outerHTML;
+              }).catch(() => null);
+            }
+
+            // Artifact 없으면 <pre> 코드 블록 폴백
+            if (!extractedHtml) {
+              extractedHtml = await page.evaluate(() => {
+                const pres = document.querySelectorAll('pre');
+                let longest = '';
+                pres.forEach(pre => {
+                  const text = pre.textContent || '';
+                  if (text.length > longest.length) longest = text;
+                });
+                return longest || null;
+              });
+            }
+
+            if (extractedHtml) {
+              console.log(`  > render_code_block: ${extractedHtml.length}자 HTML 추출 → 렌더`);
               await page.goto('about:blank');
-              await page.setContent(codeHtml, { waitUntil: 'load' });
+              await page.setContent(extractedHtml, { waitUntil: 'load' });
               await page.waitForTimeout(1000);
             } else {
-              console.warn('  ⚠️ render_code_block: 코드 블록을 찾을 수 없음');
+              console.warn('  ⚠️ render_code_block: 코드 블록/Artifact를 찾을 수 없음');
             }
             break;
           }
