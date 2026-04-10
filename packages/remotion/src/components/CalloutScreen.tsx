@@ -85,31 +85,30 @@ export const CalloutScreen: React.FC<CalloutScreenProps> = ({
           {style.label}
         </div>
 
-        <div style={{ display: 'flex', gap: 28, alignItems: 'flex-start', opacity: txtOpacity }}>
-          {/* Icon */}
-          <div
-            style={{
-              width: 72,
-              height: 72,
-              borderRadius: '50%',
-              background: `${style.color}15`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}
-          >
-            <NodeIcon icon={displayIcon} size={40} />
-          </div>
-
-          <div style={{ flex: 1 }}>
-            <h2 style={{ fontSize: 40, fontWeight: 700, color: theme.color.textPrimary, marginBottom: 16, lineHeight: 1.3 }}>
+        <div style={{ opacity: txtOpacity }}>
+          {/* Title row: icon + title aligned center */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
+            <div
+              style={{
+                width: 72,
+                height: 72,
+                borderRadius: '50%',
+                background: `${style.color}15`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <NodeIcon icon={displayIcon} size={40} />
+            </div>
+            <h2 style={{ fontSize: 40, fontWeight: 700, color: theme.color.textPrimary, margin: 0, lineHeight: 1.3 }}>
               {title}
             </h2>
-            <p style={{ fontSize: 30, color: theme.color.textSecondary, lineHeight: 1.7, margin: 0 }}>
-              {body}
-            </p>
           </div>
+          <p style={{ fontSize: 30, color: theme.color.textSecondary, lineHeight: 1.7, margin: '16px 0 0', paddingLeft: 100 }}>
+            {body}
+          </p>
         </div>
       </div>
     </AbsoluteFill>

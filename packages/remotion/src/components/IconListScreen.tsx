@@ -54,9 +54,6 @@ export const IconListScreen: React.FC<IconListScreenProps> = ({ title, items, an
             <div
               key={i}
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 24,
                 padding: '20px 28px',
                 borderRadius: 16,
                 background: theme.color.surface,
@@ -65,33 +62,32 @@ export const IconListScreen: React.FC<IconListScreenProps> = ({ title, items, an
                 transform: `translateX(${itemX}px)`,
               }}
             >
-              {/* Icon circle */}
-              <div
-                style={{
-                  width: 60,
-                  height: 60,
-                  borderRadius: '50%',
-                  background: `${itemColor}15`,
-                  border: `1.5px solid ${itemColor}25`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}
-              >
-                <NodeIcon icon={item.icon} size={32} />
-              </div>
-
-              <div style={{ flex: 1 }}>
-                <h3 style={{ fontSize: 30, fontWeight: 700, color: theme.color.textPrimary, marginBottom: item.description ? 4 : 0, lineHeight: 1.3 }}>
+              {/* Title row: icon + title aligned center */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+                <div
+                  style={{
+                    width: 60,
+                    height: 60,
+                    borderRadius: '50%',
+                    background: `${itemColor}15`,
+                    border: `1.5px solid ${itemColor}25`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  <NodeIcon icon={item.icon} size={32} />
+                </div>
+                <h3 style={{ fontSize: 30, fontWeight: 700, color: theme.color.textPrimary, margin: 0, lineHeight: 1.3 }}>
                   {item.title}
                 </h3>
-                {item.description && (
-                  <p style={{ fontSize: 22, color: theme.color.textSecondary, lineHeight: 1.5, margin: 0 }}>
-                    {item.description}
-                  </p>
-                )}
               </div>
+              {item.description && (
+                <p style={{ fontSize: 22, color: theme.color.textSecondary, lineHeight: 1.5, margin: '4px 0 0', paddingLeft: 84 }}>
+                  {item.description}
+                </p>
+              )}
             </div>
           );
         })}

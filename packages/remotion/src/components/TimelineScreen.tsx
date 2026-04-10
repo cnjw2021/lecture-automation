@@ -185,41 +185,40 @@ export const TimelineScreen: React.FC<TimelineScreenProps> = ({ title, events, a
                   borderRadius: 16,
                   borderLeft: `3px solid ${eventColor}`,
                   maxWidth: 900,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 20,
                 }}
               >
-                {event.icon && (
-                  <div style={{ flexShrink: 0 }}>
-                    <NodeIcon icon={event.icon} size={40} />
-                  </div>
-                )}
-                <div>
+                {/* Title row: icon + label aligned center */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+                  {event.icon && (
+                    <div style={{ flexShrink: 0 }}>
+                      <NodeIcon icon={event.icon} size={40} />
+                    </div>
+                  )}
                   <h3
                     style={{
                       fontSize: 34,
                       fontWeight: 700,
                       color: theme.color.textPrimary,
-                      marginBottom: event.description ? 6 : 0,
+                      margin: 0,
                       lineHeight: 1.3,
                     }}
                   >
                     {event.label}
                   </h3>
-                  {event.description && (
-                    <p
-                      style={{
-                        fontSize: 24,
-                        color: theme.color.textSecondary,
-                        lineHeight: 1.5,
-                        margin: 0,
-                      }}
-                    >
-                      {event.description}
-                    </p>
-                  )}
                 </div>
+                {event.description && (
+                  <p
+                    style={{
+                      fontSize: 24,
+                      color: theme.color.textSecondary,
+                      lineHeight: 1.5,
+                      margin: '6px 0 0',
+                      paddingLeft: event.icon ? 60 : 0,
+                    }}
+                  >
+                    {event.description}
+                  </p>
+                )}
               </div>
             </div>
           );

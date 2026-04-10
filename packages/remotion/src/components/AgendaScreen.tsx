@@ -155,62 +155,58 @@ export const AgendaScreen: React.FC<AgendaScreenProps> = ({
                   />
                 )}
 
+                {/* Title row: icon + title aligned center */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                  {/* Icon */}
                   {item.icon && (
                     <div style={{ flexShrink: 0 }}>
                       <NodeIcon icon={item.icon} size={36} />
                     </div>
                   )}
 
-                  <div style={{ flex: 1 }}>
-                    {/* Title row */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <h3
-                        style={{
-                          fontSize: 32,
-                          fontWeight: isActive ? 700 : 500,
-                          color: isPast ? theme.color.textMuted : theme.color.textPrimary,
-                          textDecoration: isPast ? 'line-through' : 'none',
-                          margin: 0,
-                          lineHeight: 1.3,
-                        }}
-                      >
-                        {item.title}
-                      </h3>
+                  <h3
+                    style={{
+                      fontSize: 32,
+                      fontWeight: isActive ? 700 : 500,
+                      color: isPast ? theme.color.textMuted : theme.color.textPrimary,
+                      textDecoration: isPast ? 'line-through' : 'none',
+                      margin: 0,
+                      lineHeight: 1.3,
+                      flex: 1,
+                    }}
+                  >
+                    {item.title}
+                  </h3>
 
-                      {/* Duration badge */}
-                      {item.duration && (
-                        <span
-                          style={{
-                            fontSize: 20,
-                            fontWeight: 600,
-                            color: theme.color.accent,
-                            opacity: 0.7,
-                            whiteSpace: 'nowrap',
-                            marginLeft: 20,
-                          }}
-                        >
-                          {item.duration}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Description */}
-                    {item.description && !isPast && (
-                      <p
-                        style={{
-                          fontSize: 22,
-                          color: theme.color.textSecondary,
-                          lineHeight: 1.5,
-                          margin: '6px 0 0',
-                        }}
-                      >
-                        {item.description}
-                      </p>
-                    )}
-                  </div>
+                  {item.duration && (
+                    <span
+                      style={{
+                        fontSize: 20,
+                        fontWeight: 600,
+                        color: theme.color.accent,
+                        opacity: 0.7,
+                        whiteSpace: 'nowrap',
+                        marginLeft: 20,
+                      }}
+                    >
+                      {item.duration}
+                    </span>
+                  )}
                 </div>
+
+                {/* Description */}
+                {item.description && !isPast && (
+                  <p
+                    style={{
+                      fontSize: 22,
+                      color: theme.color.textSecondary,
+                      lineHeight: 1.5,
+                      margin: '6px 0 0',
+                      paddingLeft: item.icon ? 52 : 0,
+                    }}
+                  >
+                    {item.description}
+                  </p>
+                )}
               </div>
             </div>
           );
