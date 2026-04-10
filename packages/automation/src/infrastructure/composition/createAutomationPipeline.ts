@@ -5,6 +5,7 @@ import { ConcatClipsUseCase } from '../../application/use-cases/ConcatClipsUseCa
 import { MergeAudioUseCase } from '../../application/use-cases/MergeAudioUseCase';
 import { RecordVisualUseCase } from '../../application/use-cases/RecordVisualUseCase';
 import { RenderSceneClipsUseCase } from '../../application/use-cases/RenderSceneClipsUseCase';
+import { ReverseSyncPlaywrightUseCase } from '../../application/use-cases/ReverseSyncPlaywrightUseCase';
 import { SyncPlaywrightUseCase } from '../../application/use-cases/SyncPlaywrightUseCase';
 import { ValidateLectureUseCase } from '../../application/use-cases/ValidateLectureUseCase';
 import { ConfiguredAudioProviderFactory } from '../factories/ConfiguredAudioProviderFactory';
@@ -47,6 +48,7 @@ export function createAutomationPipeline(): RunAutomationPipelineUseCase {
   const validateLectureUseCase = new ValidateLectureUseCase();
   const mergeAudioUseCase = new MergeAudioUseCase();
   const syncPlaywrightUseCase = new SyncPlaywrightUseCase(lectureRepository);
+  const reverseSyncPlaywrightUseCase = new ReverseSyncPlaywrightUseCase(lectureRepository);
   const captureScreenshotUseCase = new CaptureScreenshotUseCase(new PlaywrightScreenshotProvider(), lectureRepository);
   const recordVisualUseCase = new RecordVisualUseCase(
     new PlaywrightVisualProvider(),
@@ -65,6 +67,7 @@ export function createAutomationPipeline(): RunAutomationPipelineUseCase {
     narrationAudioPreparationService,
     mergeAudioUseCase,
     syncPlaywrightUseCase,
+    reverseSyncPlaywrightUseCase,
     captureScreenshotUseCase,
     recordVisualUseCase,
     renderSceneClipsUseCase,

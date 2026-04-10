@@ -1,4 +1,4 @@
-import { Composition, Sequence, Audio, Video, AbsoluteFill, registerRoot, staticFile } from 'remotion';
+import { Composition, Sequence, Audio, OffthreadVideo, AbsoluteFill, registerRoot, staticFile } from 'remotion';
 import { MyCodeScene } from './MyCodeScene';
 import {
   TitleScreen,
@@ -141,7 +141,7 @@ const SceneVisual: React.FC<{ scene: SceneData; lectureId: string; synthManifest
       return <PlaywrightSynthScene manifest={synthManifest as any} lectureId={lectureId} />;
     }
     // 기존 raw video 모드 (하위 호환)
-    return <Video src={captureUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
+    return <OffthreadVideo src={captureUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
   }
 
   if (scene.visual.type === 'screenshot') {

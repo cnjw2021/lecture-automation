@@ -1,6 +1,7 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { config } from '../config';
+import { AudioAlignment } from '../../domain/interfaces/IAudioProvider';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
 
 export class FileLectureRepository implements ILectureRepository {
@@ -74,5 +75,20 @@ export class FileLectureRepository implements ILectureRepository {
 
   getAudioPath(lectureId: string, sceneId: number): string {
     return path.join(this.audioBaseDir, lectureId, `scene-${sceneId}.wav`);
+  }
+
+  async saveAlignment(lectureId: string, sceneId: number, alignment: AudioAlignment): Promise<void> {
+    const dir = path.join(this.audioBaseDir, lectureId);
+    await fs.ensureDir(dir);
+    const filePath = path.join(dir, `scene-${sceneId}.alignment.json`);
+    await fs.writeJson(filePath, alignment, { spaces: 2 });
+  }
+
+  async getAlignment(lectureId: string, sceneId: number): Promise<AudioAlignment | null> {
+    const filePath = path.join(this.audioBaseDir, lectureId, `scene-${sceneId}.alignment.json`);
+    if (await fs.pathExists(filePath)) {
+      return await fs.readJson(filePath);
+    }
+    return null;
   }
 }

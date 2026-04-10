@@ -244,6 +244,43 @@ CSS 셀렉터로 지정한 요소에 분홍색 아웃라인(`5px solid #ff007a`)
 
 ---
 
+### `scroll` — 스크롤
+
+페이지를 수직 스크롤합니다. 마우스 휠 이벤트를 발생시키며, 스크롤 후 300ms 대기합니다.
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `deltaY` | number | ❌ | 스크롤 양 (기본값 300). 양수=아래, 음수=위 |
+
+```json
+{ "cmd": "scroll", "deltaY": 300 }
+```
+
+---
+
+### `wait_for` — 셀렉터 조건 대기
+
+지정한 셀렉터가 특정 상태가 될 때까지 대기합니다. AI 라이브 데모 씬에서 streaming 완료 감지에 사용합니다.
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `selector` | string | ✅ | 대기할 요소의 CSS 셀렉터 |
+| `state` | string | ❌ | `"visible"` \| `"attached"` \| `"hidden"` (기본값 `"visible"`) |
+| `timeout` | number | ❌ | 최대 대기 시간 ms (기본값 30000) |
+
+```json
+{ "cmd": "wait_for", "selector": "[data-is-streaming='false']", "state": "attached", "timeout": 180000 }
+```
+
+> **AI 라이브 데모 표준 패턴**: streaming 시작 감지 → streaming 완료 감지 순서로 사용:
+> ```json
+> {"cmd": "wait_for", "selector": "[data-is-streaming='true']", "state": "attached", "timeout": 60000},
+> {"cmd": "wait_for", "selector": "[data-is-streaming='false']", "state": "attached", "timeout": 180000}
+> ```
+> `wait_for`가 action에 포함된 씬은 **라이브 데모 씬**으로 분류되어 파이프라인 0단계에서 사전 녹화되고, 역방향 싱크 대상이 된다.
+
+---
+
 ## 씬 타이밍 설계 가이드
 
 Playwright 녹화 시간이 오디오(`durationSec`)보다 짧으면 마지막 프레임이 고정됩니다.

@@ -46,11 +46,14 @@ export class GenerateAudioUseCase {
 
       try {
         lastRequestTime = Date.now();
-        const { buffer, durationSec } = await this.audioProvider.generate(scene.narration, {
+        const { buffer, durationSec, alignment } = await this.audioProvider.generate(scene.narration, {
           scene_id: scene.scene_id,
         });
 
         await this.lectureRepository.saveAudio(lecture.lecture_id, scene.scene_id, buffer);
+        if (alignment) {
+          await this.lectureRepository.saveAlignment(lecture.lecture_id, scene.scene_id, alignment);
+        }
 
         durations[scene.scene_id] = durationSec;
         results.push({ scene_id: scene.scene_id, status: 'success', durationSec });
