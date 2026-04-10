@@ -1,8 +1,11 @@
+import * as fs from 'fs-extra';
+import * as path from 'path';
 import { Lecture } from '../../domain/entities/Lecture';
-import { AudioConfig, IAudioProvider } from '../../domain/interfaces/IAudioProvider';
+import { AudioAlignment, AudioConfig, IAudioProvider } from '../../domain/interfaces/IAudioProvider';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
 import { splitChunkAudio } from '../../domain/services/ChunkAudioSplitter';
 import { groupScenesIntoChunks, NarrationChunk, SceneNarrationSegment } from '../../domain/services/NarrationChunker';
+import { config } from '../../infrastructure/config';
 
 export interface GenerateChunkedAudioUseCaseOptions {
   force?: boolean;
@@ -16,6 +19,7 @@ export interface GenerateChunkedAudioUseCaseOptions {
  */
 export class GenerateChunkedAudioUseCase {
   private readonly REQUEST_INTERVAL_MS = 7000;
+  private readonly chunkDebugBaseDir = path.join(config.paths.root, 'tmp', 'chunked-audio');
 
   constructor(
     private readonly audioProvider: IAudioProvider,
@@ -77,6 +81,16 @@ export class GenerateChunkedAudioUseCase {
         );
       }
 
+      const debugDir = await this.saveChunkDebugArtifacts(
+        lecture.lecture_id,
+        chunk,
+        chunkIdx,
+        chunks.length,
+        buffer,
+        alignment,
+      );
+      console.log(`    📝 디버그 저장: ${debugDir}`);
+
       if (chunk.segments.length === 1) {
         await this.saveSingleSceneChunk(lecture.lecture_id, chunk, buffer, alignment, durations);
       } else {
@@ -103,7 +117,7 @@ export class GenerateChunkedAudioUseCase {
     lectureId: string,
     chunk: NarrationChunk,
     buffer: Buffer,
-    alignment: import('../../domain/interfaces/IAudioProvider').AudioAlignment,
+    alignment: AudioAlignment,
     durations: Record<string, number>,
   ): Promise<void> {
     const seg = chunk.segments[0];
@@ -123,7 +137,7 @@ export class GenerateChunkedAudioUseCase {
     lectureId: string,
     chunk: NarrationChunk,
     buffer: Buffer,
-    alignment: import('../../domain/interfaces/IAudioProvider').AudioAlignment,
+    alignment: AudioAlignment,
     durations: Record<string, number>,
     missingScenesOnly: boolean,
   ): Promise<void> {
@@ -149,5 +163,40 @@ export class GenerateChunkedAudioUseCase {
 
   private sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  private async saveChunkDebugArtifacts(
+    lectureId: string,
+    chunk: NarrationChunk,
+    chunkIdx: number,
+    totalChunks: number,
+    buffer: Buffer,
+    alignment: AudioAlignment,
+  ): Promise<string> {
+    const lectureDir = path.join(this.chunkDebugBaseDir, lectureId);
+    await fs.ensureDir(lectureDir);
+
+    const chunkNumber = String(chunkIdx + 1).padStart(3, '0');
+    const chunkPrefix = path.join(lectureDir, `chunk-${chunkNumber}`);
+
+    await fs.writeFile(`${chunkPrefix}.wav`, buffer);
+    await fs.writeJson(`${chunkPrefix}.alignment.json`, alignment, { spaces: 2 });
+    await fs.writeJson(`${chunkPrefix}.manifest.json`, {
+      lectureId,
+      chunkIndex: chunkIdx + 1,
+      totalChunks,
+      generatedAt: new Date().toISOString(),
+      text: chunk.text,
+      textLength: chunk.text.length,
+      sceneIds: chunk.segments.map(segment => segment.sceneId),
+      segments: chunk.segments.map(segment => ({
+        sceneId: segment.sceneId,
+        narration: segment.narration,
+        startCharIndex: segment.startCharIndex,
+        charCount: segment.charCount,
+      })),
+    }, { spaces: 2 });
+
+    return lectureDir;
   }
 }

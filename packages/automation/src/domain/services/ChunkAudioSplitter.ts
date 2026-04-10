@@ -1,5 +1,5 @@
 import { AudioAlignment, AudioConfig } from '../interfaces/IAudioProvider';
-import { buildWav } from '../utils/WavAnalysisUtils';
+import { buildWav, computeRmsFrames, readWavMetadata, RmsFrame } from '../utils/WavAnalysisUtils';
 import { SceneNarrationSegment } from './NarrationChunker';
 
 /** 씬별로 분할된 오디오 결과 */
@@ -10,7 +10,18 @@ export interface SceneAudioSegment {
   alignment: AudioAlignment;
 }
 
-const WAV_HEADER_SIZE = 44;
+const SEARCH_WINDOW_MS = 240;
+const MIN_SCENE_DURATION_MS = 250;
+
+interface SegmentTiming {
+  sceneId: number;
+  startCharIndex: number;
+  charCount: number;
+  textStartMs: number;
+  textEndMs: number;
+  adjustedStartMs: number;
+  adjustedEndMs: number;
+}
 
 /**
  * 청크 단위로 생성된 WAV + alignment를 씬별로 분할한다.
@@ -25,11 +36,23 @@ export function splitChunkAudio(
   segments: ReadonlyArray<SceneNarrationSegment>,
   audioConfig: AudioConfig,
 ): SceneAudioSegment[] {
-  const { sampleRate, channels, bitDepth } = audioConfig;
+  const metadata = readWavMetadata(wavBuffer);
+  const { sampleRate, channels, bitDepth } = metadata;
+  if (
+    sampleRate !== audioConfig.sampleRate
+    || channels !== audioConfig.channels
+    || bitDepth !== audioConfig.bitDepth
+  ) {
+    throw new Error(
+      `청크 WAV 포맷(${sampleRate}Hz/${channels}ch/${bitDepth}bit)이 설정값과 다릅니다. ` +
+      `expected=${audioConfig.sampleRate}Hz/${audioConfig.channels}ch/${audioConfig.bitDepth}bit`,
+    );
+  }
   const bytesPerFrame = channels * (bitDepth / 8);
   const bytesPerSecond = sampleRate * bytesPerFrame;
-  const pcmData = wavBuffer.subarray(WAV_HEADER_SIZE);
+  const pcmData = wavBuffer.subarray(metadata.dataOffset, metadata.dataOffset + metadata.dataSize);
   const totalDurationSec = pcmData.length / bytesPerSecond;
+  const totalDurationMs = Math.round(totalDurationSec * 1000);
 
   const lastSegment = segments[segments.length - 1];
   const expectedLength = lastSegment.startCharIndex + lastSegment.charCount;
@@ -40,19 +63,17 @@ export function splitChunkAudio(
     );
   }
 
+  const frames = computeRmsFrames(wavBuffer, metadata);
+  const timings = buildSegmentTimings(segments, alignment, totalDurationMs);
+  adjustSegmentBoundaries(timings, segments, alignment, totalDurationMs, frames);
+
   const results: SceneAudioSegment[] = [];
 
   for (let i = 0; i < segments.length; i++) {
     const segment = segments[i];
-    const nextSegment = segments[i + 1];
-
-    const startTimeSec = i === 0
-      ? 0
-      : alignment.character_start_times_seconds[segment.startCharIndex];
-
-    const endTimeSec = nextSegment
-      ? alignment.character_start_times_seconds[nextSegment.startCharIndex]
-      : totalDurationSec;
+    const timing = timings[i];
+    const startTimeSec = timing.adjustedStartMs / 1000;
+    const endTimeSec = timing.adjustedEndMs / 1000;
 
     const startByte = alignToFrame(startTimeSec * bytesPerSecond, bytesPerFrame);
     const endByte = Math.min(
@@ -77,9 +98,118 @@ export function splitChunkAudio(
   return results;
 }
 
+function buildSegmentTimings(
+  segments: ReadonlyArray<SceneNarrationSegment>,
+  alignment: AudioAlignment,
+  totalDurationMs: number,
+): SegmentTiming[] {
+  return segments.map((segment, index) => {
+    const endCharIndex = segment.startCharIndex + segment.charCount - 1;
+    const textStartMs = index === 0
+      ? 0
+      : Math.round(alignment.character_start_times_seconds[segment.startCharIndex] * 1000);
+    const textEndMs = Math.round(alignment.character_end_times_seconds[endCharIndex] * 1000);
+
+    return {
+      sceneId: segment.sceneId,
+      startCharIndex: segment.startCharIndex,
+      charCount: segment.charCount,
+      textStartMs,
+      textEndMs,
+      adjustedStartMs: index === 0 ? 0 : textStartMs,
+      adjustedEndMs: index === segments.length - 1 ? totalDurationMs : textEndMs,
+    };
+  });
+}
+
+function adjustSegmentBoundaries(
+  timings: SegmentTiming[],
+  segments: ReadonlyArray<SceneNarrationSegment>,
+  alignment: AudioAlignment,
+  totalDurationMs: number,
+  frames: RmsFrame[],
+): void {
+  if (timings.length <= 1) {
+    if (timings.length === 1) {
+      timings[0].adjustedStartMs = 0;
+      timings[0].adjustedEndMs = totalDurationMs;
+    }
+    return;
+  }
+
+  timings[0].adjustedStartMs = 0;
+  timings[timings.length - 1].adjustedEndMs = totalDurationMs;
+
+  for (let index = 0; index < timings.length - 1; index++) {
+    const current = timings[index];
+    const next = timings[index + 1];
+    const separatorCharIndex = segments[index].startCharIndex + segments[index].charCount;
+
+    const separatorStartMs = getBoundaryTimeMs(
+      alignment.character_start_times_seconds[separatorCharIndex],
+      current.textEndMs,
+    );
+    const separatorEndMs = getBoundaryTimeMs(
+      alignment.character_end_times_seconds[separatorCharIndex],
+      next.textStartMs,
+    );
+    const targetMs = Math.round((separatorStartMs + separatorEndMs) / 2);
+    const minMs = Math.max(
+      current.adjustedStartMs + MIN_SCENE_DURATION_MS,
+      separatorStartMs - SEARCH_WINDOW_MS,
+    );
+    const maxMs = Math.min(
+      totalDurationMs,
+      next.textEndMs - MIN_SCENE_DURATION_MS,
+      separatorEndMs + SEARCH_WINDOW_MS,
+    );
+
+    const cutMs = findLowestEnergyBoundary(targetMs, minMs, maxMs, frames);
+    current.adjustedEndMs = cutMs;
+    next.adjustedStartMs = cutMs;
+  }
+}
+
 /** 바이트 오프셋을 프레임 경계에 맞춰 내림 정렬한다. */
 function alignToFrame(byteOffset: number, bytesPerFrame: number): number {
   return Math.floor(byteOffset / bytesPerFrame) * bytesPerFrame;
+}
+
+function getBoundaryTimeMs(value: number | undefined, fallbackMs: number): number {
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    return fallbackMs;
+  }
+  return Math.round(value * 1000);
+}
+
+function findLowestEnergyBoundary(
+  targetMs: number,
+  minMs: number,
+  maxMs: number,
+  frames: RmsFrame[],
+): number {
+  if (maxMs <= minMs) {
+    return Math.max(minMs, Math.min(maxMs, targetMs));
+  }
+
+  const candidates = frames.filter(frame => frame.startMs >= minMs && frame.endMs <= maxMs);
+  if (candidates.length === 0) {
+    return Math.round(Math.max(minMs, Math.min(maxMs, targetMs)));
+  }
+
+  let best = candidates[0];
+  let bestDistance = Math.abs(((best.startMs + best.endMs) / 2) - targetMs);
+
+  for (const frame of candidates.slice(1)) {
+    const center = (frame.startMs + frame.endMs) / 2;
+    const distance = Math.abs(center - targetMs);
+    if (frame.rms < best.rms || (frame.rms === best.rms && distance < bestDistance)) {
+      best = frame;
+      bestDistance = distance;
+    }
+  }
+
+  return Math.round((best.startMs + best.endMs) / 2);
 }
 
 /** alignment 배열을 해당 씬의 문자 범위로 슬라이스하고, 시각을 0 기준으로 리베이스한다. */
