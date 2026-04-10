@@ -1,6 +1,7 @@
 # AGENTS.md — Lecture Automation
 
-이 프로젝트에서 AI 에이전트(Codex, Claude Code 등)가 작업할 때 참조해야 하는 지침.
+> **Note**: 이 파일은 OpenAI Codex 등 AGENTS.md를 참조하는 외부 에이전트 전용이다.
+> Claude Code는 CLAUDE.md를 사용하며, 이 파일을 참조하지 않는다.
 
 ## 강의 스크립트 작성
 
