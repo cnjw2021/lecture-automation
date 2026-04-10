@@ -1,0 +1,757 @@
+{
+  "lecture_id": "02",
+  "title": "Webの仕組みと3つの言語",
+  "part": 1,
+  "totalDurationSec": 1500,
+  "sequence": [
+    {
+      "scene_id": 1,
+      "narration": "皆さん、こんにちは。前回の講義では、この講座の全体像をお話ししました。「コーダーではなくディレクター」、つまりAIに指示を出して、出てきたものをチェックして直せる人になるのがゴールでしたね。",
+      "durationSec": 12,
+      "visual": {
+        "type": "remotion",
+        "component": "TitleScreen",
+        "props": {
+          "title": "Webの仕組みと3つの言語",
+          "sub": "PART 1 — AI時代のWeb、私たちの戦略"
+        },
+        "transition": {
+          "enter": "zoom"
+        }
+      }
+    },
+    {
+      "scene_id": 2,
+      "narration": "さて、今回はいよいよWebの世界そのものに踏み込んでいきます。皆さんは毎日、ブラウザでいろいろなWebサイトを見ていますよね。URLを入力するか、検索結果をクリックすると、画面にページが表示される。あまりにも当たり前の動作ですが、実はその裏側では、ものすごいやり取りが行われているんです。",
+      "durationSec": 18,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🌐",
+          "headline": "Webの裏側を探検しよう",
+          "detail": "毎日見ているWebサイト、その裏側で何が起きているのか",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "今日はまず、その裏側の仕組みを理解します。そしてその後、Webサイトを構成する3つの言語を学びます。最後に、実際のWebサイトの中身を「開発者ツール」という機能を使って覗いてみます。まさに、Webの世界の舞台裏ツアーです。",
+      "durationSec": 15,
+      "visual": {
+        "type": "remotion",
+        "component": "AgendaScreen",
+        "props": {
+          "title": "今日のアジェンダ",
+          "items": [
+            { "title": "Webの仕組み", "description": "ブラウザとサーバーの関係", "icon": "🌐", "duration": "5分" },
+            { "title": "HTTPとHTTPS", "description": "鍵アイコンの意味", "icon": "🔒", "duration": "3.5分" },
+            { "title": "3つの言語", "description": "HTML・CSS・JavaScript", "icon": "💻", "duration": "5.5分" },
+            { "title": "開発者ツール体験", "description": "実際のサイトの中身を覗く", "icon": "🔍", "duration": "10分" }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "では、ブラウザにURLを入力してEnterキーを押す。たったこれだけの操作の裏側で何が起きているのか、順番に見ていきましょう。",
+      "durationSec": 8,
+      "visual": {
+        "type": "remotion",
+        "component": "BrowserMockScreen",
+        "props": {
+          "url": "https://www.yahoo.co.jp",
+          "title": "URLを入力してEnter",
+          "description": "ブラウザの裏側で何が起きているのか",
+          "layout": "right",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "ここで登場するのが「サーバー」という存在です。サーバーというのは、Webサイトのデータを保管している、いわばインターネット上の倉庫です。世界中のどこかにある実際のコンピューターで、24時間電源が入ったまま、「誰かがこのサイトを見たいと言ってきたら、データを送り届けるぞ」と待機しているんです。",
+      "durationSec": 18,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "サーバー",
+          "reading": "server",
+          "definition": "Webサイトのデータを保管している、インターネット上の倉庫。24時間待機し、リクエストに応じてデータを送り届けるコンピューター。"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "皆さんがブラウザにURLを入力してEnterを押すと、まずブラウザが「このサイトのデータをください」というリクエスト、つまりお願いをサーバーに送ります。サーバーはそのリクエストを受け取って、「はい、どうぞ」とWebサイトのデータを送り返してくれる。ブラウザはそのデータを受け取って、画面にきれいに表示する。これが基本の流れです。",
+      "durationSec": 18,
+      "visual": {
+        "type": "remotion",
+        "component": "DiagramScreen",
+        "props": {
+          "title": "ブラウザとサーバーのやりとり",
+          "nodes": [
+            { "id": "browser", "label": "ブラウザ\n(あなたのPC)", "x": 280, "y": 420, "icon": "💻", "color": "#6366f1" },
+            { "id": "server", "label": "サーバー\n(データの倉庫)", "x": 1400, "y": 420, "icon": "🖥️", "color": "#6366f1" }
+          ],
+          "edges": [
+            { "from": "browser", "to": "server", "label": "リクエスト →" },
+            { "from": "server", "to": "browser", "label": "← レスポンス" }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 7,
+      "narration": "リクエストを送って、データが返ってくる。たったこれだけなんですが、この一連のやり取りはほんの一瞬で行われています。",
+      "durationSec": 7,
+      "visual": {
+        "type": "remotion",
+        "component": "StatScreen",
+        "props": {
+          "value": "1",
+          "label": "やりとりにかかる時間",
+          "suffix": "秒以下",
+          "description": "地球規模のやりとりが一瞬で行われている"
+        }
+      }
+    },
+    {
+      "scene_id": 8,
+      "narration": "さて、ここで「ドメイン」と「IPアドレス」という言葉が出てきます。聞いたことはあるけど、よくわからないという方も多いと思いますので、宅配便に例えてお話しします。",
+      "durationSec": 8,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "📦",
+          "headline": "宅配便で例える",
+          "detail": "ドメイン・IPアドレス・DNSを身近なものに置き換えて理解する",
+          "color": "#6366f1"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 9,
+      "narration": "皆さんがネットショッピングで何かを注文するとき、届け先の住所を入力しますよね。その住所があるからこそ、配達員さんは皆さんの家まで届けてくれるわけです。Webの世界でも同じことが起きています。皆さんがブラウザに入力するURL、たとえば「yahoo.co.jp」。これが宅配便でいう「お届け先の名前」、つまりドメインです。人間にとってわかりやすい名前ですね。",
+      "durationSec": 18,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "ドメイン",
+          "reading": "domain",
+          "definition": "Webサイトの「名前」にあたるもの。人間にとってわかりやすい名前。",
+          "example": "yahoo.co.jp、amazon.co.jp など"
+        }
+      }
+    },
+    {
+      "scene_id": 10,
+      "narration": "でも、実際にデータを届けるためには、もっと正確な住所が必要です。これがIPアドレスです。数字の羅列で、たとえば「183.79.250.123」のような形をしています。宅配便でいうと、「東京都渋谷区○○1丁目2番3号」という具体的な住所にあたります。",
+      "durationSec": 14,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "IPアドレス",
+          "reading": "アイピーアドレス",
+          "definition": "サーバーの「住所」にあたる数字の羅列。データを届けるための正確な住所。",
+          "example": "183.79.250.123"
+        }
+      }
+    },
+    {
+      "scene_id": 11,
+      "narration": "私たちは「Yahoo」という名前だけ覚えておけば大丈夫です。ブラウザが裏側で自動的にIPアドレスを調べて、正しいサーバーにたどり着いてくれます。この「名前からIPアドレスを調べる仕組み」をDNSと言います。宅配便に例えるなら、「この人の名前から住所を調べてくれる電話帳」のようなものですね。",
+      "durationSec": 16,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "DNS",
+          "reading": "ディーエヌエス",
+          "definition": "ドメイン名からIPアドレスを調べてくれる仕組み。インターネットの電話帳のようなもの。"
+        }
+      }
+    },
+    {
+      "scene_id": 12,
+      "narration": "まとめると、こうなります。皆さんがドメイン名を入力する。DNSがIPアドレスを調べる。そのアドレスにあるサーバーにリクエストが届く。サーバーがデータを送り返してくれる。ブラウザが画面に表示する。この流れ全体が、ほんの一瞬で起きているんです。",
+      "durationSec": 15,
+      "visual": {
+        "type": "remotion",
+        "component": "NumberedListScreen",
+        "props": {
+          "title": "Webページが表示されるまでの流れ",
+          "items": [
+            { "title": "ドメイン名を入力", "description": "yahoo.co.jp とブラウザに入力" },
+            { "title": "DNSがIPアドレスを調べる", "description": "名前から住所を調べる電話帳" },
+            { "title": "サーバーにリクエストが届く", "description": "「このサイトのデータください」" },
+            { "title": "サーバーがデータを送り返す", "description": "「はい、どうぞ」とレスポンス" },
+            { "title": "ブラウザが画面に表示する", "description": "受け取ったデータをきれいに描画" }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 13,
+      "narration": "たとえば、皆さんがスマートフォンで「amazon.co.jp」を開くときも、まったく同じことが起きています。ブラウザがDNSに問い合わせて、Amazonのサーバーの住所を調べて、「トップページのデータをください」とリクエストを送る。サーバーが商品一覧やおすすめ情報のデータを返してくれて、ブラウザがそれをきれいな画面に組み立てて表示する。パソコンでもスマートフォンでも、ChromeでもSafariでも、この仕組みはまったく同じです。",
+      "durationSec": 20,
+      "visual": {
+        "type": "remotion",
+        "component": "TwoColumnScreen",
+        "props": {
+          "title": "デバイスが違っても仕組みは同じ",
+          "left": {
+            "title": "パソコン + Chrome",
+            "body": "URL入力 → DNS → サーバー → 表示",
+            "icon": "💻"
+          },
+          "right": {
+            "title": "スマホ + Safari",
+            "body": "URL入力 → DNS → サーバー → 表示",
+            "icon": "📱",
+            "color": "#6366f1"
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 14,
+      "narration": "覚える必要はありませんよ。「ああ、裏側ではこういうことが起きてるんだな」という感覚だけ持っていてください。この仕組みを知っていると、後の講義で「サーバーにファイルをアップロードする」とか「ドメインを設定する」といった話が出てきたときに、スッと理解できるようになります。",
+      "durationSec": 14,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "tip",
+          "title": "暗記しなくて大丈夫",
+          "body": "「裏側ではこういうことが起きているんだな」という感覚だけ持っていればOK。後の講義でサーバーやドメインの話が出てきたとき、スッと理解できるようになります。"
+        }
+      }
+    },
+    {
+      "scene_id": 15,
+      "narration": "もう一つ、URLに関する大事な話があります。皆さん、ブラウザのアドレスバーに鍵のマークが表示されているのを見たことはありますか？たとえばGoogleやAmazonのサイトを開くと、アドレスバーの左側に小さな鍵のアイコンがありますよね。これは「このサイトとの通信は暗号化されていますよ」という意味です。",
+      "durationSec": 16,
+      "visual": {
+        "type": "remotion",
+        "component": "BrowserMockScreen",
+        "props": {
+          "url": "https://www.google.com",
+          "title": "鍵マークに注目",
+          "description": "アドレスバーの左側にある鍵アイコン。「通信が暗号化されている」サイン。",
+          "layout": "right",
+          "color": "#6366f1"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 16,
+      "narration": "先ほど、ブラウザとサーバーの間でデータのやり取りが行われるとお話ししました。このやり取りのルール、つまり通信のルールのことを「HTTP」と呼びます。WebサイトのURLが「http://」で始まるのを見たことがあるかもしれませんね。そして、「HTTPS」。末尾に「S」がついたもの。この「S」はセキュリティーの「S」です。HTTPSでは、ブラウザとサーバーの間のやり取りが暗号化されます。",
+      "durationSec": 20,
+      "visual": {
+        "type": "remotion",
+        "component": "ComparisonScreen",
+        "props": {
+          "left": {
+            "title": "HTTP",
+            "points": ["通信のルール", "データがそのまま送られる", "鍵マークなし"],
+            "color": "#94a3b8"
+          },
+          "right": {
+            "title": "HTTPS",
+            "points": ["通信のルール + 暗号化", "データが暗号化されて送られる", "鍵マークあり"],
+            "color": "#6366f1"
+          },
+          "vsLabel": "VS"
+        }
+      }
+    },
+    {
+      "scene_id": 17,
+      "narration": "たとえるなら、普通のはがきと封書の違いです。はがきは配達の途中で誰でも中身を読めてしまう。でも封書なら、届け先の人しか中身を見られない。HTTPSは、データを封書のように暗号化して送ってくれる仕組みです。",
+      "durationSec": 12,
+      "visual": {
+        "type": "remotion",
+        "component": "BeforeAfterScreen",
+        "props": {
+          "title": "はがきと封書の違い",
+          "before": {
+            "label": "HTTP（はがき）",
+            "points": ["途中で誰でも中身が読める", "個人情報が丸見え"],
+            "color": "#ef4444"
+          },
+          "after": {
+            "label": "HTTPS（封書）",
+            "points": ["届け先の人しか中身を見られない", "データが暗号化されて安全"],
+            "color": "#22c55e"
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 18,
+      "narration": "鍵マークが表示されていれば、そのサイトはHTTPSで通信しているということです。特に、クレジットカード番号や個人情報を入力するサイトでは、この鍵マークがあるかどうかを確認する習慣をつけておくと安心ですね。",
+      "durationSec": 12,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "warning",
+          "title": "鍵マークを確認する習慣を",
+          "body": "クレジットカード番号や個人情報を入力するサイトでは、アドレスバーの鍵マークを必ずチェック。"
+        }
+      }
+    },
+    {
+      "scene_id": 19,
+      "narration": "実はこの鍵マーク、皆さんが毎日使っているサイトで簡単に確認できます。たとえば、Googleで検索するとき、アドレスバーを見てみてください。「google.com」の左側に鍵のマークがついていますよね。Amazonでお買い物をするときも、YouTubeで動画を見るときも、同じように鍵マークがあります。逆に、もしどこかのサイトで鍵マークがなかったり、「保護されていない通信」と表示されていたら、そのサイトでは個人情報を入力しないほうがいいですね。",
+      "durationSec": 20,
+      "visual": {
+        "type": "remotion",
+        "component": "IconListScreen",
+        "props": {
+          "title": "身近なサイトで鍵マークを確認",
+          "items": [
+            { "icon": "🔍", "title": "Google", "description": "検索するとき鍵マークあり", "color": "#6366f1" },
+            { "icon": "🛒", "title": "Amazon", "description": "お買い物するとき鍵マークあり", "color": "#6366f1" },
+            { "icon": "🎬", "title": "YouTube", "description": "動画を見るとき鍵マークあり", "color": "#6366f1" },
+            { "icon": "⚠️", "title": "鍵マークなし", "description": "個人情報を入力しないほうが安全", "color": "#ef4444" }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 20,
+      "narration": "今のWebサイトは、ほとんどがHTTPSに対応しています。もちろん、この講座で皆さんが作るサイトも、最終的にはHTTPSで公開します。PART 5でサイトを公開するときに、HTTPSの設定もやりますので、楽しみにしていてください。",
+      "durationSec": 12,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🔐",
+          "headline": "皆さんのサイトもHTTPS",
+          "detail": "PART 5でサイトを公開するときにHTTPSの設定もやります",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 21,
+      "narration": "さて、ここからが今日のもう一つの大きなテーマです。Webサイトを構成する「3つの言語」についてお話しします。Webサイトは、基本的に3つの言語の組み合わせでできています。HTML、CSS、そしてJavaScriptです。この3つの関係を、「家」に例えて説明しますね。",
+      "durationSec": 14,
+      "visual": {
+        "type": "remotion",
+        "component": "FeatureGridScreen",
+        "props": {
+          "title": "Webの3つの言語",
+          "features": [
+            { "icon": "🏗️", "title": "HTML", "description": "構造・骨組み", "color": "#6366f1" },
+            { "icon": "🎨", "title": "CSS", "description": "見た目・インテリア", "color": "#6366f1" },
+            { "icon": "⚡", "title": "JavaScript", "description": "動き・家電製品", "color": "#6366f1" }
+          ],
+          "columns": 3
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 22,
+      "narration": "まず、HTML。これは家でいうと「骨組み」です。柱があって、壁があって、部屋が区切られていて、ドアがあって、窓がある。家の構造そのものですね。Webサイトで言えば、「ここに見出しがある」「ここに段落がある」「ここに画像がある」「ここにボタンがある」という、ページの構造を決めるのがHTMLです。",
+      "durationSec": 17,
+      "visual": {
+        "type": "remotion",
+        "component": "ProgressScreen",
+        "props": {
+          "title": "家の比喩で理解する3つの言語",
+          "steps": ["HTML — 骨組み", "CSS — インテリア", "JavaScript — 家電"],
+          "currentStep": 1
+        }
+      }
+    },
+    {
+      "scene_id": 23,
+      "narration": "次に、CSS。これは「インテリア」にあたります。壁の色を白にするか、ベージュにするか。家具をどう配置するか。照明を明るくするか、落ち着いた雰囲気にするか。同じ骨組みの家でも、インテリア次第でまったく違う印象になりますよね。Webサイトも同じで、文字の色やサイズ、背景の色、要素の配置やレイアウト、こういった見た目をすべてCSSで制御します。",
+      "durationSec": 19,
+      "visual": {
+        "type": "remotion",
+        "component": "ProgressScreen",
+        "props": {
+          "title": "家の比喩で理解する3つの言語",
+          "steps": ["HTML — 骨組み", "CSS — インテリア", "JavaScript — 家電"],
+          "currentStep": 2
+        }
+      }
+    },
+    {
+      "scene_id": 24,
+      "narration": "そしてJavaScript。これは「家電製品」です。エアコンをつけたり、テレビのチャンネルを変えたり、玄関のインターホンが鳴ったらモニターに映像を表示したり。つまり、何かの操作に応じて動きが生まれる部分です。Webサイトで言えば、ボタンをクリックしたらメニューが開く、スクロールしたらアニメーションが動く、フォームに入力したらエラーチェックが走る。こういった動きや反応を担当するのがJavaScriptです。",
+      "durationSec": 20,
+      "visual": {
+        "type": "remotion",
+        "component": "ProgressScreen",
+        "props": {
+          "title": "家の比喩で理解する3つの言語",
+          "steps": ["HTML — 骨組み", "CSS — インテリア", "JavaScript — 家電"],
+          "currentStep": 3
+        }
+      }
+    },
+    {
+      "scene_id": 25,
+      "narration": "ちょっと、具体的な画面で想像してみましょう。たとえば、皆さんがよく見るお店のWebサイト。一番上に大きなお店の写真が表示されていて、その下にメニューや料金表がある。さらに下にはアクセス情報や地図が載っている。こういったページの場合、「ここに写真がある」「ここにメニュー表がある」「ここに地図がある」という配置を決めているのがHTMLです。そして、写真の大きさ、メニュー表の文字の色やフォント、ボタンの形や影、これを整えているのがCSSです。そして、「予約する」ボタンを押したらフォームが出てくる、といった動きの部分がJavaScriptですね。",
+      "durationSec": 25,
+      "visual": {
+        "type": "remotion",
+        "component": "BulletDetailScreen",
+        "props": {
+          "title": "お店のサイトで見る3つの役割",
+          "items": [
+            { "icon": "🏗️", "title": "HTML — 構造", "detail": "写真、メニュー表、地図の配置を決める", "color": "#6366f1" },
+            { "icon": "🎨", "title": "CSS — 見た目", "detail": "写真の大きさ、文字の色、ボタンの形を整える", "color": "#6366f1" },
+            { "icon": "⚡", "title": "JavaScript — 動き", "detail": "「予約する」ボタンでフォームが出てくる", "color": "#6366f1" }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 26,
+      "narration": "この3つの区別は、後の講義でHTMLやCSSを書くときに、とても大事になってきます。「今書いているのは構造の話なのか、見た目の話なのか」を意識するだけで、理解のしやすさがまったく変わります。",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "QuoteScreen",
+        "props": {
+          "quote": "今書いているのは\n構造の話なのか、見た目の話なのか\nこの意識だけで理解度が変わる"
+        }
+      }
+    },
+    {
+      "scene_id": 27,
+      "narration": "ここで大事なお知らせです。この講座では、HTMLとCSSの2つを中心に学びます。JavaScriptは扱いません。「え、3つのうち1つを飛ばして大丈夫なの？」と思うかもしれませんね。大丈夫です。なぜかというと、JavaScriptがなくても、しっかりしたWebサイトは作れるからです。家に家電がなくても、家としてはちゃんと成り立ちますよね。骨組みとインテリアがしっかりしていれば、十分に素敵な家になります。",
+      "durationSec": 20,
+      "visual": {
+        "type": "remotion",
+        "component": "QnAScreen",
+        "props": {
+          "question": "3つのうち1つを飛ばして大丈夫？",
+          "answer": "大丈夫です。HTMLとCSSだけで、しっかりしたWebサイトは作れます。家に家電がなくても家として成り立つように、骨組みとインテリアがしっかりしていれば十分です。"
+        }
+      }
+    },
+    {
+      "scene_id": 28,
+      "narration": "実際、サロンや整体院のサイト、個人の紹介サイトなど、HTMLとCSSだけで完成する、見栄えの良いサイトはたくさんあります。しかも、ちょっとした動きならCSSだけで実現できるんです。ボタンにマウスを乗せたら色が変わる、ふわっとフェードインする、これくらいならJavaScriptなしでできます。PART 3とPART 4で、実際にやってみますよ。まずはHTMLとCSSの2つをしっかり身につける。これが、AIに的確な指示を出すための土台になります。",
+      "durationSec": 20,
+      "visual": {
+        "type": "remotion",
+        "component": "SummaryScreen",
+        "props": {
+          "title": "この講座で学ぶ範囲",
+          "points": [
+            "HTML ✅ — 構造を作る",
+            "CSS ✅ — 見た目を整える（ちょっとした動きもOK）",
+            "JavaScript ✗ — この講座では扱わない",
+            "HTMLとCSSがAIへの指示の土台になる"
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 29,
+      "narration": "さて、ここからは実際のWebサイトを使って、いま説明した3つの言語が本当に使われている様子を見てみましょう。ここで使うのが「開発者ツール」という機能です。ブラウザに最初から入っている機能で、Webサイトの裏側、つまりHTMLやCSSのコードをそのまま見ることができるんです。プログラマーだけが使うものだと思われがちですが、使い方はとても簡単です。",
+      "durationSec": 18,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "開発者ツール",
+          "reading": "デベロッパーツール",
+          "definition": "ブラウザに最初から入っている機能。WebサイトのHTMLやCSSのコードをそのまま見ることができる。",
+          "example": "Chromeなら右クリック→「検証」、またはF12キーで開ける"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 30,
+      "narration": "では、ヤフー ジャパンのサイトを開いてみましょう。皆さんも普段よく見ているサイトだと思います。ニュースの見出しがあって、検索ボックスがあって、いろいろなコンテンツが並んでいますよね。このページ、見た目は一つの完成された画面ですが、裏側にはHTMLのコードがぎっしり書かれているんです。では、開発者ツールを開いてみます。画面の右側にパネルが表示されましたね。上のほうに「Elements」「Console」「Sources」「Network」というタブが並んでいますが、今注目するのは「Elements」タブです。ここに表示されているのが、このページのHTMLのコードです。なんだかたくさん並んでいて、最初は「うわ、なんだこれ」と思うかもしれません。それで全然大丈夫です。今は、一つ一つの意味がわからなくても、「Webサイトってこういうコードでできているんだ」ということだけ感じ取ってください。三角マークをクリックすると、中身が展開されます。「body」と書かれたところを開いてみると、中にさらにたくさんの要素が入っているのが見えますね。これがWebサイトの構造、つまりHTMLです。",
+      "durationSec": 55,
+      "visual": {
+        "type": "playwright",
+        "action": [
+          { "cmd": "goto", "url": "https://www.yahoo.co.jp" },
+          { "cmd": "wait", "ms": 6000 },
+          { "cmd": "mouse_move", "to": [960, 400] },
+          { "cmd": "wait", "ms": 8000 },
+          { "cmd": "open_devtools" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [1300, 200] },
+          { "cmd": "wait", "ms": 4000 },
+          { "cmd": "select_devtools_node", "selector": "body", "note": "bodyタグを確認" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "toggle_devtools_node", "selector": "body", "mode": "expand", "note": "bodyの中を開く" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "highlight", "selector": "body", "note": "HTMLの構造を確認" },
+          { "cmd": "wait", "ms": 8000 }
+        ],
+        "syncPoints": [
+          { "actionIndex": 4, "phrase": "開発者ツールを開いてみます" },
+          { "actionIndex": 8, "phrase": "今注目するのは「Elements」タブです" },
+          { "actionIndex": 10, "phrase": "「body」と書かれたところを開いてみると" },
+          { "actionIndex": 12, "phrase": "これがWebサイトの構造、つまりHTMLです" }
+        ]
+      }
+    },
+    {
+      "scene_id": 31,
+      "narration": "さて、次にとても面白い実験をしてみましょう。このページからCSSを外してみます。つまり、インテリアをすべて取り払って、骨組みだけにしてみるということです。いきますよ。どうですか。一瞬で見た目が激変しましたよね。あの華やかなYahooのトップページが、まるで1990年代のWebサイトのような見た目になりました。文字がずらっと並んでいるだけで、色も装飾もレイアウトもなくなっています。でも、よく見てください。情報自体はちゃんと残っていますよね。見出しがあって、リンクがあって、テキストがある。つまり、HTMLの骨組みはそのまま残っているんです。なくなったのはCSSによる見た目だけ。これが、HTMLとCSSの関係です。HTMLが構造を作り、CSSが見た目を整える。2つが組み合わさることで、皆さんが普段見ているWebサイトの姿になるわけです。",
+      "durationSec": 50,
+      "visual": {
+        "type": "playwright",
+        "action": [
+          { "cmd": "goto", "url": "https://www.yahoo.co.jp" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [960, 400] },
+          { "cmd": "wait", "ms": 3000 },
+          { "cmd": "open_devtools" },
+          { "cmd": "wait", "ms": 3000 },
+          { "cmd": "disable_css" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "highlight", "selector": "body", "note": "CSSが外れた状態" },
+          { "cmd": "wait", "ms": 8000 },
+          { "cmd": "scroll", "deltaY": 300 },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "scroll", "deltaY": 300 },
+          { "cmd": "wait", "ms": 5000 }
+        ],
+        "syncPoints": [
+          { "actionIndex": 4, "phrase": "開発者ツールを開いてみます" },
+          { "actionIndex": 6, "phrase": "いきますよ" },
+          { "actionIndex": 8, "phrase": "一瞬で見た目が激変しましたよね" },
+          { "actionIndex": 10, "phrase": "情報自体はちゃんと残っていますよね" }
+        ]
+      }
+    },
+    {
+      "scene_id": 32,
+      "narration": "では、CSSを元に戻しましょう。はい、元の見た目に戻りましたね。ほっとしますね。",
+      "durationSec": 8,
+      "visual": {
+        "type": "playwright",
+        "action": [
+          { "cmd": "goto", "url": "https://www.yahoo.co.jp" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [960, 400] },
+          { "cmd": "wait", "ms": 3000 },
+          { "cmd": "open_devtools" },
+          { "cmd": "wait", "ms": 3000 },
+          { "cmd": "enable_css" },
+          { "cmd": "wait", "ms": 3000 }
+        ],
+        "syncPoints": [
+          { "actionIndex": 6, "phrase": "元の見た目に戻りましたね" }
+        ]
+      }
+    },
+    {
+      "scene_id": 33,
+      "narration": "さて、今のはヤフー ジャパンという大規模なサイトでしたが、もう一つ、皆さんにとってもっと身近なサイトも見てみましょう。サロン系のサイトです。こちらは、美容サロンのサイトですね。トップに大きなメイン画像があって、その下にメニューと料金表、スタッフ紹介、アクセス情報が並んでいます。一見すると、先ほどのヤフー ジャパンとはまったく違うサイトに見えますよね。では、ここでも開発者ツールを開いてみましょう。どうでしょう。やっぱりHTMLのコードが並んでいますね。「このメイン画像はここ」「メニュー一覧はここ」「住所はここ」と、すべてHTMLで構造が決められています。ヤフー ジャパンのような大規模サイトでも、こういった小さなサロンのサイトでも、使われているのは同じHTML、同じCSSなんです。",
+      "durationSec": 42,
+      "visual": {
+        "type": "playwright",
+        "action": [
+          { "cmd": "goto", "url": "https://lamune-kyoto.com/" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [960, 400] },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "scroll", "deltaY": 300 },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "scroll", "deltaY": -600 },
+          { "cmd": "wait", "ms": 3000 },
+          { "cmd": "open_devtools" },
+          { "cmd": "wait", "ms": 3000 },
+          { "cmd": "select_devtools_node", "selector": "body", "note": "サロンサイトのbody" },
+          { "cmd": "wait", "ms": 3000 },
+          { "cmd": "toggle_devtools_node", "selector": "body", "mode": "expand", "note": "bodyの中を確認" },
+          { "cmd": "wait", "ms": 3000 },
+          { "cmd": "highlight", "selector": "body", "note": "同じHTMLでできている" },
+          { "cmd": "wait", "ms": 5000 }
+        ],
+        "syncPoints": [
+          { "actionIndex": 4, "phrase": "その下にメニューと料金表" },
+          { "actionIndex": 8, "phrase": "開発者ツールを開いてみましょう" },
+          { "actionIndex": 10, "phrase": "やっぱりHTMLのコードが並んでいますね" },
+          { "actionIndex": 14, "phrase": "同じHTML、同じCSSなんです" }
+        ]
+      }
+    },
+    {
+      "scene_id": 34,
+      "narration": "ここでもCSSをオフにしてみましょう。やっぱり見た目ががらっと変わりましたね。でも、サロン名、メニューの内容、住所や電話番号、こういった情報はちゃんと残っています。HTMLの骨組みはそのままです。",
+      "durationSec": 15,
+      "visual": {
+        "type": "playwright",
+        "action": [
+          { "cmd": "goto", "url": "https://lamune-kyoto.com/" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [960, 400] },
+          { "cmd": "wait", "ms": 2000 },
+          { "cmd": "open_devtools" },
+          { "cmd": "wait", "ms": 2000 },
+          { "cmd": "disable_css" },
+          { "cmd": "wait", "ms": 3000 },
+          { "cmd": "highlight", "selector": "body", "note": "CSS無効化" },
+          { "cmd": "wait", "ms": 4000 }
+        ],
+        "syncPoints": [
+          { "actionIndex": 6, "phrase": "CSSをオフにしてみましょう" },
+          { "actionIndex": 8, "phrase": "見た目ががらっと変わりましたね" }
+        ]
+      }
+    },
+    {
+      "scene_id": 35,
+      "narration": "CSSを元に戻しますね。",
+      "durationSec": 5,
+      "visual": {
+        "type": "playwright",
+        "action": [
+          { "cmd": "goto", "url": "https://lamune-kyoto.com/" },
+          { "cmd": "wait", "ms": 3000 },
+          { "cmd": "mouse_move", "to": [960, 400] },
+          { "cmd": "wait", "ms": 2000 },
+          { "cmd": "open_devtools" },
+          { "cmd": "wait", "ms": 2000 },
+          { "cmd": "enable_css" },
+          { "cmd": "wait", "ms": 3000 }
+        ],
+        "syncPoints": [
+          { "actionIndex": 6, "phrase": "元に戻しますね" }
+        ]
+      }
+    },
+    {
+      "scene_id": 36,
+      "narration": "この実験で伝えたかったのは、「皆さんがこの講座で作ろうとしているサイトも、同じ仕組みでできている」ということです。大企業のサイトだけが特別なのではなくて、美容室でも、整体院でも、ネイルサロンでも、個人の教室でも、全部同じHTMLとCSSの組み合わせです。つまり、仕組みを一度理解すれば、どんなサイトにも応用できるということですね。",
+      "durationSec": 18,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "💡",
+          "headline": "どんなサイトも同じ仕組み",
+          "detail": "大企業でもサロンでも、HTMLとCSSの組み合わせ。一度理解すれば応用が利く。",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 37,
+      "narration": "そしてもう一つ、大事なことに気づいてほしいんです。今、開発者ツールに表示されていたHTMLのコード。あれは、画像でもなければ、特殊なファイルでもありません。ただのテキストです。文字の羅列です。CSSも同じです。フォントの色を赤にしたければ「color: red」と書くだけ。文字のサイズを大きくしたければ「font-size: 24px」と書くだけ。すべて、ただのテキストなんです。",
+      "durationSec": 20,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "color: red;\nfont-size: 24px;",
+          "language": "css",
+          "title": "CSSはただのテキスト"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 38,
+      "narration": "これは、すごく重要なポイントです。Webサイトは、特殊な才能がなければ作れないものではないんです。テキストファイルにルールに沿って文字を書いていく、それがWeb制作の本質です。そして今は、そのテキストの大部分をAIが書いてくれる時代です。皆さんは「こういうサイトにしてほしい」と指示を出す。AIがテキストを書いてくれる。出てきたテキストを読んで、おかしなところがあれば直す。それだけなんです。",
+      "durationSec": 20,
+      "visual": {
+        "type": "remotion",
+        "component": "BeforeAfterScreen",
+        "props": {
+          "title": "Web制作の本質",
+          "before": {
+            "label": "以前のイメージ",
+            "points": ["特殊な才能が必要", "コードを全部自分で書く", "何ヶ月もかかる"],
+            "color": "#94a3b8"
+          },
+          "after": {
+            "label": "AI時代の現実",
+            "points": ["テキストファイルにルールに沿って書くだけ", "AIがテキストの大部分を書いてくれる", "指示を出して、チェックして、直す"],
+            "color": "#6366f1"
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 39,
+      "narration": "それでは、今日のポイントを3つにまとめます。1つ目。ブラウザにURLを入力すると、DNSでIPアドレスを調べて、サーバーにリクエストを送り、返ってきたデータをブラウザが表示する。これがWebの基本の仕組みです。鍵マークがついていれば、通信が暗号化されているHTTPSのサイトです。",
+      "durationSec": 18,
+      "visual": {
+        "type": "remotion",
+        "component": "SummaryScreen",
+        "props": {
+          "title": "今日のまとめ",
+          "points": [
+            "URL → DNS → サーバー → ブラウザ表示。鍵マーク = HTTPS",
+            "HTML（構造）+ CSS（見た目）+ JavaScript（動き）",
+            "Webサイトの中身はすべてテキストファイル"
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 40,
+      "narration": "2つ目。Webサイトは3つの言語でできている。構造を作るHTML、見た目を整えるCSS、動きをつけるJavaScript。この講座ではHTMLとCSSの2つを学びます。3つ目。Webサイトの中身はすべてテキストファイルです。特殊な技術ではなく、ルールに沿ったテキストの書き方を知っているかどうか、それだけの違いです。",
+      "durationSec": 18,
+      "visual": {
+        "type": "remotion",
+        "component": "NumberedListScreen",
+        "props": {
+          "title": "3つのポイント",
+          "items": [
+            { "title": "Webの仕組み", "description": "URL → DNS → サーバー → ブラウザ表示。HTTPS = 暗号化通信" },
+            { "title": "3つの言語", "description": "HTML（構造）+ CSS（見た目）。この講座ではこの2つを学ぶ" },
+            { "title": "全部テキスト", "description": "特殊な技術ではなく、ルールに沿ったテキストの書き方" }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 41,
+      "narration": "次の講義では、「AIが変えたWeb制作の風景」をお話しします。ほんの数年前まで、Webサイトを一つ作るのにどれくらいの時間がかかっていたか。そして今、AIを使うとそれがどう変わるのか。実際にClaudeというAIツールにホームページを作ってもらうライブデモもお見せします。楽しみにしていてください。それでは、次の講義でお会いしましょう。",
+      "durationSec": 18,
+      "visual": {
+        "type": "remotion",
+        "component": "EndScreen",
+        "props": {
+          "title": "お疲れ様でした",
+          "message": "Webの仕組みと3つの言語、開発者ツール体験",
+          "nextPreview": "次回: AIが変えたWeb制作の風景"
+        },
+        "transition": {
+          "exit": "zoom"
+        }
+      }
+    }
+  ]
+}
