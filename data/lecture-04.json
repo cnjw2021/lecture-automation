@@ -1,0 +1,785 @@
+{
+  "lecture_id": "04",
+  "title": "CodePenセットアップ + Hello World",
+  "part": 1,
+  "totalDurationSec": 1252,
+  "sequence": [
+    {
+      "scene_id": 1,
+      "narration": "皆さん、こんにちは。前回の講義では、エーアイがウェブ制作をどう変えたのかを見てきました。実際にClaudeにホームページを作ってもらうライブデモもお見せしましたね。ほんの数十秒でサロンサイトの形ができてしまう。すごい時代です。",
+      "durationSec": 23,
+      "visual": {
+        "type": "remotion",
+        "component": "TitleScreen",
+        "props": {
+          "title": "CodePenセットアップ\n+ Hello World",
+          "sub": "PART 1 — AI時代のWeb、私たちの戦略"
+        },
+        "transition": {
+          "enter": "zoom"
+        }
+      }
+    },
+    {
+      "scene_id": 2,
+      "narration": "でも、同時にこうもお話ししました。「エーアイが作ったものを修正するには、私たちの側にも基礎知識が必要だ」と。さて、いよいよ今日から、皆さん自身の手でコードを書いていきます。パート1の最初の講義で「パート1の最後の講義が終わるまでに、皆さんの画面にはじめてのウェブページが表示されます」とお約束しましたよね。今日がその日です。",
+      "durationSec": 32,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🎉",
+          "headline": "今日がその日です",
+          "detail": "皆さん自身の手でコードを書いて、はじめてのWebページを表示させる",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "今日やることは大きく3つです。まず、GitHubというサービスのアカウントを作ります。次に、CodePenというオンラインエディタをセットアップします。そして、実際にHTMLを書いて、画面に「Hello World」を表示させます。",
+      "durationSec": 23,
+      "visual": {
+        "type": "remotion",
+        "component": "AgendaScreen",
+        "props": {
+          "title": "今日やること",
+          "items": [
+            {
+              "title": "GitHubアカウント作成",
+              "description": "コード共有サービスに登録",
+              "icon": "🔑",
+              "duration": "6分"
+            },
+            {
+              "title": "CodePenセットアップ",
+              "description": "オンラインエディタを準備",
+              "icon": "✏️",
+              "duration": "6.5分"
+            },
+            {
+              "title": "Hello World",
+              "description": "はじめてのHTMLを書く",
+              "icon": "🌍",
+              "duration": "6分"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "難しいことは何もありません。アカウントの作成も、コードの入力も、すべて画面を見ながら一緒にやっていきます。途中で手が止まっても焦らないでくださいね。一つずつ一緒に進めていきましょう。",
+      "durationSec": 18,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "tip",
+          "title": "安心してください",
+          "body": "すべて画面を見ながら一緒に進めます。途中で手が止まっても大丈夫です。"
+        }
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "まず最初に、GitHubのアカウントを作りましょう。GitHubというのは、世界中のプログラマーが使っている、コードを保存・共有するためのサービスです。「えっ、プログラマー向けのサービスなんて、自分には関係ないんじゃ」と思うかもしれませんね。今日の時点では、GitHubの機能をフルに使うわけではありません。この後セットアップするCodePenにログインするために、GitHubのアカウントが必要なんです。",
+      "durationSec": 41,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "GitHub",
+          "reading": "ギットハブ",
+          "definition": "世界中のプログラマーが使う、コードを保存・共有するためのサービス。今日はCodePenのログインに使う。"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "では、ブラウザでGitHubのサイトを開きます。Chromeのアドレスバーに「github.com」と入力して、Enter を押してください。画面が表示されましたね。英語のサイトですが、心配しないでください。必要な箇所だけ一緒に確認しながら進めていきます。右上に「Sign up」というボタンがあります。サインアップ、つまり「新規登録」という意味ですね。これをクリックしましょう。",
+      "durationSec": 38,
+      "visual": {
+        "type": "remotion",
+        "component": "BrowserMockScreen",
+        "props": {
+          "url": "https://github.com",
+          "title": "GitHubにアクセス",
+          "description": "右上の「Sign up」ボタンをクリックして新規登録を始めます",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 7,
+      "narration": "まず、メールアドレスを入力します。普段お使いのメールアドレスで大丈夫です。GmailでもYahooメールでも、なんでも構いません。ただ、一つだけ注意してほしいのは、この後メール認証のステップがありますので、すぐにメールを確認できるアドレスを使ってくださいね。入力できたら、「Continue」ボタンを押して次に進みます。",
+      "durationSec": 32,
+      "visual": {
+        "type": "remotion",
+        "component": "NumberedListScreen",
+        "props": {
+          "title": "GitHubサインアップ手順",
+          "items": [
+            {
+              "title": "メールアドレス入力",
+              "description": "すぐ確認できるアドレスを使う"
+            },
+            {
+              "title": "パスワード設定",
+              "description": "忘れないようにメモ"
+            },
+            {
+              "title": "ユーザーネーム入力",
+              "description": "好きな名前でOK"
+            },
+            {
+              "title": "メール認証",
+              "description": "届いた6桁のコードを入力"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 8,
+      "narration": "次にパスワードを設定します。ここで大事なポイントです。このパスワードは、忘れないようにしっかりメモしておいてください。紙に書いても、スマートフォンのメモ帳に残しても構いません。この後CodePenにログインするときにも使います。パスワードは15文字以上、もしくは数字と英小文字を含む8文字以上が条件になっています。",
+      "durationSec": 31,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "warning",
+          "title": "パスワードを必ずメモ！",
+          "body": "CodePenログインとPART 5のサイト公開で必要です。紙でもスマホのメモ帳でもOK。"
+        }
+      }
+    },
+    {
+      "scene_id": 9,
+      "narration": "ユーザーネームを入力します。これは自分の好きな名前で大丈夫です。英数字とハイフンが使えます。もし入力した名前がすでに使われている場合は、数字を付けたりして別の名前にしてみてください。画面の案内に従って進めていくと、パズルのような認証が出てくることがあります。ロボットではないことを確認するためのものなので、画面の指示に従って操作してくださいね。",
+      "durationSec": 34,
+      "visual": {
+        "type": "remotion",
+        "component": "BulletDetailScreen",
+        "props": {
+          "title": "残りの入力項目",
+          "items": [
+            {
+              "title": "ユーザーネーム",
+              "detail": "好きな名前。英数字とハイフンが使える",
+              "icon": "👤",
+              "color": "#6366f1"
+            },
+            {
+              "title": "パズル認証",
+              "detail": "ロボットでないことの確認。画面の指示に従う",
+              "icon": "🧩",
+              "color": "#6366f1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 10,
+      "narration": "次に、メール認証の画面が出てきます。「Enter code」と表示されていますね。ここで一旦、別のタブかウィンドウでメールの受信ボックスを開いてください。GitHubから認証コードが届いているはずです。",
+      "durationSec": 20,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "📧",
+          "headline": "メール認証",
+          "detail": "GitHubから届いた6桁の認証コードを入力する",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 11,
+      "narration": "メールが届くまで少し時間がかかることもあります。30秒くらい待っても届かない場合は、迷惑メールフォルダも確認してみてください。Gmailの場合は「プロモーション」タブに入ることもあります。メールに記載されている6桁の数字を、先ほどの画面に入力します。",
+      "durationSec": 25,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "tip",
+          "title": "メールが届かない場合",
+          "body": "迷惑メールフォルダを確認。Gmailなら「プロモーション」タブもチェック。"
+        }
+      }
+    },
+    {
+      "scene_id": 12,
+      "narration": "はい、これでGitHubのアカウントが作成できました。途中で初期設定の質問が表示される場合がありますが、ここは「Skip personalization」を押してスキップして大丈夫です。もう一度言いますが、このアカウントはCodePenのログインに使いますので、メールアドレスとパスワードは大切に覚えておいてくださいね。もし不安な方は、今のうちにスマートフォンのメモ帳などに控えておきましょう。",
+      "durationSec": 39,
+      "visual": {
+        "type": "remotion",
+        "component": "QnAScreen",
+        "props": {
+          "question": "初期設定の質問が出てきたら？",
+          "answer": "「Skip personalization」を押してスキップでOK。メールアドレスとパスワードだけ覚えておきましょう。"
+        }
+      }
+    },
+    {
+      "scene_id": 13,
+      "narration": "では次に、CodePenをセットアップしましょう。CodePenというのは、ブラウザの中でHTMLやCSSのコードを書いて、その結果をすぐに確認できるオンラインエディタです。「エディタ」というのは、コードを書くための道具のことですね。普通はパソコンにソフトをインストールして使うんですが、CodePenは何もインストールする必要がありません。ブラウザさえあれば使えます。",
+      "durationSec": 37,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "CodePen",
+          "reading": "コードペン",
+          "definition": "ブラウザの中でHTML・CSSを書いて結果をすぐ確認できるオンラインエディタ。インストール不要。",
+          "example": "codepen.io にアクセスして使う"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 14,
+      "narration": "ブラウザの新しいタブを開いて、アドレスバーに「codepen.io」と入力してください。画面が表示されました。こちらも英語のサイトですが、使うボタンは限られていますので安心してください。右上の「Sign Up」をクリックします。ログインの方法がいくつか表示されますので、「Continue with GitHub」を選んでください。先ほど作ったGitHubのアカウントでそのままログインできます。",
+      "durationSec": 40,
+      "visual": {
+        "type": "remotion",
+        "component": "BrowserMockScreen",
+        "props": {
+          "url": "https://codepen.io",
+          "title": "CodePenにアクセス",
+          "description": "「Sign Up」→「Continue with GitHub」でGitHubアカウントを使ってログイン",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 15,
+      "narration": "GitHubの画面に切り替わって、「Authorize CodePen」という確認が出てきたら、「Authorize」をクリックしてください。「CodePenにGitHubアカウントでのログインを許可しますよ」という意味です。画面が切り替わるまで少し待ちましょう。",
+      "durationSec": 26,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "✅",
+          "headline": "Authorize（許可）をクリック",
+          "detail": "CodePenにGitHubアカウントでのログインを許可する",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 16,
+      "narration": "はい、CodePenにログインできましたね。うまくいきましたか？もしエラーが出た場合は、一度ブラウザを更新してからもう一度「Continue with GitHub」を試してみてください。ここまで来れば、もう準備はほぼ完了です。",
+      "durationSec": 23,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "tip",
+          "title": "エラーが出た場合",
+          "body": "ブラウザを更新してから、もう一度「Continue with GitHub」を試してみてください。"
+        }
+      }
+    },
+    {
+      "scene_id": 17,
+      "narration": "では、さっそくコードを書く画面を開いてみましょう。左上のメニューから「Pen」を選んで、新しいペンを作成します。「ペン」というのはCodePenでの作業ファイルのようなもので、1つのペンに1つのウェブページを作っていくイメージです。この画面がCodePenの編集画面です。初めて見る方は少しごちゃごちゃして見えるかもしれませんが、大丈夫です。少しずつ見ていきましょう。",
+      "durationSec": 37,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "Pen",
+          "reading": "ペン",
+          "definition": "CodePenでの作業ファイル。1つのペンに1つのWebページを作っていく。"
+        }
+      }
+    },
+    {
+      "scene_id": 18,
+      "narration": "画面の上半分に3つの領域が並んでいますね。左から順に「HTML」「CSS」「JS」と書いてあります。覚えていますか？前々回の講義で学んだ、ウェブサイトを構成する3つの言語です。HTMLは骨組み、CSSはインテリア、JavaScriptは家電製品。その3つが、そのまま3つの入力エリアになっているんです。",
+      "durationSec": 30,
+      "visual": {
+        "type": "remotion",
+        "component": "IconListScreen",
+        "props": {
+          "title": "CodePenの3つの入力エリア",
+          "items": [
+            {
+              "icon": "🦴",
+              "title": "HTML",
+              "description": "骨組み — 構造を作る",
+              "color": "#6366f1"
+            },
+            {
+              "icon": "🎨",
+              "title": "CSS",
+              "description": "インテリア — 見た目を整える",
+              "color": "#6366f1"
+            },
+            {
+              "icon": "⚡",
+              "title": "JS",
+              "description": "家電製品 — 動きをつける",
+              "color": "#6366f1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 19,
+      "narration": "今日使うのは一番左の「HTML」と書かれた領域だけです。CSSとJSの領域は、パート2以降の講義で使っていきますので、今は空のままで構いません。",
+      "durationSec": 14,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "👈",
+          "headline": "今日はHTMLだけ",
+          "detail": "CSSとJSはパート2以降で使う。今は空のままでOK",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 20,
+      "narration": "そして画面の下半分。ここがプレビューエリアです。上の3つの領域にコードを書くと、その結果がここにリアルタイムで表示されます。コードを変えた瞬間に、プレビューもすぐ変わる。これがCodePenの最大の魅力です。",
+      "durationSec": 21,
+      "visual": {
+        "type": "remotion",
+        "component": "QuoteScreen",
+        "props": {
+          "quote": "コードを変えた瞬間に、\nプレビューもすぐ変わる。\nこれがCodePenの最大の魅力。",
+          "attribution": "リアルタイムプレビュー"
+        }
+      }
+    },
+    {
+      "scene_id": 21,
+      "narration": "もし画面のレイアウトが違う場合は、左上の「Change View」というボタンをクリックして、上下分割のレイアウトを選んでください。上がコード、下がプレビュー、という配置になるはずです。",
+      "durationSec": 19,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "info",
+          "title": "レイアウトの調整",
+          "body": "「Change View」で上下分割を選択。上がコード、下がプレビュー。"
+        }
+      }
+    },
+    {
+      "scene_id": 22,
+      "narration": "この講座では、この後のパート2からパート4まで、ほぼすべての実習をこのCodePenで行います。今のうちに画面の配置を確認しておきましょう。上がコードを書く場所、下がその結果を確認する場所。とてもシンプルですね。ちなみに、CodePenで作ったペンは自動的に保存されます。うっかりブラウザを閉じてしまっても、次にログインすれば戻ってきますので安心してくださいね。",
+      "durationSec": 36,
+      "visual": {
+        "type": "remotion",
+        "component": "TwoColumnScreen",
+        "props": {
+          "title": "CodePenの画面構成",
+          "left": {
+            "title": "上半分",
+            "body": "HTML・CSS・JSのコードを書く場所",
+            "icon": "⌨️",
+            "color": "#6366f1"
+          },
+          "right": {
+            "title": "下半分",
+            "body": "書いたコードの結果がリアルタイムで表示される",
+            "icon": "👁️",
+            "color": "#6366f1"
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 23,
+      "narration": "さあ、いよいよコードを書いてみましょう。皆さんにとって、生まれてはじめてのHTMLです。左上の「HTML」と書かれた入力エリアをクリックしてください。カーソルが点滅していますね。ここに、キーボードから文字を入力していきます。",
+      "durationSec": 22,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "✨",
+          "headline": "はじめてのHTML",
+          "detail": "HTML入力エリアをクリックして、コードを書き始めよう",
+          "color": "#6366f1"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 24,
+      "narration": "まずはシンプルに、こう入力してみてください。大文字と小文字に気をつけてくださいね。「H」「e」「l」「l」「o」、半角スペース、「W」「o」「r」「l」「d」。",
+      "durationSec": 18,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "Hello World",
+          "language": "html",
+          "title": "はじめての入力"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 25,
+      "narration": "入力できましたか？下のプレビューエリアを見てみてください。「Hello World」と表示されていますね。たったこれだけで、皆さんのブラウザ画面にテキストが表示されました。これが、ウェブページの最も基本的な姿です。特別なことは何もしていません。テキストを入力しただけ。でもこれが、立派なウェブページの始まりなんです。",
+      "durationSec": 32,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🎯",
+          "headline": "テキストが表示された！",
+          "detail": "たったこれだけで、立派なWebページの始まり",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 26,
+      "narration": "でも、「Hello World」とだけ書くのでは少し味気ないですよね。文字のサイズも小さいですし、見出しっぽくありません。ここで、HTMLの「タグ」というものを使ってみましょう。先ほど書いた「Hello World」を一度全部消してください。キーボードのバックスペースキーで消せます。消えたらプレビューも空になりましたよね。",
+      "durationSec": 32,
+      "visual": {
+        "type": "remotion",
+        "component": "QnAScreen",
+        "props": {
+          "question": "文字が小さくて味気ない？",
+          "answer": "HTMLの「タグ」を使えば、見出しらしい大きな文字にできます。"
+        }
+      }
+    },
+    {
+      "scene_id": 27,
+      "narration": "では、今度はこう書いてみてください。半角の山括弧を使います。Shiftキーを押しながら、キーボードの「ね」のキーを押すと「小なり記号」が出ます。逆に、Shiftキーを押しながら「む」のキーを押すと「大なり記号」が出ます。",
+      "durationSec": 22,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "info",
+          "title": "山括弧の打ち方",
+          "body": "「＜」= Shift +「ね」キー、「＞」= Shift +「む」キー"
+        }
+      }
+    },
+    {
+      "scene_id": 28,
+      "narration": "焦らなくて大丈夫です。山括弧は普段あまり打たないキーなので、最初は少し戸惑うかもしれません。ゆっくり、一文字ずつ入力してみてください。プレビューを見てください。さっきより文字がぐっと大きくなりましたよね。",
+      "durationSec": 22,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "<h1>Hello World</h1>",
+          "language": "html",
+          "title": "h1タグで見出しに"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 29,
+      "narration": "この「h1」というのは「見出し」を意味するタグです。新聞の一面の大見出しをイメージしてください。「h」はヘディング、つまり見出しの略です。そして「1」はいちばん大きな見出し、という意味です。",
+      "durationSec": 19,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "h1",
+          "reading": "エイチワン",
+          "definition": "いちばん大きな見出しを意味するタグ。hはHeading（見出し）の略。",
+          "example": "新聞の一面の大見出しをイメージ"
+        }
+      }
+    },
+    {
+      "scene_id": 30,
+      "narration": "山括弧で囲まれたこの目印が「タグ」です。h1の前後に、この山括弧のタグがペアで付いていますよね。今はこの形をなんとなく覚えておくだけで大丈夫です。タグの詳しい書き方のルールは、次のパート2でじっくり学んでいきます。",
+      "durationSec": 21,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🏷️",
+          "headline": "タグはペアで使う",
+          "detail": "開始タグと終了タグで文字を挟む。詳しいルールはパート2で",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 31,
+      "narration": "では次に、もう1行追加してみましょう。h1タグの下の行にカーソルを移動して、Enter を押して新しい行を作ります。そこに、こう書いてください。",
+      "durationSec": 16,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "<p>はじめてのWebページです！</p>",
+          "language": "html",
+          "title": "段落を追加"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 32,
+      "narration": "プレビューを見ると、大きな見出しの下に、普通のサイズの文章が表示されましたね。この「p」というタグは「段落」を意味します。英語のパラグラフの略です。本文を書くときに使うタグで、これもウェブページでいちばんよく使うタグの一つです。",
+      "durationSec": 23,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "p",
+          "reading": "ピー",
+          "definition": "段落を意味するタグ。Paragraph（パラグラフ）の略。本文を書くときに使う。"
+        }
+      }
+    },
+    {
+      "scene_id": 33,
+      "narration": "入力できたら、プレビューを見てみてください。大きな見出しの下に、普通のサイズの文章が表示されていますね。もしうまく表示されない場合は、山括弧の向きが逆になっていないか、スラッシュの位置が合っているか、確認してみてください。コードは1文字でも違うと動かないことがあるので、焦らずチェックしてみましょう。",
+      "durationSec": 30,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "tip",
+          "title": "うまく表示されない場合",
+          "body": "山括弧の向き、スラッシュの位置を確認。コードは1文字でも違うと動かないことがある。"
+        }
+      }
+    },
+    {
+      "scene_id": 34,
+      "narration": "ここまでのコードをまとめると、こうなっています。たった2行です。たった2行のコードで、見出しと段落があるウェブページができました。もちろん、まだ色も装飾もない、とてもシンプルな状態です。でも、これが立派なHTMLなんです。",
+      "durationSec": 24,
+      "visual": {
+        "type": "remotion",
+        "component": "CodeWalkthroughScreen",
+        "props": {
+          "title": "ここまでのコード",
+          "code": "<h1>Hello World</h1>\n<p>はじめてのWebページです！</p>",
+          "highlightLines": [
+            1,
+            2
+          ],
+          "caption": "たった2行で、見出しと段落があるWebページ"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 35,
+      "narration": "おめでとうございます。皆さんは今、ウェブ開発者になりました。大げさに聞こえるかもしれませんが、これは本当のことなんです。世界中のウェブ開発者が最初にやることは、画面に「Hello World」を表示させることです。プログラミングの世界では、これが伝統的な最初の一歩なんですね。皆さんは今、まさにその一歩を踏み出しました。",
+      "durationSec": 32,
+      "visual": {
+        "type": "remotion",
+        "component": "QuoteScreen",
+        "props": {
+          "quote": "おめでとうございます。\n皆さんは今、\nウェブ開発者になりました。",
+          "attribution": "伝統的な最初の一歩"
+        }
+      }
+    },
+    {
+      "scene_id": 36,
+      "narration": "ちなみに「Hello World」というのは、1970年代にプログラミングの教科書で使われたのが始まりだと言われています。それ以来、何十年もの間、プログラミングを始める人が最初に画面に表示させるお決まりのフレーズになっているんです。ちょっとした伝統行事みたいなものですね。",
+      "durationSec": 27,
+      "visual": {
+        "type": "remotion",
+        "component": "StatScreen",
+        "props": {
+          "value": "1970",
+          "label": "年代から続くプログラミングの伝統",
+          "suffix": "〜",
+          "description": "「Hello World」は何十年も受け継がれてきた、プログラマーの最初の一歩"
+        }
+      }
+    },
+    {
+      "scene_id": 37,
+      "narration": "さて、ここで小さなチャレンジをしてみましょう。「Hello World」の部分を、皆さんの名前に変えてみてください。たとえば「田中太郎のページ」とか、「さくらのホームページ」とか、なんでも好きなものに変えてみましょう。h1タグの山括弧はそのままにして、中のテキストだけ書き換えてくださいね。その下の段落の文章も、自由に変えてみてください。「趣味は映画鑑賞です」でも、「ネイルサロンを経営しています」でも、なんでも構いません。",
+      "durationSec": 42,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "tip",
+          "title": "チャレンジ！",
+          "body": "Hello Worldを自分の名前に変えてみよう。下の段落も自由に書き換えてOK！",
+          "icon": "🏆"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 38,
+      "narration": "コードを変えた瞬間に、プレビューが更新されますよね。この「書いたらすぐ反映される」というリアルタイムの感覚、これがCodePenの醍醐味です。余裕がある方は、もう1行pタグを追加してみてもいいですよ。たとえば、今ある2行の下にもう1行、好きな文章を同じpタグの形で書いてみてください。プレビューに3行目が増えるはずです。",
+      "durationSec": 32,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "⚡",
+          "headline": "リアルタイムプレビュー",
+          "detail": "書いたらすぐ反映される。これがCodePenの醍醐味",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 39,
+      "narration": "自分の名前が画面に表示されると、なんだかちょっとうれしい気持ちになりませんか？今はまだ白い画面に黒い文字だけのシンプルな見た目ですが、パート3でCSSを学ぶと、ここに色をつけたり、レイアウトを整えたりできるようになります。楽しみにしていてくださいね。これが皆さんのウェブページの第一歩です。",
+      "durationSec": 29,
+      "visual": {
+        "type": "remotion",
+        "component": "BeforeAfterScreen",
+        "props": {
+          "title": "これからの変化",
+          "before": {
+            "label": "今日",
+            "points": [
+              "白い画面に黒い文字",
+              "シンプルなテキストだけ"
+            ],
+            "color": "#94a3b8"
+          },
+          "after": {
+            "label": "PART 3以降",
+            "points": [
+              "色をつけられる",
+              "レイアウトを整えられる"
+            ],
+            "color": "#6366f1"
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 40,
+      "narration": "それでは、今日のポイントをまとめましょう。1つ目。GitHubアカウントを作成しました。このアカウントはCodePenのログインに使いますし、PART 5でサイトを公開するときにも必要です。メールアドレスとパスワード、忘れないでくださいね。もしまだメモしていない方は、今のうちにどこかに控えておくことをおすすめします。",
+      "durationSec": 32,
+      "visual": {
+        "type": "remotion",
+        "component": "SummaryScreen",
+        "props": {
+          "title": "今日のまとめ",
+          "points": [
+            "GitHubアカウント作成 → CodePenログイン・PART 5で必要",
+            "CodePenセットアップ → 実習はほぼすべてここで行う",
+            "はじめてのHTML → h1（見出し）とp（段落）の2つのタグ"
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 41,
+      "narration": "2つ目。CodePenをセットアップして、画面の構成を確認しました。HTML、CSS、JSの3つの入力エリアと、下にプレビュー。コードを書くとリアルタイムで結果が反映される。この講座の実習は、ほぼすべてこのCodePenで行います。もしログインの方法を忘れてしまっても、GitHubアカウントさえあれば「Continue with GitHub」ですぐ入れますので心配いりません。",
+      "durationSec": 38,
+      "visual": {
+        "type": "remotion",
+        "component": "NumberedListScreen",
+        "props": {
+          "title": "今日やったこと",
+          "items": [
+            {
+              "title": "GitHubアカウント作成",
+              "description": "CodePenログインとPART 5のサイト公開に必要"
+            },
+            {
+              "title": "CodePenセットアップ",
+              "description": "リアルタイムプレビュー付きオンラインエディタ"
+            },
+            {
+              "title": "はじめてのHTML",
+              "description": "h1タグで見出し、pタグで段落。たった2行のコード"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 42,
+      "narration": "3つ目。はじめてのHTMLを書きました。h1タグで見出しを、pタグで段落を作りました。たった2行のコードで、立派なウェブページが表示されましたね。今日覚えてほしいことは、実はこの3つだけです。細かい操作手順は忘れてしまっても大丈夫。大事なのは、「自分の手でコードを書いて、画面に表示できた」というこの体験です。",
+      "durationSec": 31,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "💡",
+          "headline": "大事なのはこの体験",
+          "detail": "自分の手でコードを書いて、画面に表示できた",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 43,
+      "narration": "さて、次の講義からはいよいよパート2に入ります。「HTML、ウェブの骨格を読む」。今日は「h1」と「p」の2つのタグだけ使いましたが、次回からは、HTMLのタグのルール、つまり書き方の約束事をちゃんと学んでいきます。タグにはどんなルールがあるのか、タグ同士の親子関係とは何か、HTMLの基本ルールを一つずつ見ていきましょう。",
+      "durationSec": 32,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "info",
+          "title": "次回予告: PART 2へ",
+          "body": "「HTML、Webの骨格を読む」— タグのルール、親子関係など、HTMLの基本を一つずつ学んでいきます。"
+        }
+      }
+    },
+    {
+      "scene_id": 44,
+      "narration": "今日書いた「Hello World」のコードは、CodePenに自動保存されていますので、いつでも見返せますよ。次の講義までに、もう一度CodePenにログインして開いて、自分のコードがちゃんと残っていることを確認してみてください。",
+      "durationSec": 23,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "tip",
+          "title": "宿題",
+          "body": "次の講義までにCodePenにログインして、自分のコードが残っていることを確認してみてください。"
+        }
+      }
+    },
+    {
+      "scene_id": 45,
+      "narration": "皆さん、お疲れ様でした。それでは、次の講義でお会いしましょう。",
+      "durationSec": 6,
+      "visual": {
+        "type": "remotion",
+        "component": "EndScreen",
+        "props": {
+          "title": "お疲れ様でした",
+          "message": "はじめてのHTML、おめでとうございます！",
+          "nextPreview": "次回: PART 2 — HTMLの基本ルール"
+        },
+        "transition": {
+          "exit": "zoom"
+        }
+      }
+    }
+  ]
+}
