@@ -120,6 +120,12 @@ make preview SCENE=6                      # 씬 프리뷰 PNG
 
 @docs/script-guidelines.md
 
+## 강의 스크립트 레뷰 지침
+
+스크립트 레뷰 시 반드시 아래 문서를 참조한다. 커리큘럼 준거, 전후 강의 연계, 후속 강의 영향 등의 관점이 포함되어 있다:
+
+@docs/script-review-guide.md
+
 ## 스크립트 → JSON 변환 지침
 
 확정된 스크립트를 Remotion 입력 JSON(`data/lecture-XX.json`)으로 변환하는 작업 시 반드시 아래 두 문서를 참조한다:
