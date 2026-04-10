@@ -2,7 +2,7 @@ import { Lecture } from '../../domain/entities/Lecture';
 import { AudioConfig, IAudioProvider } from '../../domain/interfaces/IAudioProvider';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
 import { splitChunkAudio } from '../../domain/services/ChunkAudioSplitter';
-import { groupScenesIntoChunks, NarrationChunk } from '../../domain/services/NarrationChunker';
+import { groupScenesIntoChunks, NarrationChunk, SceneNarrationSegment } from '../../domain/services/NarrationChunker';
 
 export interface GenerateChunkedAudioUseCaseOptions {
   force?: boolean;
@@ -39,7 +39,9 @@ export class GenerateChunkedAudioUseCase {
       const sceneIds = chunk.segments.map(s => s.sceneId);
       const chunkLabel = `청크 ${chunkIdx + 1}/${chunks.length} (씬 ${sceneIds.join(', ')})`;
 
-      if (!force && await this.allScenesExist(lecture.lecture_id, chunk)) {
+      const missingScenes = force ? chunk.segments : await this.findMissingScenes(lecture.lecture_id, chunk);
+
+      if (missingScenes.length === 0) {
         console.log(`  ⏭️  ${chunkLabel} — 모든 씬 오디오 존재 (스킵)`);
         for (const seg of chunk.segments) {
           const existing = await this.lectureRepository.getAudioDuration(lecture.lecture_id, seg.sceneId);
@@ -48,6 +50,12 @@ export class GenerateChunkedAudioUseCase {
           }
         }
         continue;
+      }
+
+      const isPartial = !force && missingScenes.length < chunk.segments.length;
+      if (isPartial) {
+        const missingIds = missingScenes.map(s => s.sceneId).join(', ');
+        console.log(`  ⚠️  ${chunkLabel} — 일부 씬 누락 (씬 ${missingIds}), 누락분만 저장`);
       }
 
       const elapsed = Date.now() - lastRequestTime;
@@ -72,7 +80,7 @@ export class GenerateChunkedAudioUseCase {
       if (chunk.segments.length === 1) {
         await this.saveSingleSceneChunk(lecture.lecture_id, chunk, buffer, alignment, durations);
       } else {
-        await this.splitAndSaveChunk(lecture.lecture_id, chunk, buffer, alignment, durations);
+        await this.splitAndSaveChunk(lecture.lecture_id, chunk, buffer, alignment, durations, isPartial);
       }
     }
 
@@ -80,13 +88,14 @@ export class GenerateChunkedAudioUseCase {
     console.log(`[${lecture.lecture_id}] 청크 단위 오디오 생성 완료`);
   }
 
-  private async allScenesExist(lectureId: string, chunk: NarrationChunk): Promise<boolean> {
+  private async findMissingScenes(lectureId: string, chunk: NarrationChunk): Promise<SceneNarrationSegment[]> {
+    const missing: SceneNarrationSegment[] = [];
     for (const seg of chunk.segments) {
       if (!await this.lectureRepository.existsAudio(lectureId, seg.sceneId)) {
-        return false;
+        missing.push(seg);
       }
     }
-    return true;
+    return missing;
   }
 
   /** 단일 씬 청크: 분할 없이 그대로 저장 */
@@ -109,17 +118,27 @@ export class GenerateChunkedAudioUseCase {
     console.log(`    ✅ 씬 ${seg.sceneId}: ${durationSec.toFixed(2)}초`);
   }
 
-  /** 복수 씬 청크: alignment 기반 분할 후 저장 */
+  /** 복수 씬 청크: alignment 기반 분할 후 저장 (이미 존재하는 씬은 스킵) */
   private async splitAndSaveChunk(
     lectureId: string,
     chunk: NarrationChunk,
     buffer: Buffer,
     alignment: import('../../domain/interfaces/IAudioProvider').AudioAlignment,
     durations: Record<string, number>,
+    missingScenesOnly: boolean,
   ): Promise<void> {
     const sceneSegments = splitChunkAudio(buffer, alignment, chunk.segments, this.audioConfig);
 
     for (const sceneSeg of sceneSegments) {
+      if (missingScenesOnly && await this.lectureRepository.existsAudio(lectureId, sceneSeg.sceneId)) {
+        const existing = await this.lectureRepository.getAudioDuration(lectureId, sceneSeg.sceneId);
+        if (existing) {
+          durations[sceneSeg.sceneId] = existing;
+        }
+        console.log(`    ⏭️  씬 ${sceneSeg.sceneId}: 기존 WAV 유지 (덮어쓰기 방지)`);
+        continue;
+      }
+
       await this.lectureRepository.saveAudio(lectureId, sceneSeg.sceneId, sceneSeg.buffer);
       await this.lectureRepository.saveAlignment(lectureId, sceneSeg.sceneId, sceneSeg.alignment);
       durations[sceneSeg.sceneId] = sceneSeg.durationSec;

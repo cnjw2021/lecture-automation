@@ -118,6 +118,9 @@ export class ConfiguredNarrationAudioPreparationService implements INarrationAud
     const chunkedConfig = config.getChunkedGenerationConfig();
     if (chunkedConfig.enabled) {
       console.log(`📦 청크 단위 생성 모드 (최대 ${chunkedConfig.maxCharsPerChunk}자/청크)`);
+      if (!params.forceRegenerate) {
+        console.log(`   기존 씬 WAV가 있으면 스킵됩니다. 청크 모드로 재생성하려면 force 옵션을 사용하세요.`);
+      }
       const videoConfig = config.getVideoConfig();
       const audioConfig = {
         sampleRate: videoConfig.audio.sampleRate,

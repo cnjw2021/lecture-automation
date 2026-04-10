@@ -31,6 +31,15 @@ export function splitChunkAudio(
   const pcmData = wavBuffer.subarray(WAV_HEADER_SIZE);
   const totalDurationSec = pcmData.length / bytesPerSecond;
 
+  const lastSegment = segments[segments.length - 1];
+  const expectedLength = lastSegment.startCharIndex + lastSegment.charCount;
+  if (alignment.characters.length !== expectedLength) {
+    throw new Error(
+      `alignment 문자 수(${alignment.characters.length})와 청크 텍스트 길이(${expectedLength})가 불일치합니다. ` +
+      `TTS 프로바이더가 줄바꿈/공백을 정규화했을 수 있습니다.`,
+    );
+  }
+
   const results: SceneAudioSegment[] = [];
 
   for (let i = 0; i < segments.length; i++) {
