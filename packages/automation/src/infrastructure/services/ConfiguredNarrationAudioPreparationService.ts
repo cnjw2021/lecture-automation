@@ -1,6 +1,7 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { GenerateAudioUseCase } from '../../application/use-cases/GenerateAudioUseCase';
+import { GenerateChunkedAudioUseCase } from '../../application/use-cases/GenerateChunkedAudioUseCase';
 import { GenerateMasterAudioUseCase } from '../../application/use-cases/GenerateMasterAudioUseCase';
 import { ImportMasterAudioUseCase } from '../../application/use-cases/ImportMasterAudioUseCase';
 import { MasterAudioManifest } from '../../domain/entities/MasterAudioManifest';
@@ -113,8 +114,29 @@ export class ConfiguredNarrationAudioPreparationService implements INarrationAud
     const { provider, providerName } = this.audioProviderFactory.create();
     console.log(`🔊 오디오 프로바이더: ${providerName}`);
     console.log('\n--- 1단계: 나레이션 오디오 생성 ---');
-    const generateAudioUseCase = new GenerateAudioUseCase(provider, this.lectureRepository);
-    await generateAudioUseCase.execute(params.lecture, { force: params.forceRegenerate });
+
+    const chunkedConfig = config.getChunkedGenerationConfig();
+    if (chunkedConfig.enabled) {
+      console.log(`📦 청크 단위 생성 모드 (최대 ${chunkedConfig.maxCharsPerChunk}자/청크)`);
+      const videoConfig = config.getVideoConfig();
+      const audioConfig = {
+        sampleRate: videoConfig.audio.sampleRate,
+        channels: videoConfig.audio.channels,
+        bitDepth: videoConfig.audio.bitDepth,
+        speechRate: 1,
+      };
+      const chunkedUseCase = new GenerateChunkedAudioUseCase(
+        provider,
+        this.lectureRepository,
+        audioConfig,
+        chunkedConfig.maxCharsPerChunk,
+      );
+      await chunkedUseCase.execute(params.lecture, { force: params.forceRegenerate });
+    } else {
+      const generateAudioUseCase = new GenerateAudioUseCase(provider, this.lectureRepository);
+      await generateAudioUseCase.execute(params.lecture, { force: params.forceRegenerate });
+    }
+
     return { source: 'tts', providerName };
   }
 
