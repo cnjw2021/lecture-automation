@@ -49,42 +49,38 @@ export const NumberedListScreen: React.FC<NumberedListScreenProps> = ({ title, i
             <div
               key={i}
               style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: 28,
                 opacity: itemOpacity,
                 transform: `translateX(${itemX}px)`,
               }}
             >
-              {/* Number circle */}
-              <div
-                style={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: '50%',
-                  background: `linear-gradient(135deg, ${theme.color.accent}, ${theme.color.accent}cc)`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                  boxShadow: `0 4px 16px ${theme.color.accent}30`,
-                }}
-              >
-                <span style={{ fontSize: 30, fontWeight: 800, color: theme.color.textOnAccent }}>
-                  {i + 1}
-                </span>
-              </div>
-
-              <div style={{ paddingTop: 8 }}>
-                <h3 style={{ fontSize: 34, fontWeight: 700, color: theme.color.textPrimary, marginBottom: item.description ? 8 : 0, lineHeight: 1.3 }}>
+              {/* Title row: circle + title aligned center */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
+                <div
+                  style={{
+                    width: 64,
+                    height: 64,
+                    borderRadius: '50%',
+                    background: `linear-gradient(135deg, ${theme.color.accent}, ${theme.color.accent}cc)`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    boxShadow: `0 4px 16px ${theme.color.accent}30`,
+                  }}
+                >
+                  <span style={{ fontSize: 30, fontWeight: 800, color: theme.color.textOnAccent }}>
+                    {i + 1}
+                  </span>
+                </div>
+                <h3 style={{ fontSize: 34, fontWeight: 700, color: theme.color.textPrimary, margin: 0, lineHeight: 1.3 }}>
                   {item.title}
                 </h3>
-                {item.description && (
-                  <p style={{ fontSize: 26, color: theme.color.textSecondary, lineHeight: 1.6, margin: 0 }}>
-                    {item.description}
-                  </p>
-                )}
               </div>
+              {item.description && (
+                <p style={{ fontSize: 26, color: theme.color.textSecondary, lineHeight: 1.6, margin: '6px 0 0', paddingLeft: 92 }}>
+                  {item.description}
+                </p>
+              )}
             </div>
           );
         })}

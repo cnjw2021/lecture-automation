@@ -54,8 +54,6 @@ export const BulletDetailScreen: React.FC<BulletDetailScreenProps> = ({ title, i
             <div
               key={i}
               style={{
-                display: 'flex',
-                gap: 24,
                 opacity: itemOpacity,
                 transform: `translateX(${itemX}px)`,
                 padding: '24px 32px',
@@ -64,19 +62,20 @@ export const BulletDetailScreen: React.FC<BulletDetailScreenProps> = ({ title, i
                 borderLeft: `4px solid ${itemColor}`,
               }}
             >
-              {item.icon && (
-                <div style={{ flexShrink: 0, marginTop: 4 }}>
-                  <NodeIcon icon={item.icon} size={40} />
-                </div>
-              )}
-              <div>
-                <h3 style={{ fontSize: 32, fontWeight: 700, color: theme.color.textPrimary, marginBottom: 8, lineHeight: 1.3 }}>
+              {/* Title row: icon + title aligned center */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+                {item.icon && (
+                  <div style={{ flexShrink: 0 }}>
+                    <NodeIcon icon={item.icon} size={40} />
+                  </div>
+                )}
+                <h3 style={{ fontSize: 32, fontWeight: 700, color: theme.color.textPrimary, margin: 0, lineHeight: 1.3 }}>
                   {item.title}
                 </h3>
-                <p style={{ fontSize: 24, color: theme.color.textSecondary, lineHeight: 1.6, margin: 0 }}>
-                  {item.detail}
-                </p>
               </div>
+              <p style={{ fontSize: 24, color: theme.color.textSecondary, lineHeight: 1.6, margin: '8px 0 0', paddingLeft: item.icon ? 64 : 0 }}>
+                {item.detail}
+              </p>
             </div>
           );
         })}
