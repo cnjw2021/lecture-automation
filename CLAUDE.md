@@ -132,3 +132,5 @@ make preview SCENE=6                      # 씬 프리뷰 PNG
 
 @docs/json-conversion-rules.md
 @docs/component-props-reference.md
+
+변환에 필요한 모든 규칙은 위 두 문서에 정의되어 있으므로, 기존 JSON 파일(`data/lecture-*.json`)을 참조용으로 읽을 필요 없음.
