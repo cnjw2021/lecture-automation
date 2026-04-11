@@ -1,0 +1,756 @@
+{
+  "lecture_id": "03-05",
+  "title": "Flexbox — 現代Webレイアウトの核心",
+  "part": 3,
+  "totalDurationSec": 1452,
+  "sequence": [
+    {
+      "scene_id": 1,
+      "narration": "皆さん、こんにちは。前回の講義では、ボックスモデルを学びましたね。すべてのHTML要素は「箱」で、コンテント、パディング、ボーダー、マージンという4つの層でできている。そしてボックスサイジングをボーダーボックスにしておくと、幅の計算が楽になるという話でした。実際にCodePenで開発者ツールを開いて、ボックスの構造を確認しましたよね。",
+      "durationSec": 25,
+      "visual": {
+        "type": "remotion",
+        "component": "TitleScreen",
+        "props": {
+          "title": "Flexbox",
+          "sub": "現代Webレイアウトの核心"
+        },
+        "transition": {
+          "enter": "zoom"
+        }
+      }
+    },
+    {
+      "scene_id": 2,
+      "narration": "さて、ここまでCSSを学んできて、ひとつ気になっていることはないでしょうか。私たちが作ってきたページを見てみると、要素が全部「縦に」積み重なっていますよね。見出しがあって、段落があって、画像があって。全部上から下へ、一列に並んでいます。でも、普段皆さんが見ているウェブサイトを思い出してみてください。たとえばお店のサイト。上の方にあるナビゲーションメニューは、「ホーム」「メニュー」「アクセス」「お問い合わせ」って、横に並んでいますよね。あるいは、商品紹介のページ。カードが3つ横に並んで、それぞれに写真と値段が載っている。ああいうレイアウト、横方向の配置がたくさんあります。",
+      "durationSec": 40,
+      "visual": {
+        "type": "remotion",
+        "component": "QnAScreen",
+        "props": {
+          "question": "要素をこんな風に横に並べるには？",
+          "answer": "縦積みが初期状態。でもウェブサイトにはナビバー、カード、横並びのレイアウトが欠かせない。"
+        }
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "「要素を横に並べたい」。これ、実はCSSの歴史の中で長い間、みんなが苦労してきた問題なんです。今日はこの問題を一発で解決してくれる、Flexboxという仕組みを学びます。この講義が終わるころには、ナビゲーションバーやカード型レイアウトを自分の手で作れるようになっています。Flexboxを覚えると、レイアウトの自由度が一気に上がりますよ。それではさっそく始めましょう。",
+      "durationSec": 30,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "💪",
+          "headline": "今日はFlexboxを学ぶ",
+          "detail": "ナビゲーションバーとカード型レイアウトを自分の手で作れるようになる",
+          "color": "#3b82f6"
+        }
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "まず、Flexboxがなぜこんなに大事なのか。その「ありがたみ」を感じてもらうために、少しだけ昔の話をしましょう。Flexboxが広く使われるようになる前、ウェブ制作者たちは要素を横に並べるために「フロート」という仕組みを使っていました。フロートというのは、もともと新聞記事のような表現を作るためのもので、画像の横にテキストを回り込ませる機能です。新聞や雑誌で、写真の横に本文がくっついているレイアウトを見たことがありますよね。あれをウェブで再現するための機能がフロートです。",
+      "durationSec": 37,
+      "visual": {
+        "type": "remotion",
+        "component": "BulletDetailScreen",
+        "props": {
+          "title": "Flexbox以前のレイアウト方法",
+          "items": [
+            {
+              "title": "フロート（float）とは",
+              "detail": "画像の横にテキストを回り込ませるための機能。新聞・雑誌レイアウトのイメージ。",
+              "icon": "📰"
+            },
+            {
+              "title": "本来の目的と違う使い方",
+              "detail": "横並びレイアウト全体にフロートを無理やり適用していた",
+              "icon": "⚠️"
+            }
+          ]
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "ところが、当時はほかに要素を横並びにする手段がなかったので、みんなこのフロートを無理やりレイアウト全体に使っていたんです。本来の目的とは違う使い方をしていたわけですね。結果どうなるかというと、とにかくレイアウトが崩れやすい。高さがずれる。「クリアフィックス」という呪文のようなおまじないコードを毎回書かないといけない。初心者はもちろん、プロのウェブ制作者でもフロートレイアウトには相当苦労していました。当時を知っている人に聞くと、「もう二度と戻りたくない」って口を揃えて言いますね。",
+      "durationSec": 37,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "warning",
+          "title": "フロートレイアウトの問題",
+          "body": "レイアウトが崩れやすく高さもずれる。「クリアフィックス」という呪文コードが必須。プロも苦労した時代。",
+          "icon": "😰"
+        }
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "そこに登場したのがFlexboxです。正式名称は「フレキシブルボックスレイアウト」。Flexboxは「レイアウトのために作られた仕組み」です。フロートが「本来の目的と違う使い方」で無理をしていたのに対して、Flexboxは最初から「要素を柔軟に並べる」ことを目的に設計されています。だからシンプルで、直感的で、崩れにくい。今日のウェブサイトのほとんどがこのFlexboxを使ってレイアウトされていますし、AIにコードを生成させても、まず間違いなくFlexboxが使われています。つまり、Flexboxを理解しておくと、AIが生成したCSSを読む力が大きく上がるということです。では、その仕組みを見ていきましょう。",
+      "durationSec": 43,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "Flexbox",
+          "reading": "フレキシブルボックスレイアウト",
+          "definition": "レイアウトのために設計されたCSS仕様。最初から「要素を柔軟に並べる」ことを目的に作られており、シンプルで直感的、崩れにくい。",
+          "example": "現代のウェブサイトのほとんどがFlexboxでレイアウトされている"
+        }
+      }
+    },
+    {
+      "scene_id": 7,
+      "narration": "Flexboxを使うときに、まず知っておいてほしい概念が2つあります。「コンテナ」と「アイテム」です。コンテナというのは、並べたいものを囲む親要素のことです。そしてアイテムは、その中に入っている子要素のことです。具体的にイメージしてみましょう。たとえば、ナビゲーションバーを思い浮かべてください。ナビゲーション全体を囲んでいる枠がありますよね。これがコンテナです。そしてその中に「ホーム」「商品」「お問い合わせ」といったリンクが並んでいます。このひとつひとつがアイテムです。あるいは、カード型のレイアウトなら、カードを並べるエリア全体がコンテナ。中の個別のカードがアイテムですね。",
+      "durationSec": 43,
+      "visual": {
+        "type": "remotion",
+        "component": "TwoColumnScreen",
+        "props": {
+          "title": "コンテナとアイテム",
+          "left": {
+            "title": "コンテナ（親要素）",
+            "body": "並べたいものを囲む外側の要素\n例: ナビゲーション全体を囲む枠\n例: カードを並べるエリア全体",
+            "icon": "📦",
+            "color": "#3b82f6"
+          },
+          "right": {
+            "title": "アイテム（子要素）",
+            "body": "コンテナの中に入っている要素\n例: ホーム・商品・お問い合わせ\n例: 個別のカードひとつひとつ",
+            "icon": "🔲",
+            "color": "#10b981"
+          }
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 8,
+      "narration": "Flexboxの仕組みは、この「コンテナに対してCSSを指定すると、中のアイテムの並び方が変わる」という構造になっています。これがとても大事なポイントです。アイテムの一つ一つに何かを指定する必要はほとんどありません。親であるコンテナにCSSを書くだけで、中の子要素が自動的に整列してくれる。これがFlexboxの便利なところです。",
+      "durationSec": 28,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🎯",
+          "headline": "コンテナに書くだけでOK",
+          "detail": "親要素にCSSを指定するだけで、子要素が自動的に整列される",
+          "color": "#3b82f6"
+        }
+      }
+    },
+    {
+      "scene_id": 9,
+      "narration": "もうひとつ、大事な概念があります。「主軸」と「交差軸」です。ちょっと聞き慣れない言葉ですが、図で見るとシンプルです。主軸というのは、アイテムが並ぶ方向の軸です。Flexboxの初期状態では、主軸は横方向。つまり左から右に向かう方向です。そして交差軸は、主軸に対して垂直な方向の軸です。主軸が横なら、交差軸は縦。つまり上から下に向かう方向になります。なぜこの2つの軸が大事かというと、Flexboxでは「主軸方向の配置」と「交差軸方向の配置」を別々のプロパティでコントロールするからです。たとえば、「アイテムを横方向に中央寄せしたい」なら主軸の設定を変えます。「アイテムを縦方向に中央寄せしたい」なら交差軸の設定を変えます。ちょっと抽象的に聞こえるかもしれませんが、大丈夫です。この後すぐにコードを書いて実際に動きを見ますから、そこで「あ、こういうことか」と実感できるはずです。では、CodePenを開いて、手を動かしていきましょう。",
+      "durationSec": 56,
+      "visual": {
+        "type": "remotion",
+        "component": "TwoColumnScreen",
+        "props": {
+          "title": "主軸と交差軸",
+          "left": {
+            "title": "主軸（Main Axis）",
+            "body": "アイテムが並ぶ方向の軸\n初期状態: 横方向（→）\njustify-contentで制御",
+            "icon": "↔️",
+            "color": "#3b82f6"
+          },
+          "right": {
+            "title": "交差軸（Cross Axis）",
+            "body": "主軸に垂直な方向の軸\n初期状態: 縦方向（↓）\nalign-itemsで制御",
+            "icon": "↕️",
+            "color": "#10b981"
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 10,
+      "narration": "では、CodePenを開いてください。新しいペンを作りましょう。まず、HTMLにシンプルなボックスを3つ作ります。外側のディブにコンテナというクラス名をつけました。これがFlexboxのコンテナ、つまり親要素になります。中に入っている3つのディブがアイテム、つまり子要素ですね。今の状態だと、CSSを何もつけていないので、3つのディブは縦に積み重なっています。ディブはブロック要素なので、1つずつ改行されて下に並ぶ。これが初期状態です。",
+      "durationSec": 35,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "title": "HTML: 3つのボックス",
+          "language": "html",
+          "code": "<div class=\"container\">\n  <div class=\"box\">1</div>\n  <div class=\"box\">2</div>\n  <div class=\"box\">3</div>\n</div>"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 11,
+      "narration": "では、ボックスが見やすいように、まずスタイルを当てましょう。CSSペインにこう書いてください。はい、青いボックスが3つ、縦に並んでいますね。数字の1、2、3がそれぞれ見えています。この3つを横に並べたいわけです。",
+      "durationSec": 22,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "title": "CSS: ボックスのスタイル",
+          "language": "css",
+          "code": ".box {\n  background: #3b82f6;\n  color: white;\n  padding: 20px 40px;\n  font-size: 24px;\n  border-radius: 8px;\n}"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 12,
+      "narration": "では、ここからが今日のハイライトです。コンテナに、たった1行のCSSを追加してみましょう。どうでしょうか。ボックスが横に並びましたよね。たった1行、ディスプレイの値をフレックスに変えただけで、中のアイテムが横並びになりました。これがFlexboxの基本中の基本です。親要素、つまりコンテナにディスプレイ・フレックスを指定するだけ。たったこれだけで、中身が横に並ぶ。とてもシンプルですよね。",
+      "durationSec": 37,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "title": "display: flex — 魔法の1行",
+          "language": "css",
+          "code": ".container {\n  display: flex;\n}"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 13,
+      "narration": "ここで何が起きているのか整理しましょう。ディスプレイ・フレックスを指定した瞬間に、このコンテナは「フレックスコンテナ」になります。そして中の子要素たちは自動的に「フレックスアイテム」になります。さっきスライドで説明した主軸は、初期状態では横方向。だからアイテムが左から右へ横に並んだわけです。この「ディスプレイ・フレックス」は、これからものすごく頻繁に出てきます。AIが生成するCSSでも、必ずと言っていいほど見かけます。横並びレイアウトの出発点はいつもこの1行です。",
+      "durationSec": 37,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "✨",
+          "headline": "display: flexで何が起きるか",
+          "detail": "コンテナがフレックスコンテナに。子要素がフレックスアイテムになり、主軸方向に自動整列される。",
+          "color": "#3b82f6"
+        }
+      }
+    },
+    {
+      "scene_id": 14,
+      "narration": "横に並んだのはいいですが、3つのボックスが全部左に寄っていますよね。これを中央に配置したり、均等にばらけさせたりしたい。そんなときに使うのが、ジャスティファイコンテントというプロパティです。ジャスティファイコンテントは「主軸方向のアイテムの配置」を決めるプロパティです。今、主軸は横方向ですから、横方向にアイテムをどう並べるかを指定できるわけですね。さっき説明した「主軸」が、ここで効いてきます。",
+      "durationSec": 33,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "justify-content",
+          "reading": "ジャスティファイコンテント",
+          "definition": "主軸方向のアイテムの配置を決めるプロパティ。主軸が横方向の場合、横方向の並び方を指定できる。",
+          "example": "center / space-between / space-around"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 15,
+      "narration": "では、まずセンターにしてみましょう。コンテナのCSSにジャスティファイコンテント・センターを追加します。はい、3つのボックスがまとまって中央に寄りましたね。ウェブサイトでコンテンツをページの中央に配置したいとき、非常によく使うパターンです。",
+      "durationSec": 23,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "title": "justify-content: center",
+          "language": "css",
+          "code": ".container {\n  display: flex;\n  justify-content: center;\n}"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 16,
+      "narration": "では次に、値をスペースビトウィーンに変えてみましょう。今度はどうなったでしょうか。最初のアイテムが左端、最後のアイテムが右端に寄って、その間に均等なスペースができました。「両端に寄せて、間を均等に開ける」という配置ですね。たとえばナビゲーションバーで、左側にロゴ、右側にメニューを配置したいとき。まさにこのスペースビトウィーンが使えます。",
+      "durationSec": 30,
+      "visual": {
+        "type": "remotion",
+        "component": "CodeWalkthroughScreen",
+        "props": {
+          "title": "justify-content: space-between",
+          "language": "css",
+          "code": ".container {\n  display: flex;\n  justify-content: space-between;\n}",
+          "highlightLines": [3],
+          "caption": "左端・右端に寄せて、間を均等に開ける"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 17,
+      "narration": "もうひとつ見てみましょう。スペースアラウンドです。今度は各アイテムの「周り」に均等なスペースができていますね。スペースビトウィーンとの違いに注目してください。ビトウィーンは左端と右端のアイテムがコンテナの端にぴったりくっつきますが、アラウンドは左端と右端にもスペースが入ります。アイテムの「周囲」にスペースを均等に配置するのがアラウンドです。",
+      "durationSec": 30,
+      "visual": {
+        "type": "remotion",
+        "component": "CodeWalkthroughScreen",
+        "props": {
+          "title": "justify-content: space-around",
+          "language": "css",
+          "code": ".container {\n  display: flex;\n  justify-content: space-around;\n}",
+          "highlightLines": [3],
+          "caption": "各アイテムの周囲に均等なスペース（端にも余白あり）"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 18,
+      "narration": "では、ここまでのジャスティファイコンテントを整理しましょう。よく使う値は3つです。センターで中央に寄せる。スペースビトウィーンで両端揃えにして間を均等に開ける。スペースアラウンドで全方向に均等なスペースを入れる。全部覚えなくても大丈夫です。「横方向の配置を変えたいな」と思ったときに、「ジャスティファイコンテントだったな」と思い出せれば、あとは値を調べて試せばいいんです。",
+      "durationSec": 32,
+      "visual": {
+        "type": "remotion",
+        "component": "SummaryScreen",
+        "props": {
+          "title": "justify-content よく使う3値",
+          "points": [
+            "center — アイテムをまとめて中央に寄せる",
+            "space-between — 両端に寄せて間を均等に開ける",
+            "space-around — 各アイテムの周囲に均等なスペース"
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 19,
+      "narration": "次は交差軸方向、つまり今の場合は縦方向の配置です。今のままだと効果がわかりにくいので、コンテナに高さと背景色をつけてみましょう。グレーの背景がコンテナの範囲を示しています。コンテナには300ピクセルの高さがありますが、ボックスは上に寄っていますよね。この状態を変えるのがアラインアイテムズです。アラインアイテムズは「交差軸方向のアイテムの配置」を決めます。今は交差軸が縦方向なので、縦方向の位置を変えられるわけですね。",
+      "durationSec": 42,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "title": "コンテナに高さをつけて確認",
+          "language": "css",
+          "code": ".container {\n  display: flex;\n  justify-content: center;\n  height: 300px;\n  background: #f1f5f9;\n}"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 20,
+      "narration": "では、センターをつけてみましょう。はい、ボックスが縦方向にも中央にきました。ジャスティファイコンテントのセンターが横方向の中央寄せ。アラインアイテムズのセンターが縦方向の中央寄せ。この2つを組み合わせると、要素を「上下左右のど真ん中」にピタッと配置できます。これ、実はCSSで要素を完全に中央配置する一番簡単な方法なんです。昔はこれだけのことをするのにも複雑なテクニックが必要でしたが、Flexboxなら2行で済みます。ディスプレイ・フレックス、ジャスティファイコンテント・センター、アラインアイテムズ・センター。この3行セットは「CSS中央配置の定番パターン」として覚えておくととても便利です。",
+      "durationSec": 50,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "title": "align-items: center — 縦方向も中央に",
+          "language": "css",
+          "code": ".container {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  height: 300px;\n  background: #f1f5f9;\n}"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 21,
+      "narration": "ここまで、アイテムは横方向に並んでいましたよね。でも、場合によっては縦方向に並べたいこともあります。たとえばサイドバーの中のメニューリンクは、上から下に並んでいることが多いです。そういうとき、フレックスディレクションというプロパティを使います。一度、コンテナのCSSをシンプルに戻しましょう。高さと背景色を消して、ディスプレイ・フレックスだけの状態にします。フレックスディレクションをカラムに変えると、アイテムが縦に並びましたね。カラムというのは「列」という意味で、縦方向を表します。",
+      "durationSec": 40,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "title": "flex-direction: column",
+          "language": "css",
+          "code": ".container {\n  display: flex;\n  flex-direction: column;\n}"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 22,
+      "narration": "これ、一見すると「ディスプレイ・フレックスを付ける前と同じじゃないか」と思うかもしれません。見た目は似ていますが、中身は違います。Flexboxが適用された状態なので、ジャスティファイコンテントやアラインアイテムズが引き続き使えるんです。つまり、縦並びの中で中央寄せや均等配置ができるということですね。ここでひとつ注意点があります。フレックスディレクションをカラムにすると、主軸と交差軸が入れ替わります。主軸が縦方向になるので、ジャスティファイコンテントは「縦方向の配置」をコントロールするようになり、アラインアイテムズは「横方向の配置」をコントロールするようになります。ちょっとややこしいですよね。でも、「ジャスティファイコンテントは常に主軸方向」「アラインアイテムズは常に交差軸方向」この原則を覚えておけば迷いません。",
+      "durationSec": 46,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "info",
+          "title": "columnにすると軸が入れ替わる",
+          "body": "主軸が縦方向になるため、justify-contentは縦、align-itemsは横の配置を制御するようになる。「常に主軸方向がjustify-content」の原則を覚えておけば迷わない。",
+          "icon": "🔄"
+        }
+      }
+    },
+    {
+      "scene_id": 23,
+      "narration": "では、ローに戻しておきましょう。ローは「行」、つまり横方向のことです。これがデフォルトの状態です。フレックスディレクションを書かなければ、自動的にローになります。",
+      "durationSec": 15,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "title": "flex-direction: row（デフォルト）",
+          "language": "css",
+          "code": ".container {\n  display: flex;\n  flex-direction: row;\n}"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 24,
+      "narration": "横に並んだボックスを見てください。ボックス同士がぴったりくっついていますよね。これだと少し窮屈に見えます。アイテムの間にスペースを開けたいときはどうすればいいでしょうか。前回のボックスモデルで学んだマージンを使う方法もありますが、Flexboxにはもっと便利な専用のプロパティがあります。ギャップです。ギャップを20ピクセルに設定しました。アイテム同士の間に20ピクセルの隙間ができましたね。きれいに間隔が空いています。",
+      "durationSec": 30,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "title": "gap — アイテム間の隙間",
+          "language": "css",
+          "code": ".container {\n  display: flex;\n  gap: 20px;\n}"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 25,
+      "narration": "ギャップのいいところは、「アイテムの間だけ」にスペースが入ることです。マージンだと、最初のアイテムの左側や最後のアイテムの右側にも余白がついてしまうことがあって、計算が面倒になります。でもギャップなら、アイテムとアイテムの間にだけスペースが入るので、余計なことを考えなくて済みます。Flexboxでアイテム間のスペースを設定するときは、マージンではなくギャップを使う。これが今のスタンダードなやり方です。AIが生成するコードでもギャップがよく使われていますので、見かけたら「アイテム間の隙間の設定だな」とわかるようにしておきましょう。",
+      "durationSec": 37,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "tip",
+          "title": "gapはmarginより便利",
+          "body": "gapはアイテムとアイテムの間にだけスペースが入る。端の余白が発生しないため計算が不要。Flexboxでのスペース設定の現在のスタンダード。",
+          "icon": "💡"
+        }
+      }
+    },
+    {
+      "scene_id": 26,
+      "narration": "では、ここでちょっと実験してみましょう。今ボックスは3つですが、HTMLにボックスを2つ追加して5つに増やしてみます。5つに増えましたね。画面の幅にもよりますが、ボックスが少し細くなっていませんか。Flexboxの初期状態では、全部のアイテムを無理やり1行に収めようとします。そのためにアイテムの幅を自動的に縮めてしまうんですね。でも、ボックスの幅は維持したまま、入りきらないものは次の行に折り返したいこともありますよね。商品一覧のページなんかがそうです。商品が10個あったら、全部を1行に詰め込むのではなく、3つずつ折り返して並べたいはずです。そういうときに使うのが、フレックスラップです。",
+      "durationSec": 47,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "title": "ボックスを5つに増やす",
+          "language": "html",
+          "code": "<div class=\"container\">\n  <div class=\"box\">1</div>\n  <div class=\"box\">2</div>\n  <div class=\"box\">3</div>\n  <div class=\"box\">4</div>\n  <div class=\"box\">5</div>\n</div>"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 27,
+      "narration": "フレックスラップをラップに変えると、コンテナの幅に収まりきらないアイテムが自動的に次の行に送られます。ブラウザの幅を縮めたり広げたりしてみてください。幅に応じてアイテムが折り返されるのがわかりますよね。商品一覧、写真ギャラリー、タグの一覧など、数が変わる可能性があるレイアウトには、このフレックスラップが非常に便利です。次回学ぶレスポンシブデザインでも、このフレックスラップが活躍しますので、覚えておいてくださいね。",
+      "durationSec": 37,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "title": "flex-wrap: wrap — 折り返し",
+          "language": "css",
+          "code": ".container {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 20px;\n}"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 28,
+      "narration": "さて、ここまでFlexboxの基本プロパティをひと通り見てきました。ディスプレイ・フレックスで横並びに。ジャスティファイコンテントで横方向の配置を。アラインアイテムズで縦方向の配置を。ギャップで間隔を。フレックスラップで折り返しを。これだけのプロパティで、いろんなレイアウトが作れます。では、ここからは実際によく見かけるレイアウトを2つ作ってみましょう。まずはナビゲーションバーです。CodePenで新しいペンを開いてください。",
+      "durationSec": 31,
+      "visual": {
+        "type": "remotion",
+        "component": "NumberedListScreen",
+        "props": {
+          "title": "実習: よくあるレイアウトを2つ作ろう",
+          "items": [
+            {
+              "title": "ナビゲーションバー",
+              "description": "左にロゴ、右にメニューの定番レイアウト"
+            },
+            {
+              "title": "カード3枚横並び",
+              "description": "商品・サービス紹介でよく見るカードレイアウト"
+            }
+          ]
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 29,
+      "narration": "HTMLにこのように書きましょう。ナブタグの中に、ロゴとメニューリンクがあります。ナブタグはPART 2で学んだセマンティックタグですね。ナビゲーションであることを示すタグでした。今の状態だと、ロゴが上にあって、その下にリンクが箇条書きで表示されています。これを「左にロゴ、右にメニュー」というよく見るナビゲーションバーのレイアウトにしていきましょう。",
+      "durationSec": 34,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "title": "実習1: ナビバーのHTML",
+          "language": "html",
+          "code": "<nav class=\"navbar\">\n  <div class=\"logo\">MyShop</div>\n  <ul class=\"nav-links\">\n    <li><a href=\"#\">ホーム</a></li>\n    <li><a href=\"#\">商品</a></li>\n    <li><a href=\"#\">お問い合わせ</a></li>\n  </ul>\n</nav>"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 30,
+      "narration": "まず、ナブバー全体にFlexboxを適用します。ディスプレイ・フレックスで横並びにして、ジャスティファイコンテントをスペースビトウィーンにします。スペースビトウィーンにすると、ロゴが左端、メニューリンクのリストが右端に寄りますよね。そしてアラインアイテムズをセンターにして、縦方向の高さも揃えます。背景色は濃い紺色を指定しました。さっそくそれっぽくなってきましたね。でも、メニューリンクがまだ縦に並んでいます。リストの箇条書きの点も邪魔ですね。メニューリンクを囲んでいるのはユーエルタグですから、こちらにもFlexboxを適用しましょう。",
+      "durationSec": 47,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "title": "実習1: .navbar にFlexboxを適用",
+          "language": "css",
+          "code": ".navbar {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 16px 32px;\n  background: #1e293b;\n}"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 31,
+      "narration": "リストスタイルをナンにして箇条書きの点を消しました。そしてディスプレイ・フレックスで横並びに、ギャップで24ピクセルの間隔をつけました。メニューが横に並びましたね。最後に、文字色を整えましょう。ロゴを白色の太字に。リンクはグレーの文字にして、テキストデコレーションをナンにすることで下線を消しました。",
+      "durationSec": 33,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "title": "実習1: メニューの横並び + 色調整",
+          "language": "css",
+          "code": ".nav-links {\n  display: flex;\n  gap: 24px;\n  list-style: none;\n}\n\n.logo {\n  color: white;\n  font-size: 20px;\n  font-weight: bold;\n}\n\n.nav-links a {\n  color: #94a3b8;\n  text-decoration: none;\n}"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 32,
+      "narration": "いかがでしょうか。左にロゴ、右にメニューという、よく見かけるナビゲーションバーが完成しました。今回、Flexboxを2か所に使いましたよね。ナブバー全体の横並びにひとつ、メニューリンクの横並びにもうひとつ。こういうふうに、Flexboxは入れ子にして使うことがよくあります。外側のコンテナの中にあるアイテムが、さらに別のコンテナになって、その中にアイテムが並ぶ。この「入れ子構造」が使いこなせると、かなり複雑なレイアウトも作れるようになります。",
+      "durationSec": 37,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🧩",
+          "headline": "Flexboxの入れ子構造",
+          "detail": "外側コンテナの中のアイテムが、さらに別のコンテナになれる。これが複雑なレイアウトの鍵。",
+          "color": "#3b82f6"
+        }
+      }
+    },
+    {
+      "scene_id": 33,
+      "narration": "もうひとつ、よくあるレイアウトを作ってみましょう。カード型のレイアウトです。お店のメニューや、サービスの紹介ページで、3つのカードが横に並んでいるデザインを見たことがありますよね。あれをFlexboxで作ります。CodePenで新しいペンを開いてください。",
+      "durationSec": 18,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🃏",
+          "headline": "実習2: カード3枚を横に並べる",
+          "detail": "美容室メニューを例に、カード型レイアウトをFlexboxで作る",
+          "color": "#3b82f6"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 34,
+      "narration": "HTMLにこう書きましょう。美容室のメニューカードをイメージしました。今はカードが縦に3枚並んでいますね。これを横並びにして、きれいなカードレイアウトにしていきましょう。",
+      "durationSec": 24,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "title": "実習2: カードのHTML",
+          "language": "html",
+          "code": "<div class=\"cards\">\n  <div class=\"card\">\n    <h3>カット</h3>\n    <p>丁寧なカウンセリングで、お似合いのスタイルをご提案します。</p>\n    <span class=\"price\">¥4,400</span>\n  </div>\n  <div class=\"card\">\n    <h3>カラー</h3>\n    <p>ダメージを抑えながら、理想の色味に仕上げます。</p>\n    <span class=\"price\">¥6,600</span>\n  </div>\n  <div class=\"card\">\n    <h3>パーマ</h3>\n    <p>柔らかい質感のデジタルパーマが人気です。</p>\n    <span class=\"price\">¥8,800</span>\n  </div>\n</div>"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 35,
+      "narration": "まず、カードを囲んでいるコンテナにFlexboxを適用します。ディスプレイ・フレックスとギャップだけで、3枚が横並びになりましたよね。ここまでは先ほどと同じパターンです。ここからカード自体のスタイルを整えていきましょう。",
+      "durationSec": 22,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "title": "実習2: .cards にFlexboxを適用",
+          "language": "css",
+          "code": ".cards {\n  display: flex;\n  gap: 24px;\n  padding: 32px;\n}"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 36,
+      "narration": "白い背景に、角を丸くして、ボックスシャドウで影をつけました。ボーダーレイディアスとボックスシャドウはカードデザインの定番で、この先の実習でも何度か出てきます。ここで「フレックス: 1」というプロパティも使っています。今回は3枚のカードの幅をそろえるために指定しているものです。「利用可能なスペースを均等に分け合う」という動きをするのですが、フレックス関連のプロパティはまだ他にもありますので、詳しくは 3-6 以降で少しずつ触れていきます。",
+      "durationSec": 42,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "title": "実習2: .card のスタイル",
+          "language": "css",
+          "code": ".card {\n  background: white;\n  padding: 24px;\n  border-radius: 12px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);\n  flex: 1;\n}"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 37,
+      "narration": "残りのスタイルも書きましょう。はい、美容室のメニューページっぽいカードレイアウトが完成しました。どうでしょうか、なかなかそれっぽく見えませんか。今回は美容室を例にしましたが、整体院なら施術コース、教室ならレッスン紹介、飲食店ならおすすめメニューに、内容を置き換えるだけでそのまま使えます。ディスプレイ・フレックスとギャップ、そしてフレックスラップの組み合わせで、こういうきれいなカード型レイアウトが作れるんです。",
+      "durationSec": 42,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "title": "実習2: 仕上げのスタイル",
+          "language": "css",
+          "code": ".card h3 {\n  margin-bottom: 8px;\n}\n\n.price {\n  display: block;\n  margin-top: 16px;\n  font-size: 20px;\n  font-weight: bold;\n  color: #3b82f6;\n}\n\nbody {\n  background: #f8fafc;\n  font-family: sans-serif;\n}"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 38,
+      "narration": "今日はたくさんのプロパティが出てきましたよね。ディスプレイ・フレックス、ジャスティファイコンテント、アラインアイテムズ、フレックスディレクション、ギャップ、フレックスラップ。一度にこれだけ出てくると、正直まだしっくり来ていない部分もあるかもしれません。そんな方にぴったりのゲームがあります。Flexboxフロッギーというブラウザゲームです。画面にカエルがいて、このカエルを正しい蓮の葉の上に乗せるために、Flexboxのプロパティを書いていくというパズルゲームです。",
+      "durationSec": 32,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🐸",
+          "headline": "Flexbox Froggy で楽しく練習",
+          "detail": "カエルを蓮の葉に乗せるパズルゲーム。Flexboxプロパティを書いてカエルを動かす。",
+          "color": "#3b82f6"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 39,
+      "narration": "たとえば「カエルを右に寄せてください」というお題が出たら、ジャスティファイコンテントをフレックスエンドにする。「2匹のカエルを離してください」と出たら、スペースビトウィーンにする。実際にプロパティを書いて、カエルが動くのを見ながら学べるので、楽しみながら練習できます。全部で24ステージあって、今日の講義で学んだ内容がちょうどカバーされています。「Flexboxフロッギー」で検索するとすぐに見つかります。日本語版もありますので、復習がわりにぜひ遊んでみてください。",
+      "durationSec": 30,
+      "visual": {
+        "type": "remotion",
+        "component": "IconListScreen",
+        "props": {
+          "title": "Flexbox Froggy の特徴",
+          "items": [
+            {
+              "icon": "🎮",
+              "title": "全24ステージ",
+              "description": "今日学んだ内容がすべてカバーされている"
+            },
+            {
+              "icon": "🇯🇵",
+              "title": "日本語版あり",
+              "description": "「Flexboxフロッギー」で検索してすぐに遊べる"
+            },
+            {
+              "icon": "✍️",
+              "title": "書いて動かす",
+              "description": "実際にプロパティを入力してカエルが動くのを確認"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 40,
+      "narration": "それでは、今日のまとめです。今日はFlexboxを学びました。大事なポイントを3つ振り返ります。1つ目。コンテナにディスプレイ・フレックスをつけると、中のアイテムが横に並ぶ。Flexboxの出発点はこの1行です。そしてコンテナとアイテムという「親子関係」がFlexboxの基本構造です。2つ目。配置はジャスティファイコンテントとアラインアイテムズの2つで決まる。ジャスティファイコンテントが主軸方向、アラインアイテムズが交差軸方向。「どっちの軸の話をしているのか」を意識するだけで、Flexboxはぐっとわかりやすくなります。3つ目。ギャップでアイテム間のスペースを設定し、フレックスラップで折り返しを制御できる。フレックスディレクションを使えば並ぶ方向も変えられます。",
+      "durationSec": 48,
+      "visual": {
+        "type": "remotion",
+        "component": "SummaryScreen",
+        "props": {
+          "title": "今日のまとめ",
+          "points": [
+            "display: flexで横並び。コンテナとアイテムの親子関係がFlexboxの基本",
+            "justify-content（主軸）とalign-items（交差軸）で配置を制御",
+            "gap・flex-wrap・flex-directionで間隔・折り返し・方向を調整"
+          ]
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 41,
+      "narration": "今日のFlexboxは、AIが生成するCSSコードの中に必ずと言っていいほど出てきます。ジャスティファイコンテント、アラインアイテムズ、ギャップ。これらのプロパティ名を見たときに、「ああ、レイアウトの設定をしているんだな」とわかるだけで、コードの理解度がまったく違ってきます。暗記する必要はありません。何をやっているのか読めること。それが大事です。",
+      "durationSec": 26,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "tip",
+          "title": "AIコードが読めるようになる",
+          "body": "Flexboxプロパティを見て「レイアウトの設定だな」とわかれば十分。暗記より読解。それがAI時代のスタンダード。",
+          "icon": "🤖"
+        }
+      }
+    },
+    {
+      "scene_id": 42,
+      "narration": "次回は、レスポンシブデザインを学びます。今日作ったカードレイアウト、パソコンの画面では3枚横並びできれいに表示されていますが、スマートフォンの狭い画面だとどうなるでしょうか。画面のサイズに応じてレイアウトを自動的に切り替える方法を学んでいきます。今日学んだフレックスラップも、レスポンシブデザインで大活躍しますよ。お楽しみに。お疲れ様でした。",
+      "durationSec": 30,
+      "visual": {
+        "type": "remotion",
+        "component": "EndScreen",
+        "props": {
+          "title": "お疲れ様でした",
+          "message": "Flexboxをマスターすれば、AIが生成するCSSを読む力が格段に上がります",
+          "nextPreview": "3-6: レスポンシブデザイン"
+        },
+        "transition": {
+          "exit": "zoom"
+        }
+      }
+    }
+  ]
+}
