@@ -1,0 +1,724 @@
+{
+  "lecture_id": "11",
+  "title": "構造を組み立てるタグ",
+  "part": 2,
+  "totalDurationSec": 1800,
+  "sequence": [
+    {
+      "scene_id": 1,
+      "narration": "皆さん、こんにちは。前回の講義では、リンクと画像を学びましたね。aタグでページ同士をつなぎ、imgタグで画像を表示できるようになりました。Unsplashから持ってきた写真や、SNSへのリンクも入って、皆さんの自己紹介ページはだいぶウェブページらしくなってきたのではないでしょうか。",
+      "durationSec": 21,
+      "visual": {
+        "type": "remotion",
+        "component": "TitleScreen",
+        "props": {
+          "title": "構造を組み立てるタグ",
+          "sub": "PART 2 — 講義 2-4"
+        },
+        "transition": { "enter": "zoom" }
+      }
+    },
+    {
+      "scene_id": 2,
+      "narration": "さて、今日のテーマは「構造を組み立てるタグ」です。ここまでの講義を通じて、皆さんはいくつものタグを学んできました。h1で見出し、pで段落、ulでリスト、aでリンク、imgで画像。一つひとつのタグの使い方はわかるようになりましたよね。",
+      "durationSec": 22,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🏗️",
+          "headline": "タグの使い方はわかった",
+          "detail": "でも、ページ全体の「構造」はあるか？",
+          "color": "#ef4444"
+        }
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "でも、ここでちょっと考えてみてほしいことがあります。今の自己紹介ページのコードを見てみてください。これらのタグが、ただ上から順番に並んでいるだけの状態です。「ここからここまでがヘッダー」「ここがメインの内容」「ここがページの一番下の情報」という、ページ全体のまとまりがないんですね。",
+      "durationSec": 31,
+      "visual": {
+        "type": "remotion",
+        "component": "QnAScreen",
+        "props": {
+          "question": "今のHTMLに「構造」はあるか？",
+          "answer": "タグが上から並んでいるだけ。どこがヘッダーで、どこがフッターか、コードから読み取れない状態です。"
+        }
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "人間の目で見れば、なんとなく「上のほうがタイトルで、真ん中が本文で、下のほうがフッターかな」と推測できます。でも、エーアイや検索エンジンのような機械が読んだとき、「ここがナビゲーションメニューだな」「ここがメインコンテンツだな」と正確に判断できるでしょうか。実は、今のコードのままでは判断できないんです。",
+      "durationSec": 32,
+      "visual": {
+        "type": "remotion",
+        "component": "ComparisonScreen",
+        "props": {
+          "left": {
+            "title": "人間が読む場合",
+            "points": ["なんとなく推測できる", "「上がタイトルかな」とわかる"],
+            "color": "#6366f1"
+          },
+          "right": {
+            "title": "機械が読む場合",
+            "points": ["構造の手がかりがない", "どこがメニューかわからない"],
+            "color": "#ef4444"
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "今日は、ページ全体に意味のある構造を持たせるための特別なタグを学びます。このタグを使うと、人間にも機械にも読みやすいウェブページになります。まず前半でスライドを使って考え方を学んでから、後半でCodePenの自己紹介ページを実際に書き換えていきましょう。",
+      "durationSec": 26,
+      "visual": {
+        "type": "remotion",
+        "component": "AgendaScreen",
+        "props": {
+          "title": "今日やること",
+          "items": [
+            { "title": "セマンティックタグとは", "icon": "📖", "duration": "4分" },
+            { "title": "6つのタグを覚える", "icon": "🏷️", "duration": "6分" },
+            { "title": "divタグの使い分け", "icon": "📦", "duration": "2.5分" },
+            { "title": "CodePenでリファクタリング", "icon": "💻", "duration": "8分" },
+            { "title": "前後比較", "icon": "🔄", "duration": "2.5分" }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "突然ですが、建物の間取り図を想像してみてください。間取り図には「リビング」「キッチン」「寝室」「玄関」とはっきり書いてありますよね。これがあるから、初めてその家を訪れる人でも、どの部屋がどんな役割なのかすぐにわかります。不動産屋さんで物件を探すとき、間取り図がなかったらとても困りますよね。",
+      "durationSec": 28,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🏠",
+          "headline": "間取り図がある家",
+          "detail": "リビング・キッチン・寝室が明示されていれば、誰でもすぐわかる",
+          "color": "#ef4444"
+        },
+        "transition": { "enter": "slide-left" }
+      }
+    },
+    {
+      "scene_id": 7,
+      "narration": "ウェブページも実はこれと同じなんです。今まで皆さんが書いてきたHTMLは、いわば間取り図のないマンションのようなものです。部屋はちゃんとある。家具も置いてある。でも、どこがリビングでどこがキッチンか、外から見ただけではわからない。住んでいる人はわかっていても、初めて来た人には伝わりません。",
+      "durationSec": 29,
+      "visual": {
+        "type": "remotion",
+        "component": "BeforeAfterScreen",
+        "props": {
+          "title": "ウェブページの構造",
+          "before": {
+            "label": "今のHTML",
+            "points": ["タグが上から並ぶだけ", "部屋に名前がない", "機械には構造が伝わらない"],
+            "color": "#ef4444"
+          },
+          "after": {
+            "label": "セマンティックタグ導入後",
+            "points": ["各部分に名前がつく", "間取り図ができあがる", "人にも機械にも読みやすい"],
+            "color": "#22c55e"
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 8,
+      "narration": "ここで登場するのが「セマンティックタグ」です。「セマンティック」というのは、英語で「意味を持った」という意味です。つまりセマンティックタグとは「意味を持ったタグ」のことですね。",
+      "durationSec": 19,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "セマンティックタグ",
+          "reading": "Semantic Tag",
+          "definition": "「意味を持ったタグ」のこと。各部分の役割をHTML上で明示する。",
+          "example": "header（上部）、main（本文）、footer（末尾）など"
+        },
+        "transition": { "enter": "slide-left" }
+      }
+    },
+    {
+      "scene_id": 9,
+      "narration": "もう少し具体的に言うと、こういうことです。たとえば、ページの一番上の部分をheaderというタグで囲む。headerは英語で「ヘッダー」、つまり「上部」「冒頭」という意味ですよね。このタグで囲むことで、エーアイも検索エンジンも「ああ、ここはこのページの冒頭部分なんだな」と理解できるようになります。",
+      "durationSec": 28,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🏷️",
+          "headline": "名札を貼るイメージ",
+          "detail": "headerタグで囲むと「ここがヘッダー」と明示できる",
+          "color": "#ef4444"
+        }
+      }
+    },
+    {
+      "scene_id": 10,
+      "narration": "同じように、ページの一番下をfooterタグで囲めば、「ここがページの末尾のフッター情報だ」とわかります。先ほどの間取り図のたとえに戻ると、セマンティックタグは各部屋に「リビング」「キッチン」と名札を貼るようなものです。名札を貼っても部屋の中身は変わりませんが、誰が見てもどの部屋が何なのかわかるようになります。",
+      "durationSec": 30,
+      "visual": {
+        "type": "remotion",
+        "component": "TwoColumnScreen",
+        "props": {
+          "title": "名札を貼るだけで変わること",
+          "left": {
+            "title": "変わらないもの",
+            "body": "部屋の中身（コンテンツ）はそのまま。見た目も変わらない。",
+            "icon": "🔒",
+            "color": "#94a3b8"
+          },
+          "right": {
+            "title": "変わるもの",
+            "body": "「ここが何の部屋か」が誰にでも伝わる。機械にも構造が読める。",
+            "icon": "✅",
+            "color": "#ef4444"
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 11,
+      "narration": "「でも、見た目が変わらないなら、わざわざ使う意味があるんですか？」と思いますよね。実は、セマンティックタグが大事な理由は大きく2つあります。",
+      "durationSec": 15,
+      "visual": {
+        "type": "remotion",
+        "component": "QnAScreen",
+        "props": {
+          "question": "見た目が変わらないなら、使う意味はあるの？",
+          "answer": "セマンティックタグが大事な理由は大きく2つあります。"
+        },
+        "transition": { "enter": "slide-left" }
+      }
+    },
+    {
+      "scene_id": 12,
+      "narration": "1つ目は、検索エンジンへの影響です。Googleの検索エンジンは、ウェブページの中身を自動的に読んで、「このページは何について書かれているか」を判断しています。セマンティックタグで構造がきちんと整理されていると、検索エンジンがページの内容を正しく理解しやすくなるんです。つまり、検索結果に正しく表示されやすくなるということですね。",
+      "durationSec": 36,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🔍",
+          "headline": "理由① 検索エンジンへの影響",
+          "detail": "構造が整理されるとGoogleがページ内容を正確に理解しやすくなる",
+          "color": "#ef4444"
+        }
+      }
+    },
+    {
+      "scene_id": 13,
+      "narration": "2つ目は、エーアイとの連携です。この講座のパート2の最後の講義で、エーアイにHTMLを生成してもらう実習をします。そのとき、エーアイが作ったコードを見て「ここにはheaderタグを使うべきだな」「mainタグが抜けているな」と判断できる力が必要になります。セマンティックタグの構造を知っていれば、エーアイの出力を的確にチェックできるようになるんです。",
+      "durationSec": 40,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🤖",
+          "headline": "理由② AIとの連携",
+          "detail": "AIが生成したコードを自分でチェックできるようになる",
+          "color": "#ef4444"
+        }
+      }
+    },
+    {
+      "scene_id": 14,
+      "narration": "もちろん、今日学ぶタグの名前を全部暗記する必要はありません。何を検索すべきかを知っていれば、それで十分です。「ページの上部には何かheaderっていうタグがあったな」と覚えていれば、あとは調べられますから。",
+      "durationSec": 22,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "tip",
+          "title": "暗記しなくて大丈夫",
+          "body": "「headerというタグがあった」と覚えていれば、あとはいつでも検索できます。"
+        }
+      }
+    },
+    {
+      "scene_id": 15,
+      "narration": "では、代表的なセマンティックタグを見ていきましょう。全部で6つあります。6つと聞くと多く感じるかもしれませんが、どれもウェブページの「どの部分か」を表しているだけです。しかも、タグの名前がそのまま英語の意味になっているので、名前から役割が想像しやすいものばかりです。構えなくて大丈夫ですよ。一つずつ順番に見ていきましょう。",
+      "durationSec": 32,
+      "visual": {
+        "type": "remotion",
+        "component": "FeatureGridScreen",
+        "props": {
+          "title": "6つのセマンティックタグ",
+          "features": [
+            { "icon": "🏠", "title": "header", "description": "ページの上部・顔", "color": "#ef4444" },
+            { "icon": "🗺️", "title": "nav", "description": "ナビゲーション", "color": "#ef4444" },
+            { "icon": "📄", "title": "main", "description": "メインコンテンツ", "color": "#ef4444" },
+            { "icon": "📑", "title": "section", "description": "内容のまとまり", "color": "#ef4444" },
+            { "icon": "📰", "title": "article", "description": "独立した記事", "color": "#ef4444" },
+            { "icon": "👣", "title": "footer", "description": "ページの末尾", "color": "#ef4444" }
+          ],
+          "columns": 3
+        },
+        "transition": { "enter": "slide-left" }
+      }
+    },
+    {
+      "scene_id": 16,
+      "narration": "まず1つ目、headerタグです。これはページの一番上に来る「ヘッダー」部分です。ページの顔、と言ってもいいですね。サイトのタイトルやロゴ、ナビゲーションメニューなど、ページを開いたときに最初に目に入る情報を入れます。お店でいえば、入り口の上に掲げてある看板にあたる部分です。書き方はこうなります。",
+      "durationSec": 32,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "header",
+          "reading": "ヘッダー",
+          "definition": "ページの一番上に来る部分。サイトのタイトル・ロゴ・ナビゲーションを入れる。",
+          "example": "お店の入り口に掲げた看板のイメージ"
+        },
+        "transition": { "enter": "slide-left" }
+      }
+    },
+    {
+      "scene_id": 17,
+      "narration": "headerの開始タグと閉じタグの間に、h1の見出しを入れています。これだけで、「この見出しはページのヘッダーに属している」という意味が加わるんです。",
+      "durationSec": 20,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "<header>\n  <h1>田中太郎のページ</h1>\n</header>",
+          "language": "html",
+          "title": "headerタグの書き方"
+        },
+        "transition": { "enter": "slide-up" }
+      }
+    },
+    {
+      "scene_id": 18,
+      "narration": "2つ目はnavタグです。これは「ナビゲーション」の略で、ページ内の移動メニューを入れる場所です。ウェブサイトでよく見る、「ホーム」「会社概要」「お問い合わせ」みたいなメニューバー、ありますよね。あれを入れるためのタグです。ショッピングモールの入り口にある案内板をイメージしてください。「1階は食品、2階はファッション、3階はレストラン」と書いてある、あの案内板です。",
+      "durationSec": 38,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "nav",
+          "reading": "ナビゲーション",
+          "definition": "ページ内の移動メニューを入れる場所。メニューバーに使う。",
+          "example": "ショッピングモールの案内板のイメージ"
+        },
+        "transition": { "enter": "slide-left" }
+      }
+    },
+    {
+      "scene_id": 19,
+      "narration": "navタグの中にリンクを並べています。リンク先の「#about」という書き方は、前回学んだaタグの応用です。シャープ記号のあとに名前を書くと、同じページ内の特定の場所にジャンプするリンクになります。これについてはライブコーディングのときに詳しくやりますね。ちなみに、navタグはheaderの中に入れることが多いです。お店の看板のすぐ下に案内板がある、という配置をイメージしてください。",
+      "durationSec": 42,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "<nav>\n  <a href=\"#about\">自己紹介</a>\n  <a href=\"#hobby\">趣味</a>\n</nav>",
+          "language": "html",
+          "title": "navタグの書き方"
+        },
+        "transition": { "enter": "slide-up" }
+      }
+    },
+    {
+      "scene_id": 20,
+      "narration": "3つ目はmainタグです。これはページのメインコンテンツ、つまりそのページでいちばん伝えたい中心的な内容を入れる場所です。ヘッダーでもフッターでもない、ページの本体部分ですね。お店でいえば売り場そのもの、新聞でいえば記事本文にあたります。mainタグには一つだけルールがあります。ページの中で1回しか使えません。考えてみれば当然ですよね。メインの内容が2つも3つもあったら、どれがメインなのかわからなくなってしまいます。",
+      "durationSec": 46,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "main",
+          "reading": "メイン",
+          "definition": "ページのメインコンテンツを入れる場所。1ページに1回だけ使える。",
+          "example": "お店の売り場、新聞の記事本文にあたる部分"
+        },
+        "transition": { "enter": "slide-left" }
+      }
+    },
+    {
+      "scene_id": 21,
+      "narration": "4つ目はsectionタグです。mainの中身をさらに細かく分けるときに使います。自己紹介ページなら、「プロフィール」「趣味」「連絡先」という3つのまとまりがありますよね。それぞれをsectionで囲んで、「ここからここまでが一つのまとまりですよ」と示すわけです。本の「章」をイメージしてください。1冊の本に複数の章があるように、mainの中に複数のsectionを入れることができます。",
+      "durationSec": 43,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "section",
+          "reading": "セクション",
+          "definition": "mainの中身をまとまりごとに区切るタグ。複数使えます。",
+          "example": "本の「章」のイメージ。mainという本の中に複数のsection"
+        },
+        "transition": { "enter": "slide-left" }
+      }
+    },
+    {
+      "scene_id": 22,
+      "narration": "このように、sectionの中にはh2の見出しを入れるのが一般的です。各章にタイトルがあるのと同じですね。",
+      "durationSec": 20,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "<main>\n  <section>\n    <h2>自己紹介</h2>\n    <p>ネイルサロンを経営しています。</p>\n  </section>\n  <section>\n    <h2>趣味</h2>\n    <ul>\n      <li>映画鑑賞</li>\n    </ul>\n  </section>\n</main>",
+          "language": "html",
+          "title": "sectionタグの書き方"
+        },
+        "transition": { "enter": "slide-up" }
+      }
+    },
+    {
+      "scene_id": 23,
+      "narration": "5つ目はarticleタグです。「アーティクル」、つまり「記事」という意味ですね。ブログの投稿やニュース記事のように、それだけで独立した内容のまとまりに使います。sectionとの違いが少しわかりにくいかもしれませんが、ポイントは「それだけを切り出しても意味が通じるかどうか」です。ブログの記事は、その記事だけを別のサイトに貼り付けても読めますよね。そういう独立したコンテンツにarticleを使います。今日の自己紹介ページでは使いませんが、ブログやニュースサイトを見るとよく使われています。名前と「独立した記事に使う」という役割だけ覚えておいてくださいね。",
+      "durationSec": 56,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "article",
+          "reading": "アーティクル",
+          "definition": "それだけで独立したコンテンツに使うタグ。ブログ記事やニュース記事など。",
+          "example": "「切り出しても意味が通じる」内容に使う"
+        },
+        "transition": { "enter": "slide-left" }
+      }
+    },
+    {
+      "scene_id": 24,
+      "narration": "最後に6つ目、footerタグです。ページの一番下にくるフッター部分です。著作権表示や、お問い合わせ先のメールアドレス、プライバシーポリシーへのリンクなど、ページの補足的な情報を入れます。お店でいえば、出口付近にある営業時間や住所の案内板ですね。",
+      "durationSec": 30,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "footer",
+          "reading": "フッター",
+          "definition": "ページの一番下に来る部分。著作権表示・連絡先・補足情報を入れる。",
+          "example": "お店の出口付近の案内板のイメージ"
+        },
+        "transition": { "enter": "slide-left" }
+      }
+    },
+    {
+      "scene_id": 25,
+      "narration": "ちなみに、ここに出てくる「&copy;」はコピーライトマークを表示するための特殊な書き方です。ブラウザでは「©」の記号として表示されます。",
+      "durationSec": 22,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "<footer>\n  <p>お問い合わせ: info@example.com</p>\n  <p>&copy; 2024 田中太郎</p>\n</footer>",
+          "language": "html",
+          "title": "footerタグの書き方"
+        },
+        "transition": { "enter": "slide-up" }
+      }
+    },
+    {
+      "scene_id": 26,
+      "narration": "では、ここまでの6つのタグを整理しましょう。headerがページの顔、看板。navが案内板。mainが売り場、つまりメインの内容。sectionが売り場の中の各コーナー。articleが独立した記事。footerが出口の案内板。こうして見ると、ウェブページの間取り図ができあがるわけです。headerが玄関、mainがリビング、footerが勝手口、と考えてもいいですね。6つ全部を一度に覚える必要はありませんから、まずはheader、main、footerの3つだけしっかり押さえておけば、このあとのライブコーディングもスムーズに進められると思います。",
+      "durationSec": 51,
+      "visual": {
+        "type": "remotion",
+        "component": "IconListScreen",
+        "props": {
+          "title": "6つのタグ まとめ",
+          "items": [
+            { "icon": "🏠", "title": "header", "description": "ページの顔・看板", "color": "#ef4444" },
+            { "icon": "🗺️", "title": "nav", "description": "案内板・メニュー", "color": "#ef4444" },
+            { "icon": "📄", "title": "main", "description": "メインの売り場", "color": "#ef4444" },
+            { "icon": "📑", "title": "section", "description": "売り場内の各コーナー", "color": "#ef4444" },
+            { "icon": "📰", "title": "article", "description": "独立した記事", "color": "#ef4444" },
+            { "icon": "👣", "title": "footer", "description": "出口の案内板", "color": "#ef4444" }
+          ]
+        },
+        "transition": { "enter": "slide-left" }
+      }
+    },
+    {
+      "scene_id": 27,
+      "narration": "さて、セマンティックタグの仲間として、もう1つ覚えてほしいタグがあります。divタグです。divタグは「ディビジョン」、つまり「仕切り」「区画」という意味です。これは先ほどの6つのセマンティックタグとは少し性格が違います。headerやmainには「ここはヘッダーです」「ここはメインです」という明確な意味がありました。「この部屋はリビングです」と名札が貼ってあるのと同じですね。",
+      "durationSec": 40,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "div",
+          "reading": "ディビジョン",
+          "definition": "「仕切り・区画」の意味。意味を持たない汎用の箱タグ。",
+          "example": "「名前のない仕切り板」のイメージ"
+        },
+        "transition": { "enter": "slide-left" }
+      }
+    },
+    {
+      "scene_id": 28,
+      "narration": "ところがdivには、そういった意味がありません。部屋に名札を貼らない。ただ「この範囲をひとまとめにしますよ」という箱でしかないんです。いわば、名前のない仕切り板です。では、何に使うのかというと、たとえばCSSでスタイルを当てたいときです。CSSはパート3で学びますが、複数の要素にまとめて背景色をつけたいとか、横並びにレイアウトしたいとか、そういう「見た目の都合でグループ化したい」場面で使います。意味ではなく、見た目の理由で囲みたいときの道具ですね。",
+      "durationSec": 50,
+      "visual": {
+        "type": "remotion",
+        "component": "ComparisonScreen",
+        "props": {
+          "left": {
+            "title": "セマンティックタグ",
+            "points": ["意味を持つ", "「ここが何か」を伝える", "header/main/footerなど"],
+            "color": "#ef4444"
+          },
+          "right": {
+            "title": "divタグ",
+            "points": ["意味を持たない", "見た目の都合でまとめる", "CSSでスタイルを当てるとき"],
+            "color": "#f59e0b"
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 29,
+      "narration": "ですから、使い分けのルールはとてもシンプルです。意味がはっきりしている部分にはセマンティックタグを使う。意味はないけど見た目の都合でまとめたいときにはdivを使う。divは便利なタグなので、つい何でもdivで囲みたくなりがちです。実はHTMLの歴史の中で、セマンティックタグが登場する前は、ウェブページの構造をすべてdivで作っていた時代がありました。でもそれだと、コードを見てもdivだらけで、どこが何なのかさっぱりわからない。機械にとっては間取り図のないマンションと同じです。そこで、header、main、footerといったセマンティックタグが生まれたんですね。ですから、今のベストプラクティスは「意味のある箱にはセマンティックタグ、それ以外はdiv」。このバランス感覚を持っておくと、きれいなHTMLが書けるようになります。",
+      "durationSec": 55,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "tip",
+          "title": "divとセマンティックタグの使い分け",
+          "body": "意味がある部分はセマンティックタグ（header/main/footerなど）。見た目の都合だけならdiv。これがベストプラクティスです。"
+        }
+      }
+    },
+    {
+      "scene_id": 30,
+      "narration": "さあ、ここからはライブコーディングです。今まで作ってきた自己紹介ページを、セマンティックタグで構造化していきましょう。まず、CodePenを開いてください。前回までに作った自己紹介ページのペンを開きます。皆さんのコードは、名前や内容は違っていても、おおよそこんな構成になっていると思います。h1で名前の見出し、pで自己紹介文、h2でセクションの見出し、ulで趣味のリスト、imgで写真、aでSNSリンク。そしてページの最後にコピーライト表示。上から下にタグが並んでいるだけの状態ですね。",
+      "durationSec": 52,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "info",
+          "icon": "💻",
+          "title": "ライブコーディング開始",
+          "body": "既存の自己紹介ページをセマンティックタグで構造化します。コードの中身は変えず、外側から「囲む」だけです。"
+        },
+        "transition": { "enter": "slide-left" }
+      }
+    },
+    {
+      "scene_id": 31,
+      "narration": "今からやることは、この既存のコードの中身は一切変えずに、セマンティックタグで「囲む」だけです。テキストも、リンクも、画像も、そのまま残します。外側に構造だけを追加する。これを「リファクタリング」と言います。見た目や動きは変えずに、コードの構造をよくする作業のことです。プロの開発者もよく使う言葉で、実際の現場でも頻繁に行われています。既存のウェブサイトのHTMLをセマンティックタグで整理し直す、というのはまさに典型的なリファクタリングですね。",
+      "durationSec": 51,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "リファクタリング",
+          "reading": "Refactoring",
+          "definition": "見た目や動きは変えずに、コードの構造をよくする作業のこと。",
+          "example": "セマンティックタグで既存のHTMLを整理し直すのが典型例"
+        }
+      }
+    },
+    {
+      "scene_id": 32,
+      "narration": "では、上から順番にやっていきましょう。まず、ページの一番上です。h1の見出しを、headerタグで囲みましょう。コードの先頭にheaderの開始タグを書いて、h1の下にheaderの閉じタグを書きます。headerの開始タグと閉じタグで、h1をサンドイッチにするイメージですね。h1タグの前に半角スペースを2つ入れて字下げしましょう。字下げをすると、「h1がheaderの中に入っている」ということがコードの見た目でもわかりやすくなります。できましたか？プレビューを見てみてください。見た目は変わっていませんよね。それで正解なんです。セマンティックタグは見た目を変えるためのものではありませんから。",
+      "durationSec": 61,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "<header>\n  <h1>田中太郎のページ</h1>\n</header>",
+          "language": "html",
+          "title": "STEP 1: headerで囲む"
+        },
+        "transition": { "enter": "slide-up" }
+      }
+    },
+    {
+      "scene_id": 33,
+      "narration": "次に、headerの中にnavタグを追加しましょう。ページ内の各セクションへのナビゲーションリンクを作ります。h1の下、headerの閉じタグの前に、こう書いてください。navタグの中に、aタグでリンクを3つ並べました。リンク先が「#about」のようにシャープ記号で始まっていますね。これは「ページ内リンク」と言って、同じページの中の特定の場所に飛ぶためのリンクです。シャープ記号のあとの名前は、飛び先の目印になります。飛び先の設定はこのあとやりますので、今はリンクだけ先に書いておきましょう。プレビューを見ると、「自己紹介」「趣味」「リンク」というテキストリンクが表示されていると思います。",
+      "durationSec": 63,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "<header>\n  <h1>田中太郎のページ</h1>\n  <nav>\n    <a href=\"#about\">自己紹介</a>\n    <a href=\"#hobby\">趣味</a>\n    <a href=\"#links\">リンク</a>\n  </nav>\n</header>",
+          "language": "html",
+          "title": "STEP 2: navを追加"
+        },
+        "transition": { "enter": "slide-up" }
+      }
+    },
+    {
+      "scene_id": 34,
+      "narration": "続いて、mainタグです。ヘッダーの下からフッターの手前まで、ページの中心的な内容をすべてmainで囲みます。headerの閉じタグのすぐ下の行にmainの開始タグを書きます。そして、コピーライト表示の手前にmainの閉じタグを書きましょう。headerとfooterの間にある内容が、すべてmainの中に入る形ですね。ここまでで、ページ全体に3つの大きな区画ができました。header、main、footer。これだけでも、ページの骨組みとしてはかなりわかりやすくなっています。では次に、mainの中身をさらにsectionで区切っていきましょう。自己紹介の部分、趣味の部分、リンクの部分。この3つのまとまりを、それぞれsectionタグで囲んでいきます。",
+      "durationSec": 61,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "info",
+          "icon": "📐",
+          "title": "STEP 3: mainで全体を囲む",
+          "body": "headerの下からfooterの手前まで、すべてをmainタグで囲みます。header・main・footerの3区画が完成します。"
+        }
+      }
+    },
+    {
+      "scene_id": 35,
+      "narration": "まず、自己紹介のセクションです。h2の「自己紹介」見出しから、関連する段落や画像までをsectionで囲みます。sectionの開始タグに「id=\"about\"」と書きました。このidが、先ほどnavで作った「#about」リンクの飛び先になります。ナビゲーションで「自己紹介」をクリックすると、このsectionまでスクロールしてくれるわけです。これでページ内リンクの仕組みが完成しますね。",
+      "durationSec": 42,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "  <section id=\"about\">\n    <h2>自己紹介</h2>\n    <p>ネイルサロン「Bloom」を経営して5年目です。</p>\n    <img src=\"https://images.unsplash.com/photo-example\" alt=\"サロンの写真\">\n  </section>",
+          "language": "html",
+          "title": "STEP 4a: section id=\"about\""
+        },
+        "transition": { "enter": "slide-up" }
+      }
+    },
+    {
+      "scene_id": 36,
+      "narration": "同じ要領で、趣味のセクションも囲みましょう。idは「hobby」にしました。navの「#hobby」リンクと対応していますね。そしてリンクのセクションです。3つのsectionがmainの中に並びました。本の3つの章が1冊の本に収まっているイメージです。sectionの数は皆さんのページの内容に合わせて増やしても大丈夫ですよ。",
+      "durationSec": 36,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "  <section id=\"hobby\">\n    <h2>趣味</h2>\n    <ul>\n      <li>映画鑑賞</li>\n      <li>カフェ巡り</li>\n      <li>ヨガ</li>\n    </ul>\n  </section>\n\n  <section id=\"links\">\n    <h2>リンク</h2>\n    <a href=\"https://instagram.com/bloom_nail\" target=\"_blank\">Instagram</a>\n  </section>",
+          "language": "html",
+          "title": "STEP 4b: section hobby と links"
+        },
+        "transition": { "enter": "slide-up" }
+      }
+    },
+    {
+      "scene_id": 37,
+      "narration": "最後に、ページの一番下にfooterを作ります。コピーライト表示やお問い合わせ情報をfooterで囲みましょう。footerはmainの閉じタグの下に書きます。mainの中ではなく、外側ですよ。メインコンテンツとフッターは別のまとまりですからね。お店でいうと、売り場を出てから出口の案内板がある、という配置です。ここで一つお伝えしておきたいことがあります。今、CodePenでは1つのHTMLペインにすべてのコードを書いていますが、実際のウェブサイトでは、このコード全体が「index.html」という1つのファイルの中身になります。パート4でファイルを使った開発環境に進んだとき、今日書いた構造がそのままファイルの中の構造になりますので、この感覚を覚えておいてくださいね。",
+      "durationSec": 67,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "<footer>\n  <p>&copy; 2024 田中太郎</p>\n</footer>",
+          "language": "html",
+          "title": "STEP 5: footerで締める"
+        },
+        "transition": { "enter": "slide-up" }
+      }
+    },
+    {
+      "scene_id": 38,
+      "narration": "では、ここまでのコード全体を確認しましょう。皆さんのコードもこのような形になっているか、見比べてみてください。名前やリンク先はそれぞれ違うと思いますが、構造は同じになっているはずです。headerの中にh1とnav。mainの中にsectionが3つ。そして最後にfooter。ページの間取り図が完成しましたね。navの中のリンクをクリックしてみてください。ページ内の対応するsectionにスクロールするはずです。もしうまく動かない場合は、navのリンク先の「#about」と、sectionのid「about」が一致しているか確認してみてください。",
+      "durationSec": 54,
+      "visual": {
+        "type": "remotion",
+        "component": "CodeWalkthroughScreen",
+        "props": {
+          "title": "完成コードの全体像",
+          "code": "<header>\n  <h1>田中太郎のページ</h1>\n  <nav>\n    <a href=\"#about\">自己紹介</a>\n    <a href=\"#hobby\">趣味</a>\n    <a href=\"#links\">リンク</a>\n  </nav>\n</header>\n\n<main>\n  <section id=\"about\">\n    <h2>自己紹介</h2>\n    <p>ネイルサロン「Bloom」を経営して5年目です。</p>\n  </section>\n  <section id=\"hobby\">\n    <h2>趣味</h2>\n    <ul><li>映画鑑賞</li></ul>\n  </section>\n  <section id=\"links\">\n    <h2>リンク</h2>\n    <a href=\"https://instagram.com/bloom_nail\">Instagram</a>\n  </section>\n</main>\n\n<footer>\n  <p>&copy; 2024 田中太郎</p>\n</footer>",
+          "highlightLines": [1, 9, 10, 17, 21, 25],
+          "caption": "header・main（3つのsection）・footerの構造"
+        },
+        "transition": { "enter": "slide-up" }
+      }
+    },
+    {
+      "scene_id": 39,
+      "narration": "ここで、リファクタリングの前と後を見比べてみましょう。まず、変更前のコードを思い出してください。h1、p、h2、ul、img、aといったタグが、ただ上から順番に並んでいるだけでした。タグとタグの間に区切りがないので、コードを読む機械にとっては「ここからここまでが1つのまとまり」という情報が一切ありません。言ってみれば、仕切りのない倉庫に荷物が並んでいるような状態です。",
+      "durationSec": 43,
+      "visual": {
+        "type": "remotion",
+        "component": "BeforeAfterScreen",
+        "props": {
+          "title": "リファクタリング 前後比較",
+          "before": {
+            "label": "変更前",
+            "points": ["h1/p/h2/ulがただ並ぶ", "まとまりの情報がない", "機械には構造が伝わらない"],
+            "color": "#ef4444"
+          },
+          "after": {
+            "label": "変更後",
+            "points": ["header・main・footerが明確", "3つのsectionで章立て", "人にも機械にも読みやすい"],
+            "color": "#22c55e"
+          }
+        },
+        "transition": { "enter": "slide-left" }
+      }
+    },
+    {
+      "scene_id": 40,
+      "narration": "一方、変更後のコードを見てください。headerがあって、mainがあって、その中にsectionが3つ並んで、最後にfooterがある。コードをざっと眺めただけで、ページの構成がひと目で把握できますよね。プレビューを見比べてみてください。見た目にはほとんど違いがありません。navのリンクが増えた程度で、全体のレイアウトや文字の大きさは何も変わっていないはずです。でも、意味はまったく違います。変更前のコードは「タグが上から順に並んでいるだけ」のページ。変更後のコードは「意味のある構造を持ったページ」です。見た目は同じでも、中身の質がまるで違うんです。",
+      "durationSec": 58,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🔄",
+          "headline": "見た目は同じ。でも意味は違う",
+          "detail": "変更後は「意味のある構造を持ったページ」。検索エンジンやAIに正確に伝わる。",
+          "color": "#ef4444"
+        }
+      }
+    },
+    {
+      "scene_id": 41,
+      "narration": "これは、整理整頓されていない部屋と、きちんと収納された部屋の違いに似ています。どちらも同じ物が置いてあるんですが、片付いた部屋のほうが、どこに何があるかすぐにわかりますよね。来客があったときにも、整理された部屋のほうが好印象です。ウェブページにとっての「来客」が、検索エンジンやエーアイなわけです。実際のところ、世の中のウェブサイトを見てみると、プロが作ったサイトにはほぼ必ずセマンティックタグが使われています。パート2の最後の講義で、エーアイにHTMLを作ってもらう実習をしますが、そのときにエーアイが出力したコードを見て、「ここにheaderタグがないな」「mainの中をsectionで分けたほうが読みやすいな」と自分で判断できるかどうか。今日学んだことが、まさにその力の土台になります。",
+      "durationSec": 64,
+      "visual": {
+        "type": "remotion",
+        "component": "TwoColumnScreen",
+        "props": {
+          "title": "セマンティックタグで変わること",
+          "left": {
+            "title": "整理前の部屋",
+            "body": "物は全部ある。でもどこに何があるかわからない。",
+            "icon": "🗂️",
+            "color": "#94a3b8"
+          },
+          "right": {
+            "title": "整理後の部屋",
+            "body": "同じ物でも、どこに何があるか一目でわかる。来客にも好印象。",
+            "icon": "✨",
+            "color": "#ef4444"
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 42,
+      "narration": "今日のポイントを振り返りましょう。1つ目。セマンティックタグは、ウェブページに「間取り図」を作るためのタグです。headerがページの顔、navがナビゲーション、mainがメインコンテンツ、sectionがまとまり、articleが独立した記事、footerがページの末尾。この6つの名前と役割を、なんとなくでいいので頭に入れておいてください。2つ目。divタグは「意味のない箱」です。セマンティックタグで表現できる部分にはセマンティックタグを使い、見た目の都合でまとめたいだけのときにdivを使う。この使い分けがポイントでした。3つ目。セマンティックタグを入れても見た目はほとんど変わりません。でも、検索エンジンやエーアイにとっては大きな違いがあります。「見た目は同じだが意味が違う」。今日いちばん大切なメッセージはこれです。",
+      "durationSec": 71,
+      "visual": {
+        "type": "remotion",
+        "component": "SummaryScreen",
+        "props": {
+          "title": "今日のポイント",
+          "points": [
+            "セマンティックタグはページの「間取り図」",
+            "6タグ: header / nav / main / section / article / footer",
+            "divは意味なし。見た目の都合でグループ化するときに使う",
+            "見た目は変わらない。でも機械への伝わり方が変わる"
+          ]
+        },
+        "transition": { "enter": "slide-left" }
+      }
+    },
+    {
+      "scene_id": 43,
+      "narration": "タグの名前を全部暗記する必要はありません。何を検索すべきかを知っていれば、それで十分なんです。「ページの上部にはheaderっていうタグがあったな」「まとまりをつけるのはsectionだったな」くらいの記憶があれば、あとはいつでも調べられます。今日リファクタリングした自己紹介ページは、CodePenに保存されています。次の講義までに、もう一度コードを開いて、header、main、section、footerの構造をざっと眺めてみてください。2回目に見ると、構造がよりすっきりと頭に入ってくると思います。さて、次の講義では「フォーム」を学びます。お問い合わせフォームのように、ユーザーが文字を入力したり、選択肢を選んだりできる仕組みです。inputタグやbuttonタグなど、新しいタグがいくつか登場しますが、どれもウェブサイトでよく見かけるおなじみのパーツです。今日の自己紹介ページに、お問い合わせフォームを追加してみましょう。それでは、お疲れ様でした。次の講義でお会いしましょう。",
+      "durationSec": 76,
+      "visual": {
+        "type": "remotion",
+        "component": "EndScreen",
+        "props": {
+          "title": "お疲れ様でした",
+          "message": "CodePenを開いて、header・main・section・footerの構造をもう一度確認しておきましょう。",
+          "nextPreview": "フォームを作ろう"
+        },
+        "transition": { "exit": "zoom" }
+      }
+    }
+  ]
+}
