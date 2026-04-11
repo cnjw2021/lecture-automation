@@ -5,6 +5,7 @@ export interface NarrationAudioPreparationParams {
   jsonFileName: string;
   lecturePath: string;
   forceRegenerate: boolean;
+  targetSceneIds?: number[];
 }
 
 export interface NarrationAudioPreparationResult {

@@ -24,10 +24,12 @@ import { RecordingManifest } from '../../infrastructure/providers/PlaywrightVisu
 export class ReverseSyncPlaywrightUseCase {
   constructor(private readonly lectureRepository: ILectureRepository) {}
 
-  async execute(lecture: Lecture): Promise<{ adjustedSceneIds: number[] }> {
+  async execute(lecture: Lecture, options: { sceneIds?: number[] } = {}): Promise<{ adjustedSceneIds: number[] }> {
     const adjustedSceneIds: number[] = [];
+    const targetSceneIds = options.sceneIds;
 
     for (const scene of lecture.sequence) {
+      if (targetSceneIds && !targetSceneIds.includes(scene.scene_id)) continue;
       if (scene.visual.type !== 'playwright') continue;
       const visual = scene.visual as PlaywrightVisual;
 

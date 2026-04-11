@@ -114,9 +114,22 @@ export class ConfiguredNarrationAudioPreparationService implements INarrationAud
     const { provider, providerName } = this.audioProviderFactory.create();
     console.log(`🔊 오디오 프로바이더: ${providerName}`);
     console.log('\n--- 1단계: 나레이션 오디오 생성 ---');
+    const targetSceneIds = params.targetSceneIds ?? [];
+    const hasTargetScenes = targetSceneIds.length > 0;
+    const targetLecture = hasTargetScenes
+      ? {
+          ...params.lecture,
+          sequence: params.lecture.sequence.filter(scene => targetSceneIds.includes(scene.scene_id)),
+        }
+      : params.lecture;
+
+    if (hasTargetScenes) {
+      console.log(`🎯 수정 모드: 지정 씬만 오디오 재생성 (${targetSceneIds.join(', ')})`);
+      console.log('   청크 모드를 우회하고 씬 단위 TTS를 사용합니다.');
+    }
 
     const chunkedConfig = config.getChunkedGenerationConfig();
-    if (chunkedConfig.enabled) {
+    if (chunkedConfig.enabled && !hasTargetScenes) {
       console.log(`📦 청크 단위 생성 모드 (최대 ${chunkedConfig.maxCharsPerChunk}자/청크)`);
       if (!params.forceRegenerate) {
         console.log(`   기존 씬 WAV가 있으면 스킵됩니다. 청크 모드로 재생성하려면 force 옵션을 사용하세요.`);
@@ -134,10 +147,10 @@ export class ConfiguredNarrationAudioPreparationService implements INarrationAud
         audioConfig,
         chunkedConfig.maxCharsPerChunk,
       );
-      await chunkedUseCase.execute(params.lecture, { force: params.forceRegenerate });
+      await chunkedUseCase.execute(targetLecture, { force: params.forceRegenerate });
     } else {
       const generateAudioUseCase = new GenerateAudioUseCase(provider, this.lectureRepository);
-      await generateAudioUseCase.execute(params.lecture, { force: params.forceRegenerate });
+      await generateAudioUseCase.execute(targetLecture, { force: params.forceRegenerate });
     }
 
     return { source: 'tts', providerName };

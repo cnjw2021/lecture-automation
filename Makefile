@@ -40,8 +40,8 @@ help:
 	@echo "make preview SCENE=6 - 특정 씬의 프리뷰 이미지 생성 (PNG)"
 	@echo "make tts-sample      - 현재 프로바이더로 TTS 샘플 생성"
 	@echo "make tts-sample TTS=gemini_cloud_tts RATE=0.7 - 프로바이더/속도 지정"
-	@echo "make regen-scene LECTURE=xxx SCENE=5       - 특정 씬 오디오 재생성"
-	@echo "                       청크 모드에서는 해당 씬이 포함된 청크 전체를 다시 TTS 생성"
+	@echo "make regen-scene LECTURE=xxx SCENE=5       - 특정 씬만 빠르게 재생성"
+	@echo "                       청크 모드라도 수정용 regen은 씬 단위 TTS + 지정 씬 렌더만 수행"
 	@echo "make regen-scene LECTURE=xxx SCENE='5 12'  - 여러 씬 동시 재생성"
 	@echo "make resplit-chunk-audio LECTURE=xxx SCENE=5      - 저장된 청크 원본으로 재-TTS 없이 재분할"
 	@echo "make resplit-chunk-audio LECTURE=xxx SCENE='5 12' - 여러 씬이 포함된 청크 재분할"
@@ -112,7 +112,7 @@ regen-scene:
 		echo "  🗑️  scene-$$scene.webm 캡처 삭제 중..."; \
 		rm -f packages/remotion/public/captures/$$LECTURE_ID/scene-$$scene.webm; \
 	done
-	node $(ENGINE_PATH) $(LECTURE)
+	env TARGET_SCENES="$(SCENE)" node $(ENGINE_PATH) $(LECTURE)
 
 resplit-chunk-audio:
 	@echo "✂️  저장된 청크 원본으로 재분할: $(LECTURE) / Scene $(SCENE)"

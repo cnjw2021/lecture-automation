@@ -23,7 +23,7 @@ export class GenerateAudioUseCase {
     console.log(`[${lecture.lecture_id}] 오디오 공정 시작 (Provider: ${this.audioProvider.constructor.name})`);
 
     const results: any[] = [];
-    const durations: Record<string, number> = {};
+    const durations: Record<string, number> = (await this.lectureRepository.getAudioDurations(lecture.lecture_id)) ?? {};
     let lastRequestTime = 0;
 
     for (const scene of lecture.sequence) {

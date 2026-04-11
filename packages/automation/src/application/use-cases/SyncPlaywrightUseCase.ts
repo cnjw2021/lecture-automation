@@ -42,12 +42,17 @@ export class SyncPlaywrightUseCase {
    * 강의 전체 playwright 씬을 처리.
    * 원본 lecture 객체를 변경하지 않고 업데이트된 복사본을 반환한다.
    */
-  async execute(lecture: Lecture): Promise<{ updatedLecture: Lecture; changedSceneIds: number[] }> {
+  async execute(
+    lecture: Lecture,
+    options: { sceneIds?: number[] } = {},
+  ): Promise<{ updatedLecture: Lecture; changedSceneIds: number[] }> {
     const updatedSequence = lecture.sequence.map(s => ({ ...s }));
     const changedSceneIds: number[] = [];
+    const targetSceneIds = options.sceneIds;
 
     for (let i = 0; i < updatedSequence.length; i++) {
       const scene = updatedSequence[i];
+      if (targetSceneIds && !targetSceneIds.includes(scene.scene_id)) continue;
       if (scene.visual.type !== 'playwright') continue;
       const visual = scene.visual as PlaywrightVisual;
       if (!visual.syncPoints || visual.syncPoints.length === 0) continue;

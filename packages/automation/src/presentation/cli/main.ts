@@ -21,12 +21,16 @@ async function loadLecture(jsonFileName: string): Promise<{ lecture: Lecture; le
 async function runAutomation(jsonFileName: string) {
   const forceRegenerate = process.env.FORCE === '1';
   const useSynthCapture = process.env.SYNTH === '1';
+  const targetSceneIds = parseTargetSceneIds(process.env.TARGET_SCENES);
 
   if (forceRegenerate) {
     console.log('🔄 강제 재생성 모드 활성화 - 기존 에셋을 무시합니다.');
   }
   if (useSynthCapture) {
     console.log('🖼️ 상태 합성형 캡처 모드 활성화 - 스크린샷 기반 Playwright 씬 캡처');
+  }
+  if (targetSceneIds.length > 0) {
+    console.log(`🎯 대상 씬 제한 모드 활성화 - Scene ${targetSceneIds.join(', ')}`);
   }
 
   console.log('🚀 강의 자동화 파이프라인 가동 (Full-Cycle, Clean Architecture)...');
@@ -41,6 +45,7 @@ async function runAutomation(jsonFileName: string) {
       lecturePath,
       forceRegenerate,
       useSynthCapture,
+      targetSceneIds: targetSceneIds.length > 0 ? targetSceneIds : undefined,
       persistLecture: async updatedLecture => {
         await fs.writeJson(lecturePath, updatedLecture, { spaces: 2 });
       },
@@ -53,6 +58,17 @@ async function runAutomation(jsonFileName: string) {
     console.error(error);
     process.exit(1);
   }
+}
+
+function parseTargetSceneIds(raw?: string): number[] {
+  if (!raw) return [];
+
+  return raw
+    .split(/[,\s]+/)
+    .map(value => value.trim())
+    .filter(Boolean)
+    .map(value => Number.parseInt(value, 10))
+    .filter(value => Number.isInteger(value) && value > 0);
 }
 
 if (require.main === module) {
