@@ -25,7 +25,8 @@ remotion-project/out/
 diagnose.js
 list-models.js
 
-# Claude Code 메모리
+# Claude Code
+.claude/
 memory/
 
 # 임시

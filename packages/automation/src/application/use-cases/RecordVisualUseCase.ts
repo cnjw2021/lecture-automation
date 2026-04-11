@@ -11,6 +11,7 @@ export interface RecordVisualUseCaseOptions {
   useSynthCapture?: boolean;
   /** true이면 라이브 데모 씬(wait_for 포함)만 처리. false/미지정이면 라이브 데모 씬 제외. */
   filterLiveDemo?: boolean;
+  scenes?: number[];
 }
 
 export class RecordVisualUseCase {
@@ -21,12 +22,13 @@ export class RecordVisualUseCase {
   ) {}
 
   async execute(lecture: Lecture, options: RecordVisualUseCaseOptions = {}): Promise<void> {
-    const { force = false, useSynthCapture = false, filterLiveDemo } = options;
+    const { force = false, useSynthCapture = false, filterLiveDemo, scenes } = options;
     const mode = useSynthCapture && this.stateCaptureProvider ? '상태 합성형' : 'raw video';
     console.log(`[${lecture.lecture_id}] 시각 자료 녹화 공정 시작 (모드: ${mode})`);
 
     for (const scene of lecture.sequence) {
       if (scene.visual.type !== 'playwright') continue;
+      if (scenes && !scenes.includes(scene.scene_id)) continue;
 
       // 라이브 데모 씬 필터링 (filterLiveDemo가 명시된 경우에만)
       if (filterLiveDemo !== undefined) {

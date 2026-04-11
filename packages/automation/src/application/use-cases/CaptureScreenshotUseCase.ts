@@ -4,6 +4,7 @@ import { IScreenshotProvider } from '../../domain/interfaces/IScreenshotProvider
 
 export interface CaptureScreenshotUseCaseOptions {
   force?: boolean;
+  scenes?: number[];
 }
 
 export class CaptureScreenshotUseCase {
@@ -13,9 +14,11 @@ export class CaptureScreenshotUseCase {
   ) {}
 
   async execute(lecture: Lecture, options: CaptureScreenshotUseCaseOptions = {}): Promise<void> {
-    const { force = false } = options;
+    const { force = false, scenes } = options;
 
-    const screenshotScenes = lecture.sequence.filter(s => s.visual.type === 'screenshot');
+    const screenshotScenes = lecture.sequence.filter(s =>
+      s.visual.type === 'screenshot' && (!scenes || scenes.includes(s.scene_id))
+    );
     if (screenshotScenes.length === 0) {
       console.log('  > 스크린샷 타입 씬 없음 (스킵)');
       return;

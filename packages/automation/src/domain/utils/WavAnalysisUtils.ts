@@ -107,7 +107,7 @@ export function insertSilenceIntoWav(
 }
 
 /** PCM 데이터로부터 WAV 파일 버퍼를 생성한다. */
-function buildWav(pcm: Buffer, sampleRate: number, channels: number, bitDepth: number): Buffer {
+export function buildWav(pcm: Buffer, sampleRate: number, channels: number, bitDepth: number): Buffer {
   const header = Buffer.alloc(44);
   const byteRate = sampleRate * channels * (bitDepth / 8);
   const blockAlign = channels * (bitDepth / 8);

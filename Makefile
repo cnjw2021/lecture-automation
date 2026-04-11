@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install install-align-deps build run run-master run-force run-master-force regen-scene render-scene record-webm align-master-audio import-master-audio import-master-audio-auto concat-scenes clean render-only preview tts-sample \
+.PHONY: help install install-align-deps build run run-master run-force run-master-force regen-scene resplit-chunk-audio render-scene record-webm align-master-audio import-master-audio import-master-audio-auto concat-scenes clean render-only preview tts-sample \
         preview-browser-mock preview-screenshot capture-screenshots test-screenshot-options \
         preview-springs sync-playwright save-auth
 
@@ -12,6 +12,7 @@ ENGINE_RENDER_SCENE = packages/automation/dist/presentation/cli/render-scene.js
 ENGINE_RECORD_WEBM = packages/automation/dist/presentation/cli/record-webm.js
 ENGINE_ALIGN_MASTER_AUDIO = packages/automation/dist/presentation/cli/align-master-audio.js
 ENGINE_IMPORT_MASTER_AUDIO = packages/automation/dist/presentation/cli/import-master-audio.js
+ENGINE_RESPLIT_CHUNK_AUDIO = packages/automation/dist/presentation/cli/resplit-chunk-audio.js
 ENGINE_CONCAT_SCENES = packages/automation/dist/presentation/cli/concat-scenes.js
 REMOTION_PATH = packages/remotion
 OUTPUT_DIR = output
@@ -39,8 +40,12 @@ help:
 	@echo "make preview SCENE=6 - 특정 씬의 프리뷰 이미지 생성 (PNG)"
 	@echo "make tts-sample      - 현재 프로바이더로 TTS 샘플 생성"
 	@echo "make tts-sample TTS=gemini_cloud_tts RATE=0.7 - 프로바이더/속도 지정"
-	@echo "make regen-scene LECTURE=xxx SCENE=5       - 특정 씬 오디오만 재생성"
+	@echo "make regen-scene LECTURE=xxx SCENE=5       - 특정 씬만 빠르게 재생성"
+	@echo "                       청크 모드라도 수정용 regen은 씬 단위 TTS + 지정 씬 렌더만 수행"
 	@echo "make regen-scene LECTURE=xxx SCENE='5 12'  - 여러 씬 동시 재생성"
+	@echo "make resplit-chunk-audio LECTURE=xxx SCENE=5      - 저장된 청크 원본으로 재-TTS 없이 재분할"
+	@echo "make resplit-chunk-audio LECTURE=xxx SCENE='5 12' - 여러 씬이 포함된 청크 재분할"
+	@echo "                       tmp/chunked-audio/<lectureId>/boundary-overrides.json 이 있으면 우선 적용"
 	@echo "make render-scene LECTURE=xxx SCENE=5      - 특정 씬 클립만 렌더링"
 	@echo "make render-scene LECTURE=xxx SCENE='5 12' - 여러 씬 클립 렌더링"
 	@echo "make record-webm LECTURE=xxx SCENE=17      - 특정 Playwright 씬 webm 재생성"
@@ -107,7 +112,13 @@ regen-scene:
 		echo "  🗑️  scene-$$scene.webm 캡처 삭제 중..."; \
 		rm -f packages/remotion/public/captures/$$LECTURE_ID/scene-$$scene.webm; \
 	done
-	node $(ENGINE_PATH) $(LECTURE)
+	env TARGET_SCENES="$(SCENE)" node $(ENGINE_PATH) $(LECTURE)
+
+resplit-chunk-audio:
+	@echo "✂️  저장된 청크 원본으로 재분할: $(LECTURE) / Scene $(SCENE)"
+	@echo "🔨 automation 패키지 빌드 중..."
+	npm run build -w packages/automation
+	node $(ENGINE_RESPLIT_CHUNK_AUDIO) $(LECTURE) $(SCENE)
 
 render-scene:
 	@echo "🎞️  씬 클립 렌더링: $(LECTURE) / Scene $(SCENE)"
