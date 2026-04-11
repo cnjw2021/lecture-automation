@@ -3,7 +3,7 @@ import * as path from 'path';
 import { Lecture } from '../../domain/entities/Lecture';
 import { AudioAlignment, AudioConfig } from '../../domain/interfaces/IAudioProvider';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
-import { splitChunkAudio } from '../../domain/services/ChunkAudioSplitter';
+import { BoundaryDiagnostic, BoundaryOverride, splitChunkAudio } from '../../domain/services/ChunkAudioSplitter';
 import { SceneNarrationSegment } from '../../domain/services/NarrationChunker';
 import { config } from '../../infrastructure/config';
 
@@ -25,6 +25,7 @@ export interface ResplitChunkedAudioUseCaseOptions {
 export interface ResplitChunkResult {
   chunkIndex: number;
   sceneIds: number[];
+  detectedBoundaries: BoundaryDiagnostic[];
 }
 
 export interface ResplitChunkedAudioUseCaseResult {
@@ -36,6 +37,7 @@ export interface ResplitChunkedAudioUseCaseResult {
 
 export class ResplitChunkedAudioUseCase {
   private readonly chunkDebugBaseDir = path.join(config.paths.root, 'tmp', 'chunked-audio');
+  private readonly boundaryOverridesFileName = 'boundary-overrides.json';
 
   constructor(
     private readonly lectureRepository: ILectureRepository,
@@ -64,6 +66,7 @@ export class ResplitChunkedAudioUseCase {
     const affectedChunks: ResplitChunkResult[] = [];
     const savedSceneIds = new Set<number>();
     const coveredTargetSceneIds = new Set<number>();
+    const boundaryOverrides = await this.loadBoundaryOverrides(debugDir);
 
     for (const fileName of manifestFiles) {
       const manifestPath = path.join(debugDir, fileName);
@@ -84,7 +87,11 @@ export class ResplitChunkedAudioUseCase {
 
       const wavBuffer = await fs.readFile(wavPath);
       const alignment = await fs.readJson(alignmentPath) as AudioAlignment;
-      const sceneSegments = splitChunkAudio(wavBuffer, alignment, manifest.segments, this.audioConfig);
+      const splitResult = splitChunkAudio(wavBuffer, alignment, manifest.segments, this.audioConfig, {
+        boundaryOverrides,
+      });
+      const sceneSegments = splitResult.scenes;
+      await fs.writeJson(`${chunkPrefix}.boundaries.json`, splitResult.boundaries, { spaces: 2 });
 
       for (const sceneSeg of sceneSegments) {
         await this.lectureRepository.saveAudio(lecture.lecture_id, sceneSeg.sceneId, sceneSeg.buffer);
@@ -102,6 +109,7 @@ export class ResplitChunkedAudioUseCase {
       affectedChunks.push({
         chunkIndex: manifest.chunkIndex,
         sceneIds: manifest.sceneIds,
+        detectedBoundaries: splitResult.boundaries.filter(boundary => boundary.detectedIssue || boundary.usedOverride),
       });
     }
 
@@ -127,5 +135,25 @@ export class ResplitChunkedAudioUseCase {
       affectedChunks,
       savedSceneIds: [...savedSceneIds].sort((a, b) => a - b),
     };
+  }
+
+  private async loadBoundaryOverrides(debugDir: string): Promise<BoundaryOverride[]> {
+    const overridePath = path.join(debugDir, this.boundaryOverridesFileName);
+    if (!await fs.pathExists(overridePath)) {
+      return [];
+    }
+
+    const raw = await fs.readJson(overridePath) as unknown;
+    if (!Array.isArray(raw)) {
+      throw new Error(`boundary-overrides.json 형식이 올바르지 않습니다: ${overridePath}`);
+    }
+
+    return raw.filter((item): item is BoundaryOverride => (
+      item !== null
+      && typeof item === 'object'
+      && Number.isInteger((item as BoundaryOverride).fromSceneId)
+      && Number.isInteger((item as BoundaryOverride).toSceneId)
+      && typeof (item as BoundaryOverride).offsetMs === 'number'
+    ));
   }
 }

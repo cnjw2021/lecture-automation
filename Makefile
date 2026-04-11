@@ -45,6 +45,7 @@ help:
 	@echo "make regen-scene LECTURE=xxx SCENE='5 12'  - 여러 씬 동시 재생성"
 	@echo "make resplit-chunk-audio LECTURE=xxx SCENE=5      - 저장된 청크 원본으로 재-TTS 없이 재분할"
 	@echo "make resplit-chunk-audio LECTURE=xxx SCENE='5 12' - 여러 씬이 포함된 청크 재분할"
+	@echo "                       tmp/chunked-audio/<lectureId>/boundary-overrides.json 이 있으면 우선 적용"
 	@echo "make render-scene LECTURE=xxx SCENE=5      - 특정 씬 클립만 렌더링"
 	@echo "make render-scene LECTURE=xxx SCENE='5 12' - 여러 씬 클립 렌더링"
 	@echo "make record-webm LECTURE=xxx SCENE=17      - 특정 Playwright 씬 webm 재생성"

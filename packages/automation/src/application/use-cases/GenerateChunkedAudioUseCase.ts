@@ -3,7 +3,7 @@ import * as path from 'path';
 import { Lecture } from '../../domain/entities/Lecture';
 import { AudioAlignment, AudioConfig, IAudioProvider } from '../../domain/interfaces/IAudioProvider';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
-import { splitChunkAudio } from '../../domain/services/ChunkAudioSplitter';
+import { BoundaryDiagnostic, BoundaryOverride, splitChunkAudio } from '../../domain/services/ChunkAudioSplitter';
 import { groupScenesIntoChunks, NarrationChunk, SceneNarrationSegment } from '../../domain/services/NarrationChunker';
 import { config } from '../../infrastructure/config';
 
@@ -20,6 +20,7 @@ export interface GenerateChunkedAudioUseCaseOptions {
 export class GenerateChunkedAudioUseCase {
   private readonly REQUEST_INTERVAL_MS = 7000;
   private readonly chunkDebugBaseDir = path.join(config.paths.root, 'tmp', 'chunked-audio');
+  private readonly boundaryOverridesFileName = 'boundary-overrides.json';
 
   constructor(
     private readonly audioProvider: IAudioProvider,
@@ -34,6 +35,7 @@ export class GenerateChunkedAudioUseCase {
 
     const chunks = groupScenesIntoChunks(lecture.sequence, this.maxCharsPerChunk);
     console.log(`  📦 ${lecture.sequence.length}개 씬 → ${chunks.length}개 청크로 그룹핑`);
+    const boundaryOverrides = await this.loadBoundaryOverrides(lecture.lecture_id);
 
     const durations: Record<string, number> = {};
     let lastRequestTime = 0;
@@ -94,7 +96,16 @@ export class GenerateChunkedAudioUseCase {
       if (chunk.segments.length === 1) {
         await this.saveSingleSceneChunk(lecture.lecture_id, chunk, buffer, alignment, durations);
       } else {
-        await this.splitAndSaveChunk(lecture.lecture_id, chunk, buffer, alignment, durations, isPartial);
+        await this.splitAndSaveChunk(
+          lecture.lecture_id,
+          chunk,
+          chunkIdx,
+          buffer,
+          alignment,
+          durations,
+          isPartial,
+          boundaryOverrides,
+        );
       }
     }
 
@@ -136,12 +147,18 @@ export class GenerateChunkedAudioUseCase {
   private async splitAndSaveChunk(
     lectureId: string,
     chunk: NarrationChunk,
+    chunkIdx: number,
     buffer: Buffer,
     alignment: AudioAlignment,
     durations: Record<string, number>,
     missingScenesOnly: boolean,
+    boundaryOverrides: ReadonlyArray<BoundaryOverride>,
   ): Promise<void> {
-    const sceneSegments = splitChunkAudio(buffer, alignment, chunk.segments, this.audioConfig);
+    const splitResult = splitChunkAudio(buffer, alignment, chunk.segments, this.audioConfig, {
+      boundaryOverrides,
+    });
+    const sceneSegments = splitResult.scenes;
+    await this.saveChunkBoundaryDiagnostics(lectureId, chunkIdx, splitResult.boundaries);
 
     for (const sceneSeg of sceneSegments) {
       if (missingScenesOnly && await this.lectureRepository.existsAudio(lectureId, sceneSeg.sceneId)) {
@@ -198,5 +215,36 @@ export class GenerateChunkedAudioUseCase {
     }, { spaces: 2 });
 
     return lectureDir;
+  }
+
+  private async saveChunkBoundaryDiagnostics(
+    lectureId: string,
+    chunkIdx: number,
+    boundaries: BoundaryDiagnostic[],
+  ): Promise<void> {
+    const lectureDir = path.join(this.chunkDebugBaseDir, lectureId);
+    await fs.ensureDir(lectureDir);
+    const chunkNumber = String(chunkIdx + 1).padStart(3, '0');
+    await fs.writeJson(path.join(lectureDir, `chunk-${chunkNumber}.boundaries.json`), boundaries, { spaces: 2 });
+  }
+
+  private async loadBoundaryOverrides(lectureId: string): Promise<BoundaryOverride[]> {
+    const overridePath = path.join(this.chunkDebugBaseDir, lectureId, this.boundaryOverridesFileName);
+    if (!await fs.pathExists(overridePath)) {
+      return [];
+    }
+
+    const raw = await fs.readJson(overridePath) as unknown;
+    if (!Array.isArray(raw)) {
+      throw new Error(`boundary-overrides.json 형식이 올바르지 않습니다: ${overridePath}`);
+    }
+
+    return raw.filter((item): item is BoundaryOverride => (
+      item !== null
+      && typeof item === 'object'
+      && Number.isInteger((item as BoundaryOverride).fromSceneId)
+      && Number.isInteger((item as BoundaryOverride).toSceneId)
+      && typeof (item as BoundaryOverride).offsetMs === 'number'
+    ));
   }
 }

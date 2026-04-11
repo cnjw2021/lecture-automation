@@ -30,6 +30,28 @@ async function runResplitChunkAudio(jsonFileName: string, sceneIds: number[]) {
     `   - chunks: ${result.affectedChunks.map(chunk => `${chunk.chunkIndex}(${chunk.sceneIds[0]}-${chunk.sceneIds.at(-1)})`).join(', ')}`
   );
   console.log(`   - saved scenes: ${result.savedSceneIds.join(', ')}`);
+
+  const detectedBoundaries = result.affectedChunks.flatMap(chunk =>
+    chunk.detectedBoundaries.map(boundary => ({ ...boundary, chunkIndex: chunk.chunkIndex })),
+  );
+  if (detectedBoundaries.length > 0) {
+    console.log('   - boundary diagnostics:');
+    for (const boundary of detectedBoundaries) {
+      const mode = boundary.usedOverride ? 'override' : 'auto';
+      console.log(
+        `     chunk ${boundary.chunkIndex} ${boundary.fromSceneId}->${boundary.toSceneId}` +
+        ` | ${mode}` +
+        ` | target=${boundary.targetMs}ms` +
+        ` | default=${boundary.defaultCutMs}ms` +
+        ` | suggested=${boundary.suggestedCutMs}ms` +
+        ` | applied=${boundary.appliedCutMs}ms` +
+        ` | offset=${boundary.appliedOffsetMs >= 0 ? '+' : ''}${boundary.appliedOffsetMs}ms`,
+      );
+      if (boundary.reasons.length > 0) {
+        console.log(`       reasons: ${boundary.reasons.join(', ')}`);
+      }
+    }
+  }
 }
 
 if (require.main === module) {

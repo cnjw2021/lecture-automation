@@ -10,8 +10,42 @@ export interface SceneAudioSegment {
   alignment: AudioAlignment;
 }
 
+export interface BoundaryOverride {
+  fromSceneId: number;
+  toSceneId: number;
+  offsetMs: number;
+  reason?: string;
+}
+
+export interface BoundaryDiagnostic {
+  fromSceneId: number;
+  toSceneId: number;
+  targetMs: number;
+  defaultCutMs: number;
+  suggestedCutMs: number;
+  appliedCutMs: number;
+  appliedOffsetMs: number;
+  usedOverride: boolean;
+  detectedIssue: boolean;
+  confidence: number;
+  reasons: string[];
+}
+
+export interface SplitChunkAudioOptions {
+  boundaryOverrides?: ReadonlyArray<BoundaryOverride>;
+}
+
+export interface SplitChunkAudioResult {
+  scenes: SceneAudioSegment[];
+  boundaries: BoundaryDiagnostic[];
+}
+
 const SEARCH_WINDOW_MS = 240;
 const MIN_SCENE_DURATION_MS = 250;
+const LONG_CHAR_MS = 1000;
+const SHORT_CHAR_MS = 50;
+const LATER_CANDIDATE_MIN_DELTA_MS = 30;
+const EARLIER_CANDIDATE_MIN_DELTA_MS = 30;
 
 interface SegmentTiming {
   sceneId: number;
@@ -21,6 +55,11 @@ interface SegmentTiming {
   textEndMs: number;
   adjustedStartMs: number;
   adjustedEndMs: number;
+}
+
+interface BoundaryCandidate {
+  cutMs: number;
+  rms: number;
 }
 
 /**
@@ -35,7 +74,8 @@ export function splitChunkAudio(
   alignment: AudioAlignment,
   segments: ReadonlyArray<SceneNarrationSegment>,
   audioConfig: AudioConfig,
-): SceneAudioSegment[] {
+  options: SplitChunkAudioOptions = {},
+): SplitChunkAudioResult {
   const metadata = readWavMetadata(wavBuffer);
   const { sampleRate, channels, bitDepth } = metadata;
   if (
@@ -65,7 +105,14 @@ export function splitChunkAudio(
 
   const frames = computeRmsFrames(wavBuffer, metadata);
   const timings = buildSegmentTimings(segments, alignment, totalDurationMs);
-  adjustSegmentBoundaries(timings, segments, alignment, totalDurationMs, frames);
+  const boundaries = adjustSegmentBoundaries(
+    timings,
+    segments,
+    alignment,
+    totalDurationMs,
+    frames,
+    options.boundaryOverrides ?? [],
+  );
 
   const results: SceneAudioSegment[] = [];
 
@@ -95,7 +142,10 @@ export function splitChunkAudio(
     });
   }
 
-  return results;
+  return {
+    scenes: results,
+    boundaries,
+  };
 }
 
 function buildSegmentTimings(
@@ -128,13 +178,16 @@ function adjustSegmentBoundaries(
   alignment: AudioAlignment,
   totalDurationMs: number,
   frames: RmsFrame[],
-): void {
+  boundaryOverrides: ReadonlyArray<BoundaryOverride>,
+): BoundaryDiagnostic[] {
+  const diagnostics: BoundaryDiagnostic[] = [];
+
   if (timings.length <= 1) {
     if (timings.length === 1) {
       timings[0].adjustedStartMs = 0;
       timings[0].adjustedEndMs = totalDurationMs;
     }
-    return;
+    return diagnostics;
   }
 
   timings[0].adjustedStartMs = 0;
@@ -164,10 +217,25 @@ function adjustSegmentBoundaries(
       separatorEndMs + SEARCH_WINDOW_MS,
     );
 
-    const cutMs = findLowestEnergyBoundary(targetMs, minMs, maxMs, frames);
+    const defaultCandidate = findLowestEnergyBoundary(targetMs, minMs, maxMs, frames);
+    const diagnostic = analyzeBoundary(
+      current,
+      next,
+      alignment,
+      targetMs,
+      minMs,
+      maxMs,
+      frames,
+      defaultCandidate,
+      boundaryOverrides,
+    );
+    const cutMs = diagnostic.appliedCutMs;
     current.adjustedEndMs = cutMs;
     next.adjustedStartMs = cutMs;
+    diagnostics.push(diagnostic);
   }
+
+  return diagnostics;
 }
 
 /** 바이트 오프셋을 프레임 경계에 맞춰 내림 정렬한다. */
@@ -187,14 +255,20 @@ function findLowestEnergyBoundary(
   minMs: number,
   maxMs: number,
   frames: RmsFrame[],
-): number {
+): BoundaryCandidate {
   if (maxMs <= minMs) {
-    return Math.max(minMs, Math.min(maxMs, targetMs));
+    return {
+      cutMs: Math.max(minMs, Math.min(maxMs, targetMs)),
+      rms: Number.POSITIVE_INFINITY,
+    };
   }
 
   const candidates = frames.filter(frame => frame.startMs >= minMs && frame.endMs <= maxMs);
   if (candidates.length === 0) {
-    return Math.round(Math.max(minMs, Math.min(maxMs, targetMs)));
+    return {
+      cutMs: Math.round(Math.max(minMs, Math.min(maxMs, targetMs))),
+      rms: Number.POSITIVE_INFINITY,
+    };
   }
 
   let best = candidates[0];
@@ -209,7 +283,118 @@ function findLowestEnergyBoundary(
     }
   }
 
-  return Math.round((best.startMs + best.endMs) / 2);
+  return {
+    cutMs: Math.round((best.startMs + best.endMs) / 2),
+    rms: best.rms,
+  };
+}
+
+function analyzeBoundary(
+  current: SegmentTiming,
+  next: SegmentTiming,
+  alignment: AudioAlignment,
+  targetMs: number,
+  minMs: number,
+  maxMs: number,
+  frames: RmsFrame[],
+  defaultCandidate: BoundaryCandidate,
+  boundaryOverrides: ReadonlyArray<BoundaryOverride>,
+): BoundaryDiagnostic {
+  const reasons: string[] = [];
+  const prevLastCharIndex = current.startCharIndex + current.charCount - 1;
+  const nextFirstCharIndex = next.startCharIndex;
+  const prevLastCharDurationMs = getCharDurationMs(alignment, prevLastCharIndex);
+  const nextFirstCharDurationMs = getCharDurationMs(alignment, nextFirstCharIndex);
+  const override = boundaryOverrides.find(item => item.fromSceneId === current.sceneId && item.toSceneId === next.sceneId);
+
+  let suggestedCandidate = defaultCandidate;
+  let detectedIssue = false;
+  let confidence = 0;
+
+  if (prevLastCharDurationMs <= SHORT_CHAR_MS && nextFirstCharDurationMs >= LONG_CHAR_MS) {
+    detectedIssue = true;
+    confidence = 0.85;
+    reasons.push(
+      `prevLastCharShort=${prevLastCharDurationMs}ms`,
+      `nextFirstCharLong=${nextFirstCharDurationMs}ms`,
+    );
+
+    const laterCandidate = findLowestEnergyBoundary(
+      targetMs + LATER_CANDIDATE_MIN_DELTA_MS,
+      Math.max(minMs, targetMs + LATER_CANDIDATE_MIN_DELTA_MS),
+      maxMs,
+      frames,
+    );
+    if (
+      laterCandidate.cutMs > defaultCandidate.cutMs
+      && laterCandidate.cutMs - defaultCandidate.cutMs >= LATER_CANDIDATE_MIN_DELTA_MS
+      && laterCandidate.rms <= defaultCandidate.rms * 1.2
+    ) {
+      suggestedCandidate = laterCandidate;
+      reasons.push(`preferLaterCut=${laterCandidate.cutMs - defaultCandidate.cutMs}ms`);
+    }
+  } else if (prevLastCharDurationMs >= LONG_CHAR_MS && nextFirstCharDurationMs <= SHORT_CHAR_MS) {
+    detectedIssue = true;
+    confidence = 0.8;
+    reasons.push(
+      `prevLastCharLong=${prevLastCharDurationMs}ms`,
+      `nextFirstCharShort=${nextFirstCharDurationMs}ms`,
+    );
+
+    const earlierCandidate = findLowestEnergyBoundary(
+      targetMs - EARLIER_CANDIDATE_MIN_DELTA_MS,
+      minMs,
+      Math.min(maxMs, targetMs - EARLIER_CANDIDATE_MIN_DELTA_MS),
+      frames,
+    );
+    if (
+      earlierCandidate.cutMs < defaultCandidate.cutMs
+      && defaultCandidate.cutMs - earlierCandidate.cutMs >= EARLIER_CANDIDATE_MIN_DELTA_MS
+      && earlierCandidate.rms <= defaultCandidate.rms * 1.2
+    ) {
+      suggestedCandidate = earlierCandidate;
+      reasons.push(`preferEarlierCut=${defaultCandidate.cutMs - earlierCandidate.cutMs}ms`);
+    }
+  }
+
+  let appliedCutMs = suggestedCandidate.cutMs;
+  let usedOverride = false;
+
+  if (override) {
+    appliedCutMs = clamp(targetMs + override.offsetMs, minMs, maxMs);
+    usedOverride = true;
+    reasons.push(`override=${override.offsetMs}ms`);
+    if (override.reason) {
+      reasons.push(`overrideReason=${override.reason}`);
+    }
+  }
+
+  return {
+    fromSceneId: current.sceneId,
+    toSceneId: next.sceneId,
+    targetMs,
+    defaultCutMs: defaultCandidate.cutMs,
+    suggestedCutMs: suggestedCandidate.cutMs,
+    appliedCutMs,
+    appliedOffsetMs: appliedCutMs - targetMs,
+    usedOverride,
+    detectedIssue,
+    confidence,
+    reasons,
+  };
+}
+
+function getCharDurationMs(alignment: AudioAlignment, index: number): number {
+  const start = alignment.character_start_times_seconds[index];
+  const end = alignment.character_end_times_seconds[index];
+  if (typeof start !== 'number' || typeof end !== 'number') {
+    return 0;
+  }
+  return Math.max(0, Math.round((end - start) * 1000));
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
 }
 
 /** alignment 배열을 해당 씬의 문자 범위로 슬라이스하고, 시각을 0 기준으로 리베이스한다. */
