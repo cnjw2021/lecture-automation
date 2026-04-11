@@ -56,7 +56,8 @@ ELEVENLABS_API_KEY=your_key_here
 make run LECTURE=lecture-02.json
 ```
 
-`make run`은 `config/tts.json`의 `activeProvider`를 사용해 씬별 TTS를 생성합니다.
+`make run`은 `config/tts.json`의 `activeProvider`를 사용해 TTS를 생성합니다.
+`activeProvider=elevenlabs` 이고 `providers.elevenlabs.chunkedGeneration.enabled=true`이면 긴 강의를 청크 단위로 생성한 뒤 씬별 WAV로 분할합니다.
 
 마스터 오디오 기반으로 실행하려면 다음처럼 명시적으로 호출합니다.
 
@@ -74,7 +75,8 @@ make run-master LECTURE=lecture-02.json
 | `make run-master LECTURE=xxx.json` | master.wav를 재사용하거나 `masterAudio` 설정으로 생성한 뒤 정렬/분할 |
 | `make run-force LECTURE=xxx.json` | 모든 캐시 무시하고 씬별 TTS를 강제 재생성 |
 | `make run-master-force LECTURE=xxx.json` | 모든 캐시 무시하고 master audio를 강제 재생성한 뒤 정렬/분할 |
-| `make regen-scene LECTURE=xxx SCENE='5 12'` | 특정 씬 오디오·클립 재생성 후 전체 concat |
+| `make regen-scene LECTURE=xxx SCENE='5 12'` | 수정용 빠른 경로. 지정 씬만 씬 단위 TTS 재생성, 지정 씬만 렌더 후 전체 concat |
+| `make resplit-chunk-audio LECTURE=xxx SCENE='5 12'` | 저장된 청크 원본 WAV/alignment로 재-TTS 없이 영향을 받는 청크를 다시 분할 |
 | `make render-scene LECTURE=xxx SCENE=5` | 특정 씬 클립만 렌더링 |
 | `make align-master-audio LECTURE=xxx AUDIO=... [MODEL=small]` | master.wav에서 alignment.json 생성 |
 | `make import-master-audio LECTURE=xxx AUDIO=... ALIGN=...` | 강의 단위 TTS 마스터 오디오를 씬별 WAV로 분할 |
@@ -89,6 +91,7 @@ make run-master LECTURE=lecture-02.json
 data/lecture-XX.json
     │
     ├─ 1단계: TTS 오디오 생성      → packages/remotion/public/audio/
+    │                              → tmp/chunked-audio/<lectureId>/ (청크 디버그 산출물)
     ├─ 대체: 마스터 오디오 분할     → packages/remotion/public/audio/
     ├─ 1.5단계: 오디오 미리듣기 머지 → output/XX-audio-preview.wav
     ├─ 2단계: 스크린샷 캡처         → packages/remotion/public/screenshots/
@@ -98,7 +101,45 @@ data/lecture-XX.json
 ```
 
 **씬별 클립 캐싱**: 변경된 씬만 재렌더링하고 나머지는 스킵합니다.
-한 씬 수정 시 `make regen-scene` → 해당 씬만 재처리 → concat (~수십 초).
+한 씬 수정 시 `make regen-scene` → 지정 씬만 재처리 → concat (~수십 초).
+
+## ElevenLabs 청크 생성 운영 기준
+
+`config/tts.json`에서 `providers.elevenlabs.chunkedGeneration.enabled=true`이면 긴 강의를 여러 청크로 나눠 TTS를 생성하고, 각 청크를 씬별 WAV로 분할합니다. 이 경로는 음색 변화 횟수를 줄이는 데 유리하지만, 경계 부근의 짧은 음절이나 휴지 배분은 ElevenLabs의 문자 단위 alignment 특성에 영향을 받습니다.
+
+청크 생성 시 다음 디버그 산출물이 남습니다.
+
+- `tmp/chunked-audio/<lectureId>/chunk-001.wav`
+- `tmp/chunked-audio/<lectureId>/chunk-001.alignment.json`
+- `tmp/chunked-audio/<lectureId>/chunk-001.manifest.json`
+- `tmp/chunked-audio/<lectureId>/chunk-001.boundaries.json`
+
+실무 기준은 다음처럼 나눕니다.
+
+- 발음 문제, 오타 수정, 특정 씬 텍스트 변경: `make regen-scene`
+- 앞뒤 씬 경계에서 마지막 글자나 첫 글자가 섞이는 문제: `make resplit-chunk-audio`
+- `resplit`로도 해결되지 않는 경계: 해당 씬을 `make regen-scene`으로 개별 재생성
+
+`resplit-chunk-audio`는 저장된 청크 원본이 있어야 동작합니다. 청크 원본이 없다면 먼저 한 번 청크 생성이 끝나야 합니다.
+
+```bash
+make resplit-chunk-audio LECTURE=lecture-01.json SCENE='17 18'
+```
+
+수동 보정이 필요하면 `tmp/chunked-audio/<lectureId>/boundary-overrides.json`을 둘 수 있습니다.
+
+```json
+[
+  {
+    "fromSceneId": 17,
+    "toSceneId": 18,
+    "offsetMs": 140,
+    "reason": "scene17 final syllable retention"
+  }
+]
+```
+
+수정 작업에서는 `make regen-scene`가 청크 모드를 우회합니다. 즉 청크 생성이 활성화되어 있어도, 지정 씬만 개별 TTS로 다시 생성하고 해당 씬만 렌더링합니다.
 
 ## 프로젝트 구조
 
