@@ -78,23 +78,39 @@ type PlaywrightCmd = 'goto' | 'wait' | 'wait_for' | 'mouse_move' | 'click' | 'ty
 ## 자주 쓰는 make 명령어
 
 ```bash
-make run LECTURE=lecture-02.json          # activeProvider로 전체 파이프라인
-make run-master LECTURE=lecture-02.json   # master audio 기반 전체 파이프라인
-make run-master-force LECTURE=lecture-02.json  # master audio 강제 재생성
-make regen-scene LECTURE=lecture-03.json SCENE='11 12 14'  # 특정 씬 재생성 + concat
-make render-scene LECTURE=lecture-03.json SCENE=11         # 클립 렌더링만
-make concat-scenes LECTURE=lecture-02.json                 # concat만 (~5초)
-make preview SCENE=6                      # 씬 프리뷰 PNG
+make run LECTURE=lecture-01-02.json          # activeProvider로 전체 파이프라인
+make run-master LECTURE=lecture-01-02.json   # master audio 기반 전체 파이프라인
+make run-master-force LECTURE=lecture-01-02.json  # master audio 강제 재생성
+make regen-scene LECTURE=lecture-03-01.json SCENE='11 12 14'  # 특정 씬 재생성 + concat
+make render-scene LECTURE=lecture-03-01.json SCENE=11         # 클립 렌더링만
+make concat-scenes LECTURE=lecture-01-02.json                 # concat만 (~5초)
+make preview SCENE=6                         # 씬 프리뷰 PNG
 ```
 
 ## 강의 데이터 파일
 
-| 파일 | 상태 |
-|------|------|
-| `data/lecture-01.json` | 완성 |
-| `data/lecture-02.json` | 완성 |
-| `data/lecture-03.json` | 완성 (씬 10-14 Playwright 씬 포함) |
-| `data/lecture-04.json` | 완성 (씬 28 AI 라이브 데모 씬 포함) |
+파일명 형식: `data/lecture-{파트}-{강}.json` (예: `lecture-01-01.json` = PART 1, 강의 1)
+
+| 파일 | 강의 | 상태 |
+|------|------|------|
+| `data/lecture-01-01.json` | 1-1 オリエンテーション | 완성 |
+| `data/lecture-01-02.json` | 1-2 Webの仕組みと3つの言語 | 완성 |
+| `data/lecture-01-03.json` | 1-3 AIが変えたWeb制作の風景 | 완성 |
+| `data/lecture-01-04.json` | 1-4 CodePenセットアップ + Hello World | 완성 |
+| `data/lecture-02-01.json` | 2-1 HTMLのルール | 완성 |
+| `data/lecture-02-02.json` | 2-2 テキストを扱うタグ | 완성 |
+| `data/lecture-02-03.json` | 2-3 リンクと画像 | 완성 |
+| `data/lecture-02-04.json` | 2-4 構造を組み立てるタグ | 완성 |
+| `data/lecture-02-05.json` | 2-5 フォーム | 완성 |
+| `data/lecture-02-06.json` | 2-6 テーブル基礎 | 완성 |
+| `data/lecture-02-07.json` | 2-7 AIにHTMLを任せる | 완성 |
+| `data/lecture-03-01.json` | 3-1 CSSの仕組み | 완성 |
+| `data/lecture-03-02.json` | 3-2 セレクタ | 완성 |
+| `data/lecture-03-03.json` | 3-3 色とタイポグラフィ | 완성 |
+| `data/lecture-03-04.json` | 3-4 ボックスモデル | 완성 |
+| `data/lecture-03-05.json` | 3-5 Flexbox | 완성 |
+| `data/lecture-03-06.json` | 3-6 レスポンシブデザイン | 완성 |
+| `data/lecture-03-07.json` | 3-7 AIにCSSを任せる | 완성 |
 
 커리큘럼 전체: [docs/curriculum.md](docs/curriculum.md)
 
