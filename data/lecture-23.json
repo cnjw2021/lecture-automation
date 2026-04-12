@@ -2,7 +2,7 @@
   "lecture_id": "23",
   "title": "CodePenからファイルへ — StackBlitzで変換",
   "part": 5,
-  "totalDurationSec": 956,
+  "totalDurationSec": 953,
   "sequence": [
     {
       "scene_id": 1,
@@ -22,8 +22,8 @@
     },
     {
       "scene_id": 2,
-      "narration": "前回のPART 4では、サロンサイトを一つ完成させましたね。AIに指示を出して、コードを読んで、自分好みにカスタマイズして、モバイルでの表示まで確認しました。皆さん、もう立派にAIと協力してWebサイトを作れるようになっています。さて、ここからはいよいよPART 5、最後のパートです。このパートのテーマは「世界に公開する」です。",
-      "durationSec": 27,
+      "narration": "前回は、スマートフォンでの表示確認と全体の最終チェックをしましたね。これでサロンサイトの仕上げが完了しました。いよいよ公開に向けた準備が整いましたよ。さて、ここからはPART 5、最後のパートです。このパートのテーマは「世界に公開する」です。",
+      "durationSec": 24,
       "visual": {
         "type": "remotion",
         "component": "SectionBreakScreen",
