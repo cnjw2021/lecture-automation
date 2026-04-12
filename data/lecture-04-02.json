@@ -1,0 +1,720 @@
+{
+  "lecture_id": "04-02",
+  "title": "コードを読む + 新テクニック",
+  "part": 4,
+  "totalDurationSec": 1649,
+  "sequence": [
+    {
+      "scene_id": 1,
+      "narration": "コードを読む、プラス新テクニック。講義4-2です。",
+      "durationSec": 6,
+      "visual": {
+        "type": "remotion",
+        "component": "TitleScreen",
+        "props": {
+          "title": "コードを読む + 新テクニック",
+          "sub": "講義 4-2"
+        },
+        "transition": {
+          "enter": "zoom"
+        }
+      }
+    },
+    {
+      "scene_id": 2,
+      "narration": "皆さん、こんにちは。前回の講義では、いよいよパート4に入りました。マッサージサロンのウェブサイトを作るプロジェクト、覚えていますか。サロンサイトに必要な要素を一緒に企画しましたよね。ヒーローセクション、こだわり紹介、施術メニューの料金表、スタッフ紹介、アクセス情報、予約フォーム。そしてClaudeに詳しいプロンプトを送って、HTMLとCSSを一気に生成してもらいました。CodePenに貼り付けてプレビューを見た瞬間、「わあ、もうこんなにできてる」と驚いた方も多いんじゃないでしょうか。",
+      "durationSec": 47,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🌿",
+          "headline": "前回の復習",
+          "detail": "Claudeにサロンサイトを生成してもらった",
+          "color": "#10b981"
+        }
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "でも、ここで立ち止まって考えてみましょう。あのコード、中身はどうなっているんでしょうか。AIが何を書いたのか、ちゃんと理解できていますか。プレビューの見た目はきれいだけど、裏側のコードは読んでいない。これだと、何か修正したいときに困りますよね。「ここの色を変えたいのに、どこを触ればいいかわからない」ということになってしまいます。",
+      "durationSec": 30,
+      "visual": {
+        "type": "remotion",
+        "component": "QnAScreen",
+        "props": {
+          "question": "AIが生成したコード、中身はわかりますか？",
+          "answer": "プレビューはきれいでも、コードを読めないと修正できません。今日は一緒に読み解いていきます。"
+        }
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "今日の講義では2つのことをやります。まず、前回AIが生成したコードを一緒に読み解いていきます。HTMLの構造を確認して、CSSがどういう仕組みで見た目を作っているのかを分析します。パート2で学んだHTML、パート3で学んだCSS。その知識を総動員して、プロジェクトのコードを丁寧に読んでいきましょう。「自分が学んだことが、ちゃんと実際のプロジェクトで役に立つ」という実感が持てる時間になると思います。そしてもう一つ。AIが使っているCSSの中に、パート3までの講義では扱わなかった新しいテクニックがいくつか含まれています。カードに影をつけたり、角を丸くしたり、マウスを乗せると色が変わったり。これらを今日学びます。どれも1行追加するだけのシンプルなものばかりです。では、CodePenを開いて、始めましょう。今日は手を動かしながら、コードの中を探検していく時間です。",
+      "durationSec": 64,
+      "visual": {
+        "type": "remotion",
+        "component": "AgendaScreen",
+        "props": {
+          "title": "今日やること",
+          "items": [
+            {
+              "icon": "🏗️",
+              "title": "HTML構造を読み解く",
+              "duration": "8分"
+            },
+            {
+              "icon": "🎨",
+              "title": "CSS構造を分析する",
+              "duration": "8分"
+            },
+            {
+              "icon": "✨",
+              "title": "新CSSテクニック4つ",
+              "duration": "14分"
+            }
+          ],
+          "activeIndex": -1
+        }
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "では、前回の講義で作ったCodePenを開いてください。Claudeが生成したサロンサイトのコードが入っていますね。プレビューにはヒーローセクション、こだわり紹介、施術メニュー、スタッフ紹介、アクセス情報、お問い合わせフォーム。こういった要素が並んでいるはずです。まずはHTMLペインを見ていきましょう。コードの量が多くて、最初はちょっと圧倒されるかもしれません。パート2のCodePen実習では、自分で書いたHTMLはせいぜい20行から30行くらいでしたよね。でもAIが生成したHTMLは、100行以上あるかもしれません。でも大丈夫です。上から順に、一つずつどんなタグが使われているか確認していきます。",
+      "durationSec": 47,
+      "visual": {
+        "type": "remotion",
+        "component": "BrowserMockScreen",
+        "props": {
+          "url": "https://codepen.io",
+          "title": "CodePenを開く",
+          "description": "前回生成したサロンサイトのコードを確認しましょう",
+          "layout": "right",
+          "color": "#10b981"
+        }
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "一番上にヘッダーがありますね。headerタグの中にナビゲーション、navタグが入っています。サロンの名前がロゴのように表示されていて、その横にメニューリンクが並んでいます。覚えていますか。パート2の4番目の講義で学んだセマンティックタグですね。headerは「ページの上の部分」、navは「ナビゲーション、つまりメニューのリンク集」。意味のあるタグで構造を伝えている。まさにあの講義で学んだことそのものです。",
+      "durationSec": 38,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🏷️",
+          "headline": "セマンティックタグ健在",
+          "detail": "header / nav — パート2-4で学んだあのタグです",
+          "color": "#10b981"
+        }
+      }
+    },
+    {
+      "scene_id": 7,
+      "narration": "ナビゲーションのリンクも見てみましょう。aタグが並んでいますね。href属性にシャープ付きの文字列が入っているのが見えますか。例えば href=\"#menu\" とか href=\"#access\" のような形です。これはページ内リンクといって、同じページの中の特定の場所にジャンプするためのリンクです。aタグ自体はパート2の3番目の講義で学びましたよね。リンクの使い方の応用です。",
+      "durationSec": 33,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "<nav>\n  <a href=\"#menu\">メニュー</a>\n  <a href=\"#staff\">スタッフ</a>\n  <a href=\"#access\">アクセス</a>\n</nav>",
+          "language": "html",
+          "title": "ページ内リンク"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 8,
+      "narration": "その下に、大きな写真と文字が重なった部分がありますね。ここがヒーローセクションです。sectionタグで囲まれていて、クラス名に「hero」とか「hero-section」みたいな名前がついているはずです。パート3のセレクタの講義で学んだクラスですね。ドットの後ろに書く、あのニックネームです。AIも同じようにクラス名を使って、要素を区別しているんです。ヒーローセクションの中を見ると、h1タグで大きな見出しがあって、pタグでサロンのキャッチコピーや説明文があって、aタグやbuttonタグで予約ボタンがある。全部、パート2で書いたことのあるタグです。h1が大見出し、pが段落、aがリンク。パート2の最初の講義から使ってきたおなじみのタグですよね。",
+      "durationSec": 51,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "<section class=\"hero-section\">\n  <h1>心と体をほぐす、至福のひととき</h1>\n  <p>丁寧な施術でお客様をお迎えします</p>\n  <a href=\"#contact\" class=\"button\">ご予約はこちら</a>\n</section>",
+          "language": "html",
+          "title": "ヒーローセクション"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 9,
+      "narration": "さらに下にスクロールしていくと、こだわり紹介のセクション、施術メニューのセクション、スタッフ紹介のセクション。それぞれがsectionタグで区切られています。パート2で「sectionは章のようなもの」と説明しましたよね。一つの章がひとまとまりの内容を持つ。サロンサイトでもまったく同じ使い方です。そしてそれぞれのsectionにクラス名がついていて、CSSからスタイルを当てるための目印になっています。施術メニューの部分を見てみましょう。パート2の6番目の講義で料金表を作りましたよね。テーブルタグを使って、施術名と時間と料金を並べました。AIが生成したコードでも、テーブルが使われているか、あるいはdivタグとクラス名を使ったカード形式になっているかもしれません。テーブルならtr、th、tdでおなじみの構造ですし、カード形式でもdivの中にh3で施術名、pで説明文という、やはり見覚えのあるタグの組み合わせです。",
+      "durationSec": 56,
+      "visual": {
+        "type": "remotion",
+        "component": "HierarchyScreen",
+        "props": {
+          "title": "HTMLの大きな構造",
+          "root": {
+            "label": "body",
+            "icon": "📄",
+            "children": [
+              { "label": "header / nav", "icon": "🧭" },
+              { "label": "section.hero-section", "icon": "🌟" },
+              { "label": "section.menu", "icon": "📋" },
+              { "label": "section.staff", "icon": "👤" },
+              { "label": "section.contact", "icon": "📬" },
+              { "label": "footer", "icon": "🔽" }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 10,
+      "narration": "お問い合わせフォームの部分も見てみましょう。formタグ、inputタグ、textareaタグ、buttonタグ。パート2の5番目の講義で作った予約フォームと同じタグですよね。inputのタイプも、textやemail、telなど、見覚えのあるものが並んでいるはずです。required属性がついているものもありますね。これも5番目の講義で「入力必須にする属性」として学びました。最後に、ページの一番下にfooterタグがあります。著作権表示やSNSリンクなどが入っていますね。header、nav、main、section、footer。パート2で学んだセマンティックタグが、そのまま使われているのがわかります。",
+      "durationSec": 46,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "<form>\n  <input type=\"text\" required>\n  <input type=\"email\" required>\n  <input type=\"tel\">\n  <textarea></textarea>\n  <button type=\"submit\">送信する</button>\n</form>",
+          "language": "html",
+          "title": "お問い合わせフォーム"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 11,
+      "narration": "もう一つ気づいてほしいことがあります。AIが生成したHTMLの中で、クラス名がとても読みやすくなっていることです。hero-section、menu-card、staff-member、contact-form。英語が苦手な方でも、なんとなく意味がわかりますよね。heroは「主役」、menuは「メニュー」、staffは「スタッフ」。AIが自分でわかりやすいクラス名を選んでくれているんです。パート3のセレクタの講義で「クラスはニックネーム」と言いましたよね。AIは上手にニックネームをつけてくれています。",
+      "durationSec": 37,
+      "visual": {
+        "type": "remotion",
+        "component": "IconListScreen",
+        "props": {
+          "title": "AIが選んだクラス名",
+          "items": [
+            { "icon": "🌟", "title": "hero-section", "description": "ヒーロー部分" },
+            { "icon": "📋", "title": "menu-card", "description": "施術メニューのカード" },
+            { "icon": "👤", "title": "staff-member", "description": "スタッフ紹介" },
+            { "icon": "📬", "title": "contact-form", "description": "お問い合わせフォーム" }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 12,
+      "narration": "ここで大事なことを確認しましょう。AIが生成したHTMLは、何か特別な技術で作られているわけではありません。皆さんがパート2で学んだタグの組み合わせです。見出し、段落、リスト、リンク、画像、フォーム、テーブル。どれも一度は自分の手で書いたことがあるタグです。量は確かに多い。でも一つ一つを見れば「ああ、これは知っているぞ」と思えるはずです。量が多いだけで、やっていることは同じなんです。",
+      "durationSec": 34,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "💡",
+          "headline": "量が多いだけで、やっていることは同じ",
+          "detail": "パート2で学んだタグの組み合わせです",
+          "color": "#10b981"
+        }
+      }
+    },
+    {
+      "scene_id": 13,
+      "narration": "次に、CSSペインを見ていきましょう。こちらはHTMLに比べるとコードの量がさらに多いかもしれません。スクロールしても終わらないくらい長いかもしれませんね。でも、焦らなくて大丈夫です。全部を一行ずつ読む必要はありません。大きな構造をつかむことが大事です。パート3で学んだ知識があれば、「このあたりは何をやっている部分か」がわかるようになります。上から順に確認していきましょう。",
+      "durationSec": 33,
+      "visual": {
+        "type": "remotion",
+        "component": "AgendaScreen",
+        "props": {
+          "title": "今日やること",
+          "items": [
+            {
+              "icon": "🏗️",
+              "title": "HTML構造を読み解く",
+              "duration": "8分"
+            },
+            {
+              "icon": "🎨",
+              "title": "CSS構造を分析する",
+              "duration": "8分"
+            },
+            {
+              "icon": "✨",
+              "title": "新CSSテクニック4つ",
+              "duration": "14分"
+            }
+          ],
+          "activeIndex": 1
+        }
+      }
+    },
+    {
+      "scene_id": 14,
+      "narration": "まず、CSSの一番上のあたりを見てください。ページ全体に適用されるスタイルが書いてあるはずです。アスタリスクやbodyに対して基本的なスタイルが設定されていますね。アスタリスクに box-sizing: border-box と書いてあったら、覚えていますか。パート3の4番目の講義、ボックスモデルの回で学んだプロパティです。「これさえ知れば計算が楽になる」と言いましたよね。paddingやborderを含めてもサイズが変わらなくなる設定です。AIもこれを最初に書いているんです。プロの開発者と同じ定石ですね。",
+      "durationSec": 42,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "* {\n  box-sizing: border-box;\n}\n\nbody {\n  font-family: sans-serif;\n  color: #333;\n  margin: 0;\n}",
+          "language": "css",
+          "title": "CSSの最初に書く定石"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 15,
+      "narration": "次に、色の体系を確認してみましょう。AIが生成したCSSの中で使われている色のコードをざっと眺めてみてください。前回のプロンプトで「ベージュと深緑系」とお願いしましたよね。ヘッダーの背景色、ボタンの色、セクションの背景色。それぞれにベージュ系や深緑系のカラーコードが使われているはずです。パート3の3番目の講義で学んだHEXカラーコード。シャープの後に6桁の英数字。これでどんな色かが決まる。AIが選んだ色のコードも、同じ仕組みです。サイト全体で使われている色を見てみると、2色から3色くらいの基本色を決めて、それを統一的に使っていることがわかります。プロのウェブサイトが「色に統一感がある」のは、こういう仕組みなんですね。",
+      "durationSec": 52,
+      "visual": {
+        "type": "remotion",
+        "component": "IconListScreen",
+        "props": {
+          "title": "AIが選んだカラーパレット",
+          "items": [
+            { "icon": "🟢", "title": "#2d5a3d", "description": "メインの深緑 — ヘッダー・ボタン", "color": "#2d5a3d" },
+            { "icon": "🟫", "title": "#f5f0e8", "description": "ベージュ — 背景・セクション", "color": "#c4a882" },
+            { "icon": "⬜", "title": "#ffffff", "description": "白 — カード・テキストエリア" }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 16,
+      "narration": "では、レイアウトの部分を見てみましょう。ナビゲーションのメニューが横に並んでいますよね。CSSの中に display: flex が見えますか。パート3の5番目の講義で「1行追加するだけで魔法が起きる」と言ったフレックスボックスです。ナビゲーションのリンクが横に並んでいるのも、スタッフ紹介のカードが横に並んでいるのも、施術メニューのカードが横に並んでいるのも、全部フレックスボックスのおかげなんです。justify-contentやalign-items、gapといったプロパティも見えますか。主軸と交差軸の話を思い出してください。justify-content: center は主軸の中央寄せ、align-items: center は交差軸の中央寄せ。gap: 20px はアイテム間の間隔を20ピクセルに設定。パート3で学んだことがそのまま使われています。",
+      "durationSec": 52,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": ".menu-grid {\n  display: flex;\n  justify-content: center;\n  align-items: stretch;\n  gap: 20px;\n  flex-wrap: wrap;\n}",
+          "language": "css",
+          "title": "Flexboxでカードを横並びに"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 17,
+      "narration": "flex-wrapも書いてあるかもしれません。flex-wrap: wrap。これはアイテムが収まりきらないときに折り返す設定でしたね。画面が小さくなったときにカードが下に折り返される。パート3の5番目の講義で触れた内容です。ボックスモデルの要素も見てみましょう。paddingやmarginがたくさん出てきますよね。カードの内側の余白はpadding、カードとカードの間隔はmarginやgap。パート3の4番目の講義で「すべてのHTML要素は箱だ」と説明したボックスモデル。content、padding、border、margin。このモデルを使ってレイアウトが組まれているのがわかります。",
+      "durationSec": 42,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "📦",
+          "headline": "ボックスモデルが随所に",
+          "detail": "padding・margin・border — パート3-4で学んだ知識です",
+          "color": "#10b981"
+        }
+      }
+    },
+    {
+      "scene_id": 18,
+      "narration": "もう一つ確認してほしいのが、レスポンシブ対応の部分です。CSSの下の方にスクロールしていくと、アットマークメディアという記述が見えるはずです。パート3の6番目の講義で学んだメディアクエリですね。画面の幅が768ピクセル以下になったときに、レイアウトを切り替えるための仕組みです。例えば、パソコンでは横に並んでいたカードが、スマートフォンでは縦に1列に並ぶ。flex-directionをcolumnに変えたり、widthを100パーセントにしたり。その切り替えがメディアクエリで実装されています。",
+      "durationSec": 38,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "@media (max-width: 768px) {\n  .menu-grid {\n    flex-direction: column;\n  }\n  .menu-card {\n    width: 100%;\n  }\n}",
+          "language": "css",
+          "title": "メディアクエリでスマホ対応"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 19,
+      "narration": "試しに、プレビューを見ながらCSSの一つの値を変えてみましょう。例えば、ヘッダーの背景色のカラーコードを別の色に変えてみてください。プレビューが即座に変わりますよね。パート3で何度も体験した「値を変えるとすぐに反映される」という感覚、ここでも同じです。CSSを読めるということは、こうやって自分で好みの見た目に変えられるということです。元の色に戻しておいてくださいね。ここまでの内容を振り返ると、AIが生成したCSSも、パート3で学んだ知識の組み合わせだということがわかります。フォント、色、ボックスモデル、フレックスボックス、メディアクエリ。特別なことは何もなくて、皆さんがすでに知っている技術で作られている。これはとても大事なポイントです。コードの量は多い。でも、知らないものはほとんどない。AIが作ったものを読んで理解できるということは、必要に応じて自分で修正できるということですから。ただし、CSSの中にいくつか「あれ、これは見たことないぞ」というプロパティもあったはずです。box-shadowとかborder-radiusとか。安心してください。ここからはまさにその、見たことのないプロパティを一つずつ見ていきます。",
+      "durationSec": 74,
+      "visual": {
+        "type": "remotion",
+        "component": "SummaryScreen",
+        "props": {
+          "title": "AIのCSSはパート3の知識で読める",
+          "points": [
+            "フォント指定・HEXカラーコード → 3-3",
+            "ボックスモデル・padding・margin → 3-4",
+            "Flexbox・flex-wrap・gap → 3-5",
+            "メディアクエリ → 3-6",
+            "次は「見たことない」プロパティへ"
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 20,
+      "narration": "さて、新しいCSSテクニックに入ります。今日は4つを取り上げます。でも安心してください。どれも1行追加するだけのシンプルなテクニックです。そして、「暗記してください」とは言いません。こういうものがあるんだと知っていれば、必要なときにAIに「ここにbox-shadowを追加して」と指示できますから。プロパティの名前を知っていることが大事なんです。",
+      "durationSec": 27,
+      "visual": {
+        "type": "remotion",
+        "component": "AgendaScreen",
+        "props": {
+          "title": "今日やること",
+          "items": [
+            {
+              "icon": "🏗️",
+              "title": "HTML構造を読み解く",
+              "duration": "8分"
+            },
+            {
+              "icon": "🎨",
+              "title": "CSS構造を分析する",
+              "duration": "8分"
+            },
+            {
+              "icon": "✨",
+              "title": "新CSSテクニック4つ",
+              "duration": "14分"
+            }
+          ],
+          "activeIndex": 2
+        }
+      }
+    },
+    {
+      "scene_id": 21,
+      "narration": "まず最初は、box-shadowです。ボックスシャドウ。名前の通り、ボックスに影をつけるプロパティです。AIが生成したコードの中で、施術メニューのカードやスタッフ紹介のカードの部分を見てください。CSSにbox-shadowという記述がありますね。",
+      "durationSec": 18,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "box-shadow",
+          "reading": "ボックスシャドウ",
+          "definition": "要素に影をつけるCSSプロパティ。ほんの1行で立体感が生まれます。",
+          "example": "box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 22,
+      "narration": "この1行で、カードにふわっとした影がつきます。数字がたくさん並んでいて難しそうに見えますが、一つずつ見ていけば大丈夫です。最初の0は横方向のずれです。影が左右にずれない。次の2pxは縦方向のずれ。影が少しだけ下にずれる。光が上から当たっている感じですね。3番目の8pxはぼかしの大きさです。この値が大きいほど、影がぼんやりと広がります。そしてrgbaの部分が影の色と透明度です。0, 0, 0は黒。パート3の色の講義でrgbを学びましたよね。rgbaの「a」はアルファ、つまり透明度のことです。最後の0.1は「10パーセントの不透明度」。つまりかなり薄い、うっすらとした影ということですね。",
+      "durationSec": 54,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);",
+          "language": "css",
+          "title": "box-shadowの書き方"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 23,
+      "narration": "実際に違いを確認してみましょう。この行を一旦削除してみてください。カードが平坦になって、背景に貼り付いたように見えますよね。のっぺりした印象です。もう一度元に戻すと、影のおかげでカードが少し浮き上がって見える。紙のカードがテーブルの上に置いてあるような、ちょっとした立体感が出ますよね。このわずかな影が、プロのウェブサイトっぽさを出してくれるんです。ちなみに、この値を変えるだけで影の印象がガラッと変わります。例えばぼかしの8pxを20pxに変えると、もっとふわっとした大きな影になります。逆に2pxくらいにすると、くっきりした影になる。いろいろ試してみると面白いですよ。ただ、今は値を覚える必要はありません。AIが適切な値を選んでくれていますし、もし影の印象を変えたければ「もう少し影を強くして」とAIにお願いすれば済みますから。",
+      "durationSec": 56,
+      "visual": {
+        "type": "remotion",
+        "component": "BeforeAfterScreen",
+        "props": {
+          "title": "box-shadowの効果",
+          "before": {
+            "label": "なし",
+            "points": ["カードが平坦に見える", "背景に貼り付いた印象", "のっぺりした見た目"],
+            "color": "#ef4444"
+          },
+          "after": {
+            "label": "あり",
+            "points": ["カードが浮き上がって見える", "立体感が生まれる", "プロっぽい仕上がりに"],
+            "color": "#10b981"
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 24,
+      "narration": "次のテクニックは、border-radiusです。ボーダーレイディアス。これは要素の角を丸くするプロパティです。カードの部分のCSSを見てください。border-radiusという記述がありますね。",
+      "durationSec": 14,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "border-radius",
+          "reading": "ボーダーレイディアス",
+          "definition": "要素の角を丸くするCSSプロパティ。数値が大きいほど丸くなります。",
+          "example": "border-radius: 8px;"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 25,
+      "narration": "この1行で、四角いカードの角がほんの少し丸くなります。8ピクセル分の丸みがつくという意味です。試しにこの値を変えてみましょう。0pxにすると完全な直角になります。20pxにするとかなり丸くなります。数字を大きくすればもっと丸くなりますし、小さくすればほぼ直角に近くなります。元の8pxに戻しておきましょう。直角のカードと、角が少し丸いカード。見比べてみると、丸い方が柔らかい、親しみやすい印象がありますよね。サロンのサイトですから、硬い直角よりも、こういう優しい雰囲気の方が合っています。こういうデザインの判断を、AIはプロンプトの内容から汲み取って自動的にやってくれているんですね。",
+      "durationSec": 49,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": ".menu-card {\n  border-radius: 8px;   /* 少し丸い */\n}\n\n/* 完全な丸にするとき */\n.staff-photo {\n  border-radius: 50%;   /* 円形に */\n}",
+          "language": "css",
+          "title": "border-radiusの使い分け"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 26,
+      "narration": "スタッフ紹介の写真部分にも注目してみてください。写真に対してこんな指定があるかもしれません。50パーセントにすると、四角い画像が完全な丸になります。やってみましょう。正方形の画像が丸く切り抜かれたように表示されますよね。これ、実はとてもよく使われるテクニックなんです。プロフィール写真やアイコンを丸く表示するとき、画像編集ソフトで丸く切り抜いているわけではなくて、CSSのborder-radius: 50%で表示時に丸く見せているんです。SNSのプロフィール画像が丸いのも、まさにこのCSSのおかげです。エックスやインスタグラム、いろんなサービスのプロフィール画像が丸いですよね。元の画像は四角いまま、表示だけ丸くしている。そういう仕組みなんです。",
+      "durationSec": 50,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "tip",
+          "title": "border-radius: 50% で丸いアイコンに",
+          "body": "画像編集ソフトで切り抜かなくてOK。CSSで表示時だけ丸く見せるテクニックです。SNSのプロフィール画像もこの仕組み。",
+          "icon": "🔵"
+        }
+      }
+    },
+    {
+      "scene_id": 27,
+      "narration": "ボタンにもborder-radiusがついていますね。試しに、ボタンのborder-radiusを0pxに変えてみてください。角が完全に直角のボタンになります。そしてまた8pxに戻す。比べてみると、少し丸みのあるボタンの方が押したくなりませんか。ほんの少しの丸みが、ボタンを柔らかく親しみやすい印象にしてくれるんです。",
+      "durationSec": 22,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🔘",
+          "headline": "ボタンにも border-radius",
+          "detail": "少し丸みがあるだけで「押したくなる」印象に変わります",
+          "color": "#10b981"
+        }
+      }
+    },
+    {
+      "scene_id": 28,
+      "narration": "3つ目のテクニックは、hover効果です。ホバー効果。マウスカーソルを要素の上に乗せたときに、見た目が変わる仕組みです。CSSの中でコロンhoverという記述を探してみてください。ボタンの部分に書いてあるはずです。",
+      "durationSec": 18,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": ":hover",
+          "reading": "ホバー効果",
+          "definition": "マウスカーソルを要素の上に乗せたときに見た目を変える仕組み。「クリックできる」ことを直感的に伝えます。",
+          "example": ".button:hover { background-color: #2d5a3d; }"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 29,
+      "narration": "これは「buttonというクラスがついた要素の上にマウスを乗せたとき、背景色をこの色に変える」という意味です。コロンhoverというのは、パート3のセレクタの講義では触れなかった新しい書き方です。擬似クラスと呼ばれるもので、要素の「状態」に応じてスタイルを変えることができます。でも名前は覚えなくて大丈夫。使い方はシンプルです。セレクタの後にコロンhoverをつけるだけで、マウスが乗ったときだけ適用されるスタイルを指定できます。",
+      "durationSec": 36,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": ".button {\n  background-color: #4a7c59;\n}\n\n.button:hover {\n  background-color: #2d5a3d;\n}",
+          "language": "css",
+          "title": "hover効果の書き方"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 30,
+      "narration": "実際にプレビューで試してみましょう。CodePenのプレビューエリアで、ボタンの上にマウスカーソルをゆっくり持っていってみてください。色が変わりましたよね。マウスを離すと元に戻る。もう一度乗せると変わる、離すと戻る。何度やっても同じように反応します。これがあると何がいいかというと、クリックできることが直感的にわかるんです。普段ウェブサイトを使っていて、リンクやボタンの上にマウスを乗せると何かが変わりますよね。色が変わったり、下線が出たり。「ああ、これはクリックできるんだな」と自然に理解できる。ユーザーにとっての使いやすさに直結するテクニックです。ボタンだけでなく、ナビゲーションのリンクやカードにもhover効果がついているかもしれません。CSSの中で「hover」という文字列を探してみると、いくつか見つかるはずですよ。",
+      "durationSec": 53,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🖱️",
+          "headline": "hover効果 = クリックできる合図",
+          "detail": "乗せると変わる、離すと戻る。ユーザーの使いやすさに直結します",
+          "color": "#10b981"
+        }
+      }
+    },
+    {
+      "scene_id": 31,
+      "narration": "最後、4つ目のテクニックは、transitionです。トランジション。これは変化を「滑らかに」するためのプロパティです。先ほどのhover効果を思い出してください。ボタンにマウスを乗せたら色が変わりましたよね。ちょっと注意して見てみてください。色がパッと一瞬で切り替わっていませんか。乗せた瞬間にパチッと変わる。これでも悪くはないんですが、ちょっとした工夫で印象がぐっと変わります。",
+      "durationSec": 28,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "transition",
+          "reading": "トランジション",
+          "definition": "スタイルの変化を「滑らかに」するCSSプロパティ。hover効果と組み合わせると、ふわっとした変化が生まれます。",
+          "example": "transition: background-color 0.3s ease;"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 32,
+      "narration": "ボタンのCSSを見てください。hover効果が書いてある少し上のあたりに、transitionという記述がありますね。この1行がある状態でボタンにマウスを乗せると、色の変化が0.3秒かけてふわっと切り替わります。パッと変わるのではなく、じんわり変わる。違いがわかりますか。たった1行追加するだけで、サイト全体の印象がぐっとプロっぽくなるんです。数字の意味を見てみましょう。background-colorは「背景色の変化に対して」という指定です。0.3sは「0.3秒かけて」。easeは「最初と最後をゆっくり、途中を速く」という変化のしかたです。自然界の動きに近いカーブなので、人間にとって一番心地よく感じる変化のパターンと言われています。",
+      "durationSec": 54,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": ".button {\n  background-color: #4a7c59;\n  transition: background-color 0.3s ease;\n}\n\n.button:hover {\n  background-color: #2d5a3d;\n}",
+          "language": "css",
+          "title": "transitionでなめらかに変化"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 33,
+      "narration": "違いをしっかり確認してみましょう。この行を一旦削除してみてください。ボタンにマウスを乗せると、色がパチッと瞬間的に切り替わりますよね。ちょっと機械的な、カチカチした印象です。次にコントロールプラスZで元に戻して、もう一度マウスを乗せてみてください。ふわっと、なめらかに変わりますよね。離すときも、ゆっくり元の色に戻る。この違い、感じ取れましたか。些細な違いに見えるかもしれませんが、サイト全体でこういう小さな配慮が積み重なると、仕上がりの印象がまったく変わってきます。transitionはhover効果と組み合わせて使うことがとても多いです。ボタンの色が滑らかに変わる、カードの影が滑らかに濃くなる、要素が滑らかに少し大きくなる。普段ウェブサイトを使っていて「なんかいい感じの動きだな」と感じるとき、その裏側にはだいたいこのtransitionがあります。プロのウェブサイトがなめらかに感じるのは、こういう小さなCSSの工夫の積み重ねなんですね。",
+      "durationSec": 64,
+      "visual": {
+        "type": "remotion",
+        "component": "BeforeAfterScreen",
+        "props": {
+          "title": "transitionあり vs なし",
+          "before": {
+            "label": "なし",
+            "points": ["色がパチッと瞬間的に切り替わる", "機械的・カチカチした印象"],
+            "color": "#ef4444"
+          },
+          "after": {
+            "label": "あり",
+            "points": ["0.3秒かけてふわっと変わる", "プロっぽい、なめらかな印象"],
+            "color": "#10b981"
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 34,
+      "narration": "今日学んだ4つのテクニックの中で、このhoverとtransitionはセットで使われることがほとんどです。hoverで「何を変えるか」を決めて、transitionで「どれくらいの時間をかけて変えるか」を決める。この組み合わせを知っておくだけで、AIに指示するときも「hoverでボタンの色を変えて、transitionを0.3秒にして」と具体的に言えるようになります。",
+      "durationSec": 27,
+      "visual": {
+        "type": "remotion",
+        "component": "TwoColumnScreen",
+        "props": {
+          "title": "hover + transition はセットで使う",
+          "left": {
+            "title": ":hover",
+            "body": "何を変えるかを指定する\n例: 背景色・文字色・影",
+            "icon": "🖱️",
+            "color": "#10b981"
+          },
+          "right": {
+            "title": "transition",
+            "body": "どれくらいかけて変えるかを指定する\n例: 0.3s ease",
+            "icon": "⏱️",
+            "color": "#10b981"
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 35,
+      "narration": "ここまで4つの新しいCSSテクニックを見てきました。改めて整理しましょう。box-shadow。カードや要素に影をつけて、立体感を出す。border-radius。角を丸くして、柔らかい印象にする。hover効果。マウスを乗せたときに見た目を変えて、クリックできることを伝える。transition。変化を滑らかにして、プロっぽい仕上がりにする。この4つに共通していることがあります。全部、CSSのプロパティを1行追加するだけだということです。新しいHTMLタグを覚える必要はありません。新しい構造を作る必要もありません。既存のCSSにたった1行追加するだけで、サイトの印象がこんなに変わるんです。",
+      "durationSec": 52,
+      "visual": {
+        "type": "remotion",
+        "component": "BulletDetailScreen",
+        "props": {
+          "title": "4つの新テクニック — まとめ",
+          "items": [
+            { "icon": "🌑", "title": "box-shadow", "detail": "影で立体感を出す", "color": "#10b981" },
+            { "icon": "🔵", "title": "border-radius", "detail": "角を丸くして柔らかい印象に", "color": "#10b981" },
+            { "icon": "🖱️", "title": ":hover", "detail": "クリックできることを直感的に伝える", "color": "#10b981" },
+            { "icon": "⏱️", "title": "transition", "detail": "変化を滑らかにしてプロっぽく", "color": "#10b981" }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 36,
+      "narration": "そしてもう一つ大事なことがあります。これらのテクニックは、AIが生成したコードの中にすでに入っていたということです。皆さんは今日、AIが書いたコードを読みながら、新しいテクニックを自然に学びました。パート2とパート3の知識があるから、AIのコードを読める。読めるから、新しいことも理解できる。これがパート4の学び方です。暗記するのではなく、実際のコードの中で出会って、理解する。そしてプロパティの名前を知っていれば、次回AIに修正をお願いするとき「ここのbox-shadowをもう少し強くして」と具体的に伝えられます。",
+      "durationSec": 43,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🔁",
+          "headline": "パート4の学び方",
+          "detail": "暗記ではなく、実際のコードの中で出会って理解する",
+          "color": "#10b981"
+        }
+      }
+    },
+    {
+      "scene_id": 37,
+      "narration": "今日のポイントを振り返りましょう。一つ目。AIが生成したHTMLは、パート2で学んだタグの組み合わせです。header、nav、section、footer、h1、p、a、img、form、input。どれも見覚えのあるタグでした。量は多いですが、一つ一つを見れば知っているものの組み合わせです。新しいタグは一つもありませんでした。AIは特別なことをしているわけではないんです。二つ目。CSSも同じです。フォント指定、色、ボックスモデル、フレックスボックス、メディアクエリ。パート3で学んだ知識で、AIが書いたCSSの大部分を理解できます。実際に一つの値を変えてプレビューが変わるのも確認しましたよね。AIが作ったものを読めるということは、修正もできるということです。ここがパート2とパート3の知識を学んだ意味です。三つ目。今日新しく学んだ4つのテクニック。box-shadowで影をつける、border-radiusで角を丸くする、hover効果でマウスを乗せたときの反応を作る、transitionで変化を滑らかにする。どれもたった1行で効果がある、実用的なテクニックです。AIが書いたコードの中で出会って、自分で削除したり戻したりして違いを体験しました。名前だけ覚えておけば、次にAIに何かお願いするとき「ここにbox-shadowを追加して」と伝えるだけで済みます。",
+      "durationSec": 85,
+      "visual": {
+        "type": "remotion",
+        "component": "SummaryScreen",
+        "props": {
+          "title": "今日のまとめ",
+          "points": [
+            "AIのHTMLはパート2で学んだタグの組み合わせ",
+            "AIのCSSはパート3の知識で読み解ける",
+            "box-shadow / border-radius / hover / transition",
+            "どれも1行追加するだけ",
+            "名前を知っていればAIに指示できる"
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 38,
+      "narration": "今日は「コードを読む」ということを徹底的にやりました。パート2の最後の講義でも、パート3の最後の講義でも、AIが生成したコードを読み解きましたよね。でも今回は一つ違うところがあります。前回までは練習用のコードでした。でも今回は、実際にこの後カスタマイズして完成させていくプロジェクトのコードです。読めたからこそ、次のカスタマイズのステップに自信を持って進めるんです。さて、次回の講義では、いよいよカスタマイズに入ります。今日読み解いたコードを、自分の情報に書き換えていきます。店名を変えたり、写真を入れ替えたり、色を変えたり、フォントを変えたり。さらにAIに追加の修正をお願いする方法も練習します。Googleマップの埋め込みなんかもやりますよ。パート2とパート3の知識、そして今日学んだテクニック。それらを全部使って、自分だけのサロンサイトに仕上げていきましょう。楽しみにしていてくださいね。それでは、お疲れさまでした。次回もよろしくお願いします。",
+      "durationSec": 71,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🚀",
+          "headline": "次回はカスタマイズへ",
+          "detail": "店名・写真・色を書き換えて、自分だけのサロンサイトに仕上げます",
+          "color": "#10b981"
+        }
+      }
+    },
+    {
+      "scene_id": 39,
+      "narration": "お疲れさまでした。次回もよろしくお願いします。",
+      "durationSec": 6,
+      "visual": {
+        "type": "remotion",
+        "component": "EndScreen",
+        "props": {
+          "title": "お疲れ様でした",
+          "message": "コードを読む力が、カスタマイズする力になります",
+          "nextPreview": "4-3: サロンサイトをカスタマイズする"
+        },
+        "transition": {
+          "exit": "zoom"
+        }
+      }
+    }
+  ]
+}
