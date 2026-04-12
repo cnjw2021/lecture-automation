@@ -1,0 +1,819 @@
+{
+  "lecture_id": "04-03",
+  "title": "カスタマイズ",
+  "part": 4,
+  "totalDurationSec": 2100,
+  "sequence": [
+    {
+      "scene_id": 1,
+      "narration": "皆さん、前回の講義ではAIが生成したサロンサイトのコードを読み込んで、box-shadowやborder-radius、hover効果、transitionといった新しいCSSテクニックを確認しましたね。コードの中に、パート2やパート3で学んできた要素がたくさん使われていることも確認できたと思います。",
+      "durationSec": 25,
+      "visual": {
+        "type": "remotion",
+        "component": "TitleScreen",
+        "props": {
+          "title": "カスタマイズ",
+          "sub": "PART 4 — 講義 4-3"
+        },
+        "transition": {
+          "enter": "zoom"
+        }
+      }
+    },
+    {
+      "scene_id": 2,
+      "narration": "では、今のCodePenのプレビューを改めて見てみましょう。どうでしょうか。お店の名前が「スカイサロン」とか「ビューティーサロン」のような仮の名前になっていて、キャッチコピーも「最高のリラクゼーション体験を」みたいな、少し漠然とした表現のままですよね。写真もAIが選んだサンプル画像で、色もAIが初期設定として選んだもの。自分のお店のイメージと少しズレている部分があるかもしれません。",
+      "durationSec": 36,
+      "visual": {
+        "type": "remotion",
+        "component": "QnAScreen",
+        "props": {
+          "question": "AIが作ったサイト、このままで大丈夫？",
+          "answer": "お店の名前は仮、キャッチコピーも漠然、写真もAI選定、色もデフォルト。「自分のお店」にするにはカスタマイズが必要です。"
+        },
+        "transition": {
+          "enter": "fade"
+        }
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "今日は、この「AIが作ったサイト」を「自分のサイト」に変えていきます。テキストを実際のお店の情報に書き換えて、写真も雰囲気に合うものに変えて、色もフォントも自分好みに整えて。最後にはAIに追加の修正を依頼して、機能もさらに充実させます。作業の一つひとつはシンプルで、コードを一から書くわけではありません。でも、全部終わったときの「これは自分が仕上げたサイトだ」という感覚は格別ですよ。",
+      "durationSec": 40,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "✏️",
+          "headline": "「AIのサイト」を「自分のサイト」に",
+          "detail": "テキスト・画像・色・フォント・間隔を整えて、自分だけのサイトに仕上げる",
+          "color": "#10b981"
+        },
+        "transition": {
+          "enter": "fade"
+        }
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "今日やる内容は7ステップです。テキスト変更、画像変更、色の変更、フォントの変更、間隔・サイズの微調整、料金表の修正、そしてAIへの追加依頼。一つひとつ、一緒に進めていきましょう。では、さっそくはじめましょう。",
+      "durationSec": 23,
+      "visual": {
+        "type": "remotion",
+        "component": "AgendaScreen",
+        "props": {
+          "title": "今日の7ステップ",
+          "items": [
+            { "title": "テキストを自分の情報に変える", "icon": "📝" },
+            { "title": "画像を変える", "icon": "🖼️" },
+            { "title": "色を変える", "icon": "🎨" },
+            { "title": "フォントを変える", "icon": "🔤" },
+            { "title": "間隔・サイズを微調整する", "icon": "📐" },
+            { "title": "料金表を修正する", "icon": "💴" },
+            { "title": "AIに追加修正を依頼する", "icon": "🤖" }
+          ]
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "最初にやるのは、テキストの書き換えです。コードの仕組みをゼロから理解していなくても、「この文字をこの文字に変える」という作業なので、誰でもできます。でも、丁寧にやるかどうかで、サイトのクオリティが大きく変わります。CodePenのHTMLペインを開いて、上から順番に見ていきましょう。最初に探すのは、サイトのタイトル、つまりお店の名前です。h1タグの中に入っているはずです。",
+      "durationSec": 40,
+      "visual": {
+        "type": "remotion",
+        "component": "NumberedListScreen",
+        "props": {
+          "title": "テキストを書き換える箇所",
+          "items": [
+            { "title": "お店の名前（h1タグ）" },
+            { "title": "ヒーローのキャッチコピー（h2 / p）" },
+            { "title": "こだわり紹介（3つの強み）" },
+            { "title": "施術メニューと料金表（テーブル）" },
+            { "title": "スタッフ紹介" },
+            { "title": "アクセス情報" }
+          ]
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "これを、自分の実際のお店の名前に変えてください。まだお店を持っていない方は、将来開きたいサロンの名前を考えてみてもいいですし、自分の名前を使った「〇〇 マッサージ」のような仮の名前でも構いません。大切なのは、「自分が作ったサイトだ」という実感を持ちながら作業を進めることです。",
+      "durationSec": 34,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "<h1>マッサージサロン スカイ</h1>",
+          "language": "html",
+          "title": "お店の名前を書き換える"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 7,
+      "narration": "次に、ヒーローセクションのキャッチコピーを変えましょう。pタグやh2タグで、「全身を芯からほぐします」とか「あなたの疲れ、全て引き受けます」みたいな文章が入っているはずです。ここは、サイトを見た人が最初に目にする言葉です。自分のサロンのコンセプトやこだわりに合わせて書き換えてみましょう。難しく考えなくていいです。「駅から徒歩3分の、隠れ家のような小さなサロンです」でも、「経験豊富な女性施術師が、丁寧にほぐします」でも。AIが書いたきれいな文章より、自分の言葉で書いた一文の方が、見た人に伝わることがあります。",
+      "durationSec": 53,
+      "visual": {
+        "type": "remotion",
+        "component": "BulletDetailScreen",
+        "props": {
+          "title": "キャッチコピーを自分の言葉に",
+          "items": [
+            {
+              "title": "場所・アクセス",
+              "detail": "「駅から徒歩3分の、隠れ家のような小さなサロンです」",
+              "icon": "📍",
+              "color": "#10b981"
+            },
+            {
+              "title": "施術者の特徴",
+              "detail": "「経験豊富な女性施術師が、丁寧にほぐします」",
+              "icon": "👩",
+              "color": "#10b981"
+            },
+            {
+              "title": "サロンのこだわり",
+              "detail": "「天然アロマオイルを使用した完全個室サロン」",
+              "icon": "✨",
+              "color": "#10b981"
+            }
+          ]
+        },
+        "transition": {
+          "enter": "fade"
+        }
+      }
+    },
+    {
+      "scene_id": 8,
+      "narration": "続いて、こだわり紹介のセクションです。「当店の3つのこだわり」のような見出しと、それぞれの説明文が並んでいますよね。ここも、自分のサロンの強みや特徴に書き換えてください。「完全個室で周りを気にせずくつろげます」「天然アロマオイルを使用しています」「女性専用サロンです」など、お客さんに一番伝えたいことを書きましょう。次は、施術メニューと料金表です。ここはパート2の2-6で学んだテーブルで作られているはずです。",
+      "durationSec": 42,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "💬",
+          "headline": "こだわり紹介 → お客さんに一番伝えたいことを",
+          "detail": "「完全個室」「天然アロマ」「女性専用」など、サロンの強みを自分の言葉で",
+          "color": "#10b981"
+        },
+        "transition": {
+          "enter": "fade"
+        }
+      }
+    },
+    {
+      "scene_id": 9,
+      "narration": "tdタグの中の文字を、自分のメニュー名と料金に書き換えましょう。行を追加したい場合は、trタグからtrの終わりタグまでの1行分をコピーして、その下に貼り付ければ行が増やせます。逆に、不要な行があればtrタグからtrの終わりタグごと削除すればOKです。パート2でテーブルを学んだとき、「PART 4のサロンサイトで実際に使います」とお伝えしましたが、まさにここで使っていますね。",
+      "durationSec": 43,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "<table>\n  <tr>\n    <th>コース名</th>\n    <th>時間</th>\n    <th>料金</th>\n  </tr>\n  <tr>\n    <td>全身もみほぐし</td>\n    <td>60分</td>\n    <td>6,000円</td>\n  </tr>\n  <tr>\n    <td>肩・首集中ケア</td>\n    <td>30分</td>\n    <td>3,500円</td>\n  </tr>\n  <tr>\n    <td>フットリフレクソロジー</td>\n    <td>45分</td>\n    <td>4,500円</td>\n  </tr>\n</table>",
+          "language": "html",
+          "title": "施術メニューと料金表（テーブル）"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 10,
+      "narration": "スタッフ紹介のセクションも書き換えましょう。スタッフの名前、施術歴や資格、ひとことメッセージ。ここは、お客さんが「このサロン、行ってみたいな」と思うかどうかを左右する大切な場所です。自分らしい言葉で、丁寧に書いてみてください。アクセス情報も忘れずに確認しましょう。住所、最寄り駅からの道順、営業時間、定休日、電話番号やメールアドレス。これらの情報が間違っていたり、仮のままになっていたりすると、本当に来てほしいお客さんに情報が届きません。仮のサロンを作っている場合は、近所の架空の住所でも構いませんが、形式はしっかり整えておきましょう。",
+      "durationSec": 57,
+      "visual": {
+        "type": "remotion",
+        "component": "IconListScreen",
+        "props": {
+          "title": "スタッフ紹介とアクセス情報",
+          "items": [
+            {
+              "icon": "👤",
+              "title": "スタッフ紹介",
+              "description": "名前・施術歴・資格・ひとことメッセージ",
+              "color": "#10b981"
+            },
+            {
+              "icon": "📍",
+              "title": "住所・アクセス",
+              "description": "住所・最寄り駅からの道順",
+              "color": "#10b981"
+            },
+            {
+              "icon": "🕐",
+              "title": "営業時間・定休日",
+              "description": "正確な情報を入れておく",
+              "color": "#10b981"
+            },
+            {
+              "icon": "📞",
+              "title": "連絡先",
+              "description": "電話番号・メールアドレス",
+              "color": "#10b981"
+            }
+          ]
+        },
+        "transition": {
+          "enter": "fade"
+        }
+      }
+    },
+    {
+      "scene_id": 11,
+      "narration": "テキストを一通り書き換えたら、プレビューで確認してみましょう。さっきまでと比べて、一気にリアルなサイトに見えてきましたよね。「AIが適当に入れた文章」から「自分が考えた言葉」に変わるだけで、こんなに印象が変わるんです。ここで一つ、文章を書くときのヒントをお伝えします。お客さんはサイトを見るとき、「このサロン、自分に合っているかな」「安心して行けそうかな」ということを感じ取ろうとしています。だから、「最高の技術でほぐします」のような大げさな言葉より、「産後ケアを始めて8年、のべ2,000名以上のお客様をサポートしてきました」のような具体的な事実の方が、信頼感につながります。難しく考えなくていいので、「自分のお店のことを、友達に話すとしたらどう話すか」をそのまま書いてみてください。それが一番伝わる文章になります。",
+      "durationSec": 66,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "tip",
+          "title": "伝わる文章の書き方",
+          "body": "大げさな言葉より具体的な事実が信頼感につながります。「友達に話すとしたらどう話すか」をそのまま書くのが一番です。"
+        },
+        "transition": {
+          "enter": "fade"
+        }
+      }
+    },
+    {
+      "scene_id": 12,
+      "narration": "次は画像の変更です。テキストの次にサイトの印象を大きく決めるのが画像です。特に最初に目に入るヒーローセクションの大きな画像は、そのサイトの世界観を決める最も重要な一枚です。今サイトに入っている画像はAIが選んだサンプルのURLですね。まず新しい画像を探しに行きましょう。無料で商用利用できる写真素材サイト、UnsplashとPexelsを使います。パート2の2-3でも紹介しましたね。",
+      "durationSec": 42,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "📸",
+          "headline": "画像を変えてサイトの世界観を作る",
+          "detail": "UnsplashとPexelsで無料の写真を探して、URLをそのまま使う",
+          "color": "#10b981"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 13,
+      "narration": "Chromeで新しいタブを開いて、Unsplashにアクセスしてみましょう。検索ボックスに「massage」「spa」「relaxation」などのキーワードを入力して検索してください。英語で検索した方が候補が多く出てきます。さまざまな写真が出てきましたね。サロンの内装写真、施術の様子の写真、アロマキャンドルの写真など。自分のサロンのコンセプトに合いそうなものを選んでいきましょう。",
+      "durationSec": 40,
+      "visual": {
+        "type": "playwright",
+        "syncPoints": [
+          { "actionIndex": 3, "phrase": "検索ボックスに「massage」" }
+        ],
+        "action": [
+          { "cmd": "goto", "url": "https://unsplash.com/s/photos/massage" },
+          { "cmd": "mouse_move", "to": [960, 400] },
+          { "cmd": "wait", "ms": 4000 },
+          { "cmd": "mouse_move", "to": [500, 350] },
+          { "cmd": "wait", "ms": 4000 },
+          { "cmd": "mouse_move", "to": [700, 450] },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [300, 550] },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [900, 400] },
+          { "cmd": "wait", "ms": 4000 },
+          { "cmd": "scroll", "deltaY": 300 },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "scroll", "deltaY": 300 },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [600, 400] },
+          { "cmd": "wait", "ms": 3000 }
+        ]
+      }
+    },
+    {
+      "scene_id": 14,
+      "narration": "気に入った画像が見つかったら、その写真をクリックして拡大します。右上に「ダウンロード」ボタンがありますが、今回はダウンロードせずに画像のURLをそのまま使います。拡大した画像の上で右クリックして、「画像アドレスをコピー」を選んでください。これで画像のURLがクリップボードに入りました。CodePenのHTMLペインに戻って、imgタグのsrc属性の中に、今の画像URLが書いてあるはずです。そのURL全体を削除して、コピーしたURLをペーストしてください。このとき、alt属性も必ず更新しておきましょう。「サロンのリラックスした内装」「施術中の様子」など、実際の画像に合った説明を入れてください。",
+      "durationSec": 52,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "<img\n  src=\"https://images.unsplash.com/photo-xxxxxxxxx...\"\n  alt=\"マッサージの施術の様子\"\n>",
+          "language": "html",
+          "title": "画像URLを差し替える"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 15,
+      "narration": "画像を変えると、サイトの雰囲気がテキスト変更のときとはまた違った形でガラッと変わります。「これ、本当に自分のサイトっぽくなってきた」と感じてもらえていたら嬉しいです。画像選びで迷ったときのコツをお伝えします。まず、「どんな客層に来てほしいか」を考えてみてください。ゆったりしたシニア向けのサロンであれば、落ち着いた照明の内装写真が合います。若い女性向けなら、白を基調にしたおしゃれな空間の写真が映えます。スポーツ系のコースが売りなら、施術の様子そのものを前面に出した写真がいいですね。また、複数のセクションで画像を使っている場合は、色味のトーンをそろえることで、サイト全体が統一感のある見た目になります。",
+      "durationSec": 62,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "tip",
+          "title": "画像選びのコツ",
+          "body": "「どんな客層に来てほしいか」で選ぶ。複数の画像は色味のトーンをそろえると統一感が生まれます。"
+        },
+        "transition": {
+          "enter": "fade"
+        }
+      }
+    },
+    {
+      "scene_id": 16,
+      "narration": "次は色の変更です。テキストと画像を変えただけでも随分印象が変わりましたが、色を変えることで、サイト全体の「雰囲気」そのものを変えることができます。たとえば同じサロンでも、深緑とベージュの組み合わせなら落ち着いた和の雰囲気に、チャコールグレーとゴールドならモダンで高級感のある雰囲気に、ピンクとラベンダーならかわいらしい女性向けの雰囲気になります。色はブランドイメージを作る、とても強力な要素です。まず、どんな配色にするかを決めましょう。何も考えずにCSSを開いても、「どの色をどれに変えたらいいんだろう」と迷ってしまいます。先に「こういう配色にしたい」というイメージを固めてから作業に入る方がスムーズです。",
+      "durationSec": 55,
+      "visual": {
+        "type": "remotion",
+        "component": "BulletDetailScreen",
+        "props": {
+          "title": "配色でサロンの雰囲気が変わる",
+          "items": [
+            {
+              "title": "深緑 × ベージュ",
+              "detail": "落ち着いた和の雰囲気に",
+              "icon": "🌿",
+              "color": "#4A7C6F"
+            },
+            {
+              "title": "チャコールグレー × ゴールド",
+              "detail": "モダンで高級感のある雰囲気に",
+              "icon": "✨",
+              "color": "#6B6B6B"
+            },
+            {
+              "title": "ピンク × ラベンダー",
+              "detail": "かわいらしい女性向けの雰囲気に",
+              "icon": "🌸",
+              "color": "#E8B4B8"
+            }
+          ]
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 17,
+      "narration": "そのために便利なツールが「Coolors」です。Chromeで新しいタブを開いて、Coolorsにアクセスしてみましょう。Coolorsは、5色の組み合わせを自動で提案してくれるツールです。スペースキーを押すたびに、全く新しい配色が出てきます。「この組み合わせはいいな」と思ったら、固定したい色のロックアイコンをクリックして、その色を固定した状態でまたスペースキーを押すと、固定した色に合う他の色を提案してくれます。何種類か試してみましょう。サロンサイトに合う配色のヒントをお伝えしますね。リラックス系のセラピーサロンなら、ベージュ・温かみのあるブラウン・淡いグリーンなどが合います。スポーツマッサージやリフレクソロジーならネイビー・グレー・ホワイトのクールな組み合わせが効果的です。女性向けの美容サロンなら、ローズピンク・クリームホワイト・淡いゴールドといった組み合わせが素敵ですよ。気に入った配色が見つかったら、使いたい色のHEXコードをメモしておきましょう。HEXコードというのは「#」から始まる6文字の色番号です。たとえば「#4A7C6F」といった形式ですね。パート3の3-3で学んだ色の表現方法です。Coolorsの各色の下にこのコードが表示されています。",
+      "durationSec": 108,
+      "visual": {
+        "type": "playwright",
+        "syncPoints": [
+          { "actionIndex": 5, "phrase": "スペースキーを押すたびに" }
+        ],
+        "action": [
+          { "cmd": "goto", "url": "https://coolors.co/generate" },
+          { "cmd": "mouse_move", "to": [960, 400] },
+          { "cmd": "wait", "ms": 4000 },
+          { "cmd": "mouse_move", "to": [400, 300] },
+          { "cmd": "wait", "ms": 3000 },
+          { "cmd": "press", "key": "Space" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "press", "key": "Space" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "press", "key": "Space" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [250, 500] },
+          { "cmd": "wait", "ms": 3000 },
+          { "cmd": "press", "key": "Space" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "press", "key": "Space" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [960, 300] },
+          { "cmd": "wait", "ms": 4000 },
+          { "cmd": "press", "key": "Space" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [700, 500] },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "press", "key": "Space" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [400, 500] },
+          { "cmd": "wait", "ms": 4000 },
+          { "cmd": "mouse_move", "to": [960, 400] },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "press", "key": "Space" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "press", "key": "Space" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [600, 400] },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "press", "key": "Space" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [800, 500] },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "press", "key": "Space" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [300, 400] },
+          { "cmd": "wait", "ms": 4000 },
+          { "cmd": "press", "key": "Space" },
+          { "cmd": "wait", "ms": 6000 }
+        ]
+      }
+    },
+    {
+      "scene_id": 18,
+      "narration": "では、CodePenに戻って、CSSペインで色を変えていきましょう。まず、今のCSSで使われているカラーコードの場所を把握します。CSSペインの中をクリックしてから、Ctrl+F、Macはcommand+Fで検索ができます。「#」を検索すると、カラーコードが書かれている場所がハイライトされて、数がわかります。次に、変えたい色を見つけて書き換えます。ナビゲーションバーの背景色がこうなっていたとします。これを、Coolorsでメモしたメインカラーに変えます。同じ色コードが複数の場所で使われている場合、CodePenではCtrl+H、MacはCommand+Hで検索・置換ができます。「全て置換」を押せば一括で変わります。",
+      "durationSec": 52,
+      "visual": {
+        "type": "remotion",
+        "component": "CodeWalkthroughScreen",
+        "props": {
+          "title": "CSSのカラーコードを書き換える",
+          "code": "nav {\n  background-color: #2563EB; /* 変更前 */\n}\n\nnav {\n  background-color: #4A7C6F; /* 変更後 */\n}",
+          "highlightLines": [5, 6],
+          "caption": "Ctrl+H（Mac: Command+H）で一括置換も可能"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 19,
+      "narration": "ここで、「CSS変数」という考え方も少し紹介しておきます。CSSの一番上に、こういうブロックを最初から書いておく方法があります。こうすると、CSSの中でこの変数名を使えます。この変数の値を1か所変えるだけで、その変数を使っているすべての場所の色が一括で変わります。今回は既にあるコードを修正するので検索・置換の方がシンプルですが、次に新しいサイトをゼロから作るときはこのCSS変数を最初から使うと、後で色を変えたいときに便利ですよ。",
+      "durationSec": 44,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": ":root {\n  --color-primary: #4A7C6F;\n  --color-accent: #E8D5B7;\n  --color-text: #333333;\n}\n\nnav {\n  background-color: var(--color-primary);\n}\n\n.btn {\n  background-color: var(--color-accent);\n}",
+          "language": "css",
+          "title": "CSS変数で色を一元管理する"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 20,
+      "narration": "色の変更が終わったら、全体をプレビューで確認しましょう。ナビゲーションバー、ボタン、見出し、フッター。全体を見渡して「ここの色がちょっと合わないな」と感じるところがあれば、また少し調整してみてください。色合わせには正解がありませんので、自分の感覚を信じてやってみましょう。一つ、よくあるミスをお伝えします。Coolorsで5色の配色を選んでも、それを全部サイトに使おうとすると、かえってごちゃごちゃした印象になりがちです。実際のプロのデザインでは、「メインカラー1色」「サブカラー1色」「アクセントカラー1色」の3色、多くても4色程度に抑えるのが基本です。メインカラーはナビとフッターの背景に、サブカラーはカードや区切りのラインに、アクセントカラーは予約ボタンや強調したい箇所に使う、というように役割を決めると整理しやすいですよ。",
+      "durationSec": 60,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "tip",
+          "title": "色は3〜4色に絞る",
+          "body": "メインカラー（ナビ・フッター）、サブカラー（カード・ライン）、アクセントカラー（ボタン・強調）の3色に役割を決めるとすっきりします。"
+        },
+        "transition": {
+          "enter": "fade"
+        }
+      }
+    },
+    {
+      "scene_id": 21,
+      "narration": "色の次は、フォントを変えてみましょう。フォントが変わるだけで、サイトの雰囲気がガラッと変わることがあります。今、CodePenのCSSペインで使われているフォントを確認してみましょう。font-familyというプロパティで指定されています。AIが生成したコードには、英語フォントだけが指定されていて、日本語フォントがきちんと設定されていないことも多いです。日本語フォントを明示的に指定しておくことで、文字がより読みやすく、より洗練された見た目になります。Google Fontsを使って、素敵な日本語フォントを適用してみましょう。パート3の3-3でもやりましたね。",
+      "durationSec": 48,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🔤",
+          "headline": "日本語フォントでサイトを洗練させる",
+          "detail": "Google Fontsの日本語フォントをCSSに追加するだけで印象が変わる",
+          "color": "#10b981"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 22,
+      "narration": "Chromeで新しいタブを開いて、Google Fontsにアクセスします。検索ボックスで「Japanese」と入力して絞り込むと、日本語対応フォントだけが表示されます。いくつか紹介しますね。「Noto Sans JP」は、Googleが開発したフォントで、シンプルで読みやすく、どんなジャンルのサロンにも合いやすい万能フォントです。「M PLUS Rounded 1c」は角が丸くてやわらかみのある雰囲気で、かわいらしい女性向けのサロンにぴったりです。「Zen Kaku Gothic New」はすっきりとしたモダンな雰囲気で、スタイリッシュなサロンや男性向けのサロンによく合います。フォントをクリックすると実際の見た目が確認できます。気に入ったフォントが見つかったら、「Get font」ボタンをクリックして、次の画面で「Get embed code」を選びます。「@import」のタブをクリックして、表示されたコードをコピーしてください。",
+      "durationSec": 66,
+      "visual": {
+        "type": "playwright",
+        "syncPoints": [
+          { "actionIndex": 4, "phrase": "いくつか紹介しますね" }
+        ],
+        "action": [
+          { "cmd": "goto", "url": "https://fonts.google.com/?subset=japanese&noto.script=Jpan" },
+          { "cmd": "mouse_move", "to": [960, 400] },
+          { "cmd": "wait", "ms": 4000 },
+          { "cmd": "mouse_move", "to": [400, 250] },
+          { "cmd": "wait", "ms": 3000 },
+          { "cmd": "mouse_move", "to": [350, 350] },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [650, 350] },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [960, 350] },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "scroll", "deltaY": 300 },
+          { "cmd": "wait", "ms": 4000 },
+          { "cmd": "mouse_move", "to": [400, 450] },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [700, 450] },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "scroll", "deltaY": 300 },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [500, 400] },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "scroll", "deltaY": 300 },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "mouse_move", "to": [700, 500] },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "wait", "ms": 5000 }
+        ]
+      }
+    },
+    {
+      "scene_id": 23,
+      "narration": "このコードをCodePenのCSSペインの一番先頭、つまり他のどのCSSより前に貼り付けます。次に、bodyのフォント指定を変えます。CSSペインの中でfont-familyと書かれている場所を探して、選んだフォント名に変えましょう。最後の「sans-serif」は、Google Fontsが何らかの理由で読み込めなかったときの代替フォントです。これはそのままにしておいてください。プレビューを確認しましょう。フォントが変わりましたね。同じ文章なのに、フォントが変わるだけで雰囲気が全然違いますよね。色の変更と合わせて、サイトの世界観が統一されてきた感じがすると思います。",
+      "durationSec": 50,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');\n\nbody {\n  font-family: 'Noto Sans JP', sans-serif;\n}",
+          "language": "css",
+          "title": "Google Fontsの日本語フォントを適用する"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 24,
+      "narration": "フォントに関して一つ補足です。サイト全体で2種類以上のフォントを使うときは、「見出し用」と「本文用」に分けると読みやすいサイトになります。たとえば、見出しにデザイン性の高いフォントを使って、本文にはシンプルで読みやすいNoto Sans JPを使うという組み合わせです。ただ、フォントを多用しすぎるとまとまりがなくなりますので、多くても2種類に絞るのがおすすめです。迷ったら、Noto Sans JP一種類だけでもとてもきれいに仕上がりますよ。",
+      "durationSec": 42,
+      "visual": {
+        "type": "remotion",
+        "component": "TwoColumnScreen",
+        "props": {
+          "title": "フォントの使い分け",
+          "left": {
+            "title": "見出し用フォント",
+            "body": "デザイン性の高いフォントで印象づける\n例: Zen Kaku Gothic New",
+            "icon": "🎨",
+            "color": "#10b981"
+          },
+          "right": {
+            "title": "本文用フォント",
+            "body": "読みやすいシンプルなフォントが安心\n例: Noto Sans JP",
+            "icon": "📖",
+            "color": "#10b981"
+          }
+        },
+        "transition": {
+          "enter": "fade"
+        }
+      }
+    },
+    {
+      "scene_id": 25,
+      "narration": "ここまで、テキスト、画像、色、フォントと順番に変えてきました。もう随分「自分のサイト」らしくなってきましたよね。ここからは少し細かい調整をしていきましょう。間隔とサイズの微調整です。パート3の3-4で学んだボックスモデル、padding、marginを使います。まず、全体のプレビューを見渡してみましょう。「ここ、もう少し余白があった方がゆったりした感じになるな」とか「この文字、もう少し大きくした方が読みやすいな」とか「ボタンが少し小さくてクリックしにくそうだな」と感じるところはありますか。そういった部分を、CSSで少しずつ調整していきましょう。",
+      "durationSec": 52,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "📐",
+          "headline": "padding / margin / font-size で微調整する",
+          "detail": "「窮屈だな」「大きくしたいな」と感じる部分をCSSで少しずつ整えていく",
+          "color": "#10b981"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 26,
+      "narration": "たとえば、セクションとセクションの間が詰まりすぎていると感じたら、セクション全体の上下の余白を増やします。ヒーローセクションのキャッチコピーをもっと大きく目立たせたい場合は、h1のfont-sizeを変えます。レムという単位はパート3で学びましたね。1remは基本のフォントサイズ、つまり大体16ピクセルが基準です。3remなら48ピクセル相当です。数字を変えながらプレビューで確認して、ちょうどいい大きさを見つけてみましょう。",
+      "durationSec": 47,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "section {\n  padding: 80px 0;\n}\n\n.hero h1 {\n  font-size: 3rem;\n}",
+          "language": "css",
+          "title": "セクション余白とフォントサイズの調整"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 27,
+      "narration": "ボタンの中の余白が窮屈に感じたら、paddingを増やします。上下の14px、左右の32pxというのは、一般的なボタンのバランスです。縦を増やすとボタンが高くなり、横を増やすとボタンが横に広がります。カードとカードの間の隙間を広げたい場合はgapを使います。Flexboxで並んでいる要素のgapを変えると、アイテム間の間隔が変わります。これもパート3のFlexboxで学んだプロパティですね。",
+      "durationSec": 43,
+      "visual": {
+        "type": "remotion",
+        "component": "CodeWalkthroughScreen",
+        "props": {
+          "title": "ボタンの余白とカード間隔の調整",
+          "code": ".btn {\n  padding: 14px 32px;\n}\n\n.cards {\n  gap: 32px;\n}",
+          "highlightLines": [2, 6],
+          "caption": "paddingで内側の余白、gapでカード間の間隔を調整"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 28,
+      "narration": "調整するときのコツをお伝えしますね。「一度大きく変えてから、そこから微調整する」というやり方がおすすめです。たとえばfont-sizeを変えるとき、「大きくしたい」と思ったら思い切って倍くらいにしてみる。大きすぎたら少し戻す。このやり取りを繰り返しながら、ちょうどいいバランスを見つけていきます。CodePenはリアルタイムでプレビューが更新されますから、数字を変えるたびにすぐ結果が確認できます。前回学んだbox-shadowの強さや、border-radiusの丸みの加減もこの段階で調整するといいですよ。カードの影を少し濃くしたり、ボタンの角丸をもっと丸くしたり。そういった細かいところへのこだわりが、サイト全体のクオリティを一段上げてくれます。",
+      "durationSec": 57,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "tip",
+          "title": "「大きく変えてから微調整する」",
+          "body": "思い切って倍くらいにしてみて、大きすぎたら戻す。CodePenはリアルタイム更新なのでどんどん試せます。"
+        },
+        "transition": {
+          "enter": "fade"
+        }
+      }
+    },
+    {
+      "scene_id": 29,
+      "narration": "一つ参考になる考え方をお伝えします。プロのデザイナーやWeb制作者も、最初から完璧なレイアウトを作れるわけではありません。まず大まかに配置して、見ながら少しずつ調整する、この繰り返しがデザインの基本的な進め方です。今皆さんがやっていることは、まさにそのプロと同じ作業です。「ちょっと窮屈かな」と感じる感覚、「ここの余白が足りないな」と気づく目。それ自体がWebデザインのセンスが育ってきている証拠ですから、自信を持って進めてください。",
+      "durationSec": 48,
+      "visual": {
+        "type": "remotion",
+        "component": "QuoteScreen",
+        "props": {
+          "quote": "まず大まかに配置して、見ながら少しずつ調整する。\nこの繰り返しがデザインの基本的な進め方です。",
+          "attribution": "プロのデザイナーも同じ"
+        },
+        "transition": {
+          "enter": "fade"
+        }
+      }
+    },
+    {
+      "scene_id": 30,
+      "narration": "ここまでの作業で、サイトはかなり「自分のもの」になってきましたよね。最後に、AIを活用してもう少し機能を追加してみましょう。この講座でずっとお伝えしてきた「AIへの指示の出し方」を思い出してください。漠然とした指示より、具体的な指示の方が良い結果が返ってきます。悪い例は「もっとカッコよくして」。良い例は「このボタンのCSSを変えて、背景色をオレンジ系の暖色にして、ホバー時には少し大きくなるアニメーションをつけてください」のように、何を、どうしたいかを具体的に伝えることです。まず、予約ボタンをもっと目立たせてみましょう。サロンサイトで一番大切な行動、つまりお客さんに「予約したい」と思ってもらうこと。そのためにも、予約ボタンはページ内で最も目立つ要素にしたいですよね。",
+      "durationSec": 58,
+      "visual": {
+        "type": "remotion",
+        "component": "ComparisonScreen",
+        "props": {
+          "left": {
+            "title": "❌ 曖昧な指示",
+            "points": [
+              "「もっとカッコよくして」",
+              "「おしゃれにして」",
+              "AIが何を変えるか迷う"
+            ],
+            "color": "#ef4444"
+          },
+          "right": {
+            "title": "✅ 具体的な指示",
+            "points": [
+              "「.btn-reserveをオレンジ系に」",
+              "「ホバーでscaleアニメーション追加」",
+              "変更箇所と内容が明確"
+            ],
+            "color": "#10b981"
+          },
+          "vsLabel": "VS"
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 31,
+      "narration": "ClaudeのタブをChromeで開いて、こんな風に依頼してみましょう。現在のCSSをコピーして貼り付けて、こう続けます。「このCSSの予約ボタン（.btn-reserveクラス）を改善してください。背景色はオレンジ系の暖色にして、テキストは白、ホバーしたときに少しだけ大きくなるscaleのアニメーションをつけてください。」では、送信してみましょう。AIがコードを書いている間、少し待ちましょう。クロードにはアーティファクトという便利な機能があって、生成したコードのプレビューをその場で見せてくれるんです。この機能についてはパート4で詳しく触れましたね。出てきましたね。Claudeが改善案を返してくれたら、CodePenのCSSペインに貼り付けて確認しましょう。気に入ったらそのまま使う。もう少し調整が必要なら「色をもう少し落ち着かせて」「文字を太くして」と追加で指示する。AIの提案を一度受け取って、自分の判断で採用するかどうかを決める。これが「ディレクター」としての仕事です。",
+      "durationSec": 78,
+      "visual": {
+        "type": "playwright",
+        "storageState": "config/auth/claude.json",
+        "syncPoints": [
+          { "actionIndex": 6, "phrase": "では、送信してみましょう" },
+          { "actionIndex": 10, "phrase": "出てきましたね" }
+        ],
+        "action": [
+          { "cmd": "goto", "url": "https://claude.ai/new" },
+          { "cmd": "mouse_move", "to": [960, 500] },
+          { "cmd": "wait", "ms": 3000 },
+          { "cmd": "type", "selector": "div.ProseMirror", "key": "このCSSの予約ボタン（.btn-reserveクラス）を改善してください。背景色はオレンジ系の暖色にして、テキストは白、ホバーしたときに少しだけ大きくなるscaleのアニメーションをつけてください。" },
+          { "cmd": "wait", "ms": 2000 },
+          { "cmd": "wait", "ms": 8000, "note": "送信前のナレーション確保" },
+          { "cmd": "press", "key": "Enter" },
+          { "cmd": "wait_for", "selector": "[data-is-streaming='true']", "state": "attached", "timeout": 60000 },
+          { "cmd": "wait_for", "selector": "[data-is-streaming='false']", "state": "attached", "timeout": 180000 },
+          { "cmd": "wait", "ms": 5000, "note": "Artifact プレビュー読み込み" },
+          { "cmd": "mouse_move", "to": [720, 400] },
+          { "cmd": "scroll", "deltaY": 300 },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "scroll", "deltaY": 300 },
+          { "cmd": "wait", "ms": 5000 }
+        ]
+      }
+    },
+    {
+      "scene_id": 32,
+      "narration": "次に、Googleマップの埋め込みを追加してみましょう。アクセスのセクションに地図が表示されていると、初めて来るお客さんに場所が伝わりやすくなります。Claudeにこう頼んでみましょう。「このHTMLのアクセスセクションに、Googleマップの埋め込みを追加してください。パート2で学んだiframeタグを使った方法でお願いします。住所は東京都渋谷区〇〇です。」Claudeが返してくれたiframeのコードをHTMLに貼り付けると、アクセスセクションに地図が表示されます。実際のGoogleマップと連動した地図が、コードを数行貼るだけで追加できてしまうんです。すごいですよね。こういった「既存のサイトに機能を追加する」という使い方も、AIの得意分野です。「自分でゼロから書く」のではなく、「AIに追加してもらって、自分で確認して採用する」。この流れが身についてきましたよね。",
+      "durationSec": 63,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "<!-- アクセスセクションに追加 -->\n<div class=\"map-container\">\n  <iframe\n    src=\"https://maps.google.com/maps?q=東京都渋谷区&output=embed\"\n    width=\"100%\"\n    height=\"400\"\n    style=\"border:0;\"\n    allowfullscreen\n    loading=\"lazy\">\n  </iframe>\n</div>",
+          "language": "html",
+          "title": "Googleマップの埋め込みコード"
+        },
+        "transition": {
+          "enter": "slide-up"
+        }
+      }
+    },
+    {
+      "scene_id": 33,
+      "narration": "ここでもう一つ、AIへの依頼でよく使えるパターンをご紹介します。「このCSSの特定の部分だけ変えて」というピンポイントの修正依頼です。たとえば「ナビゲーションバーの高さを60pxから80pxに変えて」とか「h2の色を現在の色から少しだけ明るくして」というように、変えたい箇所と変えたい内容を具体的に伝えます。こうすると、AIは他の部分には手を触れずにその部分だけ修正してくれます。逆に「全体をもっとおしゃれにして」というような曖昧な依頼は、AIが何を変えていいかわからず、大幅な変更を加えてしまうことがあります。AIへの指示は「どこを、どう変えるか」を具体的に。これが一番効率よく、意図した修正を得るコツです。",
+      "durationSec": 64,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "tip",
+          "title": "AIへのピンポイント修正依頼",
+          "body": "「どこを、どう変えるか」を具体的に伝えると、他の部分を変えずにその箇所だけ修正してくれます。"
+        },
+        "transition": {
+          "enter": "fade"
+        }
+      }
+    },
+    {
+      "scene_id": 34,
+      "narration": "お疲れ様でした。今日は、AIが生成したサロンサイトを自分のサイトに仕上げる作業を全部やりきりました。振り返ってみましょう。今日やったことは7つです。まず、テキストを自分のお店の情報に書き換えました。店名、キャッチコピー、こだわり紹介、施術メニューと料金表、スタッフ紹介、アクセス情報。一つひとつ書き換えることで、サイトに自分の言葉が入りましたね。次に、UnsplashとPexelsから素敵な写真を探して、画像のURLを差し替えました。右クリックで「画像アドレスをコピー」するだけでできましたね。3つ目は、Coolorsで配色を選んで、CSSのカラーコードを変更しました。検索と置換を使って、一括で色を変える方法も覚えましたね。CSS変数という、よりスマートな管理方法もご紹介しました。",
+      "durationSec": 62,
+      "visual": {
+        "type": "remotion",
+        "component": "SummaryScreen",
+        "props": {
+          "title": "今日やったこと（1〜3）",
+          "points": [
+            "テキストを自分のお店の情報に書き換えた",
+            "Unsplash / Pexelsで画像URLを差し替えた",
+            "CoolorsでHEXコードを選び、CSSを一括置換した"
+          ]
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 35,
+      "narration": "4つ目は、Google Fontsで日本語フォントを選んで、@importのコードをCSSペインの先頭に貼り付けました。5つ目は、padding、margin、font-sizeを調整して、全体のバランスを整えました。「大きく変えてから微調整する」というやり方が、感覚をつかむコツでしたね。6つ目は、AIに予約ボタンの改善を依頼して、よりインパクトのあるデザインにしました。7つ目は、AIにGoogleマップの埋め込みを依頼して、アクセスセクションに地図を追加しました。改めてプレビューを見てみましょう。講義の最初と比べて、全然違うサイトになっていますよね。でも、ゼロからコードを書いたわけではありません。AIが作ったたたき台を理解して、自分の判断で修正して仕上げた。これこそが、この講座でずっとお伝えしてきた「コーダーではなくディレクター」としての働き方です。",
+      "durationSec": 65,
+      "visual": {
+        "type": "remotion",
+        "component": "SummaryScreen",
+        "props": {
+          "title": "今日やったこと（4〜7）",
+          "points": [
+            "Google Fontsで日本語フォントを適用した",
+            "padding / font-size で間隔・サイズを微調整した",
+            "AIに予約ボタンの改善を依頼した",
+            "AIにGoogleマップ埋め込みを依頼した"
+          ]
+        },
+        "transition": {
+          "enter": "slide-left"
+        }
+      }
+    },
+    {
+      "scene_id": 36,
+      "narration": "次回はこのサイトの最終仕上げをしていきます。スマートフォンで見たときの表示を確認して、リンクや画像が正しく動いているか全体をチェックして、コードを整理して、いよいよパート5でインターネットに公開するための準備を整えます。自分が作ったサイトが実際のURLで世界に公開される瞬間が、もうすぐそこまで来ていますよ。一緒に最後まで仕上げていきましょう。楽しみにしてくださいね。それでは、今日はここまでです。今日作業した内容を保存するのも忘れずに。CodePenは基本的に自動保存されますが、右上の「Save」ボタンを押して確実に保存しておきましょう。お疲れ様でした。",
+      "durationSec": 57,
+      "visual": {
+        "type": "remotion",
+        "component": "EndScreen",
+        "props": {
+          "title": "お疲れ様でした",
+          "message": "AIが作ったたたき台を自分のサイトに仕上げました",
+          "nextPreview": "最終仕上げ — レスポンシブ確認とコード整理"
+        },
+        "transition": {
+          "exit": "zoom"
+        }
+      }
+    }
+  ]
+}
