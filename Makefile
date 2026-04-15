@@ -4,6 +4,12 @@
         preview-browser-mock preview-screenshot capture-screenshots test-screenshot-options \
         preview-springs sync-playwright save-auth
 
+# 위치 인수 지원: make run lecture-01-02.json 형식 허용
+_POSITIONAL_ARG := $(word 2,$(MAKECMDGOALS))
+ifneq ($(filter %.json,$(_POSITIONAL_ARG)),)
+  LECTURE := $(_POSITIONAL_ARG)
+endif
+
 # 기본 변수 설정
 LECTURE ?= lecture-01-01.json
 SAMPLE_LECTURE ?= sample-screenshot-test.json
@@ -22,6 +28,10 @@ RUN_ENV_VARS = $(if $(strip $(MASTER_AUDIO)),MASTER_AUDIO="$(MASTER_AUDIO)") \
                $(if $(strip $(ALIGN)),ALIGN="$(ALIGN)") \
                $(if $(strip $(ALIGN_MODEL)),ALIGN_MODEL="$(ALIGN_MODEL)") \
                $(if $(strip $(MODEL)),MODEL="$(MODEL)")
+
+# 위치 인수로 전달된 .json 파일명이 make target으로 처리되지 않도록
+%.json:
+	@:
 
 help:
 	@echo "🎓 Lecture Automation CLI"
