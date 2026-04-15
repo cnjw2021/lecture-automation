@@ -2,7 +2,7 @@
   "lecture_id": "24",
   "title": "Netlifyでデプロイ",
   "part": 5,
-  "totalDurationSec": 1680,
+  "totalDurationSec": 1618,
   "sequence": [
     {
       "scene_id": 1,
@@ -60,10 +60,26 @@
         "props": {
           "title": "今日やること",
           "items": [
-            { "icon": "👤", "title": "Netlifyアカウント作成", "description": "無料登録" },
-            { "icon": "📦", "title": "zipの解凍", "description": "フォルダを準備" },
-            { "icon": "🚀", "title": "ドラッグ&ドロップでデプロイ", "description": "公開完了" },
-            { "icon": "📱", "title": "スマホで確認", "description": "レスポンシブチェック" }
+            {
+              "icon": "👤",
+              "title": "Netlifyアカウント作成",
+              "description": "無料登録"
+            },
+            {
+              "icon": "📦",
+              "title": "zipの解凍",
+              "description": "フォルダを準備"
+            },
+            {
+              "icon": "🚀",
+              "title": "ドラッグ&ドロップでデプロイ",
+              "description": "公開完了"
+            },
+            {
+              "icon": "📱",
+              "title": "スマホで確認",
+              "description": "レスポンシブチェック"
+            }
           ]
         }
       }
@@ -77,7 +93,12 @@
         "component": "ProgressScreen",
         "props": {
           "title": "今日のステップ",
-          "steps": ["Netlifyアカウント作成", "zipの解凍", "ドラッグ&ドロップ", "スマホで確認"],
+          "steps": [
+            "Netlifyアカウント作成",
+            "zipの解凍",
+            "ドラッグ&ドロップ",
+            "スマホで確認"
+          ],
           "currentStep": 1
         },
         "transition": {
@@ -183,7 +204,12 @@
         "component": "ProgressScreen",
         "props": {
           "title": "今日のステップ",
-          "steps": ["Netlifyアカウント作成", "zipの解凍", "ドラッグ&ドロップ", "スマホで確認"],
+          "steps": [
+            "Netlifyアカウント作成",
+            "zipの解凍",
+            "ドラッグ&ドロップ",
+            "スマホで確認"
+          ],
           "currentStep": 2
         },
         "transition": {
@@ -266,7 +292,12 @@
         "component": "ProgressScreen",
         "props": {
           "title": "今日のステップ",
-          "steps": ["Netlifyアカウント作成", "zipの解凍", "ドラッグ&ドロップ", "スマホで確認"],
+          "steps": [
+            "Netlifyアカウント作成",
+            "zipの解凍",
+            "ドラッグ&ドロップ",
+            "スマホで確認"
+          ],
           "currentStep": 3
         },
         "transition": {
@@ -387,7 +418,12 @@
         "component": "ProgressScreen",
         "props": {
           "title": "今日のステップ",
-          "steps": ["Netlifyアカウント作成", "zipの解凍", "ドラッグ&ドロップ", "スマホで確認"],
+          "steps": [
+            "Netlifyアカウント作成",
+            "zipの解凍",
+            "ドラッグ&ドロップ",
+            "スマホで確認"
+          ],
           "currentStep": 4
         },
         "transition": {
@@ -474,9 +510,18 @@
         "props": {
           "title": "修正と再デプロイの3ステップ",
           "items": [
-            { "title": "CodePenでコードを修正", "description": "HTMLやCSSを直接編集。Claudeに手伝ってもらってもOK" },
-            { "title": "StackBlitzでzipを再ダウンロード", "description": "5-1の手順を繰り返す" },
-            { "title": "Netlifyに再デプロイ", "description": "Deploysタブのドロップエリアに新しいフォルダをドラッグ" }
+            {
+              "title": "CodePenでコードを修正",
+              "description": "HTMLやCSSを直接編集。Claudeに手伝ってもらってもOK"
+            },
+            {
+              "title": "StackBlitzでzipを再ダウンロード",
+              "description": "5-1の手順を繰り返す"
+            },
+            {
+              "title": "Netlifyに再デプロイ",
+              "description": "Deploysタブのドロップエリアに新しいフォルダをドラッグ"
+            }
           ]
         }
       }
@@ -491,13 +536,42 @@
         "props": {
           "title": "修正フロー",
           "nodes": [
-            { "id": "a", "label": "CodePen\n修正", "x": 280, "y": 420, "icon": "✏️", "color": "#f59e0b" },
-            { "id": "b", "label": "StackBlitz\nzipダウンロード", "x": 840, "y": 420, "icon": "📦", "color": "#f59e0b" },
-            { "id": "c", "label": "Netlify\n再デプロイ", "x": 1400, "y": 420, "icon": "🚀", "color": "#f59e0b" }
+            {
+              "id": "a",
+              "label": "CodePen\n修正",
+              "x": 280,
+              "y": 420,
+              "icon": "✏️",
+              "color": "#f59e0b"
+            },
+            {
+              "id": "b",
+              "label": "StackBlitz\nzipダウンロード",
+              "x": 840,
+              "y": 420,
+              "icon": "📦",
+              "color": "#f59e0b"
+            },
+            {
+              "id": "c",
+              "label": "Netlify\n再デプロイ",
+              "x": 1400,
+              "y": 420,
+              "icon": "🚀",
+              "color": "#f59e0b"
+            }
           ],
           "edges": [
-            { "from": "a", "to": "b", "label": "コピー&ペースト" },
-            { "from": "b", "to": "c", "label": "D&D" }
+            {
+              "from": "a",
+              "to": "b",
+              "label": "コピー&ペースト"
+            },
+            {
+              "from": "b",
+              "to": "c",
+              "label": "D&D"
+            }
           ]
         }
       }
@@ -534,28 +608,14 @@
     },
     {
       "scene_id": 34,
-      "narration": "「修正して、確認して、公開する」。このサイクルを繰り返しながら、少しずつサイトを良くしていく。これが実際のウェブサイト運営の基本的な流れです。プロのウェブ制作者も、最初から完璧なものを公開するわけではありません。公開してから改善していくんです。",
-      "durationSec": 26,
+      "narration": "「修正して、確認して、公開する」。このサイクルを繰り返しながら、少しずつサイトを良くしていく。これが実際のウェブサイト運営の基本的な流れです。プロのウェブ制作者も、最初から完璧なものを公開するわけではありません。公開してから改善していくんです。\n\n皆さんも、ぜひ気になるところがあれば、気軽に修正してみてくださいね。",
+      "durationSec": 32,
       "visual": {
         "type": "remotion",
         "component": "QuoteScreen",
         "props": {
           "quote": "修正して、確認して、公開する。\nこのサイクルを繰り返しながら\n少しずつ良くしていく。",
           "attribution": "プロも同じ流れで改善を続けています"
-        }
-      }
-    },
-    {
-      "scene_id": 35,
-      "narration": "ちなみに、もう一つ便利な機能をお伝えしておきますね。Netlifyのサイト詳細画面で、「Site configuration」に進むと、「Change site name」という項目があります。ここで、ランダムな文字列だったURLの前半部分を、好きな名前に変更できるんです。たとえば「sakura-salon.netlify.app」のように。カスタムドメインを購入しなくても、少しだけURLを覚えやすくすることができます。ただし、すでに他の人が使っている名前は設定できませんので、その点はご注意くださいね。\n\n皆さんも、ぜひ気になるところがあれば、気軽に修正してみてくださいね。",
-      "durationSec": 46,
-      "visual": {
-        "type": "remotion",
-        "component": "CalloutScreen",
-        "props": {
-          "type": "tip",
-          "title": "サイト名を変更できる",
-          "body": "Site configuration → Change site name から変更可能。例: sakura-salon.netlify.app。すでに使われている名前は設定不可。"
         }
       }
     },
@@ -594,17 +654,24 @@
     },
     {
       "scene_id": 38,
-      "narration": "ドメインは、「お名前ドットコム」や「ムームードメイン」といった専門のサービスで購入できます。価格はドメインの種類によりますが、「.com」や「.jp」なら、だいたい年間1000円から2000円くらいです。\n\n購入したドメインをNetlifyに設定すると、「ランダム文字列.netlify.app」の代わりに、自分だけのアドレスでサイトにアクセスできるようになります。Netlifyの管理画面に「Domain settings」という項目がありまして、そこから設定できます。",
-      "durationSec": 42,
+      "narration": "ドメインは、専門のサービスで年間数百円から数千円ほどで購入できます。\n\n購入したドメインをNetlifyに設定すると、「ランダム文字列.netlify.app」の代わりに、自分だけのアドレスでサイトにアクセスできるようになります。Netlifyの管理画面に「Domain settings」という項目がありまして、そこから設定できます。",
+      "durationSec": 26,
       "visual": {
         "type": "remotion",
         "component": "IconListScreen",
         "props": {
-          "title": "ドメイン購入サービス",
+          "title": "カスタムドメインの設定",
           "items": [
-            { "icon": "🛒", "title": "お名前ドットコム", "description": ".com / .jp なら年間1,000〜2,000円程度" },
-            { "icon": "🛒", "title": "ムームードメイン", "description": "同様の価格帯で購入可能" },
-            { "icon": "⚙️", "title": "Netlifyと連携", "description": "管理画面の「Domain settings」から設定" }
+            {
+              "icon": "🛒",
+              "title": "ドメインを購入",
+              "description": "専門サービスで年間数百円〜数千円"
+            },
+            {
+              "icon": "⚙️",
+              "title": "Netlifyに設定",
+              "description": "管理画面の「Domain settings」から設定"
+            }
           ]
         }
       }
@@ -661,7 +728,7 @@
     },
     {
       "scene_id": 42,
-      "narration": "皆さん、改めておめでとうございます。皆さんのサロンサイトは、今この瞬間もインターネット上で公開されています。URLを知っている人なら、日本からでも、海外からでも、パソコンからでも、スマートフォンからでも、いつでもアクセスできます。「自分のウェブサイトを持っている」。これはとても大きな一歩です。\n\nさて、次回はいよいよこの講座の最終回です。パート1からパート5まで、皆さんが歩んできた道のりを振り返ります。ウェブの仕組みを知り、HTMLで骨組みを理解し、CSSでデザインを整え、エーアイと一緒にサロンサイトを作り、そしてインターネットに公開した。この全体の流れを一度しっかり整理します。そして、ここから先にどんな可能性が広がっているのか、次のステップについてもお話しします。最後までぜひお付き合いくださいね。\n\nお疲れ様でした。それでは、次の講義でお会いしましょう。",
+      "narration": "皆さん、改めておめでとうございます。皆さんのサロンサイトは、今この瞬間もインターネット上で公開されています。URLを知っている人なら、日本からでも、海外からでも、パソコンからでも、スマートフォンからでも、いつでもアクセスできます。「自分のウェブサイトを持っている」。これはとても大きな一歩です。\n\nさて、次回はいよいよこの講座の最終回です。パート1からパート5まで、皆さんが歩んできた学習の全体像を一度しっかり振り返ります。そして、公開したサイトをどう活かしていくか、ここからさらに学べること、たとえば複数ページの制作や、ファイルのバージョン管理、サイトをより多くの人に届けるための方法など、次のステップについても具体的にご紹介します。ここからどんな道が広がっているのか、楽しみにしていてください。最後までぜひお付き合いくださいね。\n\nお疲れ様でした。それでは、次の講義でお会いしましょう。",
       "durationSec": 60,
       "visual": {
         "type": "remotion",
