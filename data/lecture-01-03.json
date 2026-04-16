@@ -685,10 +685,6 @@
         "storageState": "config/auth/claude.json",
         "syncPoints": [
           {
-            "actionIndex": 0,
-            "phrase": "出てきましたね"
-          },
-          {
             "actionIndex": 4,
             "phrase": "スクロールしていくと"
           }
