@@ -26,7 +26,7 @@ export interface BoundaryDiagnostic {
   nextSpeechStartMs: number;
   /** 경계 anchor — max(prevSpeechEndMs, nextSpeechStartMs) */
   anchorMs: number;
-  /** 전진 검색으로 찾은 최저 RMS cut 위치 */
+  /** backward-bounded RMS 검색으로 찾은 cut 위치 (nextSpeechStartMs 이하가 보장됨) */
   suggestedCutMs: number;
   /** 최종 적용된 cut 위치 */
   appliedCutMs: number;
@@ -44,7 +44,6 @@ export interface SplitChunkAudioResult {
   boundaries: BoundaryDiagnostic[];
 }
 
-const FORWARD_SEARCH_MS = 1500;
 const MIN_SCENE_DURATION_MS = 250;
 
 interface SegmentTiming {
@@ -60,13 +59,19 @@ interface SegmentTiming {
 /**
  * 청크 단위로 생성된 WAV + alignment를 씬별로 분할한다.
  *
- * 경계 컷 알고리즘 (Forward-only lowest RMS):
- *   1. Speech anchor T_w = max(N의 마지막 유효 end_time, N+1의 첫 유효 start_time)
- *   2. [T_w, T_w + FORWARD_SEARCH_MS] 범위에서 RMS 최저 프레임 중심을 cut으로 선택
+ * 경계 컷 알고리즘:
+ *   prev = N 의 마지막 유효(end>start) char 의 end_time
+ *   next = N+1 의 첫 유효 char 의 start_time
+ *   상한 searchMax = next  (엄격 — 이 이후로는 절대 컷하지 않음)
+ *   하한 searchMin = max(adjustedStart + MIN_SCENE_DURATION_MS, prev) (단, ≤ searchMax)
  *
- * ElevenLabs v3는 무음을 alignment 에 기록하지 않는 경우가 많아
- * prevSpeechEndMs == nextSpeechStartMs 가 흔하다. 이 경우 "anchor 이전"을 컷하면
- * N 의 마지막 단어를 잘라버리므로, 반드시 anchor 이후의 저에너지 프레임을 찾는다.
+ *   - prev < next  (alignment 가 무음 구간을 명시): [prev, next] 에서 최저 RMS 프레임 선택
+ *   - prev >= next (ElevenLabs v3 등에서 무음이 기록되지 않거나 trailing 문자 end_time 에 흡수): next 에서 컷
+ *
+ * next 를 엄격 상한으로 고정해 "다음 씬 앞머리 절단 (head leak)" 을 원천 차단하고,
+ * 하한을 prev 로 고정해 "이전 씬 꼬리 절단 (tail leak)" 을 차단한다. 상한·하한이 같으면
+ * 단순히 next 에서 컷하며, 이 경우 N 은 자기 speech + 씬 간 자연 무음을 그대로 보존하고
+ * N+1 은 speech onset 에서 crisp 하게 시작한다.
  *
  * ElevenLabs v3의 end_time=0 버그를 감안하여, 0ms duration 문자는 "유효" 판정에서 건너뛴다.
  */
@@ -201,18 +206,21 @@ function adjustSegmentBoundaries(
     const prevSpeechEndMs = findLastNonzeroCharEndMs(alignment, current.startCharIndex, current.charCount);
     const nextSpeechStartMs = findFirstNonzeroCharStartMs(alignment, next.startCharIndex, next.charCount);
 
-    // Anchor: N의 마지막 발화 끝과 N+1의 첫 발화 시작 중 더 늦은 쪽
+    // Anchor: 진단·override tie-break 용. N 마지막 발화 끝과 N+1 첫 발화 시작 중 더 늦은 쪽.
     const anchorMs = Math.max(prevSpeechEndMs, nextSpeechStartMs);
 
-    // Forward-only 검색: anchor 이전은 N 의 발화 영역이므로 건드리지 않는다.
-    const searchMinMs = Math.max(current.adjustedStartMs + MIN_SCENE_DURATION_MS, anchorMs);
-    const searchMaxMs = Math.min(
-      totalDurationMs,
-      next.textEndMs - MIN_SCENE_DURATION_MS,
-      anchorMs + FORWARD_SEARCH_MS,
+    // 엄격 상한: N+1 의 aligned speech start (head leak 차단)
+    const searchMaxMs = nextSpeechStartMs;
+    // 엄격 하한: N 의 aligned speech end (tail leak 차단). 단 상한을 넘지 않도록 보정.
+    const searchMinMs = Math.min(
+      searchMaxMs,
+      Math.max(current.adjustedStartMs + MIN_SCENE_DURATION_MS, prevSpeechEndMs),
     );
 
-    const suggestedCutMs = findLowestEnergyCut(anchorMs, searchMinMs, searchMaxMs, frames);
+    // 무음 구간이 alignment 에 명시된 경우에만 RMS 검색. 아니면 next 에서 컷.
+    const suggestedCutMs = searchMaxMs > searchMinMs
+      ? findLowestEnergyCut(anchorMs, searchMinMs, searchMaxMs, frames)
+      : nextSpeechStartMs;
     let appliedCutMs = suggestedCutMs;
 
     const reasons: string[] = [];
@@ -330,7 +338,14 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
 
-/** alignment 배열을 해당 씬의 문자 범위로 슬라이스하고, 시각을 0 기준으로 리베이스한다. */
+/**
+ * alignment 배열을 해당 씬의 문자 범위로 슬라이스하고, 시각을 0 기준으로 리베이스한다.
+ *
+ * 경계 컷이 씬 선두의 실제 발화를 잘랐는지 방어적으로 검증한다. 기존에는 음수 시간을
+ * 0 으로 clamp 해 절단 사실을 은폐했으나, 이제 유효 발화 문자(end > start)가
+ * 씬 시작 이전에 위치하면 즉시 throw 한다. clamp 는 v3 의 end_time=0 문자(아직
+ * 발음 위치가 확정되지 않은 공백·줄바꿈)에 대해서만 허용된다.
+ */
 function sliceAlignment(
   alignment: AudioAlignment,
   segment: SceneNarrationSegment,
@@ -338,6 +353,25 @@ function sliceAlignment(
 ): AudioAlignment {
   const { startCharIndex, charCount } = segment;
   const end = startCharIndex + charCount;
+  const sceneStartMs = Math.round(sceneStartTimeSec * 1000);
+
+  for (let i = startCharIndex; i < end; i++) {
+    const startSec = alignment.character_start_times_seconds[i];
+    const endSec = alignment.character_end_times_seconds[i];
+    const isNonzero = typeof startSec === 'number'
+      && typeof endSec === 'number'
+      && endSec > startSec;
+    if (!isNonzero) continue;
+    const startMs = Math.round(startSec * 1000);
+    if (startMs < sceneStartMs) {
+      const droppedMs = sceneStartMs - startMs;
+      throw new Error(
+        `[ChunkAudioSplitter] 씬 ${segment.sceneId} 선두 발화 절단 감지: ` +
+        `문자 [${i}] '${alignment.characters[i]}' 가 cut ${sceneStartMs}ms 이전 (${startMs}ms) 에 있음. ` +
+        `dropped=${droppedMs}ms — boundary 알고리즘 버그.`
+      );
+    }
+  }
 
   return {
     characters: alignment.characters.slice(startCharIndex, end),

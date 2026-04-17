@@ -2,8 +2,11 @@
  * 새 경계 컷 알고리즘 검증 스크립트
  *
  * 기존 청크 디버그 산출물을 읽어, 새 알고리즘으로 cut 을 재계산하고
- * 이전 결과와 비교하여 leak(음수 tail) 이 해소되는지 확인한다.
- * **WAV를 새로 쓰지 않음** — 진단만 출력.
+ * 이전 결과와 양방향 leak 을 비교한다:
+ *   - tail leak: appliedCutMs < prevSpeechEndMs  (N 의 마지막 발화 절단)
+ *   - head leak: appliedCutMs > nextSpeechStartMs (N+1 의 선두 발화 절단)
+ *
+ * **WAV를 새로 쓰지 않음** — 진단만 출력. leak 잔존 시 exit 1.
  *
  * 사용법:
  *   npx tsx scripts/validate-boundary-cut.ts <lecture.json>
@@ -47,8 +50,10 @@ async function main() {
   console.log(`   청크 수: ${chunkFiles.length}\n`);
 
   let totalBoundaries = 0;
-  let oldLeakCount = 0;
-  let newLeakCount = 0;
+  let oldTailLeakCount = 0;
+  let oldHeadLeakCount = 0;
+  let newTailLeakCount = 0;
+  let newHeadLeakCount = 0;
   const details: Array<{
     chunk: number;
     from: number;
@@ -58,7 +63,9 @@ async function main() {
     prevSpeechEndMs: number;
     nextSpeechStartMs: number;
     oldTailMs: number;
+    oldHeadMs: number;
     newTailMs: number;
+    newHeadMs: number;
     reasons: string[];
   }> = [];
 
@@ -77,12 +84,18 @@ async function main() {
           b.fromSceneId === newBoundary.fromSceneId && b.toSceneId === newBoundary.toSceneId,
       );
       const oldCutMs = oldBoundary?.appliedCutMs ?? 0;
+      // tail leak: cut 이 N 의 마지막 발화 끝보다 앞 (음수) → N 의 꼬리 발화를 자름
       const oldTailMs = oldCutMs - newBoundary.prevSpeechEndMs;
       const newTailMs = newBoundary.appliedCutMs - newBoundary.prevSpeechEndMs;
+      // head leak: cut 이 N+1 의 첫 발화 시작보다 뒤 (양수) → N+1 의 머리 발화를 자름
+      const oldHeadMs = oldCutMs - newBoundary.nextSpeechStartMs;
+      const newHeadMs = newBoundary.appliedCutMs - newBoundary.nextSpeechStartMs;
 
       totalBoundaries++;
-      if (oldTailMs < 0) oldLeakCount++;
-      if (newTailMs < 0) newLeakCount++;
+      if (oldTailMs < 0) oldTailLeakCount++;
+      if (oldHeadMs > 0) oldHeadLeakCount++;
+      if (newTailMs < 0) newTailLeakCount++;
+      if (newHeadMs > 0) newHeadLeakCount++;
 
       details.push({
         chunk: chunkIndex,
@@ -93,42 +106,47 @@ async function main() {
         prevSpeechEndMs: newBoundary.prevSpeechEndMs,
         nextSpeechStartMs: newBoundary.nextSpeechStartMs,
         oldTailMs,
+        oldHeadMs,
         newTailMs,
+        newHeadMs,
         reasons: newBoundary.reasons,
       });
     }
   }
 
-  console.log('씬 경계 비교 (tail < 0 = leak):');
-  console.log('─'.repeat(100));
+  console.log('씬 경계 비교 (tail<0 = N 꼬리 절단, head>0 = N+1 선두 절단):');
+  console.log('─'.repeat(120));
   console.log(
-    'chunk | from→to | prev_speech_end → next_speech_start | old_cut → new_cut | old_tail → new_tail | delta',
+    'chunk | from→to |  prev → next  | old_cut → new_cut | old_tail/head | new_tail/head | delta',
   );
-  console.log('─'.repeat(100));
+  console.log('─'.repeat(120));
   for (const d of details) {
-    const oldMark = d.oldTailMs < 0 ? '❌' : '  ';
-    const newMark = d.newTailMs < 0 ? '❌' : '✅';
+    const oldLeak = d.oldTailMs < 0 || d.oldHeadMs > 0 ? '❌' : '  ';
+    const newLeak = d.newTailMs < 0 || d.newHeadMs > 0 ? '❌' : '✅';
     const delta = d.newCutMs - d.oldCutMs;
     console.log(
       `  ${d.chunk}   | ${String(d.from).padStart(3)}→${String(d.to).padEnd(3)}` +
-      ` | ${String(d.prevSpeechEndMs).padStart(6)}ms → ${String(d.nextSpeechStartMs).padStart(6)}ms` +
-      ` | ${String(d.oldCutMs).padStart(6)} → ${String(d.newCutMs).padStart(6)}ms` +
-      ` | ${oldMark}${String(d.oldTailMs).padStart(5)}ms → ${newMark}${String(d.newTailMs).padStart(5)}ms` +
+      ` | ${String(d.prevSpeechEndMs).padStart(6)} → ${String(d.nextSpeechStartMs).padStart(6)}` +
+      ` | ${String(d.oldCutMs).padStart(6)} → ${String(d.newCutMs).padStart(6)}` +
+      ` | ${oldLeak} t=${String(d.oldTailMs).padStart(5)} h=${String(d.oldHeadMs).padStart(5)}` +
+      ` | ${newLeak} t=${String(d.newTailMs).padStart(5)} h=${String(d.newHeadMs).padStart(5)}` +
       ` | ${delta >= 0 ? '+' : ''}${delta}ms` +
       (d.reasons.length > 0 ? ` [${d.reasons.join('; ')}]` : ''),
     );
   }
-  console.log('─'.repeat(100));
+  console.log('─'.repeat(120));
   console.log(`\n총 ${totalBoundaries} 경계 중:`);
-  console.log(`   기존 leak: ${oldLeakCount} (${((oldLeakCount / totalBoundaries) * 100).toFixed(1)}%)`);
-  console.log(`   신규 leak: ${newLeakCount} (${((newLeakCount / totalBoundaries) * 100).toFixed(1)}%)`);
+  console.log(`   기존 tail leak (N 꼬리 절단): ${oldTailLeakCount} (${((oldTailLeakCount / totalBoundaries) * 100).toFixed(1)}%)`);
+  console.log(`   기존 head leak (N+1 선두 절단): ${oldHeadLeakCount} (${((oldHeadLeakCount / totalBoundaries) * 100).toFixed(1)}%)`);
+  console.log(`   신규 tail leak (N 꼬리 절단): ${newTailLeakCount} (${((newTailLeakCount / totalBoundaries) * 100).toFixed(1)}%)`);
+  console.log(`   신규 head leak (N+1 선두 절단): ${newHeadLeakCount} (${((newHeadLeakCount / totalBoundaries) * 100).toFixed(1)}%)`);
 
-  if (newLeakCount < oldLeakCount) {
-    console.log(`\n✅ 개선: ${oldLeakCount - newLeakCount}건의 leak 해소`);
-  } else if (newLeakCount === 0) {
-    console.log(`\n✅ 완전 해소: leak 없음`);
+  const newTotalLeak = newTailLeakCount + newHeadLeakCount;
+  if (newTotalLeak === 0) {
+    console.log(`\n✅ 양방향 leak 없음`);
   } else {
-    console.log(`\n⚠️  leak 유지 또는 증가 — 알고리즘 재검토 필요`);
+    console.log(`\n❌ leak 잔존 (tail=${newTailLeakCount}, head=${newHeadLeakCount}) — 알고리즘 재검토 필요`);
+    process.exit(1);
   }
 }
 
