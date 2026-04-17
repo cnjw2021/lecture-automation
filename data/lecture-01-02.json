@@ -45,10 +45,30 @@
         "props": {
           "title": "今日のアジェンダ",
           "items": [
-            { "title": "Webの仕組み", "description": "ブラウザとサーバーの関係", "icon": "🌐", "duration": "5分" },
-            { "title": "HTTPとHTTPS", "description": "鍵アイコンの意味", "icon": "🔒", "duration": "3.5分" },
-            { "title": "3つの言語", "description": "HTML・CSS・JavaScript", "icon": "💻", "duration": "5.5分" },
-            { "title": "開発者ツール体験", "description": "実際のサイトの中身を覗く", "icon": "🔍", "duration": "10分" }
+            {
+              "title": "Webの仕組み",
+              "description": "ブラウザとサーバーの関係",
+              "icon": "🌐",
+              "duration": "5分"
+            },
+            {
+              "title": "HTTPとHTTPS",
+              "description": "鍵アイコンの意味",
+              "icon": "🔒",
+              "duration": "3.5分"
+            },
+            {
+              "title": "3つの言語",
+              "description": "HTML・CSS・JavaScript",
+              "icon": "💻",
+              "duration": "5.5分"
+            },
+            {
+              "title": "開発者ツール体験",
+              "description": "実際のサイトの中身を覗く",
+              "icon": "🔍",
+              "duration": "10分"
+            }
           ]
         }
       }
@@ -96,12 +116,34 @@
         "props": {
           "title": "ブラウザとサーバーのやりとり",
           "nodes": [
-            { "id": "browser", "label": "ブラウザ\n(あなたのPC)", "x": 280, "y": 420, "icon": "💻", "color": "#6366f1" },
-            { "id": "server", "label": "サーバー\n(データの倉庫)", "x": 1400, "y": 420, "icon": "🖥️", "color": "#6366f1" }
+            {
+              "id": "browser",
+              "label": "ブラウザ\n(あなたのPC)",
+              "x": 280,
+              "y": 420,
+              "icon": "💻",
+              "color": "#6366f1"
+            },
+            {
+              "id": "server",
+              "label": "サーバー\n(データの倉庫)",
+              "x": 1400,
+              "y": 420,
+              "icon": "🖥️",
+              "color": "#6366f1"
+            }
           ],
           "edges": [
-            { "from": "browser", "to": "server", "label": "リクエスト →" },
-            { "from": "server", "to": "browser", "label": "← レスポンス" }
+            {
+              "from": "browser",
+              "to": "server",
+              "label": "リクエスト →"
+            },
+            {
+              "from": "server",
+              "to": "browser",
+              "label": "← レスポンス"
+            }
           ]
         }
       }
@@ -193,11 +235,26 @@
         "props": {
           "title": "Webページが表示されるまでの流れ",
           "items": [
-            { "title": "ドメイン名を入力", "description": "yahoo.co.jp とブラウザに入力" },
-            { "title": "DNSがIPアドレスを調べる", "description": "名前から住所を調べる電話帳" },
-            { "title": "サーバーにリクエストが届く", "description": "「このサイトのデータください」" },
-            { "title": "サーバーがデータを送り返す", "description": "「はい、どうぞ」とレスポンス" },
-            { "title": "ブラウザが画面に表示する", "description": "受け取ったデータをきれいに描画" }
+            {
+              "title": "ドメイン名を入力",
+              "description": "yahoo.co.jp とブラウザに入力"
+            },
+            {
+              "title": "DNSがIPアドレスを調べる",
+              "description": "名前から住所を調べる電話帳"
+            },
+            {
+              "title": "サーバーにリクエストが届く",
+              "description": "「このサイトのデータください」"
+            },
+            {
+              "title": "サーバーがデータを送り返す",
+              "description": "「はい、どうぞ」とレスポンス"
+            },
+            {
+              "title": "ブラウザが画面に表示する",
+              "description": "受け取ったデータをきれいに描画"
+            }
           ]
         }
       }
@@ -260,7 +317,7 @@
     },
     {
       "scene_id": 16,
-      "narration": "先ほど、ブラウザとサーバーの間でデータのやり取りが行われるとお話ししました。このやり取りのルール、つまり通信のルールのことを「HTTP」と呼びます。WebサイトのURLが「http://」で始まるのを見たことがあるかもしれませんね。そして、「HTTPS」。末尾に「S」がついたもの。この「S」はセキュリティーの「S」です。HTTPSでは、ブラウザとサーバーの間のやり取りが暗号化されます。",
+      "narration": "先ほど、ブラウザとサーバーの間でデータのやり取りが行われるとお話ししました。このやり取りのルール、つまり通信のルールのことを「HTTP」と呼びます。WebサイトのURLがhttpで始まるのを見たことがあるかもしれませんね。そして、「HTTPS」。末尾に「S」がついたもの。この「S」はセキュリティーの「S」です。HTTPSでは、ブラウザとサーバーの間のやり取りが暗号化されます。",
       "durationSec": 20,
       "visual": {
         "type": "remotion",
@@ -268,12 +325,20 @@
         "props": {
           "left": {
             "title": "HTTP",
-            "points": ["通信のルール", "データがそのまま送られる", "鍵マークなし"],
+            "points": [
+              "通信のルール",
+              "データがそのまま送られる",
+              "鍵マークなし"
+            ],
             "color": "#94a3b8"
           },
           "right": {
             "title": "HTTPS",
-            "points": ["通信のルール + 暗号化", "データが暗号化されて送られる", "鍵マークあり"],
+            "points": [
+              "通信のルール + 暗号化",
+              "データが暗号化されて送られる",
+              "鍵マークあり"
+            ],
             "color": "#6366f1"
           },
           "vsLabel": "VS"
@@ -291,12 +356,18 @@
           "title": "はがきと封書の違い",
           "before": {
             "label": "HTTP（はがき）",
-            "points": ["途中で誰でも中身が読める", "個人情報が丸見え"],
+            "points": [
+              "途中で誰でも中身が読める",
+              "個人情報が丸見え"
+            ],
             "color": "#ef4444"
           },
           "after": {
             "label": "HTTPS（封書）",
-            "points": ["届け先の人しか中身を見られない", "データが暗号化されて安全"],
+            "points": [
+              "届け先の人しか中身を見られない",
+              "データが暗号化されて安全"
+            ],
             "color": "#22c55e"
           }
         }
@@ -326,10 +397,30 @@
         "props": {
           "title": "身近なサイトで鍵マークを確認",
           "items": [
-            { "icon": "🔍", "title": "Google", "description": "検索するとき鍵マークあり", "color": "#6366f1" },
-            { "icon": "🛒", "title": "Amazon", "description": "お買い物するとき鍵マークあり", "color": "#6366f1" },
-            { "icon": "🎬", "title": "YouTube", "description": "動画を見るとき鍵マークあり", "color": "#6366f1" },
-            { "icon": "⚠️", "title": "鍵マークなし", "description": "個人情報を入力しないほうが安全", "color": "#ef4444" }
+            {
+              "icon": "🔍",
+              "title": "Google",
+              "description": "検索するとき鍵マークあり",
+              "color": "#6366f1"
+            },
+            {
+              "icon": "🛒",
+              "title": "Amazon",
+              "description": "お買い物するとき鍵マークあり",
+              "color": "#6366f1"
+            },
+            {
+              "icon": "🎬",
+              "title": "YouTube",
+              "description": "動画を見るとき鍵マークあり",
+              "color": "#6366f1"
+            },
+            {
+              "icon": "⚠️",
+              "title": "鍵マークなし",
+              "description": "個人情報を入力しないほうが安全",
+              "color": "#ef4444"
+            }
           ]
         }
       }
@@ -359,9 +450,24 @@
         "props": {
           "title": "Webの3つの言語",
           "features": [
-            { "icon": "🏗️", "title": "HTML", "description": "構造・骨組み", "color": "#6366f1" },
-            { "icon": "🎨", "title": "CSS", "description": "見た目・インテリア", "color": "#6366f1" },
-            { "icon": "⚡", "title": "JavaScript", "description": "動き・家電製品", "color": "#6366f1" }
+            {
+              "icon": "🏗️",
+              "title": "HTML",
+              "description": "構造・骨組み",
+              "color": "#6366f1"
+            },
+            {
+              "icon": "🎨",
+              "title": "CSS",
+              "description": "見た目・インテリア",
+              "color": "#6366f1"
+            },
+            {
+              "icon": "⚡",
+              "title": "JavaScript",
+              "description": "動き・家電製品",
+              "color": "#6366f1"
+            }
           ],
           "columns": 3
         },
@@ -379,7 +485,11 @@
         "component": "ProgressScreen",
         "props": {
           "title": "家の比喩で理解する3つの言語",
-          "steps": ["HTML — 骨組み", "CSS — インテリア", "JavaScript — 家電"],
+          "steps": [
+            "HTML — 骨組み",
+            "CSS — インテリア",
+            "JavaScript — 家電"
+          ],
           "currentStep": 1
         }
       }
@@ -393,7 +503,11 @@
         "component": "ProgressScreen",
         "props": {
           "title": "家の比喩で理解する3つの言語",
-          "steps": ["HTML — 骨組み", "CSS — インテリア", "JavaScript — 家電"],
+          "steps": [
+            "HTML — 骨組み",
+            "CSS — インテリア",
+            "JavaScript — 家電"
+          ],
           "currentStep": 2
         }
       }
@@ -407,14 +521,18 @@
         "component": "ProgressScreen",
         "props": {
           "title": "家の比喩で理解する3つの言語",
-          "steps": ["HTML — 骨組み", "CSS — インテリア", "JavaScript — 家電"],
+          "steps": [
+            "HTML — 骨組み",
+            "CSS — インテリア",
+            "JavaScript — 家電"
+          ],
           "currentStep": 3
         }
       }
     },
     {
       "scene_id": 25,
-      "narration": "ちょっと、具体的な画面で想像してみましょう。たとえば、皆さんがよく見るお店のWebサイト。一番上に大きなお店の写真が表示されていて、その下にメニューや料金表がある。さらに下にはアクセス情報や地図が載っている。こういったページの場合、「ここに写真がある」「ここにメニュー表がある」「ここに地図がある」という配置を決めているのがHTMLです。そして、写真の大きさ、メニュー表の文字の色やフォント、ボタンの形や影、これを整えているのがCSSです。そして、「予約する」ボタンを押したらフォームが出てくる、といった動きの部分がJavaScriptですね。",
+      "narration": "ちょっと、具体的な画面で想像してみましょう。たとえば、皆さんがよく見るお店のWebサイト。一番上に大きなお店の写真が表示されていて、その下にメニューや料金表がある。さらに下にはアクセス情報や地図が載っている。こういったページの場合、「ここに写真がある」「ここにメニュー表がある」「ここに地図がある」という配置を決めているのがHTMLです。そして、写真の大きさ、メニュー表の文字の色やフォント、ボタンの形や影、これを整えているのがCSSです。そして、「予約する」ボタンを押したらフォームが出てくる、といった動きの部分がジャバスクリプトですね。",
       "durationSec": 25,
       "visual": {
         "type": "remotion",
@@ -422,16 +540,31 @@
         "props": {
           "title": "お店のサイトで見る3つの役割",
           "items": [
-            { "icon": "🏗️", "title": "HTML — 構造", "detail": "写真、メニュー表、地図の配置を決める", "color": "#6366f1" },
-            { "icon": "🎨", "title": "CSS — 見た目", "detail": "写真の大きさ、文字の色、ボタンの形を整える", "color": "#6366f1" },
-            { "icon": "⚡", "title": "JavaScript — 動き", "detail": "「予約する」ボタンでフォームが出てくる", "color": "#6366f1" }
+            {
+              "icon": "🏗️",
+              "title": "HTML — 構造",
+              "detail": "写真、メニュー表、地図の配置を決める",
+              "color": "#6366f1"
+            },
+            {
+              "icon": "🎨",
+              "title": "CSS — 見た目",
+              "detail": "写真の大きさ、文字の色、ボタンの形を整える",
+              "color": "#6366f1"
+            },
+            {
+              "icon": "⚡",
+              "title": "JavaScript — 動き",
+              "detail": "「予約する」ボタンでフォームが出てくる",
+              "color": "#6366f1"
+            }
           ]
         }
       }
     },
     {
       "scene_id": 26,
-      "narration": "この3つの区別は、後の講義でHTMLやCSSを書くときに、とても大事になってきます。「今書いているのは構造の話なのか、見た目の話なのか」を意識するだけで、理解のしやすさがまったく変わります。",
+      "narration": "この3つの区別は、のちの講義でHTMLやCSSを書くときに、とても大事になってきます。「今書いているのは構造の話なのか、見た目の話なのか」を意識するだけで、理解のしやすさがまったく変わります。",
       "durationSec": 10,
       "visual": {
         "type": "remotion",
@@ -497,26 +630,89 @@
       "visual": {
         "type": "playwright",
         "action": [
-          { "cmd": "goto", "url": "https://www.yahoo.co.jp" },
-          { "cmd": "wait", "ms": 6000 },
-          { "cmd": "mouse_move", "to": [960, 400] },
-          { "cmd": "wait", "ms": 8000 },
-          { "cmd": "open_devtools" },
-          { "cmd": "wait", "ms": 5000 },
-          { "cmd": "mouse_move", "to": [1300, 200] },
-          { "cmd": "wait", "ms": 4000 },
-          { "cmd": "select_devtools_node", "selector": "body", "note": "bodyタグを確認" },
-          { "cmd": "wait", "ms": 5000 },
-          { "cmd": "toggle_devtools_node", "selector": "body", "mode": "expand", "note": "bodyの中を開く" },
-          { "cmd": "wait", "ms": 5000 },
-          { "cmd": "highlight", "selector": "body", "note": "HTMLの構造を確認" },
-          { "cmd": "wait", "ms": 8000 }
+          {
+            "cmd": "goto",
+            "url": "https://www.yahoo.co.jp"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3374
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              400
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 4498
+          },
+          {
+            "cmd": "open_devtools"
+          },
+          {
+            "cmd": "wait",
+            "ms": 6901
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              1300,
+              200
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 5520
+          },
+          {
+            "cmd": "select_devtools_node",
+            "selector": "body",
+            "note": "bodyタグを確認"
+          },
+          {
+            "cmd": "wait",
+            "ms": 36767
+          },
+          {
+            "cmd": "toggle_devtools_node",
+            "selector": "body",
+            "mode": "expand",
+            "note": "bodyの中を開く"
+          },
+          {
+            "cmd": "wait",
+            "ms": 8120
+          },
+          {
+            "cmd": "highlight",
+            "selector": "body",
+            "note": "HTMLの構造を確認"
+          },
+          {
+            "cmd": "wait",
+            "ms": 750
+          }
         ],
         "syncPoints": [
-          { "actionIndex": 4, "phrase": "開発者ツールを開いてみます" },
-          { "actionIndex": 8, "phrase": "今注目するのは「Elements」タブです" },
-          { "actionIndex": 10, "phrase": "「body」と書かれたところを開いてみると" },
-          { "actionIndex": 12, "phrase": "これがWebサイトの構造、つまりHTMLです" }
+          {
+            "actionIndex": 4,
+            "phrase": "開発者ツールを開いてみます"
+          },
+          {
+            "actionIndex": 8,
+            "phrase": "今注目するのは「Elements」タブです"
+          },
+          {
+            "actionIndex": 10,
+            "phrase": "「body」と書かれたところを開いてみると"
+          },
+          {
+            "actionIndex": 12,
+            "phrase": "これがWebサイトの構造、つまりHTMLです"
+          }
         ]
       }
     },
@@ -527,26 +723,82 @@
       "visual": {
         "type": "playwright",
         "action": [
-          { "cmd": "goto", "url": "https://www.yahoo.co.jp" },
-          { "cmd": "wait", "ms": 5000 },
-          { "cmd": "mouse_move", "to": [960, 400] },
-          { "cmd": "wait", "ms": 3000 },
-          { "cmd": "open_devtools" },
-          { "cmd": "wait", "ms": 3000 },
-          { "cmd": "disable_css" },
-          { "cmd": "wait", "ms": 5000 },
-          { "cmd": "highlight", "selector": "body", "note": "CSSが外れた状態" },
-          { "cmd": "wait", "ms": 8000 },
-          { "cmd": "scroll", "deltaY": 300 },
-          { "cmd": "wait", "ms": 5000 },
-          { "cmd": "scroll", "deltaY": 300 },
-          { "cmd": "wait", "ms": 5000 }
+          {
+            "cmd": "goto",
+            "url": "https://www.yahoo.co.jp"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              400
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "open_devtools"
+          },
+          {
+            "cmd": "wait",
+            "ms": 10800
+          },
+          {
+            "cmd": "disable_css"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3880
+          },
+          {
+            "cmd": "highlight",
+            "selector": "body",
+            "note": "CSSが外れた状態"
+          },
+          {
+            "cmd": "wait",
+            "ms": 18280
+          },
+          {
+            "cmd": "scroll",
+            "deltaY": 300
+          },
+          {
+            "cmd": "wait",
+            "ms": 17280
+          },
+          {
+            "cmd": "scroll",
+            "deltaY": 300
+          },
+          {
+            "cmd": "wait",
+            "ms": 17280
+          }
         ],
         "syncPoints": [
-          { "actionIndex": 4, "phrase": "開発者ツールを開いてみます" },
-          { "actionIndex": 6, "phrase": "いきますよ" },
-          { "actionIndex": 8, "phrase": "一瞬で見た目が激変しましたよね" },
-          { "actionIndex": 10, "phrase": "情報自体はちゃんと残っていますよね" }
+          {
+            "actionIndex": 4,
+            "phrase": "このページからCSSを外してみます"
+          },
+          {
+            "actionIndex": 6,
+            "phrase": "いきますよ"
+          },
+          {
+            "actionIndex": 8,
+            "phrase": "一瞬で見た目が激変しましたよね"
+          },
+          {
+            "actionIndex": 10,
+            "phrase": "情報自体はちゃんと残っていますよね"
+          }
         ]
       }
     },
@@ -557,17 +809,45 @@
       "visual": {
         "type": "playwright",
         "action": [
-          { "cmd": "goto", "url": "https://www.yahoo.co.jp" },
-          { "cmd": "wait", "ms": 5000 },
-          { "cmd": "mouse_move", "to": [960, 400] },
-          { "cmd": "wait", "ms": 3000 },
-          { "cmd": "open_devtools" },
-          { "cmd": "wait", "ms": 3000 },
-          { "cmd": "enable_css" },
-          { "cmd": "wait", "ms": 3000 }
+          {
+            "cmd": "goto",
+            "url": "https://www.yahoo.co.jp"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              400
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "open_devtools"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "enable_css"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4192
+          }
         ],
         "syncPoints": [
-          { "actionIndex": 6, "phrase": "元の見た目に戻りましたね" }
+          {
+            "actionIndex": 6,
+            "phrase": "元の見た目に戻りましたね"
+          }
         ]
       }
     },
@@ -578,28 +858,94 @@
       "visual": {
         "type": "playwright",
         "action": [
-          { "cmd": "goto", "url": "https://lamune-kyoto.com/" },
-          { "cmd": "wait", "ms": 5000 },
-          { "cmd": "mouse_move", "to": [960, 400] },
-          { "cmd": "wait", "ms": 5000 },
-          { "cmd": "scroll", "deltaY": 300 },
-          { "cmd": "wait", "ms": 5000 },
-          { "cmd": "scroll", "deltaY": -600 },
-          { "cmd": "wait", "ms": 3000 },
-          { "cmd": "open_devtools" },
-          { "cmd": "wait", "ms": 3000 },
-          { "cmd": "select_devtools_node", "selector": "body", "note": "サロンサイトのbody" },
-          { "cmd": "wait", "ms": 3000 },
-          { "cmd": "toggle_devtools_node", "selector": "body", "mode": "expand", "note": "bodyの中を確認" },
-          { "cmd": "wait", "ms": 3000 },
-          { "cmd": "highlight", "selector": "body", "note": "同じHTMLでできている" },
-          { "cmd": "wait", "ms": 5000 }
+          {
+            "cmd": "goto",
+            "url": "https://lamune-kyoto.com/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 5874
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              400
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 5874
+          },
+          {
+            "cmd": "scroll",
+            "deltaY": 300
+          },
+          {
+            "cmd": "wait",
+            "ms": 8259
+          },
+          {
+            "cmd": "scroll",
+            "deltaY": -600
+          },
+          {
+            "cmd": "wait",
+            "ms": 4956
+          },
+          {
+            "cmd": "open_devtools"
+          },
+          {
+            "cmd": "wait",
+            "ms": 8378
+          },
+          {
+            "cmd": "select_devtools_node",
+            "selector": "body",
+            "note": "サロンサイトのbody"
+          },
+          {
+            "cmd": "wait",
+            "ms": 8237
+          },
+          {
+            "cmd": "toggle_devtools_node",
+            "selector": "body",
+            "mode": "expand",
+            "note": "bodyの中を確認"
+          },
+          {
+            "cmd": "wait",
+            "ms": 8237
+          },
+          {
+            "cmd": "highlight",
+            "selector": "body",
+            "note": "同じHTMLでできている"
+          },
+          {
+            "cmd": "wait",
+            "ms": 907
+          }
         ],
         "syncPoints": [
-          { "actionIndex": 4, "phrase": "その下にメニューと料金表" },
-          { "actionIndex": 8, "phrase": "開発者ツールを開いてみましょう" },
-          { "actionIndex": 10, "phrase": "やっぱりHTMLのコードが並んでいますね" },
-          { "actionIndex": 14, "phrase": "同じHTML、同じCSSなんです" }
+          {
+            "actionIndex": 4,
+            "phrase": "その下にメニューと料金表"
+          },
+          {
+            "actionIndex": 8,
+            "phrase": "開発者ツールを開いてみましょう"
+          },
+          {
+            "actionIndex": 10,
+            "phrase": "やっぱりHTMLのコードが並んでいますね"
+          },
+          {
+            "actionIndex": 14,
+            "phrase": "同じHTML、同じCSSなんです"
+          }
         ]
       }
     },
@@ -610,20 +956,58 @@
       "visual": {
         "type": "playwright",
         "action": [
-          { "cmd": "goto", "url": "https://lamune-kyoto.com/" },
-          { "cmd": "wait", "ms": 5000 },
-          { "cmd": "mouse_move", "to": [960, 400] },
-          { "cmd": "wait", "ms": 2000 },
-          { "cmd": "open_devtools" },
-          { "cmd": "wait", "ms": 2000 },
-          { "cmd": "disable_css" },
-          { "cmd": "wait", "ms": 3000 },
-          { "cmd": "highlight", "selector": "body", "note": "CSS無効化" },
-          { "cmd": "wait", "ms": 4000 }
+          {
+            "cmd": "goto",
+            "url": "https://lamune-kyoto.com/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              400
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "open_devtools"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "disable_css"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4260
+          },
+          {
+            "cmd": "highlight",
+            "selector": "body",
+            "note": "CSS無効化"
+          },
+          {
+            "cmd": "wait",
+            "ms": 14608
+          }
         ],
         "syncPoints": [
-          { "actionIndex": 6, "phrase": "CSSをオフにしてみましょう" },
-          { "actionIndex": 8, "phrase": "見た目ががらっと変わりましたね" }
+          {
+            "actionIndex": 6,
+            "phrase": "CSSをオフにしてみましょう"
+          },
+          {
+            "actionIndex": 8,
+            "phrase": "見た目ががらっと変わりましたね"
+          }
         ]
       }
     },
@@ -634,17 +1018,45 @@
       "visual": {
         "type": "playwright",
         "action": [
-          { "cmd": "goto", "url": "https://lamune-kyoto.com/" },
-          { "cmd": "wait", "ms": 3000 },
-          { "cmd": "mouse_move", "to": [960, 400] },
-          { "cmd": "wait", "ms": 2000 },
-          { "cmd": "open_devtools" },
-          { "cmd": "wait", "ms": 2000 },
-          { "cmd": "enable_css" },
-          { "cmd": "wait", "ms": 3000 }
+          {
+            "cmd": "goto",
+            "url": "https://lamune-kyoto.com/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              400
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "open_devtools"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "enable_css"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1280
+          }
         ],
         "syncPoints": [
-          { "actionIndex": 6, "phrase": "元に戻しますね" }
+          {
+            "actionIndex": 6,
+            "phrase": "元に戻しますね"
+          }
         ]
       }
     },
@@ -665,7 +1077,7 @@
     },
     {
       "scene_id": 37,
-      "narration": "そしてもう一つ、大事なことに気づいてほしいんです。今、開発者ツールに表示されていたHTMLのコード。あれは、画像でもなければ、特殊なファイルでもありません。ただのテキストです。文字の羅列です。CSSも同じです。フォントの色を赤にしたければ「color: red」と書くだけ。文字のサイズを大きくしたければ「font-size: 24px」と書くだけ。すべて、ただのテキストなんです。",
+      "narration": "そしてもう一つ、大事なことに気づいてほしいんです。今、開発者ツールに表示されていたHTMLのコード。あれは、画像でもなければ、特殊なファイルでもありません。ただのテキストです。文字の羅列です。CSSも同じです。フォントの色を赤にしたければ「color: red」と書くだけ。文字のサイズを大きくしたければ「font-size: 24ピクセル」と書くだけ。すべて、ただのテキストなんです。",
       "durationSec": 20,
       "visual": {
         "type": "remotion",
@@ -691,12 +1103,20 @@
           "title": "Web制作の本質",
           "before": {
             "label": "以前のイメージ",
-            "points": ["特殊な才能が必要", "コードを全部自分で書く", "何ヶ月もかかる"],
+            "points": [
+              "特殊な才能が必要",
+              "コードを全部自分で書く",
+              "何ヶ月もかかる"
+            ],
             "color": "#94a3b8"
           },
           "after": {
             "label": "AI時代の現実",
-            "points": ["テキストファイルにルールに沿って書くだけ", "AIがテキストの大部分を書いてくれる", "指示を出して、チェックして、直す"],
+            "points": [
+              "テキストファイルにルールに沿って書くだけ",
+              "AIがテキストの大部分を書いてくれる",
+              "指示を出して、チェックして、直す"
+            ],
             "color": "#6366f1"
           }
         }
@@ -729,9 +1149,18 @@
         "props": {
           "title": "3つのポイント",
           "items": [
-            { "title": "Webの仕組み", "description": "URL → DNS → サーバー → ブラウザ表示。HTTPS = 暗号化通信" },
-            { "title": "3つの言語", "description": "HTML（構造）+ CSS（見た目）。この講座ではこの2つを学ぶ" },
-            { "title": "全部テキスト", "description": "特殊な技術ではなく、ルールに沿ったテキストの書き方" }
+            {
+              "title": "Webの仕組み",
+              "description": "URL → DNS → サーバー → ブラウザ表示。HTTPS = 暗号化通信"
+            },
+            {
+              "title": "3つの言語",
+              "description": "HTML（構造）+ CSS（見た目）。この講座ではこの2つを学ぶ"
+            },
+            {
+              "title": "全部テキスト",
+              "description": "特殊な技術ではなく、ルールに沿ったテキストの書き方"
+            }
           ]
         }
       }
