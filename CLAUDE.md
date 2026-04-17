@@ -111,6 +111,13 @@ make preview SCENE=6                         # 씬 프리뷰 PNG
 | `data/lecture-03-05.json` | 3-5 Flexbox | 완성 |
 | `data/lecture-03-06.json` | 3-6 レスポンシブデザイン | 완성 |
 | `data/lecture-03-07.json` | 3-7 AIにCSSを任せる | 완성 |
+| `data/lecture-04-01.json` | 4-1 サロンサイト企画 + AI初稿生成 | 완성 |
+| `data/lecture-04-02.json` | 4-2 コードを読む + 新テクニック | 완성 |
+| `data/lecture-04-03.json` | 4-3 カスタマイズ | 완성 |
+| `data/lecture-04-04.json` | 4-4 仕上げ + レビュー | 완성 |
+| `data/lecture-05-01.json` | 5-1 CodePenからファイルへ — StackBlitzで変換 | 완성 |
+| `data/lecture-05-02.json` | 5-2 Netlifyでデプロイ | 완성 |
+| `data/lecture-05-03.json` | 5-3 まとめと次のステップ | 완성 |
 
 커리큘럼 전체: [docs/curriculum.md](docs/curriculum.md)
 

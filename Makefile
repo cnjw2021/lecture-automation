@@ -5,7 +5,7 @@
         preview-springs sync-playwright save-auth
 
 # 기본 변수 설정
-LECTURE ?= p1-01-01.json
+LECTURE ?= lecture-01-01.json
 SAMPLE_LECTURE ?= sample-screenshot-test.json
 ENGINE_PATH = packages/automation/dist/presentation/cli/main.js
 ENGINE_RENDER_SCENE = packages/automation/dist/presentation/cli/render-scene.js
@@ -28,7 +28,7 @@ help:
 	@echo "--------------------------------------------------"
 	@echo "make install         - 모든 패키지 의존성 설치"
 	@echo "make install-align-deps - 마스터 오디오 정렬용 Python 가상환경 생성"
-	@echo "make run             - 전 공정 실행 (기본: p1-01-01.json)"
+	@echo "make run             - 전 공정 실행 (기본: lecture-01-01.json)"
 	@echo "make run LECTURE=xxx - 특정 강의 JSON 파일로 실행"
 	@echo "                       config/tts.json의 activeProvider로 씬별 TTS 생성"
 	@echo "make run-master LECTURE=xxx - master.wav 재사용 또는 config/tts.json의 masterAudio로 생성 후 정렬/분할"
