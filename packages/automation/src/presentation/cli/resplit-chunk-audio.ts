@@ -41,8 +41,9 @@ async function runResplitChunkAudio(jsonFileName: string, sceneIds: number[]) {
       console.log(
         `     chunk ${boundary.chunkIndex} ${boundary.fromSceneId}->${boundary.toSceneId}` +
         ` | ${mode}` +
-        ` | target=${boundary.targetMs}ms` +
-        ` | default=${boundary.defaultCutMs}ms` +
+        ` | anchor=${boundary.anchorMs}ms` +
+        ` | prevEnd=${boundary.prevSpeechEndMs}ms` +
+        ` | nextStart=${boundary.nextSpeechStartMs}ms` +
         ` | suggested=${boundary.suggestedCutMs}ms` +
         ` | applied=${boundary.appliedCutMs}ms` +
         ` | offset=${boundary.appliedOffsetMs >= 0 ? '+' : ''}${boundary.appliedOffsetMs}ms`,

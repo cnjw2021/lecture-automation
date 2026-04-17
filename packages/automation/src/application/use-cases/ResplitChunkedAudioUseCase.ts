@@ -109,7 +109,7 @@ export class ResplitChunkedAudioUseCase {
       affectedChunks.push({
         chunkIndex: manifest.chunkIndex,
         sceneIds: manifest.sceneIds,
-        detectedBoundaries: splitResult.boundaries.filter(boundary => boundary.detectedIssue || boundary.usedOverride),
+        detectedBoundaries: splitResult.boundaries.filter(boundary => boundary.appliedOffsetMs !== 0 || boundary.usedOverride || boundary.reasons.length > 0),
       });
     }
 

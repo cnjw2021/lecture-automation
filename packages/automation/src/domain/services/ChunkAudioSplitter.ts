@@ -20,14 +20,18 @@ export interface BoundaryOverride {
 export interface BoundaryDiagnostic {
   fromSceneId: number;
   toSceneId: number;
-  targetMs: number;
-  defaultCutMs: number;
+  /** N 마지막 유효 문자의 end_time (nonzero 보정 후) */
+  prevSpeechEndMs: number;
+  /** N+1 첫 유효 문자의 start_time (nonzero 보정 후) */
+  nextSpeechStartMs: number;
+  /** 경계 anchor — max(prevSpeechEndMs, nextSpeechStartMs) */
+  anchorMs: number;
+  /** 전진 검색으로 찾은 최저 RMS cut 위치 */
   suggestedCutMs: number;
+  /** 최종 적용된 cut 위치 */
   appliedCutMs: number;
   appliedOffsetMs: number;
   usedOverride: boolean;
-  detectedIssue: boolean;
-  confidence: number;
   reasons: string[];
 }
 
@@ -40,12 +44,8 @@ export interface SplitChunkAudioResult {
   boundaries: BoundaryDiagnostic[];
 }
 
-const SEARCH_WINDOW_MS = 240;
+const FORWARD_SEARCH_MS = 1500;
 const MIN_SCENE_DURATION_MS = 250;
-const LONG_CHAR_MS = 1000;
-const SHORT_CHAR_MS = 50;
-const LATER_CANDIDATE_MIN_DELTA_MS = 30;
-const EARLIER_CANDIDATE_MIN_DELTA_MS = 30;
 
 interface SegmentTiming {
   sceneId: number;
@@ -57,17 +57,18 @@ interface SegmentTiming {
   adjustedEndMs: number;
 }
 
-interface BoundaryCandidate {
-  cutMs: number;
-  rms: number;
-}
-
 /**
  * 청크 단위로 생성된 WAV + alignment를 씬별로 분할한다.
  *
- * alignment의 문자 단위 타임스탬프를 이용하여 각 씬의 시작/끝 시점을 특정하고,
- * PCM 데이터를 프레임 경계에 맞춰 분할한다.
- * 분할된 각 씬의 alignment는 시작 시각이 0으로 리베이스된다.
+ * 경계 컷 알고리즘 (Forward-only lowest RMS):
+ *   1. Speech anchor T_w = max(N의 마지막 유효 end_time, N+1의 첫 유효 start_time)
+ *   2. [T_w, T_w + FORWARD_SEARCH_MS] 범위에서 RMS 최저 프레임 중심을 cut으로 선택
+ *
+ * ElevenLabs v3는 무음을 alignment 에 기록하지 않는 경우가 많아
+ * prevSpeechEndMs == nextSpeechStartMs 가 흔하다. 이 경우 "anchor 이전"을 컷하면
+ * N 의 마지막 단어를 잘라버리므로, 반드시 anchor 이후의 저에너지 프레임을 찾는다.
+ *
+ * ElevenLabs v3의 end_time=0 버그를 감안하여, 0ms duration 문자는 "유효" 판정에서 건너뛴다.
  */
 export function splitChunkAudio(
   wavBuffer: Buffer,
@@ -196,201 +197,133 @@ function adjustSegmentBoundaries(
   for (let index = 0; index < timings.length - 1; index++) {
     const current = timings[index];
     const next = timings[index + 1];
-    const separatorCharIndex = segments[index].startCharIndex + segments[index].charCount;
 
-    const separatorStartMs = getBoundaryTimeMs(
-      alignment.character_start_times_seconds[separatorCharIndex],
-      current.textEndMs,
-    );
-    const separatorEndMs = getBoundaryTimeMs(
-      alignment.character_end_times_seconds[separatorCharIndex],
-      next.textStartMs,
-    );
-    const targetMs = Math.round((separatorStartMs + separatorEndMs) / 2);
-    const minMs = Math.max(
-      current.adjustedStartMs + MIN_SCENE_DURATION_MS,
-      separatorStartMs - SEARCH_WINDOW_MS,
-    );
-    const maxMs = Math.min(
+    const prevSpeechEndMs = findLastNonzeroCharEndMs(alignment, current.startCharIndex, current.charCount);
+    const nextSpeechStartMs = findFirstNonzeroCharStartMs(alignment, next.startCharIndex, next.charCount);
+
+    // Anchor: N의 마지막 발화 끝과 N+1의 첫 발화 시작 중 더 늦은 쪽
+    const anchorMs = Math.max(prevSpeechEndMs, nextSpeechStartMs);
+
+    // Forward-only 검색: anchor 이전은 N 의 발화 영역이므로 건드리지 않는다.
+    const searchMinMs = Math.max(current.adjustedStartMs + MIN_SCENE_DURATION_MS, anchorMs);
+    const searchMaxMs = Math.min(
       totalDurationMs,
       next.textEndMs - MIN_SCENE_DURATION_MS,
-      separatorEndMs + SEARCH_WINDOW_MS,
+      anchorMs + FORWARD_SEARCH_MS,
     );
 
-    const defaultCandidate = findLowestEnergyBoundary(targetMs, minMs, maxMs, frames);
-    const diagnostic = analyzeBoundary(
-      current,
-      next,
-      alignment,
-      targetMs,
-      minMs,
-      maxMs,
-      frames,
-      defaultCandidate,
-      boundaryOverrides,
+    const suggestedCutMs = findLowestEnergyCut(anchorMs, searchMinMs, searchMaxMs, frames);
+    let appliedCutMs = suggestedCutMs;
+
+    const reasons: string[] = [];
+
+    const override = boundaryOverrides.find(
+      item => item.fromSceneId === current.sceneId && item.toSceneId === next.sceneId,
     );
-    const cutMs = diagnostic.appliedCutMs;
-    current.adjustedEndMs = cutMs;
-    next.adjustedStartMs = cutMs;
-    diagnostics.push(diagnostic);
+    let usedOverride = false;
+    if (override) {
+      appliedCutMs = clamp(anchorMs + override.offsetMs, searchMinMs, searchMaxMs);
+      usedOverride = true;
+      reasons.push(`override=${override.offsetMs}ms`);
+      if (override.reason) {
+        reasons.push(`overrideReason=${override.reason}`);
+      }
+    }
+
+    current.adjustedEndMs = appliedCutMs;
+    next.adjustedStartMs = appliedCutMs;
+
+    diagnostics.push({
+      fromSceneId: current.sceneId,
+      toSceneId: next.sceneId,
+      prevSpeechEndMs,
+      nextSpeechStartMs,
+      anchorMs,
+      suggestedCutMs,
+      appliedCutMs,
+      appliedOffsetMs: appliedCutMs - anchorMs,
+      usedOverride,
+      reasons,
+    });
   }
 
   return diagnostics;
 }
 
-/** 바이트 오프셋을 프레임 경계에 맞춰 내림 정렬한다. */
-function alignToFrame(byteOffset: number, bytesPerFrame: number): number {
-  return Math.floor(byteOffset / bytesPerFrame) * bytesPerFrame;
-}
-
-function getBoundaryTimeMs(value: number | undefined, fallbackMs: number): number {
-  if (typeof value !== 'number' || !Number.isFinite(value)) {
-    return fallbackMs;
+/** N의 마지막 문자 중 end_time > start_time 인 문자의 end_time(ms). v3 end_time=0 버그 대응. */
+function findLastNonzeroCharEndMs(
+  alignment: AudioAlignment,
+  startCharIndex: number,
+  charCount: number,
+): number {
+  const endIndex = startCharIndex + charCount - 1;
+  for (let i = endIndex; i >= startCharIndex; i--) {
+    const start = alignment.character_start_times_seconds[i];
+    const end = alignment.character_end_times_seconds[i];
+    if (typeof start === 'number' && typeof end === 'number' && end > start) {
+      return Math.round(end * 1000);
+    }
   }
-  return Math.round(value * 1000);
+  // 모든 문자가 0ms duration인 극단적 케이스: 첫 문자의 end_time(또는 0)
+  const fallback = alignment.character_end_times_seconds[endIndex];
+  return typeof fallback === 'number' ? Math.round(fallback * 1000) : 0;
 }
 
-function findLowestEnergyBoundary(
-  targetMs: number,
+/** N+1의 첫 문자 중 end_time > start_time 인 문자의 start_time(ms). */
+function findFirstNonzeroCharStartMs(
+  alignment: AudioAlignment,
+  startCharIndex: number,
+  charCount: number,
+): number {
+  const endIndex = startCharIndex + charCount - 1;
+  for (let i = startCharIndex; i <= endIndex; i++) {
+    const start = alignment.character_start_times_seconds[i];
+    const end = alignment.character_end_times_seconds[i];
+    if (typeof start === 'number' && typeof end === 'number' && end > start) {
+      return Math.round(start * 1000);
+    }
+  }
+  const fallback = alignment.character_start_times_seconds[startCharIndex];
+  return typeof fallback === 'number' ? Math.round(fallback * 1000) : 0;
+}
+
+/**
+ * [minMs, maxMs] 범위에서 RMS 최저 프레임의 중심 시각을 cut으로 반환.
+ * 여러 프레임이 같은 RMS이면 anchorMs 에 가장 가까운 프레임을 선호한다.
+ */
+function findLowestEnergyCut(
+  anchorMs: number,
   minMs: number,
   maxMs: number,
   frames: RmsFrame[],
-): BoundaryCandidate {
+): number {
   if (maxMs <= minMs) {
-    return {
-      cutMs: Math.max(minMs, Math.min(maxMs, targetMs)),
-      rms: Number.POSITIVE_INFINITY,
-    };
+    return Math.max(minMs, Math.min(maxMs, anchorMs));
   }
 
   const candidates = frames.filter(frame => frame.startMs >= minMs && frame.endMs <= maxMs);
   if (candidates.length === 0) {
-    return {
-      cutMs: Math.round(Math.max(minMs, Math.min(maxMs, targetMs))),
-      rms: Number.POSITIVE_INFINITY,
-    };
+    return Math.round(Math.max(minMs, Math.min(maxMs, anchorMs)));
   }
 
   let best = candidates[0];
-  let bestDistance = Math.abs(((best.startMs + best.endMs) / 2) - targetMs);
+  let bestDistance = Math.abs(((best.startMs + best.endMs) / 2) - anchorMs);
 
   for (const frame of candidates.slice(1)) {
     const center = (frame.startMs + frame.endMs) / 2;
-    const distance = Math.abs(center - targetMs);
+    const distance = Math.abs(center - anchorMs);
     if (frame.rms < best.rms || (frame.rms === best.rms && distance < bestDistance)) {
       best = frame;
       bestDistance = distance;
     }
   }
 
-  return {
-    cutMs: Math.round((best.startMs + best.endMs) / 2),
-    rms: best.rms,
-  };
+  return Math.round((best.startMs + best.endMs) / 2);
 }
 
-function analyzeBoundary(
-  current: SegmentTiming,
-  next: SegmentTiming,
-  alignment: AudioAlignment,
-  targetMs: number,
-  minMs: number,
-  maxMs: number,
-  frames: RmsFrame[],
-  defaultCandidate: BoundaryCandidate,
-  boundaryOverrides: ReadonlyArray<BoundaryOverride>,
-): BoundaryDiagnostic {
-  const reasons: string[] = [];
-  const prevLastCharIndex = current.startCharIndex + current.charCount - 1;
-  const nextFirstCharIndex = next.startCharIndex;
-  const prevLastCharDurationMs = getCharDurationMs(alignment, prevLastCharIndex);
-  const nextFirstCharDurationMs = getCharDurationMs(alignment, nextFirstCharIndex);
-  const override = boundaryOverrides.find(item => item.fromSceneId === current.sceneId && item.toSceneId === next.sceneId);
-
-  let suggestedCandidate = defaultCandidate;
-  let detectedIssue = false;
-  let confidence = 0;
-
-  if (prevLastCharDurationMs <= SHORT_CHAR_MS && nextFirstCharDurationMs >= LONG_CHAR_MS) {
-    detectedIssue = true;
-    confidence = 0.85;
-    reasons.push(
-      `prevLastCharShort=${prevLastCharDurationMs}ms`,
-      `nextFirstCharLong=${nextFirstCharDurationMs}ms`,
-    );
-
-    const laterCandidate = findLowestEnergyBoundary(
-      targetMs + LATER_CANDIDATE_MIN_DELTA_MS,
-      Math.max(minMs, targetMs + LATER_CANDIDATE_MIN_DELTA_MS),
-      maxMs,
-      frames,
-    );
-    if (
-      laterCandidate.cutMs > defaultCandidate.cutMs
-      && laterCandidate.cutMs - defaultCandidate.cutMs >= LATER_CANDIDATE_MIN_DELTA_MS
-      && laterCandidate.rms <= defaultCandidate.rms * 1.2
-    ) {
-      suggestedCandidate = laterCandidate;
-      reasons.push(`preferLaterCut=${laterCandidate.cutMs - defaultCandidate.cutMs}ms`);
-    }
-  } else if (prevLastCharDurationMs >= LONG_CHAR_MS && nextFirstCharDurationMs <= SHORT_CHAR_MS) {
-    detectedIssue = true;
-    confidence = 0.8;
-    reasons.push(
-      `prevLastCharLong=${prevLastCharDurationMs}ms`,
-      `nextFirstCharShort=${nextFirstCharDurationMs}ms`,
-    );
-
-    const earlierCandidate = findLowestEnergyBoundary(
-      targetMs - EARLIER_CANDIDATE_MIN_DELTA_MS,
-      minMs,
-      Math.min(maxMs, targetMs - EARLIER_CANDIDATE_MIN_DELTA_MS),
-      frames,
-    );
-    if (
-      earlierCandidate.cutMs < defaultCandidate.cutMs
-      && defaultCandidate.cutMs - earlierCandidate.cutMs >= EARLIER_CANDIDATE_MIN_DELTA_MS
-      && earlierCandidate.rms <= defaultCandidate.rms * 1.2
-    ) {
-      suggestedCandidate = earlierCandidate;
-      reasons.push(`preferEarlierCut=${defaultCandidate.cutMs - earlierCandidate.cutMs}ms`);
-    }
-  }
-
-  let appliedCutMs = suggestedCandidate.cutMs;
-  let usedOverride = false;
-
-  if (override) {
-    appliedCutMs = clamp(targetMs + override.offsetMs, minMs, maxMs);
-    usedOverride = true;
-    reasons.push(`override=${override.offsetMs}ms`);
-    if (override.reason) {
-      reasons.push(`overrideReason=${override.reason}`);
-    }
-  }
-
-  return {
-    fromSceneId: current.sceneId,
-    toSceneId: next.sceneId,
-    targetMs,
-    defaultCutMs: defaultCandidate.cutMs,
-    suggestedCutMs: suggestedCandidate.cutMs,
-    appliedCutMs,
-    appliedOffsetMs: appliedCutMs - targetMs,
-    usedOverride,
-    detectedIssue,
-    confidence,
-    reasons,
-  };
-}
-
-function getCharDurationMs(alignment: AudioAlignment, index: number): number {
-  const start = alignment.character_start_times_seconds[index];
-  const end = alignment.character_end_times_seconds[index];
-  if (typeof start !== 'number' || typeof end !== 'number') {
-    return 0;
-  }
-  return Math.max(0, Math.round((end - start) * 1000));
+/** 바이트 오프셋을 프레임 경계에 맞춰 내림 정렬한다. */
+function alignToFrame(byteOffset: number, bytesPerFrame: number): number {
+  return Math.floor(byteOffset / bytesPerFrame) * bytesPerFrame;
 }
 
 function clamp(value: number, min: number, max: number): number {
