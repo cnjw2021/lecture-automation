@@ -55,7 +55,7 @@ run-force:
 	@echo "🔄 강제 재생성 모드로 파이프라인 시작: $(LECTURE)"
 	env FORCE=1 $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
-regen-scene:
+regen-scene: build
 	@echo "🔄 특정 Scene 재생성: $(LECTURE) / Scene $(SCENE)"
 	@LECTURE_ID=$$(node -e "const d=require('./data/$(LECTURE)'); console.log(d.lecture_id)"); \
 	for scene in $(SCENE); do \

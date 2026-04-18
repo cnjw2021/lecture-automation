@@ -2,7 +2,7 @@
   "lecture_id": "01-03",
   "title": "AIが変えたWeb制作の風景",
   "part": 1,
-  "totalDurationSec": 1787,
+  "totalDurationSec": 1794,
   "sequence": [
     {
       "scene_id": 1,
@@ -628,7 +628,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 3000
+            "ms": 6340
           },
           {
             "cmd": "type",
@@ -637,11 +637,11 @@
           },
           {
             "cmd": "wait",
-            "ms": 2000
+            "ms": 4227
           },
           {
             "cmd": "wait",
-            "ms": 10000,
+            "ms": 21133,
             "note": "ナレーション「指示の出し方にも...」区間を埋める"
           },
           {
@@ -649,24 +649,17 @@
             "key": "Enter"
           },
           {
-            "cmd": "wait_for",
-            "selector": "[data-is-streaming='true']",
-            "state": "attached",
-            "timeout": 60000,
-            "note": "URL が /chat/{uuid} に遷移し、次シーンで conversationUrl として参照可能になるまで待機"
-          },
-          {
             "cmd": "wait",
-            "ms": 5000,
-            "note": "URL 確定と最終フレーム安定化"
+            "ms": 1282,
+            "note": "URL が /chat/{uuid} に遷移するまで待機 (次シーンで conversationUrl として参照)"
           }
         ]
       }
     },
     {
       "scene_id": 28.5,
-      "narration": "AIがコードを書いている間、少し待ちましょう。Claudeにはアーティファクトという便利な機能があって、生成したコードのプレビューをその場で見せてくれるんです。この機能についてはPART 4で詳しく触れますので、今はこういうことができるんだな、くらいで大丈夫です。実際にやってみると、こんなふうに進んでいくんですね。AIがHTMLやCSSのコードを、リアルタイムで書き出してくれています。",
-      "durationSec": 37,
+      "narration": "AIがコードを書いている間、少し待ちましょう。Claudeにはアーティファクトという便利な機能があって、左側に会話とコード、右側に実際のプレビューが同時に表示されるんです。ブラウザやエディタを別に開かなくても、結果をその場で確認できるんですね。しかも「もう少し明るい色にして」「ボタンを大きくして」のように、対話しながら修正をお願いすることもできます。この機能についてはPART 4で詳しく触れますので、今はこういうことができるんだな、くらいで大丈夫です。",
+      "durationSec": 44,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -687,7 +680,7 @@
         "storageState": "config/auth/claude.json",
         "syncPoints": [
           {
-            "actionIndex": 6,
+            "actionIndex": 8,
             "phrase": "スクロールしていくと"
           }
         ],
@@ -695,18 +688,27 @@
           {
             "cmd": "goto",
             "urlFromScene": 28,
-            "note": "シーン28で生成されたClaude対話URLを再利用 (完成済みArtifactを直接表示)"
+            "note": "シーン28で生成されたClaude対話URLを再利用"
           },
           {
-            "cmd": "wait_for",
-            "selector": "[data-is-streaming='false']",
-            "state": "attached",
+            "cmd": "wait_for_claude_ready",
             "timeout": 180000,
-            "note": "シーン28の背後で続いているストリーミング完了を待機 (既に完了していれば即時通過)"
+            "note": "Claude 응답 생성·저장 완료까지 폴링 대기 (10초 간격)"
           },
           {
             "cmd": "wait",
-            "ms": 3940
+            "ms": 2505,
+            "note": "ready 판정 후 DOM 정착 대기"
+          },
+          {
+            "cmd": "click",
+            "selector": "button:has-text('コード'):has-text('HTML')",
+            "note": "Artifact カードをクリックしてプレビューパネルを開く"
+          },
+          {
+            "cmd": "wait",
+            "ms": 2505,
+            "note": "プレビューパネルのスライドイン完了待ち"
           },
           {
             "cmd": "mouse_move",
@@ -718,11 +720,11 @@
           },
           {
             "cmd": "wait",
-            "ms": 5910
+            "ms": 2505
           },
           {
             "cmd": "wait",
-            "ms": 5910
+            "ms": 2505
           },
           {
             "cmd": "scroll",
@@ -730,7 +732,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 6400
+            "ms": 7227
           },
           {
             "cmd": "scroll",
@@ -738,7 +740,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 6400
+            "ms": 7227
           },
           {
             "cmd": "scroll",
@@ -746,7 +748,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 6400
+            "ms": 7227
           }
         ]
       }

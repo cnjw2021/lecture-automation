@@ -72,8 +72,8 @@ function parseTargetSceneIds(raw?: string): number[] {
     .split(/[,\s]+/)
     .map(value => value.trim())
     .filter(Boolean)
-    .map(value => Number.parseInt(value, 10))
-    .filter(value => Number.isInteger(value) && value > 0);
+    .map(value => Number.parseFloat(value))
+    .filter(value => Number.isFinite(value) && value > 0);
 }
 
 if (require.main === module) {

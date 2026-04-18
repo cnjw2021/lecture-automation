@@ -203,6 +203,65 @@ export class PlaywrightVisualProvider implements IVisualProvider {
   }
 
   /**
+   * Claude 응답 완료까지 폴링 대기.
+   * /chat/{uuid} URL을 goto 한 직후 사용 — 대화 본문이 비어 있을 수 있으므로
+   * 스트리밍 인디케이터 / 빈 상태 메시지 / 메시지 DOM 등 여러 신호로 완료 판정.
+   * 10초 간격 폴링, 기본 타임아웃 180초.
+   */
+  private async waitForClaudeReady(page: Page, timeoutMs = 180000): Promise<void> {
+    const startedAt = Date.now();
+    const deadline = startedAt + timeoutMs;
+    const hints = [
+      'Claude 응답 대기 중...',
+      '시간이 조금 걸리고 있습니다...',
+      '조금 더 기다려 봅시다...',
+      '곧 응답이 돌아올 것 같습니다...',
+      '응답 생성이 계속되고 있습니다, 잠시만요...',
+    ];
+    let attempt = 0;
+
+    while (Date.now() < deadline) {
+      const state = await page.evaluate(() => {
+        const streamingTrue = document.querySelector('[data-is-streaming="true"]');
+        if (streamingTrue) return 'streaming';
+
+        const emptyGreeting = Array.from(document.querySelectorAll('h1, h2, p, div'))
+          .find(el => {
+            const t = (el.textContent || '').trim();
+            return t === '本日はどのようなお手伝いができますか？'
+              || t === 'How can I help you today?'
+              || t.startsWith('本日はどのような');
+          });
+        if (emptyGreeting) return 'empty';
+
+        const streamingFalse = document.querySelector('[data-is-streaming="false"]');
+        if (streamingFalse) return 'ready';
+
+        const hasArtifact = !!document.querySelector(
+          '[aria-label*="artifact" i], [class*="artifact-block" i], button[aria-label*="アーティファクト"]'
+        );
+        const hasProse = document.querySelectorAll('.prose, [class*="message-"]').length > 0;
+        if (hasArtifact || hasProse) return 'ready';
+
+        return 'unknown';
+      }).catch(() => 'unknown');
+
+      if (state === 'ready') {
+        const elapsed = Math.round((Date.now() - startedAt) / 1000);
+        console.log(`  > Claude 응답 준비 완료 (경과: ${elapsed}s)`);
+        return;
+      }
+
+      const hint = hints[Math.min(attempt, hints.length - 1)];
+      const elapsed = Math.round((Date.now() - startedAt) / 1000);
+      console.log(`  > ${hint} (상태: ${state}, 경과: ${elapsed}s)`);
+      attempt++;
+      await page.waitForTimeout(10000);
+    }
+    console.warn(`  ⚠️ Claude 응답 대기 타임아웃 (${timeoutMs}ms) — 계속 진행`);
+  }
+
+  /**
    * goto 후 URL을 확인하여 로그인 페이지로 리다이렉트되었는지 감지한다.
    * 세션 만료 시 wait_for 타임아웃(최대 2분)까지 낭비하지 않고 즉시 실패.
    */
@@ -338,6 +397,9 @@ export class PlaywrightVisualProvider implements IVisualProvider {
               console.log(`  > wait_for: "${action.selector}" (${state}, ${timeout}ms)`);
               await page.locator(action.selector).waitFor({ state, timeout });
             }
+            break;
+          case 'wait_for_claude_ready':
+            await this.waitForClaudeReady(page, action.timeout ?? 180000);
             break;
           case 'scroll': {
             const deltaY = action.deltaY ?? 300;

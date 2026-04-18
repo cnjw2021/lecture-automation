@@ -57,6 +57,15 @@ export class SyncPlaywrightUseCase {
       const visual = scene.visual as PlaywrightVisual;
       if (!visual.syncPoints || visual.syncPoints.length === 0) continue;
 
+      // 라이브 데모 씬(wait_for / wait_for_claude_ready 포함)은 역방향 싱크 대상이므로 건너뜀
+      const isLiveDemo = visual.action.some(
+        a => a.cmd === 'wait_for' || a.cmd === 'wait_for_claude_ready',
+      );
+      if (isLiveDemo) {
+        console.log(`\n[Sync] Scene ${scene.scene_id} 는 라이브 데모 (역방향 싱크 대상) → 순방향 싱크 건너뜀`);
+        continue;
+      }
+
       console.log(`\n[Sync] Scene ${scene.scene_id} 처리 중...`);
 
       try {

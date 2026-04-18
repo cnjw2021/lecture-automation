@@ -134,6 +134,7 @@ make preview SCENE=6                         # 씬 프리뷰 PNG
 
 - [README.md](README.md) — 프로젝트 전체 개요
 - [docs/playwright-actions.md](docs/playwright-actions.md) — Playwright 액션 명세서 (14종: wait_for, scroll 포함)
+- [docs/playwright-ai-live-demo-history.md](docs/playwright-ai-live-demo-history.md) — AI 라이브 데모 씬 자동화 이력 (폐기된 접근 + 현행 설계 + 깨지기 쉬운 포인트, 라이브 데모 작업 전 필독)
 - [docs/tts-voices.md](docs/tts-voices.md) — TTS 보이스 비교
 - [docs/tts-history.md](docs/tts-history.md) — TTS 엔진·보이스 탐색 이력 (재추천 금지 조합 포함, TTS 변경 제안 전 필독)
 - [docs/curriculum.md](docs/curriculum.md) — 전체 커리큘럼

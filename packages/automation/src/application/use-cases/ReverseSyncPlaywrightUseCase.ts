@@ -48,8 +48,10 @@ export class ReverseSyncPlaywrightUseCase {
       if (scene.visual.type !== 'playwright') continue;
       const visual = scene.visual as PlaywrightVisual;
 
-      // 라이브 데모 씬 판별: wait_for가 action에 있고 syncPoints가 정의된 경우
-      const hasWaitFor = visual.action.some(a => a.cmd === 'wait_for');
+      // 라이브 데모 씬 판별: wait_for 또는 wait_for_claude_ready가 action에 있고 syncPoints가 정의된 경우
+      const hasWaitFor = visual.action.some(
+        a => a.cmd === 'wait_for' || a.cmd === 'wait_for_claude_ready',
+      );
       if (!hasWaitFor || !visual.syncPoints?.length) continue;
 
       console.log(`\n[ReverseSync] Scene ${scene.scene_id} 처리 중...`);

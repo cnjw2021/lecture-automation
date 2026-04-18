@@ -117,23 +117,27 @@ export class RunAutomationPipelineUseCase {
     return { outputPath, lecture };
   }
 
-  /** wait_for가 action에 있는 라이브 데모 씬이 있는지 */
+  /** wait_for / wait_for_claude_ready 가 action에 있는 라이브 데모 씬이 있는지 */
   private hasLiveDemoScenes(lecture: Lecture, targetSceneIds?: number[]): boolean {
     return lecture.sequence.some(scene =>
       (!targetSceneIds || targetSceneIds.includes(scene.scene_id)) &&
       scene.visual.type === 'playwright' &&
-      (scene.visual as PlaywrightVisual).action.some(a => a.cmd === 'wait_for')
+      (scene.visual as PlaywrightVisual).action.some(
+        a => a.cmd === 'wait_for' || a.cmd === 'wait_for_claude_ready',
+      )
     );
   }
 
-  /** 순방향 싱크 대상: syncPoints가 있되 wait_for는 없는 일반 Playwright 씬 */
+  /** 순방향 싱크 대상: syncPoints가 있되 wait_for / wait_for_claude_ready 는 없는 일반 Playwright 씬 */
   private hasForwardSyncableScenes(lecture: Lecture, targetSceneIds?: number[]): boolean {
     return lecture.sequence.some(scene => {
       if (targetSceneIds && !targetSceneIds.includes(scene.scene_id)) return false;
       if (scene.visual.type !== 'playwright') return false;
       const visual = scene.visual as PlaywrightVisual;
       const hasSync = (visual.syncPoints?.length ?? 0) > 0;
-      const hasWaitFor = visual.action.some(a => a.cmd === 'wait_for');
+      const hasWaitFor = visual.action.some(
+        a => a.cmd === 'wait_for' || a.cmd === 'wait_for_claude_ready',
+      );
       return hasSync && !hasWaitFor;
     });
   }
