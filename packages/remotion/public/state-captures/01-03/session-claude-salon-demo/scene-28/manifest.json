@@ -1,0 +1,134 @@
+{
+  "sceneId": 28,
+  "lectureId": "01-03",
+  "totalSteps": 8,
+  "totalDurationMs": 42480,
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "steps": [
+    {
+      "index": 0,
+      "cmd": "goto",
+      "screenshot": "step-0.png",
+      "cursorFrom": {
+        "x": -100,
+        "y": -100
+      },
+      "cursorTo": {
+        "x": -100,
+        "y": -100
+      },
+      "scrollY": 0,
+      "durationMs": 1000
+    },
+    {
+      "index": 1,
+      "cmd": "mouse_move",
+      "screenshot": "step-1.png",
+      "cursorFrom": {
+        "x": -100,
+        "y": -100
+      },
+      "cursorTo": {
+        "x": 960,
+        "y": 500
+      },
+      "durationMs": 700
+    },
+    {
+      "index": 2,
+      "cmd": "wait",
+      "screenshot": "step-2.png",
+      "cursorFrom": {
+        "x": 960,
+        "y": 500
+      },
+      "cursorTo": {
+        "x": 960,
+        "y": 500
+      },
+      "durationMs": 6460
+    },
+    {
+      "index": 3,
+      "cmd": "type",
+      "screenshot": "step-3.png",
+      "cursorFrom": {
+        "x": 960,
+        "y": 500
+      },
+      "cursorTo": {
+        "x": 988.3984375,
+        "y": 400.19921875
+      },
+      "targetBox": {
+        "x": 669.3984375,
+        "y": 389,
+        "width": 638,
+        "height": 22.3984375
+      },
+      "typedText": "マッサージサロンのホームページをHTMLとCSSで作ってください。メニュー表、アクセス情報、お問い合わせボタンを含めてください。",
+      "durationMs": 7680
+    },
+    {
+      "index": 4,
+      "cmd": "wait",
+      "screenshot": "step-4.png",
+      "cursorFrom": {
+        "x": 988.3984375,
+        "y": 400.19921875
+      },
+      "cursorTo": {
+        "x": 988.3984375,
+        "y": 400.19921875
+      },
+      "durationMs": 4307
+    },
+    {
+      "index": 5,
+      "cmd": "wait",
+      "screenshot": "step-5.png",
+      "cursorFrom": {
+        "x": 988.3984375,
+        "y": 400.19921875
+      },
+      "cursorTo": {
+        "x": 988.3984375,
+        "y": 400.19921875
+      },
+      "durationMs": 21533,
+      "note": "ナレーション「指示の出し方にも...」区間を埋める"
+    },
+    {
+      "index": 6,
+      "cmd": "press",
+      "screenshot": "step-6.png",
+      "cursorFrom": {
+        "x": 988.3984375,
+        "y": 400.19921875
+      },
+      "cursorTo": {
+        "x": 988.3984375,
+        "y": 400.19921875
+      },
+      "durationMs": 300
+    },
+    {
+      "index": 7,
+      "cmd": "final",
+      "screenshot": "step-7.png",
+      "cursorFrom": {
+        "x": 988.3984375,
+        "y": 400.19921875
+      },
+      "cursorTo": {
+        "x": 988.3984375,
+        "y": 400.19921875
+      },
+      "durationMs": 500
+    }
+  ],
+  "captureBasePath": "state-captures/01-03/session-claude-salon-demo/scene-28"
+}
