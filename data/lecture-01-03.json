@@ -715,10 +715,10 @@
           {
             "cmd": "mouse_move",
             "to": [
-              720,
-              400
+              1500,
+              500
             ],
-            "note": "Artifact プレビュー領域へカーソル"
+            "note": "Artifact プレビュー領域中央へカーソル（右パネル内部。以降の scroll が Artifact 側で効くように）"
           },
           {
             "cmd": "wait",
