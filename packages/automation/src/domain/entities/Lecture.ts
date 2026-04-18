@@ -59,10 +59,18 @@ export interface RemotionVisual {
  * Playwright 씬의 나레이션-액션 싱크 포인트.
  * actionIndex 번 액션이 narration 내 phrase 발화 시점에 맞춰 실행되도록 wait를 자동 조정한다.
  * phrase는 나레이션 안에서 유일하게 특정되는 부분 문자열이어야 한다.
+ *
+ * target (역방향 싱크 전용):
+ *   - 'start' : 액션 시작 시각(startMs)에 phrase를 정렬 — 시각 효과가 액션 시작에서 발생
+ *     (press/click/scroll/goto/mouse_move/type/highlight 등 대부분의 액션)
+ *   - 'end'   : 액션 완료 시각(endMs)에 phrase를 정렬 — 조건/대기 충족 시점에 시각 효과 발생
+ *     (wait_for — 조건 만족 시 화면 변화, wait — 시간 경과 후)
+ *   - 미지정 시 액션 cmd 타입에 따른 기본값이 적용된다.
  */
 export interface PlaywrightSyncPoint {
   actionIndex: number;  // actions 배열의 인덱스 (0-based)
   phrase: string;       // 이 액션이 발화되어야 할 나레이션 구절 (나레이션 내 고유 부분문자열)
+  target?: 'start' | 'end';
 }
 
 export interface PlaywrightVisual {

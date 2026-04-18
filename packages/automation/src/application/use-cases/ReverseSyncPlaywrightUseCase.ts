@@ -21,6 +21,21 @@ import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
 import { readWavMetadata, insertSilenceIntoWav } from '../../domain/utils/WavAnalysisUtils';
 import { RecordingManifest } from '../../infrastructure/providers/PlaywrightVisualProvider';
 
+/**
+ * 액션 cmd별 기본 sync target.
+ * 'start': 시각 효과가 액션 시작 순간에 발생하는 액션 (press/click/scroll 등)
+ * 'end'  : 조건 충족·시간 경과 후 시각 효과가 발생하는 액션 (wait_for/wait)
+ */
+const DEFAULT_SYNC_TARGET: Record<string, 'start' | 'end'> = {
+  wait_for: 'end',
+  wait: 'end',
+};
+
+function resolveSyncTarget(cmd: string, override?: 'start' | 'end'): 'start' | 'end' {
+  if (override) return override;
+  return DEFAULT_SYNC_TARGET[cmd] ?? 'start';
+}
+
 export class ReverseSyncPlaywrightUseCase {
   constructor(private readonly lectureRepository: ILectureRepository) {}
 
@@ -101,13 +116,14 @@ export class ReverseSyncPlaywrightUseCase {
     const insertions: { splitMs: number; silenceMs: number }[] = [];
 
     for (const sp of sortedSyncPoints) {
-      // 비디오에서의 타겟 시점: 해당 액션의 완료(endMs)
+      // 비디오에서의 타겟 시점: 액션 cmd 타입에 따라 startMs 또는 endMs 선택 (syncPoint.target로 오버라이드 가능)
       const actionTs = manifest.actionTimestamps.find(t => t.index === sp.actionIndex);
       if (!actionTs) {
         console.warn(`  ⚠️ action[${sp.actionIndex}] 타임스탬프 없음, 건너뜀`);
         continue;
       }
-      const videoTargetMs = actionTs.endMs;
+      const targetKind = resolveSyncTarget(actionTs.cmd, sp.target);
+      const videoTargetMs = targetKind === 'start' ? actionTs.startMs : actionTs.endMs;
 
       // 오디오에서의 현재 발화 시점
       const audioCurrentMs = alignment
@@ -125,11 +141,11 @@ export class ReverseSyncPlaywrightUseCase {
       const silenceMs = videoTargetMs - adjustedAudioMs;
 
       if (silenceMs <= 0) {
-        console.log(`  action[${sp.actionIndex}] "${sp.phrase.slice(0, 16)}...": 무음 불필요 (video=${videoTargetMs}ms, audio=${adjustedAudioMs}ms)`);
+        console.log(`  action[${sp.actionIndex}] (${actionTs.cmd}/${targetKind}) "${sp.phrase.slice(0, 16)}...": 무음 불필요 (video=${videoTargetMs}ms, audio=${adjustedAudioMs}ms)`);
         continue;
       }
 
-      console.log(`  action[${sp.actionIndex}] "${sp.phrase.slice(0, 16)}...": ${Math.round(silenceMs)}ms 무음 삽입 (video=${videoTargetMs}ms, audio=${adjustedAudioMs}ms)`);
+      console.log(`  action[${sp.actionIndex}] (${actionTs.cmd}/${targetKind}) "${sp.phrase.slice(0, 16)}...": ${Math.round(silenceMs)}ms 무음 삽입 (video=${videoTargetMs}ms, audio=${adjustedAudioMs}ms)`);
       insertions.push({
         splitMs: audioCurrentMs,
         silenceMs: Math.round(silenceMs),

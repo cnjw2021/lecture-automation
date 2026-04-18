@@ -77,18 +77,15 @@ export class PlaywrightVisualProvider implements IVisualProvider {
       );
       await page.waitForTimeout(2000);
 
-      // 매니페스트 저장 (wait_for가 있는 라이브 데모 씬용)
-      const hasWaitFor = visualConfig.action.some(a => a.cmd === 'wait_for');
-      if (hasWaitFor) {
-        const manifest: RecordingManifest = {
-          sceneId: scene.scene_id,
-          totalDurationMs: totalDurationMs + 2000,
-          actionTimestamps: timestamps,
-        };
-        const manifestPath = outputPath.replace(/\.\w+$/, '.manifest.json');
-        await fs.writeJson(manifestPath, manifest, { spaces: 2 });
-        console.log(`  > 녹화 매니페스트 저장: ${manifestPath}`);
-      }
+      // 매니페스트 저장 (모든 playwright 씬에 생성 — 역방향 싱크·검증·디버깅용)
+      const manifest: RecordingManifest = {
+        sceneId: scene.scene_id,
+        totalDurationMs: totalDurationMs + 2000,
+        actionTimestamps: timestamps,
+      };
+      const manifestPath = outputPath.replace(/\.\w+$/, '.manifest.json');
+      await fs.writeJson(manifestPath, manifest, { spaces: 2 });
+      console.log(`  > 녹화 매니페스트 저장: ${manifestPath}`);
     } catch (error: any) {
       hasError = true;
       console.error(`  > Scene ${scene.scene_id} 녹화 중 에러:`, error.message);
