@@ -1,4 +1,5 @@
 import { Lecture, RemotionVisual } from '../../domain/entities/Lecture';
+import { validateSharedSessions } from '../../domain/policies/SharedSessionValidator';
 
 export class ValidateLectureUseCase {
   // 현재 Remotion에 실제 구현되어 있는 컴포넌트 목록
@@ -52,5 +53,15 @@ export class ValidateLectureUseCase {
     }
 
     console.log(`✅ 모든 컴포넌트 검증 완료.`);
+
+    const sharedSessionViolations = validateSharedSessions(lecture);
+    if (sharedSessionViolations.length > 0) {
+      console.error(`\n❌ [치명적 에러] shared session 씬 제약 위반 ${sharedSessionViolations.length}건 발견:`);
+      for (const v of sharedSessionViolations) {
+        console.error(`  - [${v.rule}] ${v.message}`);
+      }
+      throw new Error(`Shared session 제약 위반 ${sharedSessionViolations.length}건`);
+    }
+    console.log(`✅ shared session 제약 검증 완료.`);
   }
 }

@@ -55,7 +55,7 @@ run-force:
 	@echo "🔄 강제 재생성 모드로 파이프라인 시작: $(LECTURE)"
 	env FORCE=1 $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
-regen-scene:
+regen-scene: build
 	@echo "🔄 특정 Scene 재생성: $(LECTURE) / Scene $(SCENE)"
 	@LECTURE_ID=$$(node -e "const d=require('./data/$(LECTURE)'); console.log(d.lecture_id)"); \
 	for scene in $(SCENE); do \
@@ -65,6 +65,8 @@ regen-scene:
 		rm -f $(OUTPUT_DIR)/clips/$$LECTURE_ID/scene-$$scene.mp4; \
 		echo "  🗑️  scene-$$scene.webm 캡처 삭제 중..."; \
 		rm -f packages/remotion/public/captures/$$LECTURE_ID/scene-$$scene.webm; \
+		echo "  🗑️  session 캡처 디렉토리 삭제 중 (shared 씬)..."; \
+		find packages/remotion/public/state-captures/$$LECTURE_ID -type d -name "scene-$$scene" -exec rm -rf {} + 2>/dev/null || true; \
 	done
 	env TARGET_SCENES="$(SCENE)" node $(ENGINE_PATH) $(LECTURE)
 

@@ -2,7 +2,7 @@
   "lecture_id": "01-03",
   "title": "AIが変えたWeb制作の風景",
   "part": 1,
-  "totalDurationSec": 1798,
+  "totalDurationSec": 1794,
   "sequence": [
     {
       "scene_id": 1,
@@ -603,19 +603,19 @@
     },
     {
       "scene_id": 28,
-      "narration": "では、実際にClaudeの画面を開いてみます。ここに入力欄がありますので、メッセージを入力していきますね。「マッサージサロンのホームページをHTMLとCSSで作ってください。メニュー表、アクセス情報、お問い合わせボタンを含めてください。」シンプルな指示ですが、まずはこのくらいで試してみましょう。あまり細かいことは書いていません。あえてシンプルにして、AIがどこまでやってくれるのかを見てみます。指示の出し方にもコツがあるんですが、それはこの講座を進めていく中で少しずつ身につけていきます。では、送信してみましょう。AIがコードを書いている間、少し待ちましょう。Claudeにはアーティファクトという便利な機能があって、生成したコードのプレビューをその場で見せてくれるんです。この機能についてはPART 4で詳しく触れますので、今はこういうことができるんだな、くらいで大丈夫です。実際にやってみると、こんなふうに進んでいくんですね。AIがHTMLやCSSのコードを、リアルタイムで書き出してくれています。",
-      "durationSec": 90,
+      "narration": "では、実際にClaudeの画面を開いてみます。ここに入力欄がありますので、メッセージを入力していきますね。「マッサージサロンのホームページをHTMLとCSSで作ってください。メニュー表、アクセス情報、お問い合わせボタンを含めてください。」シンプルな指示ですが、まずはこのくらいで試してみましょう。あまり細かいことは書いていません。あえてシンプルにして、AIがどこまでやってくれるのかを見てみます。指示の出し方にもコツがあるんですが、それはこの講座を進めていく中で少しずつ身につけていきます。では、送信してみましょう。",
+      "durationSec": 42,
       "visual": {
         "type": "playwright",
         "storageState": "config/auth/claude.json",
+        "session": {
+          "id": "claude-salon-demo",
+          "mode": "shared"
+        },
         "syncPoints": [
           {
             "actionIndex": 6,
             "phrase": "では、送信してみましょう"
-          },
-          {
-            "actionIndex": 10,
-            "phrase": "実際にやってみると、こんなふうに進んでいくんですね"
           }
         ],
         "action": [
@@ -632,7 +632,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 11400
+            "ms": 6620
           },
           {
             "cmd": "type",
@@ -641,39 +641,33 @@
           },
           {
             "cmd": "wait",
-            "ms": 7600
+            "ms": 4414
           },
           {
             "cmd": "wait",
-            "ms": 19000,
-            "note": "ナレーション前半と入力時間の差を補充"
+            "ms": 22066,
+            "note": "ナレーション「指示の出し方にも...」区間を埋める"
           },
           {
             "cmd": "press",
             "key": "Enter"
-          },
-          {
-            "cmd": "wait_for",
-            "selector": "[data-is-streaming='true']",
-            "state": "attached",
-            "timeout": 60000
-          },
-          {
-            "cmd": "wait_for",
-            "selector": "[data-is-streaming='false']",
-            "state": "attached",
-            "timeout": 180000
-          },
-          {
-            "cmd": "wait",
-            "ms": 120780,
-            "note": "Artifact プレビュー ロード待ち"
-          },
-          {
-            "cmd": "wait",
-            "ms": 6394
           }
         ]
+      }
+    },
+    {
+      "scene_id": 28.5,
+      "narration": "AIがコードを書いている間、少し待ちましょう。Claudeにはアーティファクトという便利な機能があって、左側に会話とコード、右側に実際のプレビューが同時に表示されるんです。ブラウザやエディタを別に開かなくても、結果をその場で確認できるんですね。しかも「もう少し明るい色にして」「ボタンを大きくして」のように、対話しながら修正をお願いすることもできます。この機能についてはPART 4で詳しく触れますので、今はこういうことができるんだな、くらいで大丈夫です。",
+      "durationSec": 44,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "📝",
+          "headline": "Artifactでプレビュー",
+          "detail": "生成したコードをその場で表示。PART 4で詳しく扱います。",
+          "color": "#6366f1"
+        }
       }
     },
     {
@@ -683,16 +677,40 @@
       "visual": {
         "type": "playwright",
         "storageState": "config/auth/claude.json",
+        "session": {
+          "id": "claude-salon-demo",
+          "mode": "shared"
+        },
         "syncPoints": [
           {
-            "actionIndex": 4,
+            "actionIndex": 7,
             "phrase": "スクロールしていくと"
           }
         ],
         "action": [
           {
+            "cmd": "wait_for_claude_ready",
+            "timeout": 180000,
+            "offscreen": true,
+            "note": "Claude 応答生成・保存完了までポーリング待機 (共有セッション offscreen)"
+          },
+          {
             "cmd": "wait",
-            "ms": 3940
+            "ms": 2505,
+            "offscreen": true,
+            "note": "ready 判定後の DOM 安定待ち (共有セッション offscreen)"
+          },
+          {
+            "cmd": "click",
+            "selector": "button[aria-label*='アーティファクトを開く']",
+            "offscreen": true,
+            "note": "Artifact カードをクリックしてプレビューパネルを開く (共有セッション offscreen)"
+          },
+          {
+            "cmd": "wait",
+            "ms": 2505,
+            "offscreen": true,
+            "note": "プレビューパネルのスライドイン完了待ち (共有セッション offscreen)"
           },
           {
             "cmd": "mouse_move",
@@ -704,11 +722,11 @@
           },
           {
             "cmd": "wait",
-            "ms": 5910
+            "ms": 6890
           },
           {
             "cmd": "wait",
-            "ms": 5910
+            "ms": 6890
           },
           {
             "cmd": "scroll",
@@ -716,7 +734,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 6400
+            "ms": 7974
           },
           {
             "cmd": "scroll",
@@ -724,7 +742,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 6400
+            "ms": 7974
           },
           {
             "cmd": "scroll",
@@ -732,7 +750,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 6400
+            "ms": 7974
           }
         ]
       }

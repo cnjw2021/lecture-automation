@@ -1,6 +1,12 @@
-import { Lecture, PlaywrightVisual } from '../../domain/entities/Lecture';
+import { Lecture, Scene } from '../../domain/entities/Lecture';
 import { INarrationAudioPreparationService } from '../../domain/interfaces/INarrationAudioPreparationService';
+import {
+  isForwardSyncTarget,
+  isIsolatedLiveDemoScene,
+  isSharedSessionScene,
+} from '../../domain/policies/LiveDemoScenePolicy';
 import { CaptureScreenshotUseCase } from './CaptureScreenshotUseCase';
+import { CaptureSharedLiveDemoSessionsUseCase } from './CaptureSharedLiveDemoSessionsUseCase';
 import { ConcatClipsUseCase } from './ConcatClipsUseCase';
 import { MergeAudioUseCase } from './MergeAudioUseCase';
 import { RecordVisualUseCase } from './RecordVisualUseCase';
@@ -29,6 +35,7 @@ export class RunAutomationPipelineUseCase {
     private readonly reverseSyncPlaywrightUseCase: ReverseSyncPlaywrightUseCase,
     private readonly captureScreenshotUseCase: CaptureScreenshotUseCase,
     private readonly recordVisualUseCase: RecordVisualUseCase,
+    private readonly captureSharedLiveDemoSessionsUseCase: CaptureSharedLiveDemoSessionsUseCase,
     private readonly renderSceneClipsUseCase: RenderSceneClipsUseCase,
     private readonly concatClipsUseCase: ConcatClipsUseCase,
   ) {}
@@ -39,8 +46,8 @@ export class RunAutomationPipelineUseCase {
     let lecture = options.lecture;
     const targetSceneIds = options.targetSceneIds;
 
-    // 0단계: 라이브 데모 씬(wait_for 포함) 사전 녹화 — TTS보다 먼저 실행
-    if (this.hasLiveDemoScenes(lecture, targetSceneIds)) {
+    // 0단계: isolated 라이브 데모 씬 사전 녹화 — TTS보다 먼저 실행
+    if (this.hasAnyScene(lecture, isIsolatedLiveDemoScene, targetSceneIds)) {
       console.log('\n--- 0단계: 라이브 데모 씬 사전 녹화 ---');
       await this.recordVisualUseCase.execute(lecture, {
         force: options.forceRegenerate,
@@ -66,8 +73,8 @@ export class RunAutomationPipelineUseCase {
       return { outputPath: '', lecture };
     }
 
-    // 1.7a단계: 라이브 데모 씬 역방향 싱크 (비디오에 오디오를 맞춤)
-    if (this.hasLiveDemoScenes(lecture)) {
+    // 1.7a단계: isolated 라이브 데모 씬 역방향 싱크 (비디오에 오디오를 맞춤)
+    if (this.hasAnyScene(lecture, isIsolatedLiveDemoScene, targetSceneIds)) {
       console.log('\n--- 1.7a단계: 라이브 데모 씬 역방향 싱크 ---');
       const { adjustedSceneIds } = await this.reverseSyncPlaywrightUseCase.execute(lecture, {
         sceneIds: targetSceneIds,
@@ -77,8 +84,8 @@ export class RunAutomationPipelineUseCase {
       }
     }
 
-    // 1.7b단계: 일반 Playwright 씬 순방향 싱크 (오디오에 비디오를 맞춤)
-    if (this.hasForwardSyncableScenes(lecture, targetSceneIds)) {
+    // 1.7b단계: Playwright 씬 순방향 싱크 (오디오에 비디오를 맞춤)
+    if (this.hasAnyScene(lecture, isForwardSyncTarget, targetSceneIds)) {
       console.log('\n--- 1.7b단계: Playwright 씬 순방향 싱크 자동 보정 ---');
       const { updatedLecture, changedSceneIds } = await this.syncPlaywrightUseCase.execute(lecture, {
         sceneIds: targetSceneIds,
@@ -106,6 +113,15 @@ export class RunAutomationPipelineUseCase {
       scenes: targetSceneIds,
     });
 
+    // 3a단계: shared 라이브 데모 세션 캡처 (P-D)
+    if (this.hasAnyScene(lecture, isSharedSessionScene, targetSceneIds)) {
+      console.log('\n--- 3a단계: shared 라이브 데모 세션 캡처 ---');
+      await this.captureSharedLiveDemoSessionsUseCase.execute(lecture, {
+        force: options.forceRegenerate,
+        sceneIds: targetSceneIds,
+      });
+    }
+
     console.log('\n--- 4단계: 씬별 클립 렌더링 ---');
     await this.renderSceneClipsUseCase.execute(lecture, {
       force: options.forceRegenerate,
@@ -117,24 +133,15 @@ export class RunAutomationPipelineUseCase {
     return { outputPath, lecture };
   }
 
-  /** wait_for가 action에 있는 라이브 데모 씬이 있는지 */
-  private hasLiveDemoScenes(lecture: Lecture, targetSceneIds?: number[]): boolean {
-    return lecture.sequence.some(scene =>
-      (!targetSceneIds || targetSceneIds.includes(scene.scene_id)) &&
-      scene.visual.type === 'playwright' &&
-      (scene.visual as PlaywrightVisual).action.some(a => a.cmd === 'wait_for')
-    );
-  }
-
-  /** 순방향 싱크 대상: syncPoints가 있되 wait_for는 없는 일반 Playwright 씬 */
-  private hasForwardSyncableScenes(lecture: Lecture, targetSceneIds?: number[]): boolean {
+  /** 대상 씬 범위 내에서 predicate 를 만족하는 씬이 하나라도 있는지 */
+  private hasAnyScene(
+    lecture: Lecture,
+    predicate: (scene: Scene) => boolean,
+    targetSceneIds?: number[],
+  ): boolean {
     return lecture.sequence.some(scene => {
       if (targetSceneIds && !targetSceneIds.includes(scene.scene_id)) return false;
-      if (scene.visual.type !== 'playwright') return false;
-      const visual = scene.visual as PlaywrightVisual;
-      const hasSync = (visual.syncPoints?.length ?? 0) > 0;
-      const hasWaitFor = visual.action.some(a => a.cmd === 'wait_for');
-      return hasSync && !hasWaitFor;
+      return predicate(scene);
     });
   }
 }

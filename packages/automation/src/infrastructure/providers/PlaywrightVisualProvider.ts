@@ -18,6 +18,8 @@ export interface RecordingManifest {
   sceneId: number;
   totalDurationMs: number;
   actionTimestamps: RecordingActionTimestamp[];
+  /** Claude 등 대화형 AI 씬에서 프롬프트 전송 후 생성된 대화 URL. 후속 씬이 urlFromScene으로 참조. */
+  conversationUrl?: string;
 }
 
 export class PlaywrightVisualProvider implements IVisualProvider {
@@ -73,21 +75,24 @@ export class PlaywrightVisualProvider implements IVisualProvider {
       console.log(`- Scene ${scene.scene_id} 녹화 시작...`);
       const { timestamps, totalDurationMs } = await this.executeActions(
         page, visualConfig.action, scene.scene_id, 'record',
-        { hasStorageState: !!storageStatePath },
+        { hasStorageState: !!storageStatePath, outputPath },
       );
       await page.waitForTimeout(2000);
 
-      // 매니페스트 저장 (wait_for가 있는 라이브 데모 씬용)
-      const hasWaitFor = visualConfig.action.some(a => a.cmd === 'wait_for');
-      if (hasWaitFor) {
-        const manifest: RecordingManifest = {
-          sceneId: scene.scene_id,
-          totalDurationMs: totalDurationMs + 2000,
-          actionTimestamps: timestamps,
-        };
-        const manifestPath = outputPath.replace(/\.\w+$/, '.manifest.json');
-        await fs.writeJson(manifestPath, manifest, { spaces: 2 });
-        console.log(`  > 녹화 매니페스트 저장: ${manifestPath}`);
+      // 매니페스트 저장 (모든 playwright 씬에 생성 — 역방향 싱크·검증·디버깅용)
+      const finalUrl = page.url();
+      const conversationUrl = this.extractConversationUrl(finalUrl);
+      const manifest: RecordingManifest = {
+        sceneId: scene.scene_id,
+        totalDurationMs: totalDurationMs + 2000,
+        actionTimestamps: timestamps,
+        ...(conversationUrl ? { conversationUrl } : {}),
+      };
+      const manifestPath = outputPath.replace(/\.\w+$/, '.manifest.json');
+      await fs.writeJson(manifestPath, manifest, { spaces: 2 });
+      console.log(`  > 녹화 매니페스트 저장: ${manifestPath}`);
+      if (conversationUrl) {
+        console.log(`  > conversationUrl 기록: ${conversationUrl}`);
       }
     } catch (error: any) {
       hasError = true;
@@ -198,6 +203,65 @@ export class PlaywrightVisualProvider implements IVisualProvider {
   }
 
   /**
+   * Claude 응답 완료까지 폴링 대기.
+   * /chat/{uuid} URL을 goto 한 직후 사용 — 대화 본문이 비어 있을 수 있으므로
+   * 스트리밍 인디케이터 / 빈 상태 메시지 / 메시지 DOM 등 여러 신호로 완료 판정.
+   * 10초 간격 폴링, 기본 타임아웃 180초.
+   */
+  private async waitForClaudeReady(page: Page, timeoutMs = 180000): Promise<void> {
+    const startedAt = Date.now();
+    const deadline = startedAt + timeoutMs;
+    const hints = [
+      'Claude 응답 대기 중...',
+      '시간이 조금 걸리고 있습니다...',
+      '조금 더 기다려 봅시다...',
+      '곧 응답이 돌아올 것 같습니다...',
+      '응답 생성이 계속되고 있습니다, 잠시만요...',
+    ];
+    let attempt = 0;
+
+    while (Date.now() < deadline) {
+      const state = await page.evaluate(() => {
+        const streamingTrue = document.querySelector('[data-is-streaming="true"]');
+        if (streamingTrue) return 'streaming';
+
+        const emptyGreeting = Array.from(document.querySelectorAll('h1, h2, p, div'))
+          .find(el => {
+            const t = (el.textContent || '').trim();
+            return t === '本日はどのようなお手伝いができますか？'
+              || t === 'How can I help you today?'
+              || t.startsWith('本日はどのような');
+          });
+        if (emptyGreeting) return 'empty';
+
+        const streamingFalse = document.querySelector('[data-is-streaming="false"]');
+        if (streamingFalse) return 'ready';
+
+        const hasArtifact = !!document.querySelector(
+          '[aria-label*="artifact" i], [class*="artifact-block" i], button[aria-label*="アーティファクト"]'
+        );
+        const hasProse = document.querySelectorAll('.prose, [class*="message-"]').length > 0;
+        if (hasArtifact || hasProse) return 'ready';
+
+        return 'unknown';
+      }).catch(() => 'unknown');
+
+      if (state === 'ready') {
+        const elapsed = Math.round((Date.now() - startedAt) / 1000);
+        console.log(`  > Claude 응답 준비 완료 (경과: ${elapsed}s)`);
+        return;
+      }
+
+      const hint = hints[Math.min(attempt, hints.length - 1)];
+      const elapsed = Math.round((Date.now() - startedAt) / 1000);
+      console.log(`  > ${hint} (상태: ${state}, 경과: ${elapsed}s)`);
+      attempt++;
+      await page.waitForTimeout(10000);
+    }
+    console.warn(`  ⚠️ Claude 응답 대기 타임아웃 (${timeoutMs}ms) — 계속 진행`);
+  }
+
+  /**
    * goto 후 URL을 확인하여 로그인 페이지로 리다이렉트되었는지 감지한다.
    * 세션 만료 시 wait_for 타임아웃(최대 2분)까지 낭비하지 않고 즉시 실패.
    */
@@ -221,6 +285,43 @@ export class PlaywrightVisualProvider implements IVisualProvider {
     if (url.includes('claude.ai')) return 'claude';
     if (url.includes('chatgpt.com') || url.includes('openai.com')) return 'chatgpt';
     try { return new URL(url).hostname.split('.')[0]; } catch { return 'unknown'; }
+  }
+
+  /**
+   * 현재 페이지 URL이 대화형 AI 씬의 고유 대화 URL이면 그대로 반환한다.
+   * Claude: claude.ai/chat/{uuid} | ChatGPT: chatgpt.com/c/{uuid}
+   * 대화 URL이 아닌 경우(예: claude.ai/new, 홈, 로그인 등)에는 undefined.
+   */
+  private extractConversationUrl(pageUrl: string): string | undefined {
+    const claudeMatch = /^https:\/\/claude\.ai\/chat\/[0-9a-f-]+/i.exec(pageUrl);
+    if (claudeMatch) return claudeMatch[0];
+    const chatgptMatch = /^https:\/\/chatgpt\.com\/c\/[0-9a-f-]+/i.exec(pageUrl);
+    if (chatgptMatch) return chatgptMatch[0];
+    return undefined;
+  }
+
+  /**
+   * urlFromScene으로 지정된 씬의 manifest.json에서 conversationUrl을 읽어 반환한다.
+   * 동일 lectureId 디렉토리 내의 scene-{id}.manifest.json을 조회한다.
+   */
+  private resolveUrlFromScene(targetSceneId: number, currentOutputPath: string): string | undefined {
+    const dir = path.dirname(currentOutputPath);
+    const manifestPath = path.join(dir, `scene-${targetSceneId}.manifest.json`);
+    if (!fs.existsSync(manifestPath)) {
+      console.warn(`  ⚠️ urlFromScene=${targetSceneId}: 매니페스트 없음 (${manifestPath})`);
+      return undefined;
+    }
+    try {
+      const manifest = fs.readJsonSync(manifestPath) as RecordingManifest;
+      if (!manifest.conversationUrl) {
+        console.warn(`  ⚠️ urlFromScene=${targetSceneId}: manifest에 conversationUrl 없음`);
+        return undefined;
+      }
+      return manifest.conversationUrl;
+    } catch (err: any) {
+      console.warn(`  ⚠️ urlFromScene=${targetSceneId}: manifest 읽기 실패 (${err.message})`);
+      return undefined;
+    }
   }
 
   private async injectCursor(page: Page): Promise<void> {
@@ -249,7 +350,7 @@ export class PlaywrightVisualProvider implements IVisualProvider {
     actions: PlaywrightAction[],
     sceneId: number,
     phase: 'record',
-    options: { hasStorageState?: boolean } = {},
+    options: { hasStorageState?: boolean; outputPath?: string } = {},
   ): Promise<{ timestamps: RecordingActionTimestamp[]; totalDurationMs: number }> {
     const timestamps: RecordingActionTimestamp[] = [];
     const recordingStart = Date.now();
@@ -260,20 +361,32 @@ export class PlaywrightVisualProvider implements IVisualProvider {
 
       try {
         switch (action.cmd) {
-          case 'goto':
-            if (action.url) {
+          case 'goto': {
+            let targetUrl: string | undefined = action.url;
+            if (action.urlFromScene !== undefined && options.outputPath) {
+              const resolved = this.resolveUrlFromScene(action.urlFromScene, options.outputPath);
+              if (resolved) {
+                targetUrl = resolved;
+                console.log(`  > goto urlFromScene=${action.urlFromScene}: ${resolved}`);
+              } else if (!targetUrl) {
+                console.warn(`  ⚠️ goto urlFromScene=${action.urlFromScene} 실패 + url fallback 없음 (건너뜀)`);
+                break;
+              }
+            }
+            if (targetUrl) {
               try {
-                await page.goto(action.url, { waitUntil: 'load', timeout: 20000 });
+                await page.goto(targetUrl, { waitUntil: 'load', timeout: 20000 });
               } catch (_) {
                 console.warn(`  ⚠️ goto 타임아웃, 현재 상태로 계속 진행`);
               }
               // storageState 사용 씬: 세션 만료 조기 감지
               if (options.hasStorageState) {
-                this.checkSessionExpired(page, action.url);
+                this.checkSessionExpired(page, targetUrl);
               }
               await this.injectCursor(page);
             }
             break;
+          }
           case 'wait':
             if (action.ms) await page.waitForTimeout(action.ms);
             break;
@@ -284,6 +397,9 @@ export class PlaywrightVisualProvider implements IVisualProvider {
               console.log(`  > wait_for: "${action.selector}" (${state}, ${timeout}ms)`);
               await page.locator(action.selector).waitFor({ state, timeout });
             }
+            break;
+          case 'wait_for_claude_ready':
+            await this.waitForClaudeReady(page, action.timeout ?? 180000);
             break;
           case 'scroll': {
             const deltaY = action.deltaY ?? 300;

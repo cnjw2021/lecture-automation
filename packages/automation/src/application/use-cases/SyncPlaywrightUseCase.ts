@@ -14,6 +14,7 @@
 import * as fs from 'fs-extra';
 import { Lecture, Scene, PlaywrightVisual, PlaywrightAction, PlaywrightSyncPoint } from '../../domain/entities/Lecture';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
+import { isForwardSyncTarget, isIsolatedLiveDemoScene } from '../../domain/policies/LiveDemoScenePolicy';
 import { EDU_DEVTOOLS_ACTION_DURATION_MS } from '../../domain/constants/EduDevtoolsActionDurations';
 
 // 각 action cmd의 고정 소요시간 추정치 (ms).  wait는 조정 대상이므로 여기서 제외.
@@ -29,6 +30,7 @@ const FIXED_DURATION_MS: Partial<Record<string, number>> = {
   ...EDU_DEVTOOLS_ACTION_DURATION_MS,
   disable_css:  0,
   enable_css:   0,
+  scroll:       500,  // page.mouse.wheel + waitForTimeout(300) → durationMs 500
 };
 
 // ---------------------------------------------------------------------------
@@ -53,9 +55,12 @@ export class SyncPlaywrightUseCase {
     for (let i = 0; i < updatedSequence.length; i++) {
       const scene = updatedSequence[i];
       if (targetSceneIds && !targetSceneIds.includes(scene.scene_id)) continue;
-      if (scene.visual.type !== 'playwright') continue;
+      if (isIsolatedLiveDemoScene(scene)) {
+        console.log(`\n[Sync] Scene ${scene.scene_id} 는 isolated 라이브 데모 (역방향 싱크 대상) → 순방향 싱크 건너뜀`);
+        continue;
+      }
+      if (!isForwardSyncTarget(scene)) continue;
       const visual = scene.visual as PlaywrightVisual;
-      if (!visual.syncPoints || visual.syncPoints.length === 0) continue;
 
       console.log(`\n[Sync] Scene ${scene.scene_id} 처리 중...`);
 
@@ -112,9 +117,11 @@ export class SyncPlaywrightUseCase {
       }
 
       // 고정 시간 / 조정 가능한 wait 파악
+      // offscreen 액션은 클립 타임라인 바깥에서 실행되므로 싱크 계산에서 완전히 제외
       const waitIndices: number[] = [];
       let fixedMs = 0;
       for (let j = from; j < to; j++) {
+        if (actions[j].offscreen) continue;
         if (actions[j].cmd === 'wait') {
           waitIndices.push(j);
         } else {

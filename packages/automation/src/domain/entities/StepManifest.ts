@@ -15,8 +15,16 @@ export interface BoundingBox {
   height: number;
 }
 
+/**
+ * ⚠️ index 축 주의:
+ *  - PlaywrightVisual.action[] の index → raw action 배열 0-based (offscreen 포함)
+ *  - StepData.index (아래) → visible-only 순차값 (offscreen 제외, 0부터 증가)
+ *
+ * syncPoints.actionIndex 와 RecordingManifest.actionTimestamps[].index 는 raw 기준,
+ * SceneManifest.steps[].index 는 visible-only 기준이므로 서로 교차 참조하지 않는다.
+ */
 export interface StepData {
-  /** step 인덱스 (0부터) */
+  /** visible step 인덱스 (0부터). offscreen 액션은 포함되지 않는다. */
   index: number;
   /** 원본 PlaywrightAction cmd */
   cmd: string;
@@ -55,4 +63,10 @@ export interface SceneManifest {
   viewport: { width: number; height: number };
   /** step별 데이터 */
   steps: StepData[];
+  /**
+   * 스크린샷 파일의 Remotion public 루트 기준 상대 경로.
+   * 없으면 PlaywrightSynthScene이 기본값 `state-captures/{lectureId}/scene-{sceneId}` 를 사용.
+   * 공유 세션(P-D) 캡처는 session 하위 경로에 기록되므로 이 필드를 반드시 설정한다.
+   */
+  captureBasePath?: string;
 }

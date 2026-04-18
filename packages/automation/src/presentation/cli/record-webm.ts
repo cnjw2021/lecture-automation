@@ -12,6 +12,7 @@ import { ValidateLectureUseCase } from '../../application/use-cases/ValidateLect
 import { config } from '../../infrastructure/config';
 import { PlaywrightVisualProvider } from '../../infrastructure/providers/PlaywrightVisualProvider';
 import { FileLectureRepository } from '../../infrastructure/repositories/FileLectureRepository';
+import { isSharedSessionScene } from '../../domain/policies/LiveDemoScenePolicy';
 
 async function runRecordWebm(jsonFileName: string, sceneIds: number[]) {
   console.log(`🎥 Playwright webm 녹화: ${jsonFileName} / Scene ${sceneIds.join(', ')}`);
@@ -39,6 +40,16 @@ async function runRecordWebm(jsonFileName: string, sceneIds: number[]) {
   });
   if (nonPlaywrightScenes.length > 0) {
     console.error(`❌ webm 녹화는 playwright 씬만 지원합니다: ${nonPlaywrightScenes.join(', ')}`);
+    process.exit(1);
+  }
+
+  const sharedScenes = sceneIds.filter(id => {
+    const scene = lectureData.sequence.find(candidate => candidate.scene_id === id);
+    return scene && isSharedSessionScene(scene);
+  });
+  if (sharedScenes.length > 0) {
+    console.error(`❌ shared session 씬은 record-webm 대상이 아닙니다: ${sharedScenes.join(', ')}`);
+    console.error(`   shared 씬 재생성은 make regen-scene 을 사용하세요.`);
     process.exit(1);
   }
 

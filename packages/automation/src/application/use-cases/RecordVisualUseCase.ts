@@ -1,7 +1,8 @@
-import { Lecture, PlaywrightVisual } from '../../domain/entities/Lecture';
+import { Lecture } from '../../domain/entities/Lecture';
 import { IVisualProvider } from '../../domain/interfaces/IVisualProvider';
 import { IStateCaptureProvider } from '../../domain/interfaces/IStateCaptureProvider';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
+import { computePreRecordingSceneIds, isSharedSessionScene } from '../../domain/policies/LiveDemoScenePolicy';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 
@@ -26,13 +27,19 @@ export class RecordVisualUseCase {
     const mode = useSynthCapture && this.stateCaptureProvider ? '상태 합성형' : 'raw video';
     console.log(`[${lecture.lecture_id}] 시각 자료 녹화 공정 시작 (모드: ${mode})`);
 
+    // 사전 녹화 대상(isolated 라이브 데모 + urlFromScene 의존 체인)
+    const liveDemoSceneIds = computePreRecordingSceneIds(lecture);
+
     for (const scene of lecture.sequence) {
       if (scene.visual.type !== 'playwright') continue;
       if (scenes && !scenes.includes(scene.scene_id)) continue;
 
+      // shared 세션 씬은 CaptureSharedLiveDemoSessionsUseCase 가 전담 → 이 use case 에서는 항상 스킵
+      if (isSharedSessionScene(scene)) continue;
+
       // 라이브 데모 씬 필터링 (filterLiveDemo가 명시된 경우에만)
       if (filterLiveDemo !== undefined) {
-        const isLiveDemo = (scene.visual as PlaywrightVisual).action.some(a => a.cmd === 'wait_for');
+        const isLiveDemo = liveDemoSceneIds.has(scene.scene_id);
         if (filterLiveDemo && !isLiveDemo) continue;    // 라이브 데모만 처리
         if (!filterLiveDemo && isLiveDemo) continue;     // 라이브 데모 제외
       }

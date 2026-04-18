@@ -8,6 +8,7 @@ export class FileLectureRepository implements ILectureRepository {
   private audioBaseDir = config.paths.audio;
   private captureBaseDir = config.paths.captures;
   private screenshotBaseDir = config.paths.screenshots;
+  private stateCaptureBaseDir = path.join(path.dirname(config.paths.captures), 'state-captures');
 
   async saveAudio(lectureId: string, sceneId: number, audioBuffer: Buffer): Promise<void> {
     const dir = path.join(this.audioBaseDir, lectureId);
@@ -90,5 +91,13 @@ export class FileLectureRepository implements ILectureRepository {
       return await fs.readJson(filePath);
     }
     return null;
+  }
+
+  getSessionCaptureDir(lectureId: string, sessionId: string): string {
+    return path.join(this.stateCaptureBaseDir, lectureId, `session-${sessionId}`);
+  }
+
+  getSessionSceneCaptureDir(lectureId: string, sessionId: string, sceneId: number): string {
+    return path.join(this.getSessionCaptureDir(lectureId, sessionId), `scene-${sceneId}`);
   }
 }

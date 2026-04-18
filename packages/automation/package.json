@@ -4,7 +4,14 @@
   "main": "dist/presentation/cli/main.js",
   "scripts": {
     "start": "ts-node src/presentation/cli/main.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "test": "jest"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testMatch": ["**/*.test.ts"],
+    "moduleFileExtensions": ["ts", "js"]
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -13,7 +20,10 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
+    "@types/jest": "^30.0.0",
     "@types/node": "^25.5.2",
+    "jest": "^30.3.0",
+    "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.2"
   }
