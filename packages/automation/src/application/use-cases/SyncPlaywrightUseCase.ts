@@ -30,6 +30,7 @@ const FIXED_DURATION_MS: Partial<Record<string, number>> = {
   ...EDU_DEVTOOLS_ACTION_DURATION_MS,
   disable_css:  0,
   enable_css:   0,
+  scroll:       500,  // page.mouse.wheel + waitForTimeout(300) → durationMs 500
 };
 
 // ---------------------------------------------------------------------------

@@ -184,6 +184,10 @@ export class SharedPlaywrightStateCaptureProvider implements ISharedVisualSessio
       console.log(`  > Scene ${scene.scene_id} 공유 세션 캡처 완료: ${steps.length}개 step, ${totalDurationMs}ms`);
       return manifest;
     } catch (err: any) {
+      // 정책: 씬 캡처 실패 시 null 반환으로 세션은 유지(후속 씬 계속 진행).
+      // 호출부(CaptureSharedLiveDemoSessionsUseCase)가 에러를 로깅하고 다음 씬으로 넘긴다.
+      // manifest.json 이 누락되면 렌더 단계에서 synthManifest 없음 경고 후 빈 화면이 될 수 있다.
+      // 세션 전체 중단이 필요하면 여기서 throw 로 변경한다.
       console.error(`  > Scene ${scene.scene_id} 공유 세션 캡처 에러:`, err.message);
       return null;
     }

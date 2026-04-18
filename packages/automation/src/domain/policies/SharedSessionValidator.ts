@@ -8,8 +8,12 @@ import { isSharedSessionScene, planLiveDemoSessions } from './LiveDemoScenePolic
  *  R1. shared session 씬의 모든 action 에서 urlFromScene 사용 금지
  *      shared 는 같은 page 인스턴스 재사용이므로 URL 재참조라는 개념 자체가 없다.
  *  R2. shared session **결과 확인 씬**(세션 그룹 내 2번째 이후)의
- *      첫 visible action (offscreen: false) 이 goto 이면 안 된다.
+ *      모든 action(offscreen 포함)에서 goto 금지.
+ *      offscreen goto 도 page 를 교체하므로 공유 page 상태를 파괴한다.
  *      결과 확인 씬은 재진입이 아니라 이전 씬의 page 를 이어받아야 한다.
+ *  R3. shared session 씬 전체에서 render_code_block 금지
+ *      render_code_block 은 about:blank 이동 후 setContent()로 page 를 완전히 교체하므로
+ *      후속 씬이 잘못된 DOM 에서 시작하게 된다.
  *
  * 세션 그룹 내 첫 씬(entry scene)은 goto 로 시작해도 된다.
  */
@@ -64,15 +68,18 @@ export function validateSharedSessions(lecture: Lecture): SharedSessionViolation
         }
       }
 
-      // R2: 결과 확인 씬의 첫 visible action goto 금지
+      // R2: 결과 확인 씬의 모든 action(offscreen 포함)에서 goto 금지
+      // offscreen goto 도 page 를 교체하므로 shared 설계를 파괴한다
       if (!isEntryScene) {
-        const firstVisible = visual.action.find(a => !a.offscreen);
-        if (firstVisible && firstVisible.cmd === 'goto') {
-          violations.push({
-            sceneId,
-            rule: 'shared-session-no-goto-on-continuation',
-            message: `shared session 결과 확인 씬(id=${sceneId}) 의 첫 visible action 이 goto 임 — 재진입이 아니라 page 이어받기 구조여야 함`,
-          });
+        for (let i = 0; i < visual.action.length; i++) {
+          if (visual.action[i].cmd === 'goto') {
+            violations.push({
+              sceneId,
+              rule: 'shared-session-no-goto-on-continuation',
+              actionIndex: i,
+              message: `shared session 결과 확인 씬(id=${sceneId})의 action[${i}] 에 goto 사용 불가 (offscreen 포함) — page 이어받기 구조여야 함`,
+            });
+          }
         }
       }
     }
