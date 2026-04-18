@@ -1,5 +1,5 @@
 import { validateSharedSessions } from './SharedSessionValidator';
-import { Lecture, PlaywrightAction, Scene } from '../entities/Lecture';
+import { Lecture, PlaywrightAction, PlaywrightSyncPoint, Scene } from '../entities/Lecture';
 
 // ---------------------------------------------------------------------------
 // Fixture helpers
@@ -9,6 +9,7 @@ function makeSharedScene(
   id: number,
   actions: PlaywrightAction[],
   sessionId = 'test-session',
+  syncPoints?: PlaywrightSyncPoint[],
 ): Scene {
   return {
     scene_id: id,
@@ -18,6 +19,7 @@ function makeSharedScene(
       action: actions,
       storageState: 'config/auth/claude.json',
       session: { id: sessionId, mode: 'shared' },
+      ...(syncPoints ? { syncPoints } : {}),
     },
   };
 }
@@ -149,6 +151,109 @@ describe('R3: render_code_block 금지', () => {
     const violations = validateSharedSessions(lecture);
     expect(violations.filter(v => v.rule === 'shared-session-no-render-code-block')).toHaveLength(1);
     expect(violations[0].sceneId).toBe(2);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// R4: syncPoints.actionIndex 는 범위 내 + visible action 이어야 함
+// ---------------------------------------------------------------------------
+
+describe('R4: syncPoints.actionIndex 제약', () => {
+  it('syncPoints 없으면 위반 없음', () => {
+    const lecture = makeLecture(
+      makeSharedScene(1, [gotoAction, scrollAction]),
+    );
+    expect(validateSharedSessions(lecture)).toHaveLength(0);
+  });
+
+  it('syncPoints.actionIndex 가 visible action 을 가리키면 위반 없음', () => {
+    const lecture = makeLecture(
+      makeSharedScene(
+        1,
+        [gotoAction, waitAction, scrollAction],
+        'test-session',
+        [{ actionIndex: 2, phrase: 'テスト' }],
+      ),
+    );
+    expect(validateSharedSessions(lecture)).toHaveLength(0);
+  });
+
+  it('syncPoints.actionIndex 가 offscreen action 을 가리키면 위반', () => {
+    const offscreenWait = { cmd: 'wait', ms: 1000, offscreen: true } as const;
+    const lecture = makeLecture(
+      makeSharedScene(
+        1,
+        [gotoAction, offscreenWait, scrollAction],
+        'test-session',
+        [{ actionIndex: 1, phrase: 'テスト' }],
+      ),
+    );
+    const violations = validateSharedSessions(lecture);
+    expect(violations.filter(v => v.rule === 'shared-session-sync-point-on-offscreen')).toHaveLength(1);
+    expect(violations[0].sceneId).toBe(1);
+    expect(violations[0].actionIndex).toBe(1);
+  });
+
+  it('syncPoints.actionIndex 가 음수면 범위 밖 위반', () => {
+    const lecture = makeLecture(
+      makeSharedScene(
+        1,
+        [gotoAction, scrollAction],
+        'test-session',
+        [{ actionIndex: -1, phrase: 'テスト' }],
+      ),
+    );
+    const violations = validateSharedSessions(lecture);
+    expect(violations.filter(v => v.rule === 'shared-session-sync-point-out-of-range')).toHaveLength(1);
+    expect(violations[0].actionIndex).toBe(-1);
+  });
+
+  it('syncPoints.actionIndex 가 action 배열 길이 이상이면 범위 밖 위반', () => {
+    const lecture = makeLecture(
+      makeSharedScene(
+        1,
+        [gotoAction, scrollAction],
+        'test-session',
+        [{ actionIndex: 2, phrase: 'テスト' }],
+      ),
+    );
+    const violations = validateSharedSessions(lecture);
+    expect(violations.filter(v => v.rule === 'shared-session-sync-point-out-of-range')).toHaveLength(1);
+    expect(violations[0].actionIndex).toBe(2);
+  });
+
+  it('범위 밖 syncPoint 는 offscreen 검사를 건너뜀 (중복 위반 없음)', () => {
+    const lecture = makeLecture(
+      makeSharedScene(
+        1,
+        [gotoAction],
+        'test-session',
+        [{ actionIndex: 99, phrase: 'テスト' }],
+      ),
+    );
+    const violations = validateSharedSessions(lecture);
+    expect(violations).toHaveLength(1);
+    expect(violations[0].rule).toBe('shared-session-sync-point-out-of-range');
+  });
+
+  it('복수 syncPoints 중 offscreen 만 위반 보고', () => {
+    const offscreenClick = { cmd: 'click', selector: 'button', offscreen: true } as const;
+    const lecture = makeLecture(
+      makeSharedScene(
+        1,
+        [gotoAction, offscreenClick, scrollAction],
+        'test-session',
+        [
+          { actionIndex: 0, phrase: 'A' },
+          { actionIndex: 1, phrase: 'B' },
+          { actionIndex: 2, phrase: 'C' },
+        ],
+      ),
+    );
+    const violations = validateSharedSessions(lecture)
+      .filter(v => v.rule === 'shared-session-sync-point-on-offscreen');
+    expect(violations).toHaveLength(1);
+    expect(violations[0].actionIndex).toBe(1);
   });
 });
 

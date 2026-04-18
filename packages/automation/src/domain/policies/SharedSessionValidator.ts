@@ -14,6 +14,10 @@ import { isSharedSessionScene, planLiveDemoSessions } from './LiveDemoScenePolic
  *  R3. shared session 씬 전체에서 render_code_block 금지
  *      render_code_block 은 about:blank 이동 후 setContent()로 page 를 완전히 교체하므로
  *      후속 씬이 잘못된 DOM 에서 시작하게 된다.
+ *  R4. shared session 씬의 syncPoints.actionIndex 는 visible(=offscreen 이 아닌) action 을
+ *      가리켜야 한다. offscreen 은 클립 타임라인 바깥에서 실행되므로 순방향 싱크의
+ *      세그먼트 피벗으로 삼으면 세그먼트 경계가 깨진다. 또한 actionIndex 는 범위
+ *      ([0, action.length)) 안이어야 한다.
  *
  * 세션 그룹 내 첫 씬(entry scene)은 goto 로 시작해도 된다.
  * 단 R3 는 entry/continuation 구분 없이 전체 금지.
@@ -24,7 +28,9 @@ export interface SharedSessionViolation {
   rule:
     | 'shared-session-no-url-from-scene'
     | 'shared-session-no-goto-on-continuation'
-    | 'shared-session-no-render-code-block';
+    | 'shared-session-no-render-code-block'
+    | 'shared-session-sync-point-on-offscreen'
+    | 'shared-session-sync-point-out-of-range';
   actionIndex?: number;
   message: string;
 }
@@ -79,6 +85,31 @@ export function validateSharedSessions(lecture: Lecture): SharedSessionViolation
               rule: 'shared-session-no-goto-on-continuation',
               actionIndex: i,
               message: `shared session 결과 확인 씬(id=${sceneId})의 action[${i}] 에 goto 사용 불가 (offscreen 포함) — page 이어받기 구조여야 함`,
+            });
+          }
+        }
+      }
+
+      // R4: syncPoints.actionIndex 는 범위 내 + visible action 이어야 함
+      // offscreen 은 클립 타임라인 바깥이므로 세그먼트 피벗이 되면 순방향 싱크가 파손된다
+      if (visual.syncPoints) {
+        for (const sp of visual.syncPoints) {
+          const idx = sp.actionIndex;
+          if (idx < 0 || idx >= visual.action.length) {
+            violations.push({
+              sceneId,
+              rule: 'shared-session-sync-point-out-of-range',
+              actionIndex: idx,
+              message: `shared session 씬(id=${sceneId})의 syncPoint.actionIndex=${idx} 가 action 배열 범위(0..${visual.action.length - 1}) 밖`,
+            });
+            continue;
+          }
+          if (visual.action[idx].offscreen === true) {
+            violations.push({
+              sceneId,
+              rule: 'shared-session-sync-point-on-offscreen',
+              actionIndex: idx,
+              message: `shared session 씬(id=${sceneId})의 syncPoint.actionIndex=${idx} 가 offscreen action 을 가리킴 — 순방향 싱크 세그먼트 피벗은 visible action 이어야 함`,
             });
           }
         }
