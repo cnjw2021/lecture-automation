@@ -27,6 +27,8 @@ export type PlaywrightCmd =
 export interface PlaywrightAction {
   cmd: PlaywrightCmd;
   url?: string;
+  /** goto: 지정된 이전 씬의 녹화 매니페스트에서 conversationUrl을 읽어 URL로 사용. url보다 우선. */
+  urlFromScene?: number;
   ms?: number;
   selector?: string;
   from?: [number, number];

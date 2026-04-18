@@ -18,6 +18,8 @@ export interface RecordingManifest {
   sceneId: number;
   totalDurationMs: number;
   actionTimestamps: RecordingActionTimestamp[];
+  /** Claude 등 대화형 AI 씬에서 프롬프트 전송 후 생성된 대화 URL. 후속 씬이 urlFromScene으로 참조. */
+  conversationUrl?: string;
 }
 
 export class PlaywrightVisualProvider implements IVisualProvider {
@@ -73,19 +75,25 @@ export class PlaywrightVisualProvider implements IVisualProvider {
       console.log(`- Scene ${scene.scene_id} 녹화 시작...`);
       const { timestamps, totalDurationMs } = await this.executeActions(
         page, visualConfig.action, scene.scene_id, 'record',
-        { hasStorageState: !!storageStatePath },
+        { hasStorageState: !!storageStatePath, outputPath },
       );
       await page.waitForTimeout(2000);
 
       // 매니페스트 저장 (모든 playwright 씬에 생성 — 역방향 싱크·검증·디버깅용)
+      const finalUrl = page.url();
+      const conversationUrl = this.extractConversationUrl(finalUrl);
       const manifest: RecordingManifest = {
         sceneId: scene.scene_id,
         totalDurationMs: totalDurationMs + 2000,
         actionTimestamps: timestamps,
+        ...(conversationUrl ? { conversationUrl } : {}),
       };
       const manifestPath = outputPath.replace(/\.\w+$/, '.manifest.json');
       await fs.writeJson(manifestPath, manifest, { spaces: 2 });
       console.log(`  > 녹화 매니페스트 저장: ${manifestPath}`);
+      if (conversationUrl) {
+        console.log(`  > conversationUrl 기록: ${conversationUrl}`);
+      }
     } catch (error: any) {
       hasError = true;
       console.error(`  > Scene ${scene.scene_id} 녹화 중 에러:`, error.message);
@@ -220,6 +228,43 @@ export class PlaywrightVisualProvider implements IVisualProvider {
     try { return new URL(url).hostname.split('.')[0]; } catch { return 'unknown'; }
   }
 
+  /**
+   * 현재 페이지 URL이 대화형 AI 씬의 고유 대화 URL이면 그대로 반환한다.
+   * Claude: claude.ai/chat/{uuid} | ChatGPT: chatgpt.com/c/{uuid}
+   * 대화 URL이 아닌 경우(예: claude.ai/new, 홈, 로그인 등)에는 undefined.
+   */
+  private extractConversationUrl(pageUrl: string): string | undefined {
+    const claudeMatch = /^https:\/\/claude\.ai\/chat\/[0-9a-f-]+/i.exec(pageUrl);
+    if (claudeMatch) return claudeMatch[0];
+    const chatgptMatch = /^https:\/\/chatgpt\.com\/c\/[0-9a-f-]+/i.exec(pageUrl);
+    if (chatgptMatch) return chatgptMatch[0];
+    return undefined;
+  }
+
+  /**
+   * urlFromScene으로 지정된 씬의 manifest.json에서 conversationUrl을 읽어 반환한다.
+   * 동일 lectureId 디렉토리 내의 scene-{id}.manifest.json을 조회한다.
+   */
+  private resolveUrlFromScene(targetSceneId: number, currentOutputPath: string): string | undefined {
+    const dir = path.dirname(currentOutputPath);
+    const manifestPath = path.join(dir, `scene-${targetSceneId}.manifest.json`);
+    if (!fs.existsSync(manifestPath)) {
+      console.warn(`  ⚠️ urlFromScene=${targetSceneId}: 매니페스트 없음 (${manifestPath})`);
+      return undefined;
+    }
+    try {
+      const manifest = fs.readJsonSync(manifestPath) as RecordingManifest;
+      if (!manifest.conversationUrl) {
+        console.warn(`  ⚠️ urlFromScene=${targetSceneId}: manifest에 conversationUrl 없음`);
+        return undefined;
+      }
+      return manifest.conversationUrl;
+    } catch (err: any) {
+      console.warn(`  ⚠️ urlFromScene=${targetSceneId}: manifest 읽기 실패 (${err.message})`);
+      return undefined;
+    }
+  }
+
   private async injectCursor(page: Page): Promise<void> {
     await page.evaluate(() => {
       if (document.getElementById('__edu_cur__')) return;
@@ -246,7 +291,7 @@ export class PlaywrightVisualProvider implements IVisualProvider {
     actions: PlaywrightAction[],
     sceneId: number,
     phase: 'record',
-    options: { hasStorageState?: boolean } = {},
+    options: { hasStorageState?: boolean; outputPath?: string } = {},
   ): Promise<{ timestamps: RecordingActionTimestamp[]; totalDurationMs: number }> {
     const timestamps: RecordingActionTimestamp[] = [];
     const recordingStart = Date.now();
@@ -257,20 +302,32 @@ export class PlaywrightVisualProvider implements IVisualProvider {
 
       try {
         switch (action.cmd) {
-          case 'goto':
-            if (action.url) {
+          case 'goto': {
+            let targetUrl: string | undefined = action.url;
+            if (action.urlFromScene !== undefined && options.outputPath) {
+              const resolved = this.resolveUrlFromScene(action.urlFromScene, options.outputPath);
+              if (resolved) {
+                targetUrl = resolved;
+                console.log(`  > goto urlFromScene=${action.urlFromScene}: ${resolved}`);
+              } else if (!targetUrl) {
+                console.warn(`  ⚠️ goto urlFromScene=${action.urlFromScene} 실패 + url fallback 없음 (건너뜀)`);
+                break;
+              }
+            }
+            if (targetUrl) {
               try {
-                await page.goto(action.url, { waitUntil: 'load', timeout: 20000 });
+                await page.goto(targetUrl, { waitUntil: 'load', timeout: 20000 });
               } catch (_) {
                 console.warn(`  ⚠️ goto 타임아웃, 현재 상태로 계속 진행`);
               }
               // storageState 사용 씬: 세션 만료 조기 감지
               if (options.hasStorageState) {
-                this.checkSessionExpired(page, action.url);
+                this.checkSessionExpired(page, targetUrl);
               }
               await this.injectCursor(page);
             }
             break;
+          }
           case 'wait':
             if (action.ms) await page.waitForTimeout(action.ms);
             break;

@@ -2,7 +2,7 @@
   "lecture_id": "01-03",
   "title": "AIが変えたWeb制作の風景",
   "part": 1,
-  "totalDurationSec": 1798,
+  "totalDurationSec": 1787,
   "sequence": [
     {
       "scene_id": 1,
@@ -603,8 +603,8 @@
     },
     {
       "scene_id": 28,
-      "narration": "では、実際にClaudeの画面を開いてみます。ここに入力欄がありますので、メッセージを入力していきますね。「マッサージサロンのホームページをHTMLとCSSで作ってください。メニュー表、アクセス情報、お問い合わせボタンを含めてください。」シンプルな指示ですが、まずはこのくらいで試してみましょう。あまり細かいことは書いていません。あえてシンプルにして、AIがどこまでやってくれるのかを見てみます。指示の出し方にもコツがあるんですが、それはこの講座を進めていく中で少しずつ身につけていきます。では、送信してみましょう。AIがコードを書いている間、少し待ちましょう。Claudeにはアーティファクトという便利な機能があって、生成したコードのプレビューをその場で見せてくれるんです。この機能についてはPART 4で詳しく触れますので、今はこういうことができるんだな、くらいで大丈夫です。実際にやってみると、こんなふうに進んでいくんですね。AIがHTMLやCSSのコードを、リアルタイムで書き出してくれています。",
-      "durationSec": 90,
+      "narration": "では、実際にClaudeの画面を開いてみます。ここに入力欄がありますので、メッセージを入力していきますね。「マッサージサロンのホームページをHTMLとCSSで作ってください。メニュー表、アクセス情報、お問い合わせボタンを含めてください。」シンプルな指示ですが、まずはこのくらいで試してみましょう。あまり細かいことは書いていません。あえてシンプルにして、AIがどこまでやってくれるのかを見てみます。指示の出し方にもコツがあるんですが、それはこの講座を進めていく中で少しずつ身につけていきます。では、送信してみましょう。",
+      "durationSec": 42,
       "visual": {
         "type": "playwright",
         "storageState": "config/auth/claude.json",
@@ -612,10 +612,6 @@
           {
             "actionIndex": 6,
             "phrase": "では、送信してみましょう"
-          },
-          {
-            "actionIndex": 10,
-            "phrase": "実際にやってみると、こんなふうに進んでいくんですね"
           }
         ],
         "action": [
@@ -632,7 +628,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 11400
+            "ms": 3000
           },
           {
             "cmd": "type",
@@ -641,12 +637,12 @@
           },
           {
             "cmd": "wait",
-            "ms": 7600
+            "ms": 2000
           },
           {
             "cmd": "wait",
-            "ms": 19000,
-            "note": "ナレーション前半と入力時間の差を補充"
+            "ms": 10000,
+            "note": "ナレーション「指示の出し方にも...」区間を埋める"
           },
           {
             "cmd": "press",
@@ -656,24 +652,30 @@
             "cmd": "wait_for",
             "selector": "[data-is-streaming='true']",
             "state": "attached",
-            "timeout": 60000
-          },
-          {
-            "cmd": "wait_for",
-            "selector": "[data-is-streaming='false']",
-            "state": "attached",
-            "timeout": 180000
+            "timeout": 60000,
+            "note": "URL が /chat/{uuid} に遷移し、次シーンで conversationUrl として参照可能になるまで待機"
           },
           {
             "cmd": "wait",
-            "ms": 120780,
-            "note": "Artifact プレビュー ロード待ち"
-          },
-          {
-            "cmd": "wait",
-            "ms": 6394
+            "ms": 5000,
+            "note": "URL 確定と最終フレーム安定化"
           }
         ]
+      }
+    },
+    {
+      "scene_id": 28.5,
+      "narration": "AIがコードを書いている間、少し待ちましょう。Claudeにはアーティファクトという便利な機能があって、生成したコードのプレビューをその場で見せてくれるんです。この機能についてはPART 4で詳しく触れますので、今はこういうことができるんだな、くらいで大丈夫です。実際にやってみると、こんなふうに進んでいくんですね。AIがHTMLやCSSのコードを、リアルタイムで書き出してくれています。",
+      "durationSec": 37,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "📝",
+          "headline": "Artifactでプレビュー",
+          "detail": "生成したコードをその場で表示。PART 4で詳しく扱います。",
+          "color": "#6366f1"
+        }
       }
     },
     {
@@ -685,11 +687,23 @@
         "storageState": "config/auth/claude.json",
         "syncPoints": [
           {
-            "actionIndex": 4,
+            "actionIndex": 6,
             "phrase": "スクロールしていくと"
           }
         ],
         "action": [
+          {
+            "cmd": "goto",
+            "urlFromScene": 28,
+            "note": "シーン28で生成されたClaude対話URLを再利用 (完成済みArtifactを直接表示)"
+          },
+          {
+            "cmd": "wait_for",
+            "selector": "[data-is-streaming='false']",
+            "state": "attached",
+            "timeout": 180000,
+            "note": "シーン28の背後で続いているストリーミング完了を待機 (既に完了していれば即時通過)"
+          },
           {
             "cmd": "wait",
             "ms": 3940
