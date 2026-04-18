@@ -3,6 +3,11 @@ import * as path from 'path';
 import { ResplitChunkedAudioUseCase } from '../../application/use-cases/ResplitChunkedAudioUseCase';
 import { Lecture } from '../../domain/entities/Lecture';
 import { config } from '../../infrastructure/config';
+import { ConfiguredAudioProviderFactory } from '../../infrastructure/factories/ConfiguredAudioProviderFactory';
+import { ElevenLabsConfiguredAudioProviderBuilder } from '../../infrastructure/factories/ElevenLabsConfiguredAudioProviderBuilder';
+import { GeminiCloudTtsConfiguredAudioProviderBuilder } from '../../infrastructure/factories/GeminiCloudTtsConfiguredAudioProviderBuilder';
+import { GeminiConfiguredAudioProviderBuilder } from '../../infrastructure/factories/GeminiConfiguredAudioProviderBuilder';
+import { GoogleCloudTtsConfiguredAudioProviderBuilder } from '../../infrastructure/factories/GoogleCloudTtsConfiguredAudioProviderBuilder';
 import { FileLectureRepository } from '../../infrastructure/repositories/FileLectureRepository';
 
 async function runResplitChunkAudio(jsonFileName: string, sceneIds: number[]) {
@@ -21,7 +26,15 @@ async function runResplitChunkAudio(jsonFileName: string, sceneIds: number[]) {
     speechRate: 1,
   };
 
-  const useCase = new ResplitChunkedAudioUseCase(new FileLectureRepository(), audioConfig);
+  const audioProviderFactory = new ConfiguredAudioProviderFactory([
+    new GeminiConfiguredAudioProviderBuilder(),
+    new GoogleCloudTtsConfiguredAudioProviderBuilder(),
+    new GeminiCloudTtsConfiguredAudioProviderBuilder(),
+    new ElevenLabsConfiguredAudioProviderBuilder(),
+  ]);
+  const { alignmentReliabilityStrategy } = audioProviderFactory.create();
+
+  const useCase = new ResplitChunkedAudioUseCase(new FileLectureRepository(), audioConfig, alignmentReliabilityStrategy);
   const result = await useCase.execute(lectureData, { sceneIds });
 
   console.log(`✅ 청크 재분할 완료: ${result.lectureId}`);

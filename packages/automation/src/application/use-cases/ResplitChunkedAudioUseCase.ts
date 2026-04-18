@@ -1,6 +1,7 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { Lecture } from '../../domain/entities/Lecture';
+import { IAlignmentReliabilityStrategy } from '../../domain/interfaces/IAlignmentReliabilityStrategy';
 import { AudioAlignment, AudioConfig } from '../../domain/interfaces/IAudioProvider';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
 import { BoundaryDiagnostic, BoundaryOverride, splitChunkAudio } from '../../domain/services/ChunkAudioSplitter';
@@ -42,6 +43,7 @@ export class ResplitChunkedAudioUseCase {
   constructor(
     private readonly lectureRepository: ILectureRepository,
     private readonly audioConfig: AudioConfig,
+    private readonly alignmentReliabilityStrategy: IAlignmentReliabilityStrategy,
   ) {}
 
   async execute(
@@ -88,6 +90,7 @@ export class ResplitChunkedAudioUseCase {
       const wavBuffer = await fs.readFile(wavPath);
       const alignment = await fs.readJson(alignmentPath) as AudioAlignment;
       const splitResult = splitChunkAudio(wavBuffer, alignment, manifest.segments, this.audioConfig, {
+        strategy: this.alignmentReliabilityStrategy,
         boundaryOverrides,
       });
       const sceneSegments = splitResult.scenes;

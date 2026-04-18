@@ -2,6 +2,7 @@ import { AudioConfig } from '../../domain/interfaces/IAudioProvider';
 import { AudioProviderFactoryResult } from '../../domain/interfaces/IAudioProviderFactory';
 import { config } from '../config';
 import { GeminiAudioProvider } from '../providers/GeminiAudioProvider';
+import { NaiveAlignmentReliabilityStrategy } from '../strategies/NaiveAlignmentReliabilityStrategy';
 import { ConfiguredAudioProviderBuilder } from './ConfiguredAudioProviderBuilder';
 
 export class GeminiConfiguredAudioProviderBuilder implements ConfiguredAudioProviderBuilder {
@@ -25,6 +26,7 @@ export class GeminiConfiguredAudioProviderBuilder implements ConfiguredAudioProv
         geminiConfig.temperature,
         geminiConfig.seed,
       ),
+      alignmentReliabilityStrategy: new NaiveAlignmentReliabilityStrategy(),
     };
   }
 }

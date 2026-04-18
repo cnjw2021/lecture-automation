@@ -2,6 +2,7 @@ import { AudioConfig } from '../../domain/interfaces/IAudioProvider';
 import { AudioProviderFactoryResult } from '../../domain/interfaces/IAudioProviderFactory';
 import { config } from '../config';
 import { GeminiCloudTtsProvider } from '../providers/GeminiCloudTtsProvider';
+import { NaiveAlignmentReliabilityStrategy } from '../strategies/NaiveAlignmentReliabilityStrategy';
 import { ConfiguredAudioProviderBuilder } from './ConfiguredAudioProviderBuilder';
 
 export class GeminiCloudTtsConfiguredAudioProviderBuilder implements ConfiguredAudioProviderBuilder {
@@ -23,6 +24,7 @@ export class GeminiCloudTtsConfiguredAudioProviderBuilder implements ConfiguredA
         gcConfig.prompt,
         audioConfig,
       ),
+      alignmentReliabilityStrategy: new NaiveAlignmentReliabilityStrategy(),
     };
   }
 }

@@ -111,7 +111,7 @@ export class ConfiguredNarrationAudioPreparationService implements INarrationAud
       return { source: 'master-audio' };
     }
 
-    const { provider, providerName } = this.audioProviderFactory.create();
+    const { provider, providerName, alignmentReliabilityStrategy } = this.audioProviderFactory.create();
     console.log(`🔊 오디오 프로바이더: ${providerName}`);
     console.log('\n--- 1단계: 나레이션 오디오 생성 ---');
     const targetSceneIds = params.targetSceneIds ?? [];
@@ -146,6 +146,7 @@ export class ConfiguredNarrationAudioPreparationService implements INarrationAud
         this.lectureRepository,
         audioConfig,
         chunkedConfig.maxCharsPerChunk,
+        alignmentReliabilityStrategy,
       );
       await chunkedUseCase.execute(targetLecture, { force: params.forceRegenerate });
     } else {

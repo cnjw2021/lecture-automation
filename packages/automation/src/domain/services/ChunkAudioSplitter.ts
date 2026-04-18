@@ -1,3 +1,4 @@
+import { IAlignmentReliabilityStrategy } from '../interfaces/IAlignmentReliabilityStrategy';
 import { AudioAlignment, AudioConfig } from '../interfaces/IAudioProvider';
 import { buildWav, computeRmsFrames, readWavMetadata, RmsFrame } from '../utils/WavAnalysisUtils';
 import { SceneNarrationSegment } from './NarrationChunker';
@@ -36,6 +37,8 @@ export interface BoundaryDiagnostic {
 }
 
 export interface SplitChunkAudioOptions {
+  /** TTS 프로바이더별 alignment 신뢰도 전략. 씬 경계 컷 규칙을 캡슐화한다. */
+  strategy: IAlignmentReliabilityStrategy;
   boundaryOverrides?: ReadonlyArray<BoundaryOverride>;
 }
 
@@ -45,27 +48,6 @@ export interface SplitChunkAudioResult {
 }
 
 const MIN_SCENE_DURATION_MS = 250;
-/**
- * prev >= next 일 때 (alignment 가 씬 간 무음을 다음 씬 첫 문자에 흡수한 경우)
- * RMS 를 이만큼 앞으로 확장해 실제 무음 valley 를 찾는다.
- * 과도하게 늘리면 다음 씬 발화를 침범할 수 있어 0.5초로 제한.
- */
-const MAX_TAIL_EXTENSION_MS = 500;
-/**
- * 씬 간 무음 흡수 판정 임계값. 어느 한쪽 char 의 duration 이 이 값을 넘으면
- * TTS 가 무음을 해당 char 에 흡수했다고 판단한다.
- * 일본어 일반 char 는 80-200ms, 장음(ー)·촉음도 300ms 이내.
- */
-const INFLATION_THRESHOLD_MS = 350;
-/**
- * 발화 없는 기호. 다음 씬 첫 char 가 이 집합에 있으면 char 전체가 무음이므로
- * forward 확장 대신 prev 에서 컷 — 흡수된 무음은 씬 N+1 앞머리에 그대로 남긴다.
- */
-const SILENT_START_CHARS = new Set([
-  '「', '」', '『', '』', '（', '）', '(', ')',
-  '"', '“', '”', "'", '‘', '’',
-  '〜', '～', 'ー', '・', '　', ' ',
-]);
 
 interface SegmentTiming {
   sceneId: number;
@@ -88,13 +70,9 @@ interface SegmentTiming {
  *       상한 = next, 하한 = max(adjustedStart + MIN_SCENE_DURATION_MS, prev)
  *       [하한, 상한] 에서 최저 RMS 프레임 선택. 상한/하한 tie-break 은 anchor = max(prev, next).
  *
- *   - Case B (prev >= next): alignment 는 씬 간 무음 정보를 잃었다. 어느 char 가 흡수했는지 판정.
- *       · B1 (prev char duration > INFLATION_THRESHOLD_MS): prev (보통 `。` 句点) 가 무음 흡수.
- *         prev_end 를 무음 flush 완료 지점으로 신뢰, prev 에서 컷.
- *       · B2 (next char duration > INFLATION_THRESHOLD_MS): next 가 무음 흡수. RMS 를 앞으로
- *         최대 MAX_TAIL_EXTENSION_MS 확장해 무음 valley 탐색. 상한 = min(prev + 500,
- *         next first char end). anchor 는 창의 중심.
- *       · B3 (둘 다 정상 duration): 자연스러운 back-to-back 발화. prev 에서 컷.
+ *   - Case B (prev >= next): alignment 가 씬 간 무음 구간을 잃은 상태. 어떻게 처리할지는
+ *       주입된 IAlignmentReliabilityStrategy 가 결정한다. 프로바이더별 특이 지식
+ *       (ElevenLabs 의 char duration inflate, silent 기호 등) 은 전략 안에 갇힌다.
  *
  * 어느 경우에도 하한을 prev 이상으로 고정해 "이전 씬 꼬리 절단 (tail leak)" 을 차단한다.
  *
@@ -105,7 +83,7 @@ export function splitChunkAudio(
   alignment: AudioAlignment,
   segments: ReadonlyArray<SceneNarrationSegment>,
   audioConfig: AudioConfig,
-  options: SplitChunkAudioOptions = {},
+  options: SplitChunkAudioOptions,
 ): SplitChunkAudioResult {
   const metadata = readWavMetadata(wavBuffer);
   const { sampleRate, channels, bitDepth } = metadata;
@@ -138,11 +116,11 @@ export function splitChunkAudio(
   const timings = buildSegmentTimings(segments, alignment, totalDurationMs);
   const boundaries = adjustSegmentBoundaries(
     timings,
-    segments,
     alignment,
     totalDurationMs,
     frames,
     options.boundaryOverrides ?? [],
+    options.strategy,
   );
 
   const results: SceneAudioSegment[] = [];
@@ -163,7 +141,7 @@ export function splitChunkAudio(
     const durationSec = pcmSlice.length / bytesPerSecond;
     const buffer = buildWav(pcmSlice, sampleRate, channels, bitDepth);
 
-    const sceneAlignment = sliceAlignment(alignment, segment, startTimeSec);
+    const sceneAlignment = sliceAlignment(alignment, segment, startTimeSec, options.strategy);
 
     results.push({
       sceneId: segment.sceneId,
@@ -205,11 +183,11 @@ function buildSegmentTimings(
 
 function adjustSegmentBoundaries(
   timings: SegmentTiming[],
-  segments: ReadonlyArray<SceneNarrationSegment>,
   alignment: AudioAlignment,
   totalDurationMs: number,
   frames: RmsFrame[],
   boundaryOverrides: ReadonlyArray<BoundaryOverride>,
+  strategy: IAlignmentReliabilityStrategy,
 ): BoundaryDiagnostic[] {
   const diagnostics: BoundaryDiagnostic[] = [];
 
@@ -228,11 +206,10 @@ function adjustSegmentBoundaries(
     const current = timings[index];
     const next = timings[index + 1];
 
-    const prevLastChar = findLastNonzeroChar(alignment, current.startCharIndex, current.charCount);
-    const prevSpeechEndMs = prevLastChar.endMs;
-    const prevCharDurationMs = prevLastChar.endMs - prevLastChar.startMs;
-    const nextFirstChar = findFirstNonzeroChar(alignment, next.startCharIndex, next.charCount);
-    const nextSpeechStartMs = nextFirstChar.startMs;
+    const prevChar = findLastNonzeroChar(alignment, current.startCharIndex, current.charCount);
+    const nextChar = findFirstNonzeroChar(alignment, next.startCharIndex, next.charCount);
+    const prevSpeechEndMs = prevChar.endMs;
+    const nextSpeechStartMs = nextChar.startMs;
 
     // Anchor: 진단·override tie-break 용. N 마지막 발화 끝과 N+1 첫 발화 시작 중 더 늦은 쪽.
     const anchorMs = Math.max(prevSpeechEndMs, nextSpeechStartMs);
@@ -251,36 +228,16 @@ function adjustSegmentBoundaries(
       );
       searchAnchorMs = anchorMs;
     } else {
-      // Case B — prev >= next. 어느 쪽 char 가 씬 간 무음을 흡수했는지 판정.
-      //   · prev 가 이미 inflated (예: 句点 `。` 가 1초+) → 신뢰 가능. prev 에서 컷.
-      //   · next 가 silent char (예: `「`) 면 char 전체가 무음 → prev 에서 컷, 무음은 씬 N+1 앞머리에 남김.
-      //   · next 가 inflated 이고 실제 speech char 면 → forward RMS 확장.
-      //   · 둘 다 정상 duration → 자연스러운 back-to-back. prev 에서 컷.
-      const nextCharDurationMs = nextFirstChar.endMs - prevSpeechEndMs;
-      const isNextSilent = SILENT_START_CHARS.has(nextFirstChar.text);
-
-      if (prevCharDurationMs > INFLATION_THRESHOLD_MS) {
-        searchMinMs = prevSpeechEndMs;
-        searchMaxMs = prevSpeechEndMs;
-        searchAnchorMs = prevSpeechEndMs;
-        reasons.push(`prev-inflated(${prevCharDurationMs}ms)`);
-      } else if (isNextSilent) {
-        searchMinMs = prevSpeechEndMs;
-        searchMaxMs = prevSpeechEndMs;
-        searchAnchorMs = prevSpeechEndMs;
-        reasons.push(`next-silent-char(${nextFirstChar.text})`);
-      } else if (nextCharDurationMs > INFLATION_THRESHOLD_MS) {
-        const forwardCap = Math.min(prevSpeechEndMs + MAX_TAIL_EXTENSION_MS, nextFirstChar.endMs);
-        searchMinMs = Math.max(current.adjustedStartMs + MIN_SCENE_DURATION_MS, prevSpeechEndMs);
-        searchMaxMs = Math.max(searchMinMs, forwardCap);
-        searchAnchorMs = Math.round((searchMinMs + searchMaxMs) / 2);
-        reasons.push(`next-inflated(${nextCharDurationMs}ms)-forward-extended`);
-      } else {
-        searchMinMs = prevSpeechEndMs;
-        searchMaxMs = prevSpeechEndMs;
-        searchAnchorMs = prevSpeechEndMs;
-        reasons.push(`natural-boundary(prevDur=${prevCharDurationMs}ms,nextDur=${nextCharDurationMs}ms)`);
-      }
+      // Case B — prev >= next. 프로바이더별 전략에 위임.
+      const classification = strategy.classifyBackToBackBoundary({
+        prevChar,
+        nextChar,
+        minCutMs: current.adjustedStartMs + MIN_SCENE_DURATION_MS,
+      });
+      searchMinMs = classification.searchMinMs;
+      searchMaxMs = classification.searchMaxMs;
+      searchAnchorMs = classification.searchAnchorMs;
+      reasons.push(...classification.reasons);
     }
 
     // 유효 창이 있으면 RMS 검색. 없으면 prev 에서 컷 (tail leak 감수, 다음 씬은 alignment 만 따라감).
@@ -322,24 +279,28 @@ function adjustSegmentBoundaries(
   return diagnostics;
 }
 
-/** N의 마지막 문자 중 end_time > start_time 인 문자의 {startMs, endMs}. v3 end_time=0 버그 대응. */
+/** N의 마지막 문자 중 end_time > start_time 인 문자의 {text, startMs, endMs}. v3 end_time=0 버그 대응. */
 function findLastNonzeroChar(
   alignment: AudioAlignment,
   startCharIndex: number,
   charCount: number,
-): { startMs: number; endMs: number } {
+): { text: string; startMs: number; endMs: number } {
   const endIndex = startCharIndex + charCount - 1;
   for (let i = endIndex; i >= startCharIndex; i--) {
     const start = alignment.character_start_times_seconds[i];
     const end = alignment.character_end_times_seconds[i];
     if (typeof start === 'number' && typeof end === 'number' && end > start) {
-      return { startMs: Math.round(start * 1000), endMs: Math.round(end * 1000) };
+      return {
+        text: alignment.characters[i] ?? '',
+        startMs: Math.round(start * 1000),
+        endMs: Math.round(end * 1000),
+      };
     }
   }
   // 모든 문자가 0ms duration인 극단적 케이스: 마지막 문자의 end_time(또는 0)
   const fallback = alignment.character_end_times_seconds[endIndex];
   const ms = typeof fallback === 'number' ? Math.round(fallback * 1000) : 0;
-  return { startMs: ms, endMs: ms };
+  return { text: alignment.characters[endIndex] ?? '', startMs: ms, endMs: ms };
 }
 
 /** N+1의 첫 유효 char 의 {text, startMs, endMs}. v3 end_time=0 버그 대응. */
@@ -415,15 +376,16 @@ function clamp(value: number, min: number, max: number): number {
 /**
  * alignment 배열을 해당 씬의 문자 범위로 슬라이스하고, 시각을 0 기준으로 리베이스한다.
  *
- * 경계 컷이 씬 선두의 실제 발화를 잘랐는지 방어적으로 검증한다. 단, 첫 유효 char 가
- * INFLATION_THRESHOLD_MS 를 넘는 inflated char 라면 alignment 가 무음을 흡수했다는
- * 의미이므로 cut 이 그 내부에 있어도 clamp 로 허용한다 (실제 발화 손실 없음).
- * 두 번째 이후 char 가 cut 이전에 있는 경우는 실제 발화 절단 — 즉시 throw.
+ * 경계 컷이 씬 선두의 실제 발화를 잘랐는지 방어적으로 검증한다. 단, 전략이 첫 유효 char 를
+ * inflated 로 판정하면 alignment 가 무음을 흡수했다는 의미이므로 cut 이 그 내부에 있어도
+ * 허용한다 (실제 발화 손실 없음). 두 번째 이후 char 가 cut 이전에 있는 경우는 실제 발화 절단 —
+ * 즉시 throw.
  */
 function sliceAlignment(
   alignment: AudioAlignment,
   segment: SceneNarrationSegment,
   sceneStartTimeSec: number,
+  strategy: IAlignmentReliabilityStrategy,
 ): AudioAlignment {
   const { startCharIndex, charCount } = segment;
   const end = startCharIndex + charCount;
@@ -442,7 +404,11 @@ function sliceAlignment(
     if (startMs < sceneStartMs) {
       const droppedMs = sceneStartMs - startMs;
       const charDurationMs = endMs - startMs;
-      const isFirstInflated = !firstNonzeroSeen && charDurationMs > INFLATION_THRESHOLD_MS;
+      const isFirstInflated = !firstNonzeroSeen && strategy.isFirstCharInflated({
+        text: alignment.characters[i] ?? '',
+        startMs,
+        endMs,
+      });
       if (isFirstInflated) {
         // Inflated 첫 char: alignment 가 무음을 흡수한 상태. cut 이 내부에 있어도 실제 발화 손실 없음.
         firstNonzeroSeen = true;

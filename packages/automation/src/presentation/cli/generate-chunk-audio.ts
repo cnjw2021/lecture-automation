@@ -40,7 +40,7 @@ async function runGenerateChunkAudio(jsonFileName: string, chunkIndices: number[
     new GeminiCloudTtsConfiguredAudioProviderBuilder(),
     new ElevenLabsConfiguredAudioProviderBuilder(),
   ]);
-  const { provider, providerName } = audioProviderFactory.create();
+  const { provider, providerName, alignmentReliabilityStrategy } = audioProviderFactory.create();
   console.log(`🔊 오디오 프로바이더: ${providerName}`);
 
   const videoConfig = config.getVideoConfig();
@@ -56,6 +56,7 @@ async function runGenerateChunkAudio(jsonFileName: string, chunkIndices: number[
     new FileLectureRepository(),
     audioConfig,
     chunkedConfig.maxCharsPerChunk,
+    alignmentReliabilityStrategy,
   );
 
   await useCase.execute(lecture, { targetChunkIndices: chunkIndices });

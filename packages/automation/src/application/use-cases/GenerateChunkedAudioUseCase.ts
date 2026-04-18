@@ -1,6 +1,7 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { Lecture } from '../../domain/entities/Lecture';
+import { IAlignmentReliabilityStrategy } from '../../domain/interfaces/IAlignmentReliabilityStrategy';
 import { AudioAlignment, AudioConfig, IAudioProvider } from '../../domain/interfaces/IAudioProvider';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
 import { BoundaryDiagnostic, BoundaryOverride, splitChunkAudio } from '../../domain/services/ChunkAudioSplitter';
@@ -29,6 +30,7 @@ export class GenerateChunkedAudioUseCase {
     private readonly lectureRepository: ILectureRepository,
     private readonly audioConfig: AudioConfig,
     private readonly maxCharsPerChunk: number,
+    private readonly alignmentReliabilityStrategy: IAlignmentReliabilityStrategy,
   ) {}
 
   async execute(lecture: Lecture, options: GenerateChunkedAudioUseCaseOptions = {}): Promise<void> {
@@ -183,6 +185,7 @@ export class GenerateChunkedAudioUseCase {
     boundaryOverrides: ReadonlyArray<BoundaryOverride>,
   ): Promise<void> {
     const splitResult = splitChunkAudio(buffer, alignment, chunk.segments, this.audioConfig, {
+      strategy: this.alignmentReliabilityStrategy,
       boundaryOverrides,
     });
     const sceneSegments = splitResult.scenes;

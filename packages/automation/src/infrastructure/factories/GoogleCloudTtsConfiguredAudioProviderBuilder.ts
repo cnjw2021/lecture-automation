@@ -2,6 +2,7 @@ import { AudioConfig } from '../../domain/interfaces/IAudioProvider';
 import { AudioProviderFactoryResult } from '../../domain/interfaces/IAudioProviderFactory';
 import { config } from '../config';
 import { GoogleCloudTtsProvider } from '../providers/GoogleCloudTtsProvider';
+import { NaiveAlignmentReliabilityStrategy } from '../strategies/NaiveAlignmentReliabilityStrategy';
 import { ConfiguredAudioProviderBuilder } from './ConfiguredAudioProviderBuilder';
 
 export class GoogleCloudTtsConfiguredAudioProviderBuilder implements ConfiguredAudioProviderBuilder {
@@ -16,6 +17,7 @@ export class GoogleCloudTtsConfiguredAudioProviderBuilder implements ConfiguredA
     return {
       providerName: this.providerName,
       provider: new GoogleCloudTtsProvider(gcConfig.keyFilePath, gcConfig.voiceName, gcConfig.languageCode, audioConfig),
+      alignmentReliabilityStrategy: new NaiveAlignmentReliabilityStrategy(),
     };
   }
 }

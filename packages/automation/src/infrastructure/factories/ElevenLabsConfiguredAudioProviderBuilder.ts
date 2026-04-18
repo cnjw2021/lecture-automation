@@ -2,6 +2,7 @@ import { AudioConfig } from '../../domain/interfaces/IAudioProvider';
 import { AudioProviderFactoryResult } from '../../domain/interfaces/IAudioProviderFactory';
 import { config } from '../config';
 import { ElevenLabsAudioProvider } from '../providers/ElevenLabsAudioProvider';
+import { ElevenLabsAlignmentReliabilityStrategy } from '../strategies/ElevenLabsAlignmentReliabilityStrategy';
 import { ConfiguredAudioProviderBuilder } from './ConfiguredAudioProviderBuilder';
 
 export class ElevenLabsConfiguredAudioProviderBuilder implements ConfiguredAudioProviderBuilder {
@@ -27,6 +28,7 @@ export class ElevenLabsConfiguredAudioProviderBuilder implements ConfiguredAudio
         elConfig.voiceSettings,
         audioConfig,
       ),
+      alignmentReliabilityStrategy: new ElevenLabsAlignmentReliabilityStrategy(),
     };
   }
 }
