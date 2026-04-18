@@ -608,6 +608,10 @@
       "visual": {
         "type": "playwright",
         "storageState": "config/auth/claude.json",
+        "session": {
+          "id": "claude-salon-demo",
+          "mode": "shared"
+        },
         "syncPoints": [
           {
             "actionIndex": 6,
@@ -647,11 +651,6 @@
           {
             "cmd": "press",
             "key": "Enter"
-          },
-          {
-            "cmd": "wait",
-            "ms": 1282,
-            "note": "URL が /chat/{uuid} に遷移するまで待機 (次シーンで conversationUrl として参照)"
           }
         ]
       }
@@ -678,37 +677,40 @@
       "visual": {
         "type": "playwright",
         "storageState": "config/auth/claude.json",
+        "session": {
+          "id": "claude-salon-demo",
+          "mode": "shared"
+        },
         "syncPoints": [
           {
-            "actionIndex": 8,
+            "actionIndex": 7,
             "phrase": "スクロールしていくと"
           }
         ],
         "action": [
           {
-            "cmd": "goto",
-            "urlFromScene": 28,
-            "note": "シーン28で生成されたClaude対話URLを再利用"
-          },
-          {
             "cmd": "wait_for_claude_ready",
             "timeout": 180000,
-            "note": "Claude 응답 생성·저장 완료까지 폴링 대기 (10초 간격)"
+            "offscreen": true,
+            "note": "Claude 응답 생성·저장 완료까지 폴링 대기 (공유 세션 offscreen)"
           },
           {
             "cmd": "wait",
             "ms": 2505,
-            "note": "ready 판정 후 DOM 정착 대기"
+            "offscreen": true,
+            "note": "ready 판정 후 DOM 정착 대기 (공유 세션 offscreen)"
           },
           {
             "cmd": "click",
             "selector": "button:has-text('コード'):has-text('HTML')",
-            "note": "Artifact カードをクリックしてプレビューパネルを開く"
+            "offscreen": true,
+            "note": "Artifact カードをクリックしてプレビューパネルを開く (공유 세션 offscreen)"
           },
           {
             "cmd": "wait",
             "ms": 2505,
-            "note": "プレビューパネルのスライドイン完了待ち"
+            "offscreen": true,
+            "note": "プレビューパネルのスライドイン完了待ち (공유 세션 offscreen)"
           },
           {
             "cmd": "mouse_move",
