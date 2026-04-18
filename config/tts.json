@@ -33,26 +33,11 @@
       "style": 0,
       "use_speaker_boost": true,
       "speed": 1.0,
-      "chunkedGeneration": {
-        "enabled": false,
-        "maxCharsPerChunk": 2500
-      },
       "warmupPadding": {
         "enabled": true,
         "text": "これからお話しします。",
         "trimGuardMs": 0
       }
     }
-  },
-  "masterAudio": {
-    "enabled": true,
-    "provider": "gemini",
-    "modelName": "gemini-2.5-pro-preview-tts",
-    "voiceName": "Orus",
-    "styleVersion": "v1",
-    "speechRate": 1,
-    "temperature": 0,
-    "seed": 42,
-    "prompt": "次の日本語原稿を、実在の人物を模倣しない範囲で、日本のIT入門講座を担当するプロ講師のような雰囲気で読んでください。落ち着きがあり、信頼感のある標準的な日本語で、初学者にもわかりやすいように、はっきり丁寧に読んでください。実際のオンライン講義のように自然で親しみやすい話し方にし、大げさな演技、広告っぽい語り、アニメ声は避けてください。大事なポイントだけを軽く強調し、文と文の間、段落の切り替わりでは短く自然な間を入れてください。HTML、CSS、JavaScript、APIなどのIT用語は自然かつ正確に発音してください。"
   }
 }

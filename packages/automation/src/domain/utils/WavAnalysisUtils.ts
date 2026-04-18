@@ -80,16 +80,13 @@ export function insertSilenceIntoWav(
   for (const { splitMs, silenceMs } of insertions) {
     if (silenceMs <= 0) continue;
 
-    // splitMs 지점까지의 PCM 복사
     const splitByte = Math.min(Math.round(splitMs * bytesPerMs), pcm.length);
-    // 2바이트 경계 정렬
     const alignedSplitByte = splitByte - (splitByte % 2);
 
     if (alignedSplitByte > prevByteOffset) {
       parts.push(pcm.subarray(prevByteOffset, alignedSplitByte));
     }
 
-    // 무음 삽입
     const silenceBytes = Math.round(silenceMs * bytesPerMs);
     const alignedSilenceBytes = silenceBytes - (silenceBytes % 2);
     parts.push(Buffer.alloc(alignedSilenceBytes, 0));
@@ -97,7 +94,6 @@ export function insertSilenceIntoWav(
     prevByteOffset = alignedSplitByte;
   }
 
-  // 나머지 PCM
   if (prevByteOffset < pcm.length) {
     parts.push(pcm.subarray(prevByteOffset));
   }
@@ -106,7 +102,6 @@ export function insertSilenceIntoWav(
   return buildWav(newPcm, meta.sampleRate, meta.channels, meta.bitDepth);
 }
 
-/** PCM 데이터로부터 WAV 파일 버퍼를 생성한다. */
 export function buildWav(pcm: Buffer, sampleRate: number, channels: number, bitDepth: number): Buffer {
   const header = Buffer.alloc(44);
   const byteRate = sampleRate * channels * (bitDepth / 8);
@@ -116,8 +111,8 @@ export function buildWav(pcm: Buffer, sampleRate: number, channels: number, bitD
   header.writeUInt32LE(36 + pcm.length, 4);
   header.write('WAVE', 8);
   header.write('fmt ', 12);
-  header.writeUInt32LE(16, 16);        // fmt chunk size
-  header.writeUInt16LE(1, 20);         // PCM format
+  header.writeUInt32LE(16, 16);
+  header.writeUInt16LE(1, 20);
   header.writeUInt16LE(channels, 22);
   header.writeUInt32LE(sampleRate, 24);
   header.writeUInt32LE(byteRate, 28);
