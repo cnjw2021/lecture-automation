@@ -14,6 +14,7 @@
 import * as fs from 'fs-extra';
 import { Lecture, Scene, PlaywrightVisual, PlaywrightAction, PlaywrightSyncPoint } from '../../domain/entities/Lecture';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
+import { isForwardSyncTarget, isIsolatedLiveDemoScene } from '../../domain/policies/LiveDemoScenePolicy';
 import { EDU_DEVTOOLS_ACTION_DURATION_MS } from '../../domain/constants/EduDevtoolsActionDurations';
 
 // 각 action cmd의 고정 소요시간 추정치 (ms).  wait는 조정 대상이므로 여기서 제외.
@@ -53,18 +54,12 @@ export class SyncPlaywrightUseCase {
     for (let i = 0; i < updatedSequence.length; i++) {
       const scene = updatedSequence[i];
       if (targetSceneIds && !targetSceneIds.includes(scene.scene_id)) continue;
-      if (scene.visual.type !== 'playwright') continue;
-      const visual = scene.visual as PlaywrightVisual;
-      if (!visual.syncPoints || visual.syncPoints.length === 0) continue;
-
-      // 라이브 데모 씬(wait_for / wait_for_claude_ready 포함)은 역방향 싱크 대상이므로 건너뜀
-      const isLiveDemo = visual.action.some(
-        a => a.cmd === 'wait_for' || a.cmd === 'wait_for_claude_ready',
-      );
-      if (isLiveDemo) {
-        console.log(`\n[Sync] Scene ${scene.scene_id} 는 라이브 데모 (역방향 싱크 대상) → 순방향 싱크 건너뜀`);
+      if (isIsolatedLiveDemoScene(scene)) {
+        console.log(`\n[Sync] Scene ${scene.scene_id} 는 isolated 라이브 데모 (역방향 싱크 대상) → 순방향 싱크 건너뜀`);
         continue;
       }
+      if (!isForwardSyncTarget(scene)) continue;
+      const visual = scene.visual as PlaywrightVisual;
 
       console.log(`\n[Sync] Scene ${scene.scene_id} 처리 중...`);
 

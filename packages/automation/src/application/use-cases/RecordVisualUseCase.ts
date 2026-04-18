@@ -1,7 +1,8 @@
-import { Lecture, PlaywrightVisual } from '../../domain/entities/Lecture';
+import { Lecture } from '../../domain/entities/Lecture';
 import { IVisualProvider } from '../../domain/interfaces/IVisualProvider';
 import { IStateCaptureProvider } from '../../domain/interfaces/IStateCaptureProvider';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
+import { computePreRecordingSceneIds } from '../../domain/policies/LiveDemoScenePolicy';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 
@@ -26,10 +27,8 @@ export class RecordVisualUseCase {
     const mode = useSynthCapture && this.stateCaptureProvider ? '상태 합성형' : 'raw video';
     console.log(`[${lecture.lecture_id}] 시각 자료 녹화 공정 시작 (모드: ${mode})`);
 
-    // 라이브 데모 씬 + urlFromScene 체인으로 참조되는 의존 씬 ID 집합
-    // 예: 씬 29가 wait_for_claude_ready + urlFromScene:28 을 갖는 경우,
-    //     씬 28 의 녹화가 씬 29 보다 먼저 끝나야 최신 conversationUrl 을 넘길 수 있다.
-    const liveDemoSceneIds = this.computeLiveDemoSceneIds(lecture);
+    // 사전 녹화 대상(isolated 라이브 데모 + urlFromScene 의존 체인)
+    const liveDemoSceneIds = computePreRecordingSceneIds(lecture);
 
     for (const scene of lecture.sequence) {
       if (scene.visual.type !== 'playwright') continue;
@@ -78,30 +77,6 @@ export class RecordVisualUseCase {
         }
       }
     }
-  }
-
-  /**
-   * 라이브 데모 씬 및 그 의존 URL 소스 씬의 ID 집합을 계산한다.
-   * - 씬의 action 에 wait_for 또는 wait_for_claude_ready 가 있으면 라이브 데모 씬
-   * - 라이브 데모 씬이 urlFromScene:N 을 참조하면 씬 N 도 집합에 포함 (의존 체인)
-   */
-  private computeLiveDemoSceneIds(lecture: Lecture): Set<number> {
-    const result = new Set<number>();
-    for (const scene of lecture.sequence) {
-      if (scene.visual.type !== 'playwright') continue;
-      const visual = scene.visual as PlaywrightVisual;
-      const isLiveDemo = visual.action.some(
-        a => a.cmd === 'wait_for' || a.cmd === 'wait_for_claude_ready',
-      );
-      if (!isLiveDemo) continue;
-      result.add(scene.scene_id);
-      for (const a of visual.action) {
-        if (typeof a.urlFromScene === 'number') {
-          result.add(a.urlFromScene);
-        }
-      }
-    }
-    return result;
   }
 
   private getStateCaptureDir(lectureId: string, sceneId: number): string {

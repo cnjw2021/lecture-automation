@@ -43,6 +43,23 @@ export interface PlaywrightAction {
   timeout?: number;
   /** scroll: 스크롤 량 (양수=아래, 음수=위, 기본 300) */
   deltaY?: number;
+  /**
+   * 공유 세션(P-D) 전용: true 이면 실제 세션에서 실행되지만
+   * 씬 캡처(manifest step)와 씬 길이 계산에서 제외된다.
+   * wait_for_claude_ready, 세션 재개 후 DOM 정착 wait 등 비결정적 대기에 사용.
+   */
+  offscreen?: boolean;
+}
+
+/**
+ * Playwright 씬의 실행 단위 설정.
+ * - isolated: 씬마다 독립된 browser/context/page 사용 (기본 동작, 현행 호환)
+ * - shared  : 같은 session.id 를 공유하는 인접/연관 씬들이 하나의 page 인스턴스를 공유
+ *             결과 확인 씬은 goto 재진입이 아니라 "이어받기" 로 동작해야 한다
+ */
+export interface PlaywrightSessionConfig {
+  id: string;
+  mode: 'isolated' | 'shared';
 }
 
 export interface TransitionConfig {
@@ -84,6 +101,12 @@ export interface PlaywrightVisual {
   transition?: TransitionConfig;
   /** 브라우저 인증 상태 파일 경로 (예: "config/auth/claude.json"). 프로젝트 루트 상대 경로. */
   storageState?: string;
+  /**
+   * 공유 세션(P-D) 설정. 생략 시 isolated 로 간주.
+   * 같은 session.id + mode 'shared' 인 씬들은 하나의 LiveDemoSession 으로 그룹핑되어
+   * browser/context/page 가 세션 동안 유지된다.
+   */
+  session?: PlaywrightSessionConfig;
 }
 
 export interface ScreenshotVisual {

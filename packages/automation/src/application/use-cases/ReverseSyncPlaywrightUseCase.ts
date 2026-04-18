@@ -18,6 +18,7 @@ import * as fs from 'fs-extra';
 import { Lecture, PlaywrightVisual, PlaywrightSyncPoint } from '../../domain/entities/Lecture';
 import { AudioAlignment } from '../../domain/interfaces/IAudioProvider';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
+import { isReverseSyncTarget } from '../../domain/policies/LiveDemoScenePolicy';
 import { readWavMetadata, insertSilenceIntoWav } from '../../domain/utils/WavAnalysisUtils';
 import { RecordingManifest } from '../../infrastructure/providers/PlaywrightVisualProvider';
 
@@ -45,14 +46,8 @@ export class ReverseSyncPlaywrightUseCase {
 
     for (const scene of lecture.sequence) {
       if (targetSceneIds && !targetSceneIds.includes(scene.scene_id)) continue;
-      if (scene.visual.type !== 'playwright') continue;
+      if (!isReverseSyncTarget(scene)) continue;
       const visual = scene.visual as PlaywrightVisual;
-
-      // 라이브 데모 씬 판별: wait_for 또는 wait_for_claude_ready가 action에 있고 syncPoints가 정의된 경우
-      const hasWaitFor = visual.action.some(
-        a => a.cmd === 'wait_for' || a.cmd === 'wait_for_claude_ready',
-      );
-      if (!hasWaitFor || !visual.syncPoints?.length) continue;
 
       console.log(`\n[ReverseSync] Scene ${scene.scene_id} 처리 중...`);
 

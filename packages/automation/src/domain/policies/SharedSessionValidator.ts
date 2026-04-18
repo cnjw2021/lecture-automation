@@ -1,0 +1,66 @@
+import { Lecture, PlaywrightVisual, Scene } from '../entities/Lecture';
+import { isSharedSessionScene, planLiveDemoSessions } from './LiveDemoScenePolicy';
+
+/**
+ * shared session (P-D) 씬의 구조적 제약을 검증한다 (순수 함수).
+ *
+ * 검증 규칙:
+ *  R1. shared session 씬의 모든 action 에서 urlFromScene 사용 금지
+ *      shared 는 같은 page 인스턴스 재사용이므로 URL 재참조라는 개념 자체가 없다.
+ *  R2. shared session **결과 확인 씬**(세션 그룹 내 2번째 이후)의
+ *      첫 visible action (offscreen: false) 이 goto 이면 안 된다.
+ *      결과 확인 씬은 재진입이 아니라 이전 씬의 page 를 이어받아야 한다.
+ *
+ * 세션 그룹 내 첫 씬(entry scene)은 goto 로 시작해도 된다.
+ */
+
+export interface SharedSessionViolation {
+  sceneId: number;
+  rule: 'shared-session-no-url-from-scene' | 'shared-session-no-goto-on-continuation';
+  actionIndex?: number;
+  message: string;
+}
+
+export function validateSharedSessions(lecture: Lecture): SharedSessionViolation[] {
+  const violations: SharedSessionViolation[] = [];
+  const sceneById = new Map<number, Scene>();
+  for (const scene of lecture.sequence) sceneById.set(scene.scene_id, scene);
+
+  const groups = planLiveDemoSessions(lecture);
+
+  for (const group of groups) {
+    for (let groupIdx = 0; groupIdx < group.sceneIds.length; groupIdx++) {
+      const sceneId = group.sceneIds[groupIdx];
+      const scene = sceneById.get(sceneId);
+      if (!scene || !isSharedSessionScene(scene)) continue;
+      const visual = scene.visual as PlaywrightVisual;
+      const isEntryScene = groupIdx === 0;
+
+      // R1: urlFromScene 금지
+      for (let i = 0; i < visual.action.length; i++) {
+        if (typeof visual.action[i].urlFromScene === 'number') {
+          violations.push({
+            sceneId,
+            rule: 'shared-session-no-url-from-scene',
+            actionIndex: i,
+            message: `shared session 씬(id=${sceneId})의 action[${i}] 에 urlFromScene 사용 불가 — shared 는 page 인스턴스 재사용, URL 재참조 아님`,
+          });
+        }
+      }
+
+      // R2: 결과 확인 씬의 첫 visible action goto 금지
+      if (!isEntryScene) {
+        const firstVisible = visual.action.find(a => !a.offscreen);
+        if (firstVisible && firstVisible.cmd === 'goto') {
+          violations.push({
+            sceneId,
+            rule: 'shared-session-no-goto-on-continuation',
+            message: `shared session 결과 확인 씬(id=${sceneId}) 의 첫 visible action 이 goto 임 — 재진입이 아니라 page 이어받기 구조여야 함`,
+          });
+        }
+      }
+    }
+  }
+
+  return violations;
+}
