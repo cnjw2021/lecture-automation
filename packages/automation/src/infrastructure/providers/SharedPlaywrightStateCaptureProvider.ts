@@ -113,19 +113,24 @@ export class SharedPlaywrightStateCaptureProvider implements ISharedVisualSessio
         try {
           // replayOnly 모드: 모든 액션을 offscreen처럼 처리 (스크린샷 없음)
           if (replayOnly || action.offscreen) {
-            // click: full run은 클릭 전 bounding box 중심을 cursorTo로 기록한다.
-            // replayOnly도 동일하게 클릭 전에 bounding box를 캡처해 cursor를 갱신한다.
-            let clickBox: { x: number; y: number; width: number; height: number } | null = null;
-            if (action.cmd === 'click' && action.selector) {
+            // selector 기반 액션(click/type/focus)은 실행 전 bounding box 중심을 커서로 기록한다.
+            // full run의 executeAndCaptureStep도 실행 전 box를 캡처하므로 동일 타이밍이다.
+            const selectorCmd = action.cmd === 'click' || action.cmd === 'type' || action.cmd === 'focus';
+            let selectorBox: { x: number; y: number; width: number; height: number } | null = null;
+            if (selectorCmd && action.selector) {
               try {
-                clickBox = await session.page.locator(action.selector).boundingBox();
+                selectorBox = await session.page.locator(action.selector).boundingBox();
               } catch (_) {}
             }
+
             await executeActionOffscreen(session.page, action);
+
             if (action.cmd === 'mouse_move' && action.to) {
               session.cursorPos = { x: action.to[0], y: action.to[1] };
-            } else if (clickBox) {
-              session.cursorPos = { x: clickBox.x + clickBox.width / 2, y: clickBox.y + clickBox.height / 2 };
+            } else if (action.cmd === 'mouse_drag' && action.to) {
+              session.cursorPos = { x: action.to[0], y: action.to[1] };
+            } else if (selectorBox) {
+              session.cursorPos = { x: selectorBox.x + selectorBox.width / 2, y: selectorBox.y + selectorBox.height / 2 };
             }
             continue;
           }
