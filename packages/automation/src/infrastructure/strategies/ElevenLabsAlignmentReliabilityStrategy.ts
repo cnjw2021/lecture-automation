@@ -48,11 +48,18 @@ export class ElevenLabsAlignmentReliabilityStrategy implements IAlignmentReliabi
     const isNextSilent = SILENT_START_CHARS.has(nextChar.text);
 
     if (prevCharDurationMs > INFLATION_THRESHOLD_MS) {
+      // prev char (예: `。`) 가 씬 간 무음을 흡수. char 의 labeled end_time 을 그대로
+      // 컷으로 쓰면 next 씬 첫 음향 onset 이 그보다 먼저 시작된 경우 (alignment 해상도·
+      // plosive onset 등) N 꼬리에 N+1 선두가 새어든다. [prev.startMs, prev.endMs]
+      // 안에서 RMS 최저 프레임을 backward-search 해 실제 무음 한가운데를 컷으로 삼는다.
+      const searchMinMs = Math.max(minCutMs, prevChar.startMs);
+      const searchMaxMs = Math.max(searchMinMs, prevSpeechEndMs);
+      const searchAnchorMs = Math.round((searchMinMs + searchMaxMs) / 2);
       return {
-        searchMinMs: prevSpeechEndMs,
-        searchMaxMs: prevSpeechEndMs,
-        searchAnchorMs: prevSpeechEndMs,
-        reasons: [`prev-inflated(${prevCharDurationMs}ms)`],
+        searchMinMs,
+        searchMaxMs,
+        searchAnchorMs,
+        reasons: [`prev-inflated(${prevCharDurationMs}ms)-backward-search`],
       };
     }
 

@@ -2,9 +2,11 @@
  * 새 경계 컷 알고리즘 검증 스크립트
  *
  * 기존 청크 디버그 산출물을 읽어, 새 알고리즘으로 cut 을 재계산하고
- * 이전 결과와 양방향 leak 을 비교한다:
- *   - tail leak: appliedCutMs < prevSpeechEndMs  (N 의 마지막 발화 절단)
- *   - head leak: appliedCutMs > nextSpeechStartMs (N+1 의 선두 발화 절단)
+ * 라벨된 char 범위 밖으로 컷이 나가 실제 발화를 자른 케이스만 leak 으로 판정한다:
+ *   - tail leak: appliedCutMs < prevSpeechStartMs (N 마지막 char 의 start 이전 → 이전 발화 절단)
+ *   - head leak: appliedCutMs > nextSpeechEndMs   (N+1 첫 char 의 end 이후 → 다음 발화 절단)
+ *
+ * inflated char 내부의 backward/forward 오프셋은 의도된 동작이므로 leak 으로 치지 않는다.
  *
  * **WAV를 새로 쓰지 않음** — 진단만 출력. leak 잔존 시 exit 1.
  *
@@ -16,6 +18,11 @@ import * as path from 'path';
 import { config } from '../packages/automation/src/infrastructure/config';
 import { splitChunkAudio } from '../packages/automation/src/domain/services/ChunkAudioSplitter';
 import { Lecture } from '../packages/automation/src/domain/entities/Lecture';
+import { ConfiguredAudioProviderFactory } from '../packages/automation/src/infrastructure/factories/ConfiguredAudioProviderFactory';
+import { ElevenLabsConfiguredAudioProviderBuilder } from '../packages/automation/src/infrastructure/factories/ElevenLabsConfiguredAudioProviderBuilder';
+import { GeminiCloudTtsConfiguredAudioProviderBuilder } from '../packages/automation/src/infrastructure/factories/GeminiCloudTtsConfiguredAudioProviderBuilder';
+import { GeminiConfiguredAudioProviderBuilder } from '../packages/automation/src/infrastructure/factories/GeminiConfiguredAudioProviderBuilder';
+import { GoogleCloudTtsConfiguredAudioProviderBuilder } from '../packages/automation/src/infrastructure/factories/GoogleCloudTtsConfiguredAudioProviderBuilder';
 
 async function main() {
   const jsonFileName = process.argv[2];
@@ -40,6 +47,14 @@ async function main() {
     bitDepth: videoConfig.audio.bitDepth,
     speechRate: 1,
   };
+
+  const audioProviderFactory = new ConfiguredAudioProviderFactory([
+    new GeminiConfiguredAudioProviderBuilder(),
+    new GoogleCloudTtsConfiguredAudioProviderBuilder(),
+    new GeminiCloudTtsConfiguredAudioProviderBuilder(),
+    new ElevenLabsConfiguredAudioProviderBuilder(),
+  ]);
+  const { alignmentReliabilityStrategy } = audioProviderFactory.create();
 
   const chunkFiles = (await fs.readdir(debugDir))
     .filter(name => /^chunk-\d+\.manifest\.json$/.test(name))
@@ -76,7 +91,9 @@ async function main() {
     const oldBoundaries = await fs.readJson(path.join(debugDir, `chunk-${String(chunkIndex).padStart(3, '0')}.boundaries.json`));
     const wav = await fs.readFile(path.join(debugDir, `chunk-${String(chunkIndex).padStart(3, '0')}.wav`));
 
-    const result = splitChunkAudio(wav, alignment, manifest.segments, audioConfig);
+    const result = splitChunkAudio(wav, alignment, manifest.segments, audioConfig, {
+      strategy: alignmentReliabilityStrategy,
+    });
 
     for (const newBoundary of result.boundaries) {
       const oldBoundary = oldBoundaries.find(
@@ -84,12 +101,12 @@ async function main() {
           b.fromSceneId === newBoundary.fromSceneId && b.toSceneId === newBoundary.toSceneId,
       );
       const oldCutMs = oldBoundary?.appliedCutMs ?? 0;
-      // tail leak: cut 이 N 의 마지막 발화 끝보다 앞 (음수) → N 의 꼬리 발화를 자름
-      const oldTailMs = oldCutMs - newBoundary.prevSpeechEndMs;
-      const newTailMs = newBoundary.appliedCutMs - newBoundary.prevSpeechEndMs;
-      // head leak: cut 이 N+1 의 첫 발화 시작보다 뒤 (양수) → N+1 의 머리 발화를 자름
-      const oldHeadMs = oldCutMs - newBoundary.nextSpeechStartMs;
-      const newHeadMs = newBoundary.appliedCutMs - newBoundary.nextSpeechStartMs;
+      // tail leak: cut 이 N 마지막 char 의 start 이전 → prev 발화 내부를 자름
+      const oldTailMs = oldCutMs - newBoundary.prevSpeechStartMs;
+      const newTailMs = newBoundary.appliedCutMs - newBoundary.prevSpeechStartMs;
+      // head leak: cut 이 N+1 첫 char 의 end 이후 → next 발화 내부를 자름
+      const oldHeadMs = oldCutMs - newBoundary.nextSpeechEndMs;
+      const newHeadMs = newBoundary.appliedCutMs - newBoundary.nextSpeechEndMs;
 
       totalBoundaries++;
       if (oldTailMs < 0) oldTailLeakCount++;

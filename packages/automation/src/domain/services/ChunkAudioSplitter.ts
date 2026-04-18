@@ -21,10 +21,14 @@ export interface BoundaryOverride {
 export interface BoundaryDiagnostic {
   fromSceneId: number;
   toSceneId: number;
+  /** N 마지막 유효 문자의 start_time (backward-search 안전 하한) */
+  prevSpeechStartMs: number;
   /** N 마지막 유효 문자의 end_time (nonzero 보정 후) */
   prevSpeechEndMs: number;
   /** N+1 첫 유효 문자의 start_time (nonzero 보정 후) */
   nextSpeechStartMs: number;
+  /** N+1 첫 유효 문자의 end_time (forward-search 안전 상한) */
+  nextSpeechEndMs: number;
   /** 경계 anchor — max(prevSpeechEndMs, nextSpeechStartMs) */
   anchorMs: number;
   /** backward-bounded RMS 검색으로 찾은 cut 위치 (nextSpeechStartMs 이하가 보장됨) */
@@ -265,8 +269,10 @@ function adjustSegmentBoundaries(
     diagnostics.push({
       fromSceneId: current.sceneId,
       toSceneId: next.sceneId,
+      prevSpeechStartMs: prevChar.startMs,
       prevSpeechEndMs,
       nextSpeechStartMs,
+      nextSpeechEndMs: nextChar.endMs,
       anchorMs,
       suggestedCutMs,
       appliedCutMs,
