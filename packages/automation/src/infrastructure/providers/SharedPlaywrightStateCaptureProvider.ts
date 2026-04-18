@@ -144,6 +144,8 @@ export class SharedPlaywrightStateCaptureProvider implements ISharedVisualSessio
           if (stepData.cursorTo) session.cursorPos = stepData.cursorTo;
           stepIndex++;
         } catch (err: any) {
+          // replayOnly: 페이지 상태 복원 실패 → 후속 씬 DOM이 잘못되므로 즉시 중단
+          if (replayOnly) throw err;
           console.warn(`  ⚠️ Action '${action.cmd}' 처리 실패: ${err.message}`);
         }
       }
@@ -184,10 +186,11 @@ export class SharedPlaywrightStateCaptureProvider implements ISharedVisualSessio
       console.log(`  > Scene ${scene.scene_id} 공유 세션 캡처 완료: ${steps.length}개 step, ${totalDurationMs}ms`);
       return manifest;
     } catch (err: any) {
-      // 정책: 씬 캡처 실패 시 null 반환으로 세션은 유지(후속 씬 계속 진행).
-      // 호출부(CaptureSharedLiveDemoSessionsUseCase)가 에러를 로깅하고 다음 씬으로 넘긴다.
-      // manifest.json 이 누락되면 렌더 단계에서 synthManifest 없음 경고 후 빈 화면이 될 수 있다.
-      // 세션 전체 중단이 필요하면 여기서 throw 로 변경한다.
+      // replayOnly: inner catch가 rethrow한 에러가 여기까지 전파 → 그대로 다시 throw.
+      // 페이지 상태 복원 실패이므로 세션 전체를 중단해야 한다.
+      if (replayOnly) throw err;
+      // capture 모드: null 반환으로 세션 유지(후속 씬 계속 진행).
+      // manifest.json 누락 시 렌더 단계에서 loadSynthManifests 가 즉시 throw 한다.
       console.error(`  > Scene ${scene.scene_id} 공유 세션 캡처 에러:`, err.message);
       return null;
     }

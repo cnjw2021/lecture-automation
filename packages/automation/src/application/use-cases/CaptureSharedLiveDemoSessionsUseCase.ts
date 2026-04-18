@@ -75,6 +75,10 @@ export class CaptureSharedLiveDemoSessionsUseCase {
           try {
             await this.sharedProvider.captureSceneInSession(handle, scene, outputDir, { replayOnly });
           } catch (err: any) {
+            if (replayOnly) {
+              // 페이지 상태 복원 실패 → 이후 씬의 DOM이 잘못된 상태 → 그룹 전체 중단
+              throw new Error(`Scene ${sceneId} 리플레이(상태 복원) 실패로 세션 ${group.sessionId} 중단: ${err.message}`);
+            }
             console.error(`- Scene ${sceneId} 공유 세션 캡처 실패:`, err.message);
           }
         }

@@ -76,8 +76,9 @@ export class RemotionSceneClipRenderProvider implements ISceneClipRenderProvider
     );
 
     if (!await fs.pathExists(manifestPath)) {
-      console.warn(`    ⚠️  Scene ${sceneId} shared session manifest 없음: ${manifestPath}`);
-      return null;
+      // shared 씬은 webm 폴백이 없다(RecordVisualUseCase가 항상 스킵).
+      // manifest 없이 렌더하면 잘못된 결과물이 나오므로 즉시 실패시킨다.
+      throw new Error(`Scene ${sceneId} shared session manifest 없음: ${manifestPath}\n  → 캡처를 먼저 실행하세요: make regen-scene LECTURE=... SCENE=${sceneId}`);
     }
 
     const manifest = await fs.readJson(manifestPath);
