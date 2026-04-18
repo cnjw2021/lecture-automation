@@ -36,6 +36,11 @@
       "chunkedGeneration": {
         "enabled": false,
         "maxCharsPerChunk": 2500
+      },
+      "warmupPadding": {
+        "enabled": false,
+        "text": "これからお話しします。",
+        "trimGuardMs": 0
       }
     }
   },

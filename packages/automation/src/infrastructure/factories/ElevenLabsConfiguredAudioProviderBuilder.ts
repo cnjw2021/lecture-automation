@@ -16,6 +16,8 @@ export class ElevenLabsConfiguredAudioProviderBuilder implements ConfiguredAudio
       throw new Error('config/tts.json의 providers.elevenlabs.voiceId를 설정해 주세요.');
     }
 
+    const warmupPadding = config.getWarmupPaddingConfig();
+
     return {
       providerName: this.providerName,
       provider: new ElevenLabsAudioProvider(
@@ -26,6 +28,7 @@ export class ElevenLabsConfiguredAudioProviderBuilder implements ConfiguredAudio
         elConfig.seed,
         elConfig.voiceSettings,
         audioConfig,
+        warmupPadding,
       ),
     };
   }
