@@ -1,5 +1,5 @@
 import { validateSharedSessions } from './SharedSessionValidator';
-import { Lecture, Scene } from '../entities/Lecture';
+import { Lecture, PlaywrightAction, Scene } from '../entities/Lecture';
 
 // ---------------------------------------------------------------------------
 // Fixture helpers
@@ -7,7 +7,7 @@ import { Lecture, Scene } from '../entities/Lecture';
 
 function makeSharedScene(
   id: number,
-  actions: any[],
+  actions: PlaywrightAction[],
   sessionId = 'test-session',
 ): Scene {
   return {

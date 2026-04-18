@@ -16,6 +16,7 @@ import { isSharedSessionScene, planLiveDemoSessions } from './LiveDemoScenePolic
  *      후속 씬이 잘못된 DOM 에서 시작하게 된다.
  *
  * 세션 그룹 내 첫 씬(entry scene)은 goto 로 시작해도 된다.
+ * 단 R3 는 entry/continuation 구분 없이 전체 금지.
  */
 
 export interface SharedSessionViolation {
