@@ -113,12 +113,19 @@ export class SharedPlaywrightStateCaptureProvider implements ISharedVisualSessio
         try {
           // replayOnly 모드: 모든 액션을 offscreen처럼 처리 (스크린샷 없음)
           if (replayOnly || action.offscreen) {
+            // click: full run은 클릭 전 bounding box 중심을 cursorTo로 기록한다.
+            // replayOnly도 동일하게 클릭 전에 bounding box를 캡처해 cursor를 갱신한다.
+            let clickBox: { x: number; y: number; width: number; height: number } | null = null;
+            if (action.cmd === 'click' && action.selector) {
+              try {
+                clickBox = await session.page.locator(action.selector).boundingBox();
+              } catch (_) {}
+            }
             await executeActionOffscreen(session.page, action);
-            // replayOnly에서도 커서 위치를 추적해야 full run과 cursorFrom이 일치한다
             if (action.cmd === 'mouse_move' && action.to) {
               session.cursorPos = { x: action.to[0], y: action.to[1] };
-            } else if (action.cmd === 'click' && action.selector) {
-              // click은 selector 기반이라 정확한 좌표를 알 수 없으므로 현재 위치 유지
+            } else if (clickBox) {
+              session.cursorPos = { x: clickBox.x + clickBox.width / 2, y: clickBox.y + clickBox.height / 2 };
             }
             continue;
           }

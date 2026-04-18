@@ -16,7 +16,10 @@ import { isSharedSessionScene, planLiveDemoSessions } from './LiveDemoScenePolic
 
 export interface SharedSessionViolation {
   sceneId: number;
-  rule: 'shared-session-no-url-from-scene' | 'shared-session-no-goto-on-continuation';
+  rule:
+    | 'shared-session-no-url-from-scene'
+    | 'shared-session-no-goto-on-continuation'
+    | 'shared-session-no-render-code-block';
   actionIndex?: number;
   message: string;
 }
@@ -44,6 +47,19 @@ export function validateSharedSessions(lecture: Lecture): SharedSessionViolation
             rule: 'shared-session-no-url-from-scene',
             actionIndex: i,
             message: `shared session 씬(id=${sceneId})의 action[${i}] 에 urlFromScene 사용 불가 — shared 는 page 인스턴스 재사용, URL 재참조 아님`,
+          });
+        }
+      }
+
+      // R3: render_code_block 금지 (about:blank 이동 + setContent로 page를 완전히 교체해
+      //     shared session의 후속 씬이 잘못된 DOM에서 시작하게 됨)
+      for (let i = 0; i < visual.action.length; i++) {
+        if (visual.action[i].cmd === 'render_code_block') {
+          violations.push({
+            sceneId,
+            rule: 'shared-session-no-render-code-block',
+            actionIndex: i,
+            message: `shared session 씬(id=${sceneId})의 action[${i}] 에 render_code_block 사용 불가 — about:blank 이동으로 공유 page 상태를 파괴함`,
           });
         }
       }
