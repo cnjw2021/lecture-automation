@@ -394,13 +394,12 @@ export async function executeActionOffscreen(
       return;
     case 'highlight':
       // DOM 스타일 변경: 페이지 상태에 영향을 주므로 offscreen에서도 실행
+      // selector miss/timeout = 잘못된 page 상태 → throw (swallow 금지)
       if (action.selector) {
-        try {
-          await page.locator(action.selector).waitFor({ state: 'attached', timeout: 5000 });
-          await page.locator(action.selector).evaluate((el: HTMLElement) => {
-            el.style.outline = '5px solid #ff007a';
-          });
-        } catch (_) {}
+        await page.locator(action.selector).waitFor({ state: 'attached', timeout: 5000 });
+        await page.locator(action.selector).evaluate((el: HTMLElement) => {
+          el.style.outline = '5px solid #ff007a';
+        });
       }
       return;
     case 'disable_css':
@@ -426,9 +425,8 @@ export async function executeActionOffscreen(
     case 'select_devtools_node':
     case 'toggle_devtools_node':
       // 교육용 DevTools 오버레이: DOM 주입이므로 후속 씬 상태 복원을 위해 실행
-      try {
-        await executeEduDevtoolsAction(page, action);
-      } catch (_) {}
+      // 실패 = 오버레이 미주입 = page 상태 불완전 → throw (swallow 금지)
+      await executeEduDevtoolsAction(page, action);
       return;
     case 'render_code_block':
       // 순수 시각 효과, 페이지 상태에 영향 없음 → no-op
