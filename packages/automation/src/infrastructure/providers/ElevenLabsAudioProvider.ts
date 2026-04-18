@@ -118,12 +118,27 @@ export class ElevenLabsAudioProvider implements IAudioProvider {
             console.warn(`  ⚠️ alignment 누락 — warmup trim 불가, warmup 포함된 채로 반환`);
           } else {
             const endTimes = alignment.character_end_times_seconds;
-            const rawTrimSec = endTimes[warmupChars - 1];
+            const startTimes = alignment.character_start_times_seconds;
+            const warmupEndSec = endTimes[warmupChars - 1];
+            const narrationStartSec = startTimes[warmupChars];
+
+            // narrationStartSec 경로: 나레이션 첫 글자 시작 시점이 기준이므로
+            // trimGuardMs를 더하면 나레이션을 침범하게 됨 → 0으로 강제.
+            // warmupEndSec fallback 경로: 기존 동작(trimGuardMs 적용)을 유지.
+            let effectiveGuardMs = this.warmupPadding.trimGuardMs;
+            if (narrationStartSec !== undefined && effectiveGuardMs !== 0) {
+              console.warn(`  ⚠️ narrationStart 기준 trim에서 trimGuardMs=${effectiveGuardMs}ms는 나레이션 클리핑을 유발합니다 — 0으로 강제 적용`);
+              effectiveGuardMs = 0;
+            }
+
+            const rawTrimSec = narrationStartSec ?? warmupEndSec;
+
+            console.log(`  🔍 warmup 종료: ${warmupEndSec?.toFixed(3)}s, 나레이션 시작: ${narrationStartSec?.toFixed(3)}s → trim 기준: ${rawTrimSec?.toFixed(3)}s (guard: ${effectiveGuardMs}ms)`);
 
             if (rawTrimSec === undefined || rawTrimSec <= 0) {
               console.warn(`  ⚠️ warmup trim 경계 이상 (trimSec=${rawTrimSec}) — trim 생략`);
             } else {
-              const trimSec = rawTrimSec + this.warmupPadding.trimGuardMs / 1000;
+              const trimSec = rawTrimSec + effectiveGuardMs / 1000;
               const { sampleRate, channels, bitDepth } = this.audioConfig;
               const bytesPerFrame = channels * (bitDepth / 8);
               const bytesPerSec = sampleRate * bytesPerFrame;
