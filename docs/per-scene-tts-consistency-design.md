@@ -2,215 +2,208 @@
 
 ## 목적
 
-`eleven_v3` + 개별 씬 단위 생성 모드에서 발생하는 **첫 시작 구간 톤 드리프트**를 완화하기 위한 두 전략(#6 첫 문장 중립화, #7 오프닝 사전 생성 재사용)의 구체적 구현 설계를 정의한다.
+`eleven_v3` + 개별 씬 단위 생성 모드에서 **각 씬 시작 3~5초 구간의 톤 드리프트**를 완화하기 위한 구현 설계를 정의한다.
 
 전체 맥락은 `docs/tts-history.md`를 먼저 읽을 것.
 
 ---
 
-## 배경 — 왜 이 전략이 필요한가
+## 관찰 — 문제의 형태
 
-ElevenLabs v3는 non-deterministic. 같은 seed·같은 설정이어도 **첫 문장**의 톤·속도·억양이 호출마다 조금씩 다르게 샘플링되고, 이후 원래 voice reference 쪽으로 수렴한다.
+v3 개별 씬 모드에서 확인된 재현 가능한 패턴:
 
-청크 생성(chunkedGeneration)은 씬 간 톤 일관성에는 유리하지만 **청크 경계 컷에서 인접 씬의 음소 leak이 발생**하여 알고리즘으로 해결 불가능함이 확인됨 (상세: `docs/tts-history.md` §재추천 금지 §5).
+- 각 씬 WAV의 **처음 3~5초 구간**에서 톤·속도·억양이 매 호출마다 조금씩 다르게 샘플링됨
+- 3~5초가 지나면 모두 동일한 음색(원 voice reference에 수렴)으로 안정됨
+- 씬을 이어붙여 재생하면 초반 구간만 이질감이 드러남
 
-→ 채택: 개별 씬 단위 생성 + 첫 시작 톤 안정화 전략.
+v3 고유의 non-deterministic prosody 샘플링 특성 + 첫 문장에서 감정·분위기를 먼저 결정하려는 경향의 결합.
 
-v3에서는 `previous_text` / `next_text`가 400 에러(`unsupported_model`)로 거부되므로 문맥 기반 연속성 경로는 불가 (메모리: `project_elevenlabs_v3_limit.md`). 따라서 두 축으로 접근한다.
+제약:
+- `previous_text` / `next_text` — v3에서 400 에러로 거부 (`project_elevenlabs_v3_limit.md`)
+- 청크 방식 — 경계 컷 leak으로 해결 불가 판정 (`tts-history.md` §5)
 
-- **전략 #6 (입력 텍스트 측)**: 첫 문장을 중립화해 톤 샘플링 편차를 최소화
-- **전략 #7 (출력 오디오 측)**: 안정적인 오프닝 클립을 사전 생성·재사용하여 모든 씬의 초반 구간을 동일하게 고정
-
-두 전략은 독립적으로 동작하며 병행 가능.
-
----
-
-## 전략 #6 — 첫 문장 중립화
-
-### 원리
-
-v3는 첫 문장의 punctuation·capitalization·텍스트 구조를 근거로 전체 delivery의 감정 방향을 결정한다. 첫 문장을 "감정 신호가 없는 평이한 평서문"으로 유지하면 샘플링 편차 폭이 줄어든다.
-
-### 금지 패턴 — 씬 첫 문장에 사용 금지
-
-각 씬의 **첫 문장(첫 마침표까지)**에 다음이 있으면 시작 톤이 흔들릴 가능성이 크다. 금지한다.
-
-| # | 패턴 | 예시 (❌) | 교체 방향 (✅) |
-|---|------|----------|---------------|
-| 1 | `—` (em 대시) | `今日は — HTMLの話をします` | `今日はHTMLの話をします` |
-| 2 | `...` (말줄임표) | `では...始めましょう` | `では始めましょう` |
-| 3 | `!` / `！` (감탄부호) | `始めましょう！` | `始めましょう` |
-| 4 | `?` / `？` (의문부호) 포함된 수사 의문 | `準備はいいですか？` | `これから準備を確認します` (평서화) 또는 두 번째 문장으로 이동 |
-| 5 | ALL CAPS 또는 전각 대문자 강조 | `さあ、START しましょう` | `さあ、始めましょう` |
-| 6 | audio tag `[happy]`, `[whisper]` 등 | `[excited] 今日の内容は` | 태그 제거 |
-| 7 | 감정이 실린 감탄사로 시작 | `おお、これはすごい！` | `これから内容を見ていきます` |
-| 8 | 문장 첫머리 반복 강조 | `本当に本当に大切なのは` | `とても大切なのは` |
-
-### 권장 패턴 — 씬 첫 문장의 형태
-
-- 짧고 명료한 평서문: 30자 이내 권장
-- 톤이 평평한 도입어: `まず、` `では、` `ここからは、` `次に、` `続いて、` `今回は、`
-- 감정·연기가 필요하면 **두 번째 문장 이후**로 배치
-
-### 예시
-
-❌ Before
-```
-さあ、今日は — Webサイトがどうやって動くのか、その秘密を…覗いてみましょう！
-```
-
-✅ After
-```
-今回はWebサイトがどのように動くのかを確認します。
-これから、そのしくみを一緒に見ていきましょう。
-```
-
-### 적용 범위
-
-이 규칙은 **모든 씬의 `narration` 필드**에 적용된다. TitleScreen·EndScreen도 예외 없음.
-
-### 반영할 문서
-
-- `docs/script-guidelines.md` — "スクリプト作成ルール" 섹션 하위에 "씬 첫 문장 중립화" 서브섹션 신설. 스크립트 작성자가 처음부터 규칙에 맞춰 쓰도록 유도.
-- `docs/json-conversion-rules.md` — "ナレーション作成ルール §記号禁止" 확장. JSON 변환 시 씬 경계에서 금지 패턴을 제거하거나 다음 문장으로 이동.
-- `docs/script-review-guide.md` — 레뷰 체크리스트에 "씬 첫 문장 중립화 확인" 항목 추가.
-
-### 선택 구현 — 검증 스크립트 (optional)
-
-JSON 변환 후 자동 검증:
-
-- 경로: `scripts/validate-scene-openings.ts`
-- 입력: `data/lecture-XX.json`
-- 동작: 각 씬의 `narration`에서 첫 문장을 추출, 금지 패턴 8종을 정규식으로 탐지, 히트 시 경고 출력
-- 실패 정책: CI 중단은 아님(경고만). 작성자가 의식적으로 판단.
-
-본 전략 #6은 **정책·가이드 문서 업데이트 우선**, 검증 스크립트는 후속 판단.
+→ **각 씬을 개별 호출로 생성하되, 톤이 이미 안정된 상태의 오디오만 최종 결과로 남기는 방식이 필요**.
 
 ---
 
-## 전략 #7 — 오프닝 사전 생성 재사용
+## 전략 — Warmup Padding + Trim
 
 ### 원리
 
-v3의 첫 시작 톤 드리프트는 "매 씬마다 새로 시작"한다는 점에서 발생한다. 그렇다면 **모든 씬이 공유하는 고정 오프닝 오디오**를 하나만 베스트 테이크로 생성해 두고, 씬 생성 후 그 오프닝을 모든 씬 WAV 앞에 prepend한다.
+1. 각 씬 나레이션 앞에 **고정된 중립 warmup 텍스트**를 prepend 하여 TTS 호출
+2. v3는 warmup + 본문을 하나의 긴 발화로 생성 → warmup 구간에서 톤이 안정화됨
+3. 반환된 alignment 타임스탬프를 이용해 **warmup 종료 지점을 초 단위로 계산**
+4. 생성된 PCM 버퍼에서 warmup 구간을 **앞쪽에서 잘라냄**
+5. 남은 alignment 타임스탬프는 trim된 오프셋만큼 차감하여 보정
+6. 최종 저장되는 WAV는 **톤이 이미 안정된 본문 구간만** 포함
 
-결과:
-- 모든 씬의 **초반 0.5~1.5초 구간이 bit-identical**하게 동일
-- 그 이후의 "실제 씬 발화"는 v3가 샘플링하지만, 오프닝 쿠션이 있기 때문에 톤 드리프트가 귀에 띄게 드러나지 않음
+### 개념도
 
-### 오프닝 콘텐츠 선택지 (검토 필요)
+```
+호출 입력 (warmup + 본문):
+ ┌──────────────────────┬─────────────────────────────────┐
+ │ これからお話しします。 │ 本編のナレーション …              │
+ └──────────────────────┴─────────────────────────────────┘
+                        ↓ v3 생성
+생성된 PCM:
+ ┌──────────────────────┬─────────────────────────────────┐
+ │  ⟨톤 드리프트 구간⟩   │  ⟨안정된 본편⟩                    │
+ └──────────────────────┴─────────────────────────────────┘
+                        ↑
+                        trim boundary
+                        (alignment.character_end_times_seconds[warmup.length - 1])
 
-| 옵션 | 내용 | 장단 |
-|------|------|------|
-| A. 고정 인사어 | `「はい、」` 또는 `「では、」` 등 짧은 도입어 | 자연스러움 ◯ / 씬마다 문맥 미스매치 가능 ✕ |
-| B. 짧은 평서문 고정 도입 | `「続いて、」` 고정 | A보다 강제력 ◯ / 스크립트 리듬 제약 ✕ |
-| C. 무음 대신 "호흡" 소리 | 실제 숨소리 · 자연 공백 | 톤 고정 효과 약함 ✕ |
-| D. 순수 무음(silence) | PCM zero 버퍼 0.5s | 톤 안정화 효과 없음 (단순 lead-in). 기각 |
+저장되는 WAV:
+                        ┌─────────────────────────────────┐
+                        │  ⟨안정된 본편⟩                    │
+                        └─────────────────────────────────┘
+```
 
-**권장**: **옵션 A 또는 B 중 실측 후 결정**. 씬 작성 가이드와 궁합이 맞는 쪽 선택.
+### 장점
 
-### 오프닝 생성 프로세스
+- 씬마다 자연스러운 음색 흐름 (모든 씬 동일 오프닝 오디오를 붙이는 방식 아님)
+- 사전 자산·버전 관리 불필요 — config의 문자열 하나로 동작
+- v3의 "3~5초 뒤 수렴" 관찰을 직접 활용
+- TTS provider 내부 완결 — 상위 UseCase·싱크 로직 불변
 
-1. **Best-take 생성 스크립트**
-   - 경로(안): `scripts/generate-opening-take.ts`
-   - 동작:
-     - `config/tts.json`의 elevenlabs 설정을 그대로 사용
-     - 후보 텍스트(예: `「はい、」`)로 v3 호출을 N회(예: 20회) 반복
-     - 각 결과 WAV를 `tmp/opening-candidates/` 아래에 저장
-     - 검수자가 청취 후 가장 안정적인 테이크를 선택
-2. **채택된 오프닝 자산**
-   - 경로(안): `packages/remotion/public/audio/_opening/opening-v1.wav`
-   - 버전 suffix(`-v1`, `-v2`)로 교체 이력 관리
-   - `config/tts.json`에 파일명 참조 필드 추가 (아래 §config 변경)
+### 단점
 
-### 파이프라인 통합 — 어디서 prepend하는가
+- warmup 문자 수만큼 토큰/크레딧 추가 소모 (씬당 약 10자, 전체의 3~5% 수준으로 추정)
+- alignment 타임스탬프의 정밀도에 의존 — 정확도 검증 필요
+- warmup + 본문이 매우 긴 씬에서 모델 입력 한도 접근 가능성 (실측 필요)
 
-두 가지 선택지.
+---
 
-#### 옵션 1: TTS provider 레벨 (권장)
-- `ElevenLabsAudioProvider.generate()` 결과 직후에 오프닝 PCM을 prepend
-- 장점: 상위 레이어(UseCase·싱크)는 변경 불필요. WAV 길이만 증가.
-- 단점: provider가 config에 의존 (오프닝 파일 경로).
+## 구현 설계
 
-#### 옵션 2: UseCase 레벨 (`GenerateAudioUseCase` 또는 신규 단계)
-- TTS 생성 완료 후 별도 단계에서 모든 씬 WAV를 열어 prepend
-- 장점: TTS provider와 디커플링. 다른 provider에서도 재사용 가능.
-- 단점: 파일 I/O 2회. alignment 타임스탬프 오프셋 보정 필요.
+### 대상 파일
 
-**채택 권장**: **옵션 1**. 단일 provider 모드에서 시작하고, 다른 provider가 필요해지면 옵션 2로 리팩토링.
+- 주: `packages/automation/src/infrastructure/providers/ElevenLabsAudioProvider.ts`
+- 부: `packages/automation/src/infrastructure/config/index.ts` (config 로더)
+- 부: `packages/automation/src/infrastructure/factories/ElevenLabsConfiguredAudioProviderBuilder.ts` (옵션 주입)
 
-### alignment 타임스탬프 오프셋
+### config 변경
 
-prepend 후 scene WAV 시작점이 앞으로 밀림. `alignment.character_start_times_seconds` 배열의 각 값에 오프닝 길이(sec)를 더해야 한다.
-
-- 구현 위치: `ElevenLabsAudioProvider.generate()` 내부에서 PCM prepend 직후 alignment offset 보정
-- 예: 오프닝 0.8s일 때 모든 `character_start_times_seconds[i] += 0.8`, `character_end_times_seconds[i] += 0.8`
-
-### durations.json 영향
-
-- 씬 WAV 길이가 오프닝 길이만큼 증가 → `durations.json`의 각 씬 duration도 자동으로 증가 (파일 크기 기반 산출)
-- 상위 파이프라인(순/역방향 싱크, 렌더링)은 durations.json을 소스로 참조하므로 **코드 변경 없이 자연 전파**
-- 단, JSON의 `durationSec` (스크립트 기준 산출값)과 약간의 불일치 발생 → 기존에도 있었던 현상이며 싱크 단계에서 흡수됨
-
-### config 변경 (제안)
+`config/tts.json`:
 
 ```json
 "elevenlabs": {
-  ...
-  "openingReuse": {
+  …,
+  "warmupPadding": {
     "enabled": true,
-    "wavPath": "packages/remotion/public/audio/_opening/opening-v1.wav"
+    "text": "これからお話しします。",
+    "trimGuardMs": 0
   }
 }
 ```
 
-- `enabled: false`면 현재 동작(오프닝 prepend 없음)
-- 자산 교체 시 `wavPath` 수정 → 재생성 없이 반영 (기존 씬 WAV는 재생성 필요)
+| 필드 | 의미 |
+|------|------|
+| `enabled` | false 면 현재 동작(warmup 없이 호출). 점진적 도입·롤백용 스위치 |
+| `text` | 씬마다 앞에 붙일 고정 중립 문장. 씬 본문 내용과 독립 |
+| `trimGuardMs` | trim 경계 보정(ms). 0이면 alignment가 지정한 정확한 경계를 사용. 50~100으로 올리면 fricative 꼬리 누출 방지 목적의 안전 여백 추가 가능 |
 
-### 기존 씬 WAV와의 호환성
+### 처리 흐름 (`ElevenLabsAudioProvider.generate()`)
 
-- 오프닝 prepend는 **TTS 생성 시점**에만 이루어짐
-- 이미 생성된 씬 WAV(오프닝 없음)는 `make run`의 `FORCE=1` 또는 `make run-tts-only`로 재생성 필요
-- 점진적 적용: 신규 강의부터 오프닝 포함 → 기존 강의는 필요 시 재생성
+```
+입력: text (씬 본문), options
+───────────────────────────────────────────────
+if (warmupPadding.enabled):
+  paddedText = warmupPadding.text + text
+  sentToApi = paddedText
+else:
+  sentToApi = text
 
-### 구현 단계
+response = POST /with-timestamps { text: sentToApi, ... }
+pcmBuffer = base64-decode(response.audio_base64)
+alignment = response.alignment
 
-1. **Phase 1 — 오프닝 자산 확보** (사람 작업)
-   - `scripts/generate-opening-take.ts` 작성
-   - 20개 후보 생성 → 청취 → 1개 선정 → `_opening/opening-v1.wav` 배치
-2. **Phase 2 — provider 통합** (코드 작업)
-   - `config/tts.json`에 `openingReuse` 필드 추가, config 로더 확장
-   - `ElevenLabsAudioProvider` 생성자에 openingReuse 옵션 주입
-   - `generate()` 내 PCM prepend + alignment offset 보정 로직 추가
-   - 유닛 테스트: 오프닝 prepend 전/후 WAV 길이·alignment 오프셋 검증
-3. **Phase 3 — 실전 검증**
-   - 강의 1-1 전체 재생성 → 씬 간 연결 청취
-   - 첫 시작 톤 드리프트가 체감상 완화되는지 확인
-   - 불만족 시 오프닝 자산 교체 또는 전략 #6 강화
+if (warmupPadding.enabled):
+  warmupChars = warmupPadding.text.length
+  trimSec = alignment.character_end_times_seconds[warmupChars - 1]
+           + (warmupPadding.trimGuardMs / 1000)
+
+  # PCM 앞부분 제거
+  bytesPerSec = sampleRate * channels * (bitDepth / 8)
+  trimBytes = floor(trimSec * bytesPerSec)
+  trimBytes = alignToFrame(trimBytes, bytesPerFrame)  # 프레임 경계 정렬
+  pcmBuffer = pcmBuffer.slice(trimBytes)
+
+  # alignment 배열 앞부분 제거 + 타임스탬프 오프셋 차감
+  alignment.characters            = alignment.characters.slice(warmupChars)
+  alignment.character_start_times_seconds =
+    alignment.character_start_times_seconds.slice(warmupChars).map(t => t - trimSec)
+  alignment.character_end_times_seconds =
+    alignment.character_end_times_seconds.slice(warmupChars).map(t => t - trimSec)
+
+wav = pcmToWav(pcmBuffer, audioConfig)
+return { buffer: wav.buffer, durationSec: wav.durationSec, alignment }
+```
+
+핵심 포인트:
+
+- **trim 경계 산출**은 alignment가 이미 제공하는 `character_end_times_seconds` 를 그대로 활용. 별도 음향 분석 불필요
+- **PCM 바이트 오프셋은 반드시 프레임 경계(`channels * bitDepth/8`)에 정렬** — 정렬 안 하면 noise/pop 발생
+- **alignment 배열도 동시에 보정** — 상위 레이어(순방향 싱크 등)가 alignment를 사용할 때 부정확해지지 않도록
+- **durationSec 재계산** — trim 후 PCM 길이 기반으로 자동 산출되므로 별도 처리 불필요
+
+### 상위 레이어 영향
+
+- `durations.json` — 씬 WAV 길이 기반으로 자동 산출되므로 자연 전파
+- 순방향 싱크 (`SyncPlaywrightUseCase`) — alignment 배열이 warmup 제거된 상태로 전달되므로 추가 보정 불필요
+- 역방향 싱크 (`ReverseSyncPlaywrightUseCase`) — 영향 없음 (비디오 녹화에 WAV를 맞추는 단계)
+
+### 에러 처리 · 방어 로직
+
+- `warmupPadding.text` 가 빈 문자열이면 `enabled: false`로 간주
+- alignment 누락 시: trim 불가 → warmup 포함된 채로 반환 + 경고 로그 (요청은 실패시키지 않음)
+- `trimSec` 이 전체 WAV 길이 이상이면: 이상 상황 → 에러 throw (warmup 텍스트가 너무 길거나 alignment 오염)
 
 ---
 
-## 두 전략의 상호보완
+## 검증 계획
 
-| 시나리오 | #6 (첫 문장 중립화) | #7 (오프닝 재사용) | 결과 |
-|---------|---------------------|---------------------|------|
-| 단독 #6 | ✓ | ✗ | 첫 시작 샘플링 편차 축소. 여전히 드리프트 일부 존재. |
-| 단독 #7 | ✗ | ✓ | 모든 씬의 초반 0.5~1.5초 동일. 그 이후는 여전히 감정 구두점에 민감. |
-| #6 + #7 | ✓ | ✓ | 최선. 오프닝 쿠션 + 샘플링 편차 최소화 입력. |
+### Phase 1 — 프로토타입 + A/B 청취 비교
 
-**권장 적용 순서**: #6 먼저 (정책·가이드 문서 업데이트만으로 즉시 효과), #7은 자산 확보 + 코드 작업이 필요하므로 후속.
+1. `warmupPadding.enabled: false` 상태로 강의 1-1의 씬 1~3 생성 → WAV 보관
+2. `warmupPadding.enabled: true` 로 동일 씬 재생성 → WAV 보관
+3. 두 세트를 이어붙여 재생 비교. 청취 포인트:
+   - 씬 초반 1~2초의 톤 흔들림이 실제로 완화되는지
+   - trim 경계에서 노이즈·클릭이 발생하지 않는지
+   - warmup-본문 연결이 부자연스러운 억양 끊김을 만들지 않는지
+
+### Phase 2 — 튜닝
+
+warmup 텍스트 후보를 3~5개 두고 각각 테스트:
+
+| 후보 | 길이 | 문맥 호환성 |
+|------|------|------------|
+| `これからお話しします。` | 10자 | 범용 ◯ |
+| `では、始めます。` | 8자 | 범용 ◯ |
+| `続けてお話しします。` | 10자 | 연속 씬에 어울림 |
+| `はい、` | 3자 | 짧음, 안정화 부족 가능성 |
+| `皆さん、こんにちは。` | 10자 | 첫 씬 외에는 부자연스러움 |
+
+`trimGuardMs` 도 0 / 30 / 50 / 100 을 비교.
+
+### Phase 3 — 롤아웃
+
+- 채택된 warmup 텍스트·trimGuard 값을 `config/tts.json` 기본값으로 반영
+- 기존 씬 WAV는 `make run-tts-only SCENE=...` 로 선택 재생성
+- 신규 강의는 자동 적용
 
 ---
 
-## 미해결 과제 / Open Questions
+## 남은 결정 사항 (구현 착수 전)
 
-1. **오프닝 텍스트 결정**: A(`「はい、」`) vs B(`「では、」` 등). 실측 청취 필요.
-2. **오프닝 길이**: 0.5s / 1.0s / 1.5s 중 어느 쪽이 톤 안정화 + 자연스러움 균형이 좋은지.
-3. **첫 씬(TitleScreen) 예외**: 강의 첫 씬에도 동일 오프닝을 붙일지, 특별 오프닝을 쓸지.
-4. **검증 스크립트 도입 여부**: #6의 자동 검증을 도입할지(현재 설계는 도입 보류).
+1. **warmup 텍스트 최종 선정** — Phase 2 실측으로 결정
+2. **`trimGuardMs` 기본값** — 0으로 시작할지, 처음부터 30~50 안전 여백을 둘지
+3. **워밍업과 본문 사이 punctuation 처리** — warmup 끝에 `。` 마침표가 있을 때 v3가 잠깐 포즈(쉼)을 둠. 이 포즈가 trim 경계 바로 앞에 남을 수 있음. `trimGuardMs` 또는 warmup 텍스트 꼬리 조정으로 대응
+4. **첫 씬(TitleScreen) 예외** — warmup 때문에 강의 첫 발화 전 공백이 생기지는 않음(trim 되므로). 예외 처리 불필요로 추정되나 실측 확인
 
 ---
 
 ## 변경 이력
 
-- 2026-04-18: 설계서 최초 작성. `docs/tts-history.md` 최종 결정에 따른 후속 전략 정의.
+- 2026-04-18: 설계서 최초 작성 (오프닝 오디오 재사용 방식으로 오해 기술)
+- 2026-04-18: **전면 재작성**. 사용자 원안(씬 프롬프트에 warmup 텍스트 prepend → 생성 후 alignment 기반 trim) 반영. 이전 "첫 문장 중립화(#6)" 폐기, "오프닝 오디오 재사용(#7)" 은 "warmup padding + trim"으로 교체
