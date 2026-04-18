@@ -14,4 +14,8 @@ export interface ILectureRepository {
   getAudioPath(lectureId: string, sceneId: number): string;
   saveAlignment(lectureId: string, sceneId: number, alignment: AudioAlignment): Promise<void>;
   getAlignment(lectureId: string, sceneId: number): Promise<AudioAlignment | null>;
+  /** 공유 세션(P-D) 씬의 state capture 루트. session-{sessionId}/scene-{sceneId}/ 를 감싸는 상위 디렉토리. */
+  getSessionCaptureDir(lectureId: string, sessionId: string): string;
+  /** 공유 세션 내 특정 씬의 state capture 디렉토리. */
+  getSessionSceneCaptureDir(lectureId: string, sessionId: string, sceneId: number): string;
 }
