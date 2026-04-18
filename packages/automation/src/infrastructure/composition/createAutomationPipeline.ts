@@ -1,4 +1,3 @@
-import { GenerateMasterAudioUseCase } from '../../application/use-cases/GenerateMasterAudioUseCase';
 import { RunAutomationPipelineUseCase } from '../../application/use-cases/RunAutomationPipelineUseCase';
 import { CaptureScreenshotUseCase } from '../../application/use-cases/CaptureScreenshotUseCase';
 import { ConcatClipsUseCase } from '../../application/use-cases/ConcatClipsUseCase';
@@ -10,16 +9,13 @@ import { SyncPlaywrightUseCase } from '../../application/use-cases/SyncPlaywrigh
 import { ValidateLectureUseCase } from '../../application/use-cases/ValidateLectureUseCase';
 import { ConfiguredAudioProviderFactory } from '../factories/ConfiguredAudioProviderFactory';
 import { ElevenLabsConfiguredAudioProviderBuilder } from '../factories/ElevenLabsConfiguredAudioProviderBuilder';
-import { ConfiguredMasterAudioGeneratorFactory } from '../factories/ConfiguredMasterAudioGeneratorFactory';
 import { GeminiCloudTtsConfiguredAudioProviderBuilder } from '../factories/GeminiCloudTtsConfiguredAudioProviderBuilder';
 import { GeminiConfiguredAudioProviderBuilder } from '../factories/GeminiConfiguredAudioProviderBuilder';
 import { GoogleCloudTtsConfiguredAudioProviderBuilder } from '../factories/GoogleCloudTtsConfiguredAudioProviderBuilder';
-import { FfmpegAudioSegmentProvider } from '../providers/FfmpegAudioSegmentProvider';
 import { FfmpegConcatProvider } from '../providers/FfmpegConcatProvider';
 import { PlaywrightScreenshotProvider } from '../providers/PlaywrightScreenshotProvider';
 import { PlaywrightStateCaptureProvider } from '../providers/PlaywrightStateCaptureProvider';
 import { PlaywrightVisualProvider } from '../providers/PlaywrightVisualProvider';
-import { PythonMasterAudioAlignmentProvider } from '../providers/PythonMasterAudioAlignmentProvider';
 import { RemotionSceneClipRenderProvider } from '../providers/RemotionSceneClipRenderProvider';
 import { FileClipRepository } from '../repositories/FileClipRepository';
 import { FileLectureRepository } from '../repositories/FileLectureRepository';
@@ -34,15 +30,9 @@ export function createAutomationPipeline(): RunAutomationPipelineUseCase {
     new GeminiCloudTtsConfiguredAudioProviderBuilder(),
     new ElevenLabsConfiguredAudioProviderBuilder(),
   ]);
-  const masterAudioGenerator = new ConfiguredMasterAudioGeneratorFactory().create();
-  const masterAudioAlignmentProvider = new PythonMasterAudioAlignmentProvider();
-  const audioSegmentProvider = new FfmpegAudioSegmentProvider();
   const narrationAudioPreparationService = new ConfiguredNarrationAudioPreparationService(
     lectureRepository,
     audioProviderFactory,
-    masterAudioGenerator ? new GenerateMasterAudioUseCase(masterAudioGenerator) : null,
-    masterAudioAlignmentProvider,
-    audioSegmentProvider,
   );
 
   const validateLectureUseCase = new ValidateLectureUseCase();

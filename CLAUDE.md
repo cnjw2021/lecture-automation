@@ -79,8 +79,7 @@ type PlaywrightCmd = 'goto' | 'wait' | 'wait_for' | 'mouse_move' | 'click' | 'ty
 
 ```bash
 make run LECTURE=lecture-01-02.json          # activeProvider로 전체 파이프라인
-make run-master LECTURE=lecture-01-02.json   # master audio 기반 전체 파이프라인
-make run-master-force LECTURE=lecture-01-02.json  # master audio 강제 재생성
+make run-force LECTURE=lecture-01-02.json    # 강제 재생성 모드로 전체 파이프라인
 make regen-scene LECTURE=lecture-03-01.json SCENE='11 12 14'  # 특정 씬 재생성 + concat
 make run-tts-only LECTURE=lecture-01-01.json SCENE='1 2 3'   # 지정 씬 TTS만 재생성 + 미리 듣기 파일 생성 (씬 간 1.5초 갭)
 make render-scene LECTURE=lecture-03-01.json SCENE=11         # 클립 렌더링만

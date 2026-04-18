@@ -14,14 +14,6 @@ const getTtsJson = () => {
   return fs.readJsonSync(ttsConfigPath);
 };
 
-function getRequiredMasterAudioPrompt(tts: any): string {
-  const prompt = tts.masterAudio?.prompt;
-  if (typeof prompt !== 'string' || prompt.trim().length === 0) {
-    throw new Error('config/tts.json의 masterAudio.prompt는 필수 문자열입니다.');
-  }
-  return prompt;
-}
-
 function getOptionalGeminiPrompt(tts: any): string {
   const prompt = tts.providers?.gemini?.prompt;
   return typeof prompt === 'string' ? prompt.trim() : '';
@@ -124,24 +116,6 @@ export const config = {
       enabled: wp?.enabled ?? false,
       text: typeof wp?.text === 'string' ? wp.text : 'これからお話しします。',
       trimGuardMs: typeof wp?.trimGuardMs === 'number' ? wp.trimGuardMs : 0,
-    };
-  },
-
-  getMasterAudioConfig: () => {
-    const tts = getTtsJson();
-    const masterAudio = tts.masterAudio || {};
-    const enabled = masterAudio.enabled ?? false;
-    return {
-      enabled,
-      provider: masterAudio.provider || 'gemini',
-      apiKey: process.env.GEMINI_API_KEY || '',
-      modelName: masterAudio.modelName || 'gemini-2.5-pro-preview-tts',
-      voiceName: masterAudio.voiceName || tts.providers.gemini.voice || 'Kore',
-      styleVersion: masterAudio.styleVersion || 'v1',
-      speechRate: masterAudio.speechRate ?? 1,
-      temperature: typeof masterAudio.temperature === 'number' ? masterAudio.temperature : 0,
-      prompt: enabled ? getRequiredMasterAudioPrompt(tts) : '',
-      seed: typeof masterAudio.seed === 'number' ? masterAudio.seed : undefined,
     };
   },
 };

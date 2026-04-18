@@ -9,7 +9,7 @@ export interface NarrationAudioPreparationParams {
 }
 
 export interface NarrationAudioPreparationResult {
-  source: 'master-audio' | 'tts';
+  source: 'tts';
   providerName?: string;
 }
 
