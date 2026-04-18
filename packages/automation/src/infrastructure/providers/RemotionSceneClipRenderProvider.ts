@@ -3,9 +3,13 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import { Lecture } from '../../domain/entities/Lecture';
 import { ISceneClipRenderProvider } from '../../domain/interfaces/ISceneClipRenderProvider';
+import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
+import { isSharedSessionScene } from '../../domain/policies/LiveDemoScenePolicy';
 import { config } from '../config';
 
 export class RemotionSceneClipRenderProvider implements ISceneClipRenderProvider {
+  constructor(private readonly lectureRepository: ILectureRepository) {}
+
   async renderScene(
     lectureId: string,
     sceneId: number,
@@ -16,9 +20,11 @@ export class RemotionSceneClipRenderProvider implements ISceneClipRenderProvider
     const startTime = Date.now();
     await fs.ensureDir(path.dirname(outPath));
 
+    const synthManifests = await this.loadSynthManifests(lectureId, sceneId, lectureData);
+
     const propsPath = path.join(config.paths.output, `${lectureId}-scene-${sceneId}-props.json`);
     await fs.ensureDir(path.dirname(propsPath));
-    await fs.writeJson(propsPath, { lectureData, audioDurations, sceneId });
+    await fs.writeJson(propsPath, { lectureData, audioDurations, sceneId, ...(synthManifests && { synthManifests }) });
 
     const command = `npm run build -w packages/remotion -- SingleScene "${outPath}" --props="${propsPath}"`;
 
@@ -53,5 +59,28 @@ export class RemotionSceneClipRenderProvider implements ISceneClipRenderProvider
         });
       }
     });
+  }
+
+  private async loadSynthManifests(
+    lectureId: string,
+    sceneId: number,
+    lectureData: Lecture,
+  ): Promise<Record<string, unknown> | null> {
+    const scene = lectureData.sequence.find(s => s.scene_id === sceneId);
+    if (!scene || !isSharedSessionScene(scene)) return null;
+
+    const sessionId = (scene.visual as any).session!.id as string;
+    const manifestPath = path.join(
+      this.lectureRepository.getSessionSceneCaptureDir(lectureId, sessionId, sceneId),
+      'manifest.json',
+    );
+
+    if (!await fs.pathExists(manifestPath)) {
+      console.warn(`    ⚠️  Scene ${sceneId} shared session manifest 없음: ${manifestPath}`);
+      return null;
+    }
+
+    const manifest = await fs.readJson(manifestPath);
+    return { [sceneId.toString()]: manifest };
   }
 }

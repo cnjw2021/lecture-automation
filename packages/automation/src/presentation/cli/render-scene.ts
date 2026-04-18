@@ -18,7 +18,7 @@ async function runRenderScene(jsonFileName: string, sceneIds: number[]) {
 
   const lectureRepository = new FileLectureRepository();
   const clipRepository = new FileClipRepository();
-  const sceneClipRenderProvider = new RemotionSceneClipRenderProvider();
+  const sceneClipRenderProvider = new RemotionSceneClipRenderProvider(lectureRepository);
   const renderSceneClipsUseCase = new RenderSceneClipsUseCase(sceneClipRenderProvider, clipRepository, lectureRepository);
 
   const filePath = path.join(config.paths.data, jsonFileName);

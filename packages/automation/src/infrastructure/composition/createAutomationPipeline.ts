@@ -52,7 +52,7 @@ export function createAutomationPipeline(): RunAutomationPipelineUseCase {
     lectureRepository,
   );
   const renderSceneClipsUseCase = new RenderSceneClipsUseCase(
-    new RemotionSceneClipRenderProvider(),
+    new RemotionSceneClipRenderProvider(lectureRepository),
     clipRepository,
     lectureRepository,
   );
