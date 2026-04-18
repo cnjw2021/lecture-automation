@@ -15,6 +15,7 @@ export interface RunAutomationPipelineOptions {
   lecturePath: string;
   forceRegenerate: boolean;
   useSynthCapture: boolean;
+  ttsOnly: boolean;
   targetSceneIds?: number[];
   persistLecture?: (lecture: Lecture) => Promise<void>;
 }
@@ -56,6 +57,11 @@ export class RunAutomationPipelineUseCase {
       forceRegenerate: options.forceRegenerate,
       targetSceneIds,
     });
+
+    if (options.ttsOnly) {
+      console.log('\n✅ [TTS_ONLY] TTS 생성 완료. 이후 단계를 건너뜁니다.');
+      return { outputPath: '', lecture };
+    }
 
     console.log('\n--- 1.5단계: 전체 오디오 미리 듣기 머지 ---');
     await this.mergeAudioUseCase.execute(lecture);
