@@ -174,7 +174,7 @@ Provider 는 씬 N 의 녹화 매니페스트(`scene-N.manifest.json`) 에서 `c
       {"cmd": "goto", "urlFromScene": 28},
       {"cmd": "wait_for_claude_ready", "timeout": 180000},
       {"cmd": "wait", "ms": 2505, "note": "DOM 정착 대기"},
-      {"cmd": "click", "selector": "button:has-text('コード'):has-text('HTML')"},
+      {"cmd": "click", "selector": "button[aria-label*='アーティファクトを開く']"},
       ...
     ]
   }
@@ -187,9 +187,10 @@ Provider 는 씬 N 의 녹화 매니페스트(`scene-N.manifest.json`) 에서 `c
 
 ### 4.1 Claude DOM 셀렉터 (High Risk)
 
-- **Artifact 카드 클릭**: `button:has-text('コード'):has-text('HTML')`.
+- **Artifact 카드 클릭**: `button[aria-label*='アーティファクトを開く']`.
   - Claude UI 업데이트 시 버튼 구조 · 라벨 변경 가능.
-  - 2026-04-18 실측: 10초 타임아웃 발생 사례 있음 (stale URL 로 열려 카드 자체가 없던 케이스).
+  - 2026-04-18 실측: `button:has-text('コード'):has-text('HTML')` 로 10초 타임아웃 발생.
+    버튼 자체는 `absolute inset-0` 오버레이라 내부 텍스트 없음 — "コード"/"HTML" 은 형제 div 라벨. `aria-label` 은 `"{title}。アーティファクトを開く。"` 형태라 접근성 계약에 묶여 더 안정적.
 - **빈 인사말 감지 문자열**: `本日はどのようなお手伝いができますか？`.
   - 시간대·계정 설정·버전에 따라 문구가 달라질 수 있음.
   - 실패 시 `wait_for_claude_ready` 가 영원히 대기.

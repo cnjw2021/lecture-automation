@@ -632,7 +632,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 6340
+            "ms": 6620
           },
           {
             "cmd": "type",
@@ -641,11 +641,11 @@
           },
           {
             "cmd": "wait",
-            "ms": 4227
+            "ms": 4414
           },
           {
             "cmd": "wait",
-            "ms": 21133,
+            "ms": 22066,
             "note": "ナレーション「指示の出し方にも...」区間を埋める"
           },
           {
@@ -702,7 +702,7 @@
           },
           {
             "cmd": "click",
-            "selector": "button:has-text('コード'):has-text('HTML')",
+            "selector": "button[aria-label*='アーティファクトを開く']",
             "offscreen": true,
             "note": "Artifact カードをクリックしてプレビューパネルを開く (共有セッション offscreen)"
           },
@@ -722,11 +722,11 @@
           },
           {
             "cmd": "wait",
-            "ms": 2505
+            "ms": 6890
           },
           {
             "cmd": "wait",
-            "ms": 2505
+            "ms": 6890
           },
           {
             "cmd": "scroll",
@@ -734,7 +734,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 7227
+            "ms": 7974
           },
           {
             "cmd": "scroll",
@@ -742,7 +742,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 7227
+            "ms": 7974
           },
           {
             "cmd": "scroll",
@@ -750,7 +750,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 7227
+            "ms": 7974
           }
         ]
       }
