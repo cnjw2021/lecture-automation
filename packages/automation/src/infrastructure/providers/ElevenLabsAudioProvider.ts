@@ -18,6 +18,69 @@ interface WarmupPaddingConfig {
 export class ElevenLabsAudioProvider implements IAudioProvider {
   private readonly withTimestampsUrl = 'https://api.elevenlabs.io/v1/text-to-speech';
 
+  /**
+   * PCM 버퍼에서 [warmup speech → silence → narration onset] 전환점을 RMS 스캔으로 찾는다.
+   * alignment 타임스탬프의 onset 지연 오차를 우회하기 위한 방법.
+   *
+   * searchFromSec: alignment 기반 나레이션 시작 추정치 (탐색 기준점)
+   * 반환값: 나레이션 onset 바로 직전(20ms 앞)의 초 단위 trim 지점
+   */
+  private findNarrationOnsetFromPcm(
+    pcmBuffer: Buffer,
+    audioConfig: AudioConfig,
+    searchFromSec: number,
+  ): number {
+    const { sampleRate, channels, bitDepth } = audioConfig;
+    const bytesPerFrame = channels * (bitDepth / 8);
+    const bytesPerSec = sampleRate * bytesPerFrame;
+
+    const WINDOW_SEC = 0.010;
+    const windowFrames = Math.floor(sampleRate * WINDOW_SEC);
+    const windowBytes = windowFrames * bytesPerFrame;
+    const SILENCE_RMS = 400;
+    const MIN_SILENCE_WINDOWS = 2; // 20ms 이상 무음이어야 gap으로 인정
+
+    const searchStartByte = Math.max(
+      0,
+      Math.floor((searchFromSec - 0.400) * bytesPerSec / bytesPerFrame) * bytesPerFrame,
+    );
+    const searchEndByte = Math.min(
+      pcmBuffer.length,
+      Math.floor((searchFromSec + 0.200) * bytesPerSec / bytesPerFrame) * bytesPerFrame,
+    );
+
+    let silenceRun = 0;
+    let foundSilence = false;
+
+    for (let byteOffset = searchStartByte; byteOffset + windowBytes <= searchEndByte; byteOffset += windowBytes) {
+      let sumSq = 0;
+      for (let i = 0; i < windowFrames; i++) {
+        const pos = byteOffset + i * bytesPerFrame;
+        if (pos + 1 >= pcmBuffer.length) break;
+        const sample = pcmBuffer.readInt16LE(pos);
+        sumSq += sample * sample;
+      }
+      const rms = Math.sqrt(sumSq / windowFrames);
+
+      if (rms < SILENCE_RMS) {
+        silenceRun++;
+        if (silenceRun >= MIN_SILENCE_WINDOWS) foundSilence = true;
+      } else {
+        if (foundSilence) {
+          // 무음 이후 첫 speech 프레임 = narration onset
+          // 20ms 앞당겨 pre-phoneme onset까지 포함
+          const onsetSec = byteOffset / bytesPerSec;
+          return Math.max(0, onsetSec - 0.020);
+        }
+        silenceRun = 0;
+      }
+    }
+
+    // warmup과 narration 사이 silence gap 미검출 → alignment 기반 fallback
+    console.warn('  ⚠️ RMS 스캔으로 나레이션 onset 미검출 — alignment 기반 fallback (50ms pre-buffer) 사용');
+    return Math.max(0, searchFromSec - 0.050);
+  }
+
   constructor(
     private readonly apiKey: string,
     private readonly voiceId: string,
@@ -118,12 +181,32 @@ export class ElevenLabsAudioProvider implements IAudioProvider {
             console.warn(`  ⚠️ alignment 누락 — warmup trim 불가, warmup 포함된 채로 반환`);
           } else {
             const endTimes = alignment.character_end_times_seconds;
-            const rawTrimSec = endTimes[warmupChars - 1];
+            const startTimes = alignment.character_start_times_seconds;
+            const warmupEndSec = endTimes[warmupChars - 1];
+            const narrationStartSec = startTimes[warmupChars];
+
+            // trimGuardMs는 warmupEndSec fallback 경로에서만 사용.
+            // narrationStartSec 경로는 RMS 스캔으로 실제 onset을 찾으므로 guard 불필요.
+            const effectiveGuardMs = narrationStartSec !== undefined
+              ? 0
+              : this.warmupPadding.trimGuardMs;
+            if (narrationStartSec !== undefined && this.warmupPadding.trimGuardMs !== 0) {
+              console.warn(`  ⚠️ narrationStart 경로에서 trimGuardMs=${this.warmupPadding.trimGuardMs}ms 무시 (RMS 스캔 사용)`);
+            }
+
+            // narrationStartSec가 있으면 PCM RMS 스캔으로 실제 나레이션 onset을 검출.
+            // alignment onset은 실제 acoustic onset보다 수십~100ms 늦게 보고되는 경향이
+            // 있어 고정 pre-buffer로는 씬마다 다른 지연을 커버할 수 없음.
+            const rawTrimSec = narrationStartSec !== undefined
+              ? this.findNarrationOnsetFromPcm(pcmBuffer, this.audioConfig, narrationStartSec)
+              : warmupEndSec;
+
+            console.log(`  🔍 warmup 종료: ${warmupEndSec?.toFixed(3)}s, 나레이션 시작(alignment): ${narrationStartSec?.toFixed(3)}s → trim 기준(RMS): ${rawTrimSec?.toFixed(3)}s`);
 
             if (rawTrimSec === undefined || rawTrimSec <= 0) {
               console.warn(`  ⚠️ warmup trim 경계 이상 (trimSec=${rawTrimSec}) — trim 생략`);
             } else {
-              const trimSec = rawTrimSec + this.warmupPadding.trimGuardMs / 1000;
+              const trimSec = rawTrimSec + effectiveGuardMs / 1000;
               const { sampleRate, channels, bitDepth } = this.audioConfig;
               const bytesPerFrame = channels * (bitDepth / 8);
               const bytesPerSec = sampleRate * bytesPerFrame;
