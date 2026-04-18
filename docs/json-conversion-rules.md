@@ -3,6 +3,13 @@
 ## 役割
 확정된 강의 스크립트(마크다운)를 Remotion 동영상 생성 앱의 입력 JSON으로 변환한다. 스크립트 내용은 수정하지 않는다.
 
+## 参照ドキュメント
+
+Playwright 씬(`"type": "playwright"`) 을 작성·수정할 때는 반드시 아래 두 문서를 함께 참조한다. 본 파일에는 변환·씬 구성 규칙이 있고, 각 액션의 정확한 파라미터·주의사항은 액션 명세서와 라이브 데모 이력 문서에 있다.
+
+- [`docs/playwright-actions.md`](playwright-actions.md) — 모든 Playwright 액션(cmd) 의 파라미터 명세·주의사항 (scroll 의 커서 위치 의존 등)
+- [`docs/playwright-ai-live-demo-history.md`](playwright-ai-live-demo-history.md) — AI 라이브 데모 씬 자동화 이력·현행 설계·깨지기 쉬운 포인트
+
 ## 入出力
 - 입력: 확정 스크립트 (마크다운). 1강 단위로 첨부
 - 출력: `data/lecture-XX.json` (1강 = 1파일)
@@ -345,6 +352,18 @@ Claude.ai, ChatGPT 등 로그인 필요한 AI 서비스를 조작하는 씬.
 - `press Enter` (송신) 전에 wait를 넣어 나레이션 타이밍 여유 확보 — 역방향 싱크는 무음 삽입만 가능하고 나레이션을 앞당길 수 없음
 - streaming 완료 후 `wait 5000` → Artifact 프리뷰 로드 대기
 - 결과 확인 구간에 `scroll` + `wait`로 Artifact 프리뷰를 스크롤하며 보여주기
+- **셀렉터 선택**: AI 도구 UI 는 클래스명·자식 텍스트가 자주 바뀐다. `button:has-text('...')` 대신 `button[aria-label*='...']` 처럼 **접근성 속성 기반**을 우선한다. 예: Artifact 오픈 버튼 → `button[aria-label*='アーティファクトを開く']` (상세: `docs/playwright-ai-live-demo-history.md` §4.1)
+- **스크롤 대상 패널 내부로 커서 이동 필수**: `scroll` 은 현재 커서가 놓인 스크롤 컨테이너만 스크롤한다. Claude 는 좌측 채팅과 우측 Artifact 가 각각 독립 스크롤이므로, Artifact 를 스크롤하려면 `mouse_move` 로 먼저 우측 패널 내부 좌표로 커서를 옮긴 뒤 `scroll` 해야 한다 (상세: `docs/playwright-actions.md` → `scroll` 섹션)
+
+**Claude.ai 1920×1080 뷰포트 주요 좌표 참고**
+
+| 영역 | x 범위 | 대표 좌표 | 용도 |
+|---|---|---|---|
+| 좌측 사이드바 (열렸을 때) | ~0 ~ 280 | — | storageState preflight 에서 자동 접음 |
+| 채팅 영역 | ~80 ~ 1040 | `[960, 500]` | 입력창(ProseMirror), 대화 이력. `type` 전후 커서 |
+| 우측 Artifact 패널 (열린 후) | ~1040 ~ 1920 | `[1500, 500]` | Artifact 프리뷰 스크롤 대상. `scroll` 직전 `mouse_move` 위치 |
+
+> ⚠️ 좌표는 Claude UI 업데이트 시 조금씩 이동할 수 있다. 녹화 결과가 어긋나면 webm 을 열어 실제 경계를 확인할 것.
 
 **예시: Claude에 HTML 생성을 요청하는 씬**
 ```json
@@ -371,7 +390,7 @@ Claude.ai, ChatGPT 등 로그인 필요한 AI 서비스를 조작하는 씬.
       {"cmd": "wait_for", "selector": "[data-is-streaming='false']", "state": "attached", "timeout": 180000},
       {"cmd": "wait", "ms": 5000, "note": "Artifact 프리뷰 로드 대기"},
       {"cmd": "wait", "ms": 3000},
-      {"cmd": "mouse_move", "to": [720, 400], "note": "Artifact 프리뷰 영역으로 커서"},
+      {"cmd": "mouse_move", "to": [1500, 500], "note": "Artifact 패널 내부로 커서 (1920×1080 기준 우측 x>1040). 다음 scroll 이 Artifact 에서 동작하도록"},
       {"cmd": "scroll", "deltaY": 300},
       {"cmd": "wait", "ms": 5000},
       {"cmd": "scroll", "deltaY": 300},
