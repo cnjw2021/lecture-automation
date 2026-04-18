@@ -21,6 +21,7 @@ async function loadLecture(jsonFileName: string): Promise<{ lecture: Lecture; le
 async function runAutomation(jsonFileName: string) {
   const forceRegenerate = process.env.FORCE === '1';
   const useSynthCapture = process.env.SYNTH === '1';
+  const ttsOnly = process.env.TTS_ONLY === '1';
   const targetSceneIds = parseTargetSceneIds(process.env.TARGET_SCENES);
 
   if (forceRegenerate) {
@@ -28,6 +29,9 @@ async function runAutomation(jsonFileName: string) {
   }
   if (useSynthCapture) {
     console.log('🖼️ 상태 합성형 캡처 모드 활성화 - 스크린샷 기반 Playwright 씬 캡처');
+  }
+  if (ttsOnly) {
+    console.log('🔊 TTS_ONLY 모드 활성화 - TTS 생성 후 중단');
   }
   if (targetSceneIds.length > 0) {
     console.log(`🎯 대상 씬 제한 모드 활성화 - Scene ${targetSceneIds.join(', ')}`);
@@ -45,6 +49,7 @@ async function runAutomation(jsonFileName: string) {
       lecturePath,
       forceRegenerate,
       useSynthCapture,
+      ttsOnly,
       targetSceneIds: targetSceneIds.length > 0 ? targetSceneIds : undefined,
       persistLecture: async updatedLecture => {
         await fs.writeJson(lecturePath, updatedLecture, { spaces: 2 });

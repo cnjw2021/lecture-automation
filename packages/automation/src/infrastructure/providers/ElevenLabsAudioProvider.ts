@@ -9,8 +9,13 @@ interface ElevenLabsVoiceSettings {
   speed?: number;
 }
 
+interface WarmupPaddingConfig {
+  enabled: boolean;
+  text: string;
+  trimGuardMs: number;
+}
+
 export class ElevenLabsAudioProvider implements IAudioProvider {
-  private readonly baseUrl = 'https://api.elevenlabs.io/v1/text-to-speech';
   private readonly withTimestampsUrl = 'https://api.elevenlabs.io/v1/text-to-speech';
 
   constructor(
@@ -21,6 +26,7 @@ export class ElevenLabsAudioProvider implements IAudioProvider {
     private readonly seed: number | undefined,
     private readonly voiceSettings: ElevenLabsVoiceSettings,
     private readonly audioConfig: AudioConfig,
+    private readonly warmupPadding: WarmupPaddingConfig = { enabled: false, text: '', trimGuardMs: 0 },
   ) {}
 
   private async sleep(ms: number): Promise<void> {
@@ -50,9 +56,13 @@ export class ElevenLabsAudioProvider implements IAudioProvider {
     const baseDelayMs = 2000;
     const outputFormat = `pcm_${this.audioConfig.sampleRate}`;
 
+    const useWarmup = this.warmupPadding.enabled && this.warmupPadding.text.length > 0;
+    const warmupChars = useWarmup ? this.warmupPadding.text.length : 0;
+    const sentText = useWarmup ? this.warmupPadding.text + text : text;
+
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       if (attempt === 1) {
-        console.log(`[ElevenLabs TTS] Scene ${scene_id || 'unknown'} 음성 생성 시도 (${this.modelId})...`);
+        console.log(`[ElevenLabs TTS] Scene ${scene_id || 'unknown'} 음성 생성 시도 (${this.modelId})${useWarmup ? ' [warmup]' : ''}...`);
       } else {
         const delay = baseDelayMs * Math.pow(2, attempt - 2);
         console.log(`  ⏳ Scene ${scene_id || 'unknown'} 재시도 ${attempt}/${maxRetries} (${delay / 1000}초 대기 후)...`);
@@ -60,7 +70,7 @@ export class ElevenLabsAudioProvider implements IAudioProvider {
       }
 
       const payload: Record<string, unknown> = {
-        text,
+        text: sentText,
         model_id: this.modelId,
         language_code: this.languageCode,
         voice_settings: this.voiceSettings,
@@ -100,12 +110,47 @@ export class ElevenLabsAudioProvider implements IAudioProvider {
           };
         };
 
-        const pcmBuffer = Buffer.from(json.audio_base64, 'base64');
+        let pcmBuffer = Buffer.from(json.audio_base64, 'base64');
+        let alignment: AudioAlignment | undefined = json.alignment;
+
+        if (this.warmupPadding.enabled && warmupChars > 0) {
+          if (!alignment) {
+            console.warn(`  ⚠️ alignment 누락 — warmup trim 불가, warmup 포함된 채로 반환`);
+          } else {
+            const endTimes = alignment.character_end_times_seconds;
+            const rawTrimSec = endTimes[warmupChars - 1];
+
+            if (rawTrimSec === undefined || rawTrimSec <= 0) {
+              console.warn(`  ⚠️ warmup trim 경계 이상 (trimSec=${rawTrimSec}) — trim 생략`);
+            } else {
+              const trimSec = rawTrimSec + this.warmupPadding.trimGuardMs / 1000;
+              const { sampleRate, channels, bitDepth } = this.audioConfig;
+              const bytesPerFrame = channels * (bitDepth / 8);
+              const bytesPerSec = sampleRate * bytesPerFrame;
+              const rawTrimBytes = Math.floor(trimSec * bytesPerSec);
+              const trimBytes = Math.floor(rawTrimBytes / bytesPerFrame) * bytesPerFrame;
+
+              const totalBytes = pcmBuffer.length;
+              if (trimBytes >= totalBytes) {
+                throw new Error(`ElevenLabs warmup trim 이상: trimBytes(${trimBytes}) >= pcmBuffer(${totalBytes}). warmup 텍스트가 너무 길거나 alignment 오염`);
+              }
+
+              pcmBuffer = pcmBuffer.slice(trimBytes);
+
+              alignment = {
+                characters: alignment.characters.slice(warmupChars),
+                character_start_times_seconds: alignment.character_start_times_seconds.slice(warmupChars).map(t => t - trimSec),
+                character_end_times_seconds: alignment.character_end_times_seconds.slice(warmupChars).map(t => t - trimSec),
+              };
+
+              console.log(`  ✂️  warmup trim: ${trimSec.toFixed(3)}초 (${trimBytes}bytes) 제거`);
+            }
+          }
+        }
+
         const { buffer, durationSec } = pcmToWav(pcmBuffer, this.audioConfig);
 
-        let alignment: AudioAlignment | undefined;
-        if (json.alignment) {
-          alignment = json.alignment;
+        if (alignment) {
           console.log(`  ✅ 오디오 생성 완료 (${pcmBuffer.length} bytes, ${durationSec.toFixed(2)}초, alignment: ${alignment.characters.length}자)`);
         } else {
           console.log(`  ✅ 오디오 생성 완료 (${pcmBuffer.length} bytes, ${durationSec.toFixed(2)}초, alignment 없음)`);

@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install install-align-deps build run run-master run-force run-master-force regen-scene resplit-chunk-audio render-scene record-webm align-master-audio import-master-audio import-master-audio-auto concat-scenes clean render-only preview tts-sample \
+.PHONY: help install install-align-deps build run run-master run-force run-master-force regen-scene run-tts-only resplit-chunk-audio render-scene record-webm align-master-audio import-master-audio import-master-audio-auto concat-scenes clean render-only preview tts-sample \
         preview-browser-mock preview-screenshot capture-screenshots test-screenshot-options \
         preview-springs sync-playwright save-auth
 
@@ -113,6 +113,16 @@ regen-scene:
 		rm -f packages/remotion/public/captures/$$LECTURE_ID/scene-$$scene.webm; \
 	done
 	env TARGET_SCENES="$(SCENE)" node $(ENGINE_PATH) $(LECTURE)
+
+run-tts-only:
+	@echo "🔊 TTS만 생성: $(LECTURE) / Scene $(SCENE)"
+	@LECTURE_ID=$$(node -e "const d=require('./data/$(LECTURE)'); console.log(d.lecture_id)"); \
+	for scene in $(SCENE); do \
+		echo "  🗑️  scene-$$scene.wav 삭제 중..."; \
+		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene.wav; \
+		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene.alignment.json; \
+	done
+	env TTS_ONLY=1 TARGET_SCENES="$(SCENE)" $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
 resplit-chunk-audio:
 	@echo "✂️  저장된 청크 원본으로 재분할: $(LECTURE) / Scene $(SCENE)"

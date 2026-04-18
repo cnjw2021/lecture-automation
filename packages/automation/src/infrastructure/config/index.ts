@@ -126,6 +126,18 @@ export const config = {
     };
   },
 
+  getWarmupPaddingConfig: () => {
+    const tts = getTtsJson();
+    const activeProvider = tts.activeProvider;
+    const providerConfig = tts.providers?.[activeProvider];
+    const wp = providerConfig?.warmupPadding;
+    return {
+      enabled: wp?.enabled ?? false,
+      text: typeof wp?.text === 'string' ? wp.text : 'これからお話しします。',
+      trimGuardMs: typeof wp?.trimGuardMs === 'number' ? wp.trimGuardMs : 0,
+    };
+  },
+
   getMasterAudioConfig: () => {
     const tts = getTtsJson();
     const masterAudio = tts.masterAudio || {};
