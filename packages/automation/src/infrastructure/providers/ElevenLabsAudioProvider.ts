@@ -118,7 +118,14 @@ export class ElevenLabsAudioProvider implements IAudioProvider {
             console.warn(`  ⚠️ alignment 누락 — warmup trim 불가, warmup 포함된 채로 반환`);
           } else {
             const endTimes = alignment.character_end_times_seconds;
-            const rawTrimSec = endTimes[warmupChars - 1];
+            const startTimes = alignment.character_start_times_seconds;
+            const warmupEndSec = endTimes[warmupChars - 1];
+            const narrationStartSec = startTimes[warmupChars];
+            // narrationStartSec: 나레이션 첫 글자가 실제로 시작하는 시점 → 침범 불가
+            // warmupEndSec: fallback (narrationStartSec 누락 시)
+            const rawTrimSec = narrationStartSec ?? warmupEndSec;
+
+            console.log(`  🔍 warmup 종료: ${warmupEndSec?.toFixed(3)}s, 나레이션 시작: ${narrationStartSec?.toFixed(3)}s → trim 기준: ${rawTrimSec?.toFixed(3)}s`);
 
             if (rawTrimSec === undefined || rawTrimSec <= 0) {
               console.warn(`  ⚠️ warmup trim 경계 이상 (trimSec=${rawTrimSec}) — trim 생략`);
