@@ -164,8 +164,12 @@ export async function executeAndCaptureStep(
       const typeLoc = page.locator(action.selector);
       await typeLoc.waitFor({ state: 'visible', timeout: 10000 });
       const typeBox = await typeLoc.boundingBox();
-      await page.screenshot({ path: screenshotPath });
+      // 타이핑 완료 후 스크린샷: Remotion 의 monospace 오버레이가 실제 입력창 폰트/래핑과
+      // 맞지 않아 placeholder 와 겹치고 박스 경계를 벗어나던 문제를 피하기 위해,
+      // 실제 입력창에 래핑된 최종 상태를 캡처한다. typedText 는 manifest 에서 제외해
+      // Remotion 의 typing overlay 가 렌더되지 않도록 한다.
       await typeLoc.pressSequentially(action.key, { delay: 100 });
+      await page.screenshot({ path: screenshotPath });
       const charDuration = action.key.length * 120;
       return {
         index: stepIndex,
@@ -176,7 +180,6 @@ export async function executeAndCaptureStep(
           ? { x: typeBox.x + typeBox.width / 2, y: typeBox.y + typeBox.height / 2 }
           : cursorPos,
         targetBox: typeBox ? { x: typeBox.x, y: typeBox.y, width: typeBox.width, height: typeBox.height } : undefined,
-        typedText: action.key,
         durationMs: Math.max(charDuration, 500),
         note: action.note,
       };
