@@ -135,6 +135,7 @@ make preview SCENE=6                         # 씬 프리뷰 PNG
 - [README.md](README.md) — 프로젝트 전체 개요
 - [docs/playwright-actions.md](docs/playwright-actions.md) — Playwright 액션 명세서 (14종: wait_for, scroll 포함)
 - [docs/tts-voices.md](docs/tts-voices.md) — TTS 보이스 비교
+- [docs/tts-history.md](docs/tts-history.md) — TTS 엔진·보이스 탐색 이력 (재추천 금지 조합 포함, TTS 변경 제안 전 필독)
 - [docs/curriculum.md](docs/curriculum.md) — 전체 커리큘럼
 
 ## 강의 스크립트 작성 지침

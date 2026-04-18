@@ -34,7 +34,7 @@
       "use_speaker_boost": true,
       "speed": 1.0,
       "chunkedGeneration": {
-        "enabled": true,
+        "enabled": false,
         "maxCharsPerChunk": 2500
       }
     }
