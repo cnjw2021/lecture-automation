@@ -131,7 +131,14 @@ export class ElevenLabsAudioProvider implements IAudioProvider {
               effectiveGuardMs = 0;
             }
 
-            const rawTrimSec = narrationStartSec ?? warmupEndSec;
+            // ElevenLabs alignment의 character_start_times_seconds는 실제 음성
+            // acoustic onset보다 수십ms 늦게 찍히는 경향이 있음.
+            // narrationStartSec에서 PRE_BUFFER_SEC만큼 앞당겨 잘라 onset 클리핑 방지.
+            // 해당 구간은 warmup 마지막(。)의 무음/여운이므로 포함해도 무해.
+            const PRE_BUFFER_SEC = 0.050;
+            const rawTrimSec = narrationStartSec !== undefined
+              ? Math.max(0, narrationStartSec - PRE_BUFFER_SEC)
+              : warmupEndSec;
 
             console.log(`  🔍 warmup 종료: ${warmupEndSec?.toFixed(3)}s, 나레이션 시작: ${narrationStartSec?.toFixed(3)}s → trim 기준: ${rawTrimSec?.toFixed(3)}s (guard: ${effectiveGuardMs}ms)`);
 
