@@ -8,8 +8,10 @@ import {
   ISharedVisualSessionProvider,
   LiveDemoSessionPlan,
   SharedVisualSessionHandle,
+  CaptureSceneOptions,
 } from '../../domain/interfaces/ISharedVisualSessionProvider';
 import { executeActionOffscreen, executeAndCaptureStep } from './playwrightStepExecutor';
+import { resolveStorageState, buildLaunchOptions, preflightCloseSidebar } from './playwrightBrowserUtils';
 
 /**
  * 공유 브라우저 세션(P-D) 기반 상태 합성형 캡처 프로바이더.
@@ -40,9 +42,16 @@ export class SharedPlaywrightStateCaptureProvider implements ISharedVisualSessio
     const videoConfig = config.getVideoConfig();
     const { width, height } = videoConfig.resolution;
 
-    const storageStatePath = this.resolveStorageState(plan.storageState);
+    const storageStatePath = resolveStorageState(plan.storageState);
+    const launchOptions = buildLaunchOptions(!!storageStatePath);
 
-    const browser = await chromium.launch({ headless: true });
+    // storageState 씬: 사이드바 닫힌 상태의 storageState 준비 (Cloudflare 봇 감지 우회 필수)
+    let effectiveStorageState = storageStatePath;
+    if (storageStatePath) {
+      effectiveStorageState = await preflightCloseSidebar(launchOptions, storageStatePath, width, height);
+    }
+
+    const browser = await chromium.launch(launchOptions);
     const context = await browser.newContext({
       viewport: { width, height },
       deviceScaleFactor: 1,
@@ -50,7 +59,7 @@ export class SharedPlaywrightStateCaptureProvider implements ISharedVisualSessio
       timezoneId: 'Asia/Tokyo',
       colorScheme: 'light',
       reducedMotion: 'no-preference',
-      ...(storageStatePath ? { storageState: storageStatePath } : {}),
+      ...(effectiveStorageState ? { storageState: effectiveStorageState } : {}),
     });
 
     const page = await context.newPage();
@@ -76,7 +85,9 @@ export class SharedPlaywrightStateCaptureProvider implements ISharedVisualSessio
     handle: SharedVisualSessionHandle,
     scene: Scene,
     outputDir: string,
+    options?: CaptureSceneOptions,
   ): Promise<SceneManifest | null> {
+    const { replayOnly = false } = options ?? {};
     const session = this.requireSession(handle.sessionId);
     if (scene.visual.type !== 'playwright') return null;
 
@@ -84,16 +95,24 @@ export class SharedPlaywrightStateCaptureProvider implements ISharedVisualSessio
     const videoConfig = config.getVideoConfig();
     const { width, height } = videoConfig.resolution;
 
-    await fs.ensureDir(outputDir);
+    if (!replayOnly) {
+      await fs.ensureDir(outputDir);
+    }
 
     const steps: StepData[] = [];
     let stepIndex = 0;
-    console.log(`- [${session.plan.sessionId}] Scene ${scene.scene_id} 공유 세션 캡처 시작 (offscreen: ${visual.action.filter(a => a.offscreen).length}개, visible: ${visual.action.filter(a => !a.offscreen).length}개)`);
+
+    if (replayOnly) {
+      console.log(`- [${session.plan.sessionId}] Scene ${scene.scene_id} 리플레이 (페이지 상태 복원)`);
+    } else {
+      console.log(`- [${session.plan.sessionId}] Scene ${scene.scene_id} 공유 세션 캡처 시작 (offscreen: ${visual.action.filter(a => a.offscreen).length}개, visible: ${visual.action.filter(a => !a.offscreen).length}개)`);
+    }
 
     try {
       for (const action of visual.action) {
         try {
-          if (action.offscreen) {
+          // replayOnly 모드: 모든 액션을 offscreen처럼 처리 (스크린샷 없음)
+          if (replayOnly || action.offscreen) {
             await executeActionOffscreen(session.page, action);
             continue;
           }
@@ -111,6 +130,11 @@ export class SharedPlaywrightStateCaptureProvider implements ISharedVisualSessio
         }
       }
 
+      if (replayOnly) {
+        console.log(`  > Scene ${scene.scene_id} 리플레이 완료`);
+        return null;
+      }
+
       const finalScreenshot = `step-${stepIndex}.png`;
       await session.page.screenshot({ path: path.join(outputDir, finalScreenshot) });
       steps.push({
@@ -123,6 +147,11 @@ export class SharedPlaywrightStateCaptureProvider implements ISharedVisualSessio
       });
 
       const totalDurationMs = steps.reduce((sum, s) => sum + s.durationMs, 0);
+
+      // Remotion public 루트 기준 상대 경로 (PlaywrightSynthScene의 staticFile 해석 기준)
+      const remotionPublicDir = path.dirname(config.paths.captures);
+      const captureBasePath = path.relative(remotionPublicDir, outputDir);
+
       const manifest: SceneManifest = {
         sceneId: scene.scene_id,
         lectureId: session.plan.lectureId,
@@ -130,6 +159,7 @@ export class SharedPlaywrightStateCaptureProvider implements ISharedVisualSessio
         totalDurationMs,
         viewport: { width, height },
         steps,
+        captureBasePath,
       };
 
       await fs.writeJson(path.join(outputDir, 'manifest.json'), manifest, { spaces: 2 });
@@ -173,15 +203,5 @@ export class SharedPlaywrightStateCaptureProvider implements ISharedVisualSessio
   private getSessionDir(plan: LiveDemoSessionPlan): string {
     const stateCaptureBaseDir = path.join(path.dirname(config.paths.captures), 'state-captures');
     return path.join(stateCaptureBaseDir, plan.lectureId, `session-${plan.sessionId}`);
-  }
-
-  private resolveStorageState(storageState?: string): string | undefined {
-    if (!storageState) return undefined;
-    const resolved = path.resolve(config.paths.root, storageState);
-    if (!fs.existsSync(resolved)) {
-      console.warn(`  ⚠️ storageState 파일 없음: ${resolved} (인증 없이 진행)`);
-      return undefined;
-    }
-    return resolved;
   }
 }

@@ -54,6 +54,8 @@ interface SceneManifest {
   totalDurationMs: number;
   viewport: { width: number; height: number };
   steps: StepData[];
+  /** Remotion public 루트 기준 스크린샷 디렉토리 경로. 없으면 기본 경로 사용. */
+  captureBasePath?: string;
 }
 
 interface PlaywrightSynthSceneProps {
@@ -95,7 +97,7 @@ export const PlaywrightSynthScene: React.FC<PlaywrightSynthSceneProps> = ({
 
   // 다음 step의 스크린샷 (크로스페이드용)
   const nextRange = stepFrameRanges.find((r) => r.start === stepEnd);
-  const basePath = `state-captures/${lectureId}/scene-${manifest.sceneId}`;
+  const basePath = manifest.captureBasePath ?? `state-captures/${lectureId}/scene-${manifest.sceneId}`;
 
   // 커서 위치 보간
   const cursorX = step.cursorFrom && step.cursorTo

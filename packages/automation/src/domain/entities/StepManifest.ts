@@ -55,4 +55,10 @@ export interface SceneManifest {
   viewport: { width: number; height: number };
   /** step별 데이터 */
   steps: StepData[];
+  /**
+   * 스크린샷 파일의 Remotion public 루트 기준 상대 경로.
+   * 없으면 PlaywrightSynthScene이 기본값 `state-captures/{lectureId}/scene-{sceneId}` 를 사용.
+   * 공유 세션(P-D) 캡처는 session 하위 경로에 기록되므로 이 필드를 반드시 설정한다.
+   */
+  captureBasePath?: string;
 }

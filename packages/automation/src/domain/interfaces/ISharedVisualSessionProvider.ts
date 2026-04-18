@@ -26,12 +26,22 @@ export interface SharedVisualSessionHandle {
   sessionId: string;
 }
 
+export interface CaptureSceneOptions {
+  /**
+   * true の場合、アクションを実行してページ状態を復元するが、
+   * スクリーンショットもマニフェストも保存しない。
+   * 部分再生成時に先行シーンのページ状態を再構築するために使う。
+   */
+  replayOnly?: boolean;
+}
+
 export interface ISharedVisualSessionProvider {
   openSession(plan: LiveDemoSessionPlan): Promise<SharedVisualSessionHandle>;
   captureSceneInSession(
     handle: SharedVisualSessionHandle,
     scene: Scene,
     outputDir: string,
+    options?: CaptureSceneOptions,
   ): Promise<SceneManifest | null>;
   closeSession(handle: SharedVisualSessionHandle): Promise<void>;
 }
