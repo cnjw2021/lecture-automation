@@ -2,7 +2,7 @@ import { Lecture } from '../../domain/entities/Lecture';
 import { IVisualProvider } from '../../domain/interfaces/IVisualProvider';
 import { IStateCaptureProvider } from '../../domain/interfaces/IStateCaptureProvider';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
-import { computePreRecordingSceneIds } from '../../domain/policies/LiveDemoScenePolicy';
+import { computePreRecordingSceneIds, isSharedSessionScene } from '../../domain/policies/LiveDemoScenePolicy';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 
@@ -33,6 +33,9 @@ export class RecordVisualUseCase {
     for (const scene of lecture.sequence) {
       if (scene.visual.type !== 'playwright') continue;
       if (scenes && !scenes.includes(scene.scene_id)) continue;
+
+      // shared 세션 씬은 CaptureSharedLiveDemoSessionsUseCase 가 전담 → 이 use case 에서는 항상 스킵
+      if (isSharedSessionScene(scene)) continue;
 
       // 라이브 데모 씬 필터링 (filterLiveDemo가 명시된 경우에만)
       if (filterLiveDemo !== undefined) {

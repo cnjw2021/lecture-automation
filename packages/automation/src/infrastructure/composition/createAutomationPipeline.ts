@@ -1,5 +1,6 @@
 import { RunAutomationPipelineUseCase } from '../../application/use-cases/RunAutomationPipelineUseCase';
 import { CaptureScreenshotUseCase } from '../../application/use-cases/CaptureScreenshotUseCase';
+import { CaptureSharedLiveDemoSessionsUseCase } from '../../application/use-cases/CaptureSharedLiveDemoSessionsUseCase';
 import { ConcatClipsUseCase } from '../../application/use-cases/ConcatClipsUseCase';
 import { MergeAudioUseCase } from '../../application/use-cases/MergeAudioUseCase';
 import { RecordVisualUseCase } from '../../application/use-cases/RecordVisualUseCase';
@@ -16,6 +17,7 @@ import { FfmpegConcatProvider } from '../providers/FfmpegConcatProvider';
 import { PlaywrightScreenshotProvider } from '../providers/PlaywrightScreenshotProvider';
 import { PlaywrightStateCaptureProvider } from '../providers/PlaywrightStateCaptureProvider';
 import { PlaywrightVisualProvider } from '../providers/PlaywrightVisualProvider';
+import { SharedPlaywrightStateCaptureProvider } from '../providers/SharedPlaywrightStateCaptureProvider';
 import { RemotionSceneClipRenderProvider } from '../providers/RemotionSceneClipRenderProvider';
 import { FileClipRepository } from '../repositories/FileClipRepository';
 import { FileLectureRepository } from '../repositories/FileLectureRepository';
@@ -45,6 +47,10 @@ export function createAutomationPipeline(): RunAutomationPipelineUseCase {
     lectureRepository,
     new PlaywrightStateCaptureProvider(),
   );
+  const captureSharedLiveDemoSessionsUseCase = new CaptureSharedLiveDemoSessionsUseCase(
+    new SharedPlaywrightStateCaptureProvider(),
+    lectureRepository,
+  );
   const renderSceneClipsUseCase = new RenderSceneClipsUseCase(
     new RemotionSceneClipRenderProvider(),
     clipRepository,
@@ -60,6 +66,7 @@ export function createAutomationPipeline(): RunAutomationPipelineUseCase {
     reverseSyncPlaywrightUseCase,
     captureScreenshotUseCase,
     recordVisualUseCase,
+    captureSharedLiveDemoSessionsUseCase,
     renderSceneClipsUseCase,
     concatClipsUseCase,
   );

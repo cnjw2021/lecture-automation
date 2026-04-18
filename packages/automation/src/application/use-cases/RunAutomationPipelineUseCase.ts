@@ -3,8 +3,10 @@ import { INarrationAudioPreparationService } from '../../domain/interfaces/INarr
 import {
   isForwardSyncTarget,
   isIsolatedLiveDemoScene,
+  isSharedSessionScene,
 } from '../../domain/policies/LiveDemoScenePolicy';
 import { CaptureScreenshotUseCase } from './CaptureScreenshotUseCase';
+import { CaptureSharedLiveDemoSessionsUseCase } from './CaptureSharedLiveDemoSessionsUseCase';
 import { ConcatClipsUseCase } from './ConcatClipsUseCase';
 import { MergeAudioUseCase } from './MergeAudioUseCase';
 import { RecordVisualUseCase } from './RecordVisualUseCase';
@@ -33,6 +35,7 @@ export class RunAutomationPipelineUseCase {
     private readonly reverseSyncPlaywrightUseCase: ReverseSyncPlaywrightUseCase,
     private readonly captureScreenshotUseCase: CaptureScreenshotUseCase,
     private readonly recordVisualUseCase: RecordVisualUseCase,
+    private readonly captureSharedLiveDemoSessionsUseCase: CaptureSharedLiveDemoSessionsUseCase,
     private readonly renderSceneClipsUseCase: RenderSceneClipsUseCase,
     private readonly concatClipsUseCase: ConcatClipsUseCase,
   ) {}
@@ -109,6 +112,15 @@ export class RunAutomationPipelineUseCase {
       filterLiveDemo: false,
       scenes: targetSceneIds,
     });
+
+    // 3a단계: shared 라이브 데모 세션 캡처 (P-D)
+    if (this.hasAnyScene(lecture, isSharedSessionScene, targetSceneIds)) {
+      console.log('\n--- 3a단계: shared 라이브 데모 세션 캡처 ---');
+      await this.captureSharedLiveDemoSessionsUseCase.execute(lecture, {
+        force: options.forceRegenerate,
+        sceneIds: targetSceneIds,
+      });
+    }
 
     console.log('\n--- 4단계: 씬별 클립 렌더링 ---');
     await this.renderSceneClipsUseCase.execute(lecture, {
