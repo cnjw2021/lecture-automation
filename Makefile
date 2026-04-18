@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install install-align-deps build run run-master run-force run-master-force regen-scene resplit-chunk-audio render-scene record-webm align-master-audio import-master-audio import-master-audio-auto concat-scenes clean render-only preview tts-sample \
+.PHONY: help install install-align-deps build run run-master run-force run-master-force regen-scene resplit-chunk-audio generate-chunk-audio render-scene record-webm align-master-audio import-master-audio import-master-audio-auto concat-scenes clean render-only preview tts-sample \
         preview-browser-mock preview-screenshot capture-screenshots test-screenshot-options \
         preview-springs sync-playwright save-auth
 
@@ -13,6 +13,7 @@ ENGINE_RECORD_WEBM = packages/automation/dist/presentation/cli/record-webm.js
 ENGINE_ALIGN_MASTER_AUDIO = packages/automation/dist/presentation/cli/align-master-audio.js
 ENGINE_IMPORT_MASTER_AUDIO = packages/automation/dist/presentation/cli/import-master-audio.js
 ENGINE_RESPLIT_CHUNK_AUDIO = packages/automation/dist/presentation/cli/resplit-chunk-audio.js
+ENGINE_GENERATE_CHUNK_AUDIO = packages/automation/dist/presentation/cli/generate-chunk-audio.js
 ENGINE_CONCAT_SCENES = packages/automation/dist/presentation/cli/concat-scenes.js
 REMOTION_PATH = packages/remotion
 OUTPUT_DIR = output
@@ -46,6 +47,8 @@ help:
 	@echo "make resplit-chunk-audio LECTURE=xxx SCENE=5      - 저장된 청크 원본으로 재-TTS 없이 재분할"
 	@echo "make resplit-chunk-audio LECTURE=xxx SCENE='5 12' - 여러 씬이 포함된 청크 재분할"
 	@echo "                       tmp/chunked-audio/<lectureId>/boundary-overrides.json 이 있으면 우선 적용"
+	@echo "make generate-chunk-audio LECTURE=xxx CHUNK=3       - 특정 청크 TTS만 생성 (씬 렌더/concat 없음)"
+	@echo "make generate-chunk-audio LECTURE=xxx CHUNK='3 5'   - 여러 청크 동시 생성"
 	@echo "make render-scene LECTURE=xxx SCENE=5      - 특정 씬 클립만 렌더링"
 	@echo "make render-scene LECTURE=xxx SCENE='5 12' - 여러 씬 클립 렌더링"
 	@echo "make record-webm LECTURE=xxx SCENE=17      - 특정 Playwright 씬 webm 재생성"
@@ -119,6 +122,16 @@ resplit-chunk-audio:
 	@echo "🔨 automation 패키지 빌드 중..."
 	npm run build -w packages/automation
 	node $(ENGINE_RESPLIT_CHUNK_AUDIO) $(LECTURE) $(SCENE)
+
+generate-chunk-audio:
+	@echo "🎙️  특정 청크 TTS 생성: $(LECTURE) / Chunk $(CHUNK)"
+	@if [ -z "$(CHUNK)" ]; then \
+		echo "❌ CHUNK 값을 지정해 주세요. 예: make generate-chunk-audio LECTURE=lecture-03-01.json CHUNK=3"; \
+		exit 1; \
+	fi
+	@echo "🔨 automation 패키지 빌드 중..."
+	npm run build -w packages/automation
+	node $(ENGINE_GENERATE_CHUNK_AUDIO) $(LECTURE) $(CHUNK)
 
 render-scene:
 	@echo "🎞️  씬 클립 렌더링: $(LECTURE) / Scene $(SCENE)"

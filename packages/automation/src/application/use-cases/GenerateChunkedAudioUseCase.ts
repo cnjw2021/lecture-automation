@@ -9,6 +9,8 @@ import { config } from '../../infrastructure/config';
 
 export interface GenerateChunkedAudioUseCaseOptions {
   force?: boolean;
+  /** 1-based chunk indices. 지정 시 해당 청크만 생성하고 나머지는 건드리지 않는다. */
+  targetChunkIndices?: number[];
 }
 
 /**
@@ -30,14 +32,22 @@ export class GenerateChunkedAudioUseCase {
   ) {}
 
   async execute(lecture: Lecture, options: GenerateChunkedAudioUseCaseOptions = {}): Promise<void> {
-    const { force = false } = options;
+    const { force = false, targetChunkIndices } = options;
     console.log(`[${lecture.lecture_id}] 청크 단위 오디오 생성 시작 (maxChars: ${this.maxCharsPerChunk})`);
 
     const chunks = groupScenesIntoChunks(lecture.sequence, this.maxCharsPerChunk);
     console.log(`  📦 ${lecture.sequence.length}개 씬 → ${chunks.length}개 청크로 그룹핑`);
     const boundaryOverrides = await this.loadBoundaryOverrides(lecture.lecture_id);
 
-    const durations: Record<string, number> = {};
+    const targetChunkSet = this.resolveTargetChunkSet(targetChunkIndices, chunks.length);
+    const isTargeted = targetChunkSet !== null;
+    if (isTargeted) {
+      console.log(`  🎯 청크 제한 모드: ${[...targetChunkSet].sort((a, b) => a - b).join(', ')}번 청크만 생성`);
+    }
+
+    const durations: Record<string, number> = isTargeted
+      ? { ...((await this.lectureRepository.getAudioDurations(lecture.lecture_id)) ?? {}) }
+      : {};
     let lastRequestTime = 0;
 
     for (let chunkIdx = 0; chunkIdx < chunks.length; chunkIdx++) {
@@ -45,7 +55,12 @@ export class GenerateChunkedAudioUseCase {
       const sceneIds = chunk.segments.map(s => s.sceneId);
       const chunkLabel = `청크 ${chunkIdx + 1}/${chunks.length} (씬 ${sceneIds.join(', ')})`;
 
-      const missingScenes = force ? chunk.segments : await this.findMissingScenes(lecture.lecture_id, chunk);
+      if (isTargeted && !targetChunkSet.has(chunkIdx + 1)) {
+        continue;
+      }
+
+      const effectiveForce = force || isTargeted;
+      const missingScenes = effectiveForce ? chunk.segments : await this.findMissingScenes(lecture.lecture_id, chunk);
 
       if (missingScenes.length === 0) {
         console.log(`  ⏭️  ${chunkLabel} — 모든 씬 오디오 존재 (스킵)`);
@@ -58,7 +73,7 @@ export class GenerateChunkedAudioUseCase {
         continue;
       }
 
-      const isPartial = !force && missingScenes.length < chunk.segments.length;
+      const isPartial = !effectiveForce && missingScenes.length < chunk.segments.length;
       if (isPartial) {
         const missingIds = missingScenes.map(s => s.sceneId).join(', ');
         console.log(`  ⚠️  ${chunkLabel} — 일부 씬 누락 (씬 ${missingIds}), 누락분만 저장`);
@@ -111,6 +126,19 @@ export class GenerateChunkedAudioUseCase {
 
     await this.lectureRepository.saveAudioDurations(lecture.lecture_id, durations);
     console.log(`[${lecture.lecture_id}] 청크 단위 오디오 생성 완료`);
+  }
+
+  private resolveTargetChunkSet(targetChunkIndices: number[] | undefined, totalChunks: number): Set<number> | null {
+    if (!targetChunkIndices || targetChunkIndices.length === 0) {
+      return null;
+    }
+    const invalid = targetChunkIndices.filter(idx => !Number.isInteger(idx) || idx < 1 || idx > totalChunks);
+    if (invalid.length > 0) {
+      throw new Error(
+        `지정한 청크 번호가 범위를 벗어났습니다: ${invalid.join(', ')}. 총 청크 수는 ${totalChunks}개입니다 (1~${totalChunks}).`,
+      );
+    }
+    return new Set(targetChunkIndices);
   }
 
   private async findMissingScenes(lectureId: string, chunk: NarrationChunk): Promise<SceneNarrationSegment[]> {
