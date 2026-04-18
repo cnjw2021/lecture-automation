@@ -339,11 +339,8 @@ export async function executeActionOffscreen(
   switch (action.cmd) {
     case 'goto': {
       if (!action.url) return;
-      try {
-        await page.goto(action.url, { waitUntil: 'load', timeout: 20000 });
-      } catch (_) {
-        console.warn(`  ⚠️ offscreen goto 타임아웃, 계속 진행`);
-      }
+      // shared session 에서 goto 실패 = 페이지 상태 파괴 → 항상 throw
+      await page.goto(action.url, { waitUntil: 'load', timeout: 20000 });
       return;
     }
     case 'wait':
@@ -353,11 +350,8 @@ export async function executeActionOffscreen(
       if (!action.selector) return;
       const state = action.state ?? 'visible';
       const timeout = action.timeout ?? 30000;
-      try {
-        await page.locator(action.selector).waitFor({ state, timeout });
-      } catch (err: any) {
-        console.warn(`  ⚠️ offscreen wait_for 타임아웃 (${action.selector}): ${err.message}`);
-      }
+      // timeout = 페이지 상태 불확실 → 항상 throw (swallow 금지)
+      await page.locator(action.selector).waitFor({ state, timeout });
       return;
     }
     case 'wait_for_claude_ready':
@@ -499,5 +493,5 @@ async function waitForClaudeReady(page: Page, timeoutMs: number): Promise<void> 
     attempt++;
     await page.waitForTimeout(10000);
   }
-  console.warn(`  ⚠️ Claude 응답 대기 타임아웃 (${timeoutMs}ms) — 계속 진행`);
+  throw new Error(`Claude 응답 대기 타임아웃 (${timeoutMs}ms) — 페이지 상태 불확실, 세션 중단`);
 }

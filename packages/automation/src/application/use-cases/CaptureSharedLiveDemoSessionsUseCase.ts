@@ -72,15 +72,8 @@ export class CaptureSharedLiveDemoSessionsUseCase {
           // 캡처 불필요 씬: replayOnly で実行してページ状態だけ復元
           const replayOnly = !needsCapture;
 
-          try {
-            await this.sharedProvider.captureSceneInSession(handle, scene, outputDir, { replayOnly });
-          } catch (err: any) {
-            if (replayOnly) {
-              // 페이지 상태 복원 실패 → 이후 씬의 DOM이 잘못된 상태 → 그룹 전체 중단
-              throw new Error(`Scene ${sceneId} 리플레이(상태 복원) 실패로 세션 ${group.sessionId} 중단: ${err.message}`);
-            }
-            console.error(`- Scene ${sceneId} 공유 세션 캡처 실패:`, err.message);
-          }
+          // 실패(replayOnly/capture 모두) 시 throw → finally で closeSession 후 호출부로 전파
+          await this.sharedProvider.captureSceneInSession(handle, scene, outputDir, { replayOnly });
         }
       } finally {
         await this.sharedProvider.closeSession(handle);
