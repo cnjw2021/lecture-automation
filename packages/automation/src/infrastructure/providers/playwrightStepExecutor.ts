@@ -390,6 +390,55 @@ export async function executeActionOffscreen(
     case 'press':
       if (action.key) await page.keyboard.press(action.key);
       return;
+    case 'mouse_drag':
+      if (action.from && action.to) {
+        await page.mouse.move(action.from[0], action.from[1]);
+        await page.mouse.down();
+        await page.mouse.move(action.to[0], action.to[1], { steps: 10 });
+        await page.mouse.up();
+      }
+      return;
+    case 'highlight':
+      // DOM 스타일 변경: 페이지 상태에 영향을 주므로 offscreen에서도 실행
+      if (action.selector) {
+        try {
+          await page.locator(action.selector).waitFor({ state: 'attached', timeout: 5000 });
+          await page.locator(action.selector).evaluate((el: HTMLElement) => {
+            el.style.outline = '5px solid #ff007a';
+          });
+        } catch (_) {}
+      }
+      return;
+    case 'disable_css':
+      await page.evaluate(() => {
+        Array.from(document.styleSheets).forEach(sheet => {
+          try {
+            const owner = sheet.ownerNode as Element | null;
+            if (owner?.id?.startsWith('__edu')) return;
+            if (owner?.closest?.('#__edu_devtools__')) return;
+            sheet.disabled = true;
+          } catch (_) {}
+        });
+      });
+      return;
+    case 'enable_css':
+      await page.evaluate(() => {
+        Array.from(document.styleSheets).forEach(sheet => {
+          try { sheet.disabled = false; } catch (_) {}
+        });
+      });
+      return;
+    case 'open_devtools':
+    case 'select_devtools_node':
+    case 'toggle_devtools_node':
+      // 교육용 DevTools 오버레이: DOM 주입이므로 후속 씬 상태 복원을 위해 실행
+      try {
+        await executeEduDevtoolsAction(page, action);
+      } catch (_) {}
+      return;
+    case 'render_code_block':
+      // 순수 시각 효과, 페이지 상태에 영향 없음 → no-op
+      return;
     default:
       console.warn(`  ⚠️ offscreen 미지원 Action '${action.cmd}' (건너뜀)`);
       return;

@@ -114,6 +114,12 @@ export class SharedPlaywrightStateCaptureProvider implements ISharedVisualSessio
           // replayOnly 모드: 모든 액션을 offscreen처럼 처리 (스크린샷 없음)
           if (replayOnly || action.offscreen) {
             await executeActionOffscreen(session.page, action);
+            // replayOnly에서도 커서 위치를 추적해야 full run과 cursorFrom이 일치한다
+            if (action.cmd === 'mouse_move' && action.to) {
+              session.cursorPos = { x: action.to[0], y: action.to[1] };
+            } else if (action.cmd === 'click' && action.selector) {
+              // click은 selector 기반이라 정확한 좌표를 알 수 없으므로 현재 위치 유지
+            }
             continue;
           }
           const stepData = await executeAndCaptureStep(session.page, action, {

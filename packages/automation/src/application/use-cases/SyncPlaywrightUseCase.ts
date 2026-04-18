@@ -116,9 +116,11 @@ export class SyncPlaywrightUseCase {
       }
 
       // 고정 시간 / 조정 가능한 wait 파악
+      // offscreen 액션은 클립 타임라인 바깥에서 실행되므로 싱크 계산에서 완전히 제외
       const waitIndices: number[] = [];
       let fixedMs = 0;
       for (let j = from; j < to; j++) {
+        if (actions[j].offscreen) continue;
         if (actions[j].cmd === 'wait') {
           waitIndices.push(j);
         } else {
