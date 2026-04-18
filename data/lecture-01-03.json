@@ -692,25 +692,25 @@
             "cmd": "wait_for_claude_ready",
             "timeout": 180000,
             "offscreen": true,
-            "note": "Claude 응답 생성·저장 완료까지 폴링 대기 (공유 세션 offscreen)"
+            "note": "Claude 応答生成・保存完了までポーリング待機 (共有セッション offscreen)"
           },
           {
             "cmd": "wait",
             "ms": 2505,
             "offscreen": true,
-            "note": "ready 판정 후 DOM 정착 대기 (공유 세션 offscreen)"
+            "note": "ready 判定後の DOM 安定待ち (共有セッション offscreen)"
           },
           {
             "cmd": "click",
             "selector": "button:has-text('コード'):has-text('HTML')",
             "offscreen": true,
-            "note": "Artifact カードをクリックしてプレビューパネルを開く (공유 세션 offscreen)"
+            "note": "Artifact カードをクリックしてプレビューパネルを開く (共有セッション offscreen)"
           },
           {
             "cmd": "wait",
             "ms": 2505,
             "offscreen": true,
-            "note": "プレビューパネルのスライドイン完了待ち (공유 세션 offscreen)"
+            "note": "プレビューパネルのスライドイン完了待ち (共有セッション offscreen)"
           },
           {
             "cmd": "mouse_move",
