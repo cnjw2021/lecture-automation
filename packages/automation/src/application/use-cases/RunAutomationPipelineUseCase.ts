@@ -59,7 +59,7 @@ export class RunAutomationPipelineUseCase {
     });
 
     console.log('\n--- 1.5단계: 전체 오디오 미리 듣기 머지 ---');
-    await this.mergeAudioUseCase.execute(lecture);
+    await this.mergeAudioUseCase.execute(lecture, options.ttsOnly ? targetSceneIds : undefined);
 
     if (options.ttsOnly) {
       console.log('\n✅ [TTS_ONLY] TTS 생성 + 미리 듣기 머지 완료. 이후 단계를 건너뜁니다.');
