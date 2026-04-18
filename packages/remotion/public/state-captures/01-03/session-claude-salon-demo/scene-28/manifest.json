@@ -2,7 +2,7 @@
   "sceneId": 28,
   "lectureId": "01-03",
   "totalSteps": 8,
-  "totalDurationMs": 42480,
+  "totalDurationMs": 52360,
   "viewport": {
     "width": 1920,
     "height": 1080
@@ -49,7 +49,7 @@
         "x": 960,
         "y": 500
       },
-      "durationMs": 6460
+      "durationMs": 5796
     },
     {
       "index": 3,
@@ -69,8 +69,7 @@
         "width": 638,
         "height": 22.3984375
       },
-      "typedText": "マッサージサロンのホームページをHTMLとCSSで作ってください。メニュー表、アクセス情報、お問い合わせボタンを含めてください。",
-      "durationMs": 7680
+      "durationMs": 20880
     },
     {
       "index": 4,
@@ -84,7 +83,7 @@
         "x": 988.3984375,
         "y": 400.19921875
       },
-      "durationMs": 4307
+      "durationMs": 3865
     },
     {
       "index": 5,
@@ -98,7 +97,7 @@
         "x": 988.3984375,
         "y": 400.19921875
       },
-      "durationMs": 21533,
+      "durationMs": 19319,
       "note": "ナレーション「指示の出し方にも...」区間を埋める"
     },
     {

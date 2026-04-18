@@ -1,8 +1,8 @@
 {
   "sceneId": 29,
   "lectureId": "01-03",
-  "totalSteps": 10,
-  "totalDurationMs": 41843,
+  "totalSteps": 16,
+  "totalDurationMs": 37844,
   "viewport": {
     "width": 1920,
     "height": 1080
@@ -13,55 +13,55 @@
       "cmd": "mouse_move",
       "screenshot": "step-0.png",
       "cursorFrom": {
-        "x": 510.09375,
-        "y": 1536.390625
+        "x": 988.3984375,
+        "y": 400.19921875
       },
       "cursorTo": {
-        "x": 720,
-        "y": 400
+        "x": 1500,
+        "y": 500
       },
       "durationMs": 700,
-      "note": "Artifact プレビュー領域へカーソル"
+      "note": "Artifact プレビュー領域中央へカーソル（右パネル内部。以降の scroll が Artifact 側で効くように）"
     },
     {
       "index": 1,
       "cmd": "wait",
       "screenshot": "step-1.png",
       "cursorFrom": {
-        "x": 720,
-        "y": 400
+        "x": 1500,
+        "y": 500
       },
       "cursorTo": {
-        "x": 720,
-        "y": 400
+        "x": 1500,
+        "y": 500
       },
-      "durationMs": 8950
+      "durationMs": 14225
     },
     {
       "index": 2,
       "cmd": "wait",
       "screenshot": "step-2.png",
       "cursorFrom": {
-        "x": 720,
-        "y": 400
+        "x": 1500,
+        "y": 500
       },
       "cursorTo": {
-        "x": 720,
-        "y": 400
+        "x": 1500,
+        "y": 500
       },
-      "durationMs": 8950
+      "durationMs": 5335
     },
     {
       "index": 3,
       "cmd": "scroll",
       "screenshot": "step-3.png",
       "cursorFrom": {
-        "x": 720,
-        "y": 400
+        "x": 1500,
+        "y": 500
       },
       "cursorTo": {
-        "x": 720,
-        "y": 400
+        "x": 1500,
+        "y": 500
       },
       "durationMs": 500
     },
@@ -70,26 +70,26 @@
       "cmd": "wait",
       "screenshot": "step-4.png",
       "cursorFrom": {
-        "x": 720,
-        "y": 400
+        "x": 1500,
+        "y": 500
       },
       "cursorTo": {
-        "x": 720,
-        "y": 400
+        "x": 1500,
+        "y": 500
       },
-      "durationMs": 7081
+      "durationMs": 2191
     },
     {
       "index": 5,
       "cmd": "scroll",
       "screenshot": "step-5.png",
       "cursorFrom": {
-        "x": 720,
-        "y": 400
+        "x": 1500,
+        "y": 500
       },
       "cursorTo": {
-        "x": 720,
-        "y": 400
+        "x": 1500,
+        "y": 500
       },
       "durationMs": 500
     },
@@ -98,26 +98,26 @@
       "cmd": "wait",
       "screenshot": "step-6.png",
       "cursorFrom": {
-        "x": 720,
-        "y": 400
+        "x": 1500,
+        "y": 500
       },
       "cursorTo": {
-        "x": 720,
-        "y": 400
+        "x": 1500,
+        "y": 500
       },
-      "durationMs": 7081
+      "durationMs": 2191
     },
     {
       "index": 7,
       "cmd": "scroll",
       "screenshot": "step-7.png",
       "cursorFrom": {
-        "x": 720,
-        "y": 400
+        "x": 1500,
+        "y": 500
       },
       "cursorTo": {
-        "x": 720,
-        "y": 400
+        "x": 1500,
+        "y": 500
       },
       "durationMs": 500
     },
@@ -126,26 +126,111 @@
       "cmd": "wait",
       "screenshot": "step-8.png",
       "cursorFrom": {
-        "x": 720,
-        "y": 400
+        "x": 1500,
+        "y": 500
       },
       "cursorTo": {
-        "x": 720,
-        "y": 400
+        "x": 1500,
+        "y": 500
       },
-      "durationMs": 7081
+      "durationMs": 2191
     },
     {
       "index": 9,
-      "cmd": "final",
+      "cmd": "scroll",
       "screenshot": "step-9.png",
       "cursorFrom": {
-        "x": 720,
-        "y": 400
+        "x": 1500,
+        "y": 500
       },
       "cursorTo": {
-        "x": 720,
-        "y": 400
+        "x": 1500,
+        "y": 500
+      },
+      "durationMs": 500
+    },
+    {
+      "index": 10,
+      "cmd": "wait",
+      "screenshot": "step-10.png",
+      "cursorFrom": {
+        "x": 1500,
+        "y": 500
+      },
+      "cursorTo": {
+        "x": 1500,
+        "y": 500
+      },
+      "durationMs": 2191
+    },
+    {
+      "index": 11,
+      "cmd": "scroll",
+      "screenshot": "step-11.png",
+      "cursorFrom": {
+        "x": 1500,
+        "y": 500
+      },
+      "cursorTo": {
+        "x": 1500,
+        "y": 500
+      },
+      "durationMs": 500
+    },
+    {
+      "index": 12,
+      "cmd": "wait",
+      "screenshot": "step-12.png",
+      "cursorFrom": {
+        "x": 1500,
+        "y": 500
+      },
+      "cursorTo": {
+        "x": 1500,
+        "y": 500
+      },
+      "durationMs": 2191
+    },
+    {
+      "index": 13,
+      "cmd": "scroll",
+      "screenshot": "step-13.png",
+      "cursorFrom": {
+        "x": 1500,
+        "y": 500
+      },
+      "cursorTo": {
+        "x": 1500,
+        "y": 500
+      },
+      "durationMs": 500
+    },
+    {
+      "index": 14,
+      "cmd": "wait",
+      "screenshot": "step-14.png",
+      "cursorFrom": {
+        "x": 1500,
+        "y": 500
+      },
+      "cursorTo": {
+        "x": 1500,
+        "y": 500
+      },
+      "durationMs": 3129,
+      "note": "プレビュー下端を見せる最終静止"
+    },
+    {
+      "index": 15,
+      "cmd": "final",
+      "screenshot": "step-15.png",
+      "cursorFrom": {
+        "x": 1500,
+        "y": 500
+      },
+      "cursorTo": {
+        "x": 1500,
+        "y": 500
       },
       "durationMs": 500
     }
