@@ -74,7 +74,7 @@ export class RunAutomationPipelineUseCase {
     }
 
     // 1.7a단계: isolated 라이브 데모 씬 역방향 싱크 (비디오에 오디오를 맞춤)
-    if (this.hasAnyScene(lecture, isIsolatedLiveDemoScene)) {
+    if (this.hasAnyScene(lecture, isIsolatedLiveDemoScene, targetSceneIds)) {
       console.log('\n--- 1.7a단계: 라이브 데모 씬 역방향 싱크 ---');
       const { adjustedSceneIds } = await this.reverseSyncPlaywrightUseCase.execute(lecture, {
         sceneIds: targetSceneIds,

@@ -66,7 +66,7 @@ regen-scene: build
 		echo "  🗑️  scene-$$scene.webm 캡처 삭제 중..."; \
 		rm -f packages/remotion/public/captures/$$LECTURE_ID/scene-$$scene.webm; \
 		echo "  🗑️  session 캡처 디렉토리 삭제 중 (shared 씬)..."; \
-		find packages/remotion/public/captures/$$LECTURE_ID -type d -name "scene-$$scene" -exec rm -rf {} + 2>/dev/null || true; \
+		find packages/remotion/public/state-captures/$$LECTURE_ID -type d -name "scene-$$scene" -exec rm -rf {} + 2>/dev/null || true; \
 	done
 	env TARGET_SCENES="$(SCENE)" node $(ENGINE_PATH) $(LECTURE)
 
