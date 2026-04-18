@@ -163,34 +163,25 @@ return { buffer: wav.buffer, durationSec: wav.durationSec, alignment }
 
 ## 검증 계획
 
-### Phase 1 — 프로토타입 + A/B 청취 비교
+### Phase 1 — 프로토타입 + A/B 청취 비교 ✅ 완료 (2026-04-18)
 
-1. `warmupPadding.enabled: false` 상태로 강의 1-1의 씬 1~3 생성 → WAV 보관
-2. `warmupPadding.enabled: true` 로 동일 씬 재생성 → WAV 보관
-3. 두 세트를 이어붙여 재생 비교. 청취 포인트:
-   - 씬 초반 1~2초의 톤 흔들림이 실제로 완화되는지
-   - trim 경계에서 노이즈·클릭이 발생하지 않는지
-   - warmup-본문 연결이 부자연스러운 억양 끊김을 만들지 않는지
+1. `warmupPadding.enabled: false` 상태로 강의 1-1의 씬 1~3 생성
+2. `warmupPadding.enabled: true` 로 동일 씬 재생성
+3. 결과: **warmup 활성화 시 씬 초반 톤 드리프트 완전 해소**. 비활성화 시 씬마다 음색 편차가 명확히 드러남.
+   - trim 경계 노이즈·클릭 없음
+   - `trimGuardMs: 0`, `text: "これからお話しします。"` 기본값으로 충분
 
-### Phase 2 — 튜닝
+→ **결론: warmup 활성화 확정. `config/tts.json`에 `enabled: true` 반영.**
 
-warmup 텍스트 후보를 3~5개 두고 각각 테스트:
+### Phase 2 — 튜닝 (생략)
 
-| 후보 | 길이 | 문맥 호환성 |
-|------|------|------------|
-| `これからお話しします。` | 10자 | 범용 ◯ |
-| `では、始めます。` | 8자 | 범용 ◯ |
-| `続けてお話しします。` | 10자 | 연속 씬에 어울림 |
-| `はい、` | 3자 | 짧음, 안정화 부족 가능성 |
-| `皆さん、こんにちは。` | 10자 | 첫 씬 외에는 부자연스러움 |
-
-`trimGuardMs` 도 0 / 30 / 50 / 100 을 비교.
+Phase 1에서 기본값(`text: "これからお話しします。"`, `trimGuardMs: 0`)이 충분히 동작함을 확인. 추가 후보 비교 불필요.
 
 ### Phase 3 — 롤아웃
 
-- 채택된 warmup 텍스트·trimGuard 값을 `config/tts.json` 기본값으로 반영
-- 기존 씬 WAV는 `make run-tts-only SCENE=...` 로 선택 재생성
-- 신규 강의는 자동 적용
+- [x] `config/tts.json`에 `enabled: true` 확정
+- [ ] 기존 씬 WAV 선택 재생성 — `make run-tts-only LECTURE=<강의> SCENE=<씬번호>`
+- [ ] 신규 강의는 자동 적용 (이미 활성화 상태)
 
 ---
 
@@ -210,3 +201,4 @@ warmup 텍스트 후보를 3~5개 두고 각각 테스트:
 - 2026-04-18: 설계서 최초 작성 (오프닝 오디오 재사용 방식으로 오해 기술)
 - 2026-04-18: **전면 재작성**. 사용자 원안(씬 프롬프트에 warmup 텍스트 prepend → 생성 후 alignment 기반 trim) 반영. 이전 "첫 문장 중립화(#6)" 폐기, "오프닝 오디오 재사용(#7)" 은 "warmup padding + trim"으로 교체
 - 2026-04-18: **구현 완료** (PR #73 / issue #74). 추가 구현 사항: `make run-tts-only` 타겟, `MergeAudioUseCase` 씬 지정 머지 + 씬 간 1.5초 무음 삽입. 남은 결정 사항 섹션을 "구현 착수 전"에서 "Phase 2 청취 후 결정"으로 업데이트
+- 2026-04-18: **Phase 1 A/B 청취 완료**. warmup 활성화 확정, `config/tts.json` `enabled: true` 반영. Phase 2 튜닝 생략 (기본값 충분). 검증 계획 업데이트
