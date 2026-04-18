@@ -33,10 +33,6 @@
       "style": 0,
       "use_speaker_boost": true,
       "speed": 1.0,
-      "chunkedGeneration": {
-        "enabled": false,
-        "maxCharsPerChunk": 2500
-      },
       "warmupPadding": {
         "enabled": true,
         "text": "これからお話しします。",

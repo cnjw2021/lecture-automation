@@ -115,17 +115,6 @@ export const config = {
     };
   },
 
-  getChunkedGenerationConfig: () => {
-    const tts = getTtsJson();
-    const activeProvider = tts.activeProvider;
-    const providerConfig = tts.providers?.[activeProvider];
-    const chunked = providerConfig?.chunkedGeneration;
-    return {
-      enabled: chunked?.enabled ?? false,
-      maxCharsPerChunk: typeof chunked?.maxCharsPerChunk === 'number' ? chunked.maxCharsPerChunk : 2500,
-    };
-  },
-
   getWarmupPaddingConfig: () => {
     const tts = getTtsJson();
     const activeProvider = tts.activeProvider;

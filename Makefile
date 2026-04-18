@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install install-align-deps build run run-master run-force run-master-force regen-scene run-tts-only resplit-chunk-audio render-scene record-webm align-master-audio import-master-audio import-master-audio-auto concat-scenes clean render-only preview tts-sample \
+.PHONY: help install install-align-deps build run run-master run-force run-master-force regen-scene run-tts-only render-scene record-webm align-master-audio import-master-audio import-master-audio-auto concat-scenes clean render-only preview tts-sample \
         preview-browser-mock preview-screenshot capture-screenshots test-screenshot-options \
         preview-springs sync-playwright save-auth
 
@@ -12,7 +12,6 @@ ENGINE_RENDER_SCENE = packages/automation/dist/presentation/cli/render-scene.js
 ENGINE_RECORD_WEBM = packages/automation/dist/presentation/cli/record-webm.js
 ENGINE_ALIGN_MASTER_AUDIO = packages/automation/dist/presentation/cli/align-master-audio.js
 ENGINE_IMPORT_MASTER_AUDIO = packages/automation/dist/presentation/cli/import-master-audio.js
-ENGINE_RESPLIT_CHUNK_AUDIO = packages/automation/dist/presentation/cli/resplit-chunk-audio.js
 ENGINE_CONCAT_SCENES = packages/automation/dist/presentation/cli/concat-scenes.js
 REMOTION_PATH = packages/remotion
 OUTPUT_DIR = output
@@ -123,12 +122,6 @@ run-tts-only:
 		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene.alignment.json; \
 	done
 	env TTS_ONLY=1 TARGET_SCENES="$(SCENE)" $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
-
-resplit-chunk-audio:
-	@echo "✂️  저장된 청크 원본으로 재분할: $(LECTURE) / Scene $(SCENE)"
-	@echo "🔨 automation 패키지 빌드 중..."
-	npm run build -w packages/automation
-	node $(ENGINE_RESPLIT_CHUNK_AUDIO) $(LECTURE) $(SCENE)
 
 render-scene:
 	@echo "🎞️  씬 클립 렌더링: $(LECTURE) / Scene $(SCENE)"
