@@ -38,7 +38,7 @@
         "maxCharsPerChunk": 2500
       },
       "warmupPadding": {
-        "enabled": false,
+        "enabled": true,
         "text": "これからお話しします。",
         "trimGuardMs": 0
       }
