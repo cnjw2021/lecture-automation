@@ -632,7 +632,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 7600
+            "ms": 7772
           },
           {
             "cmd": "type",
@@ -641,11 +641,11 @@
           },
           {
             "cmd": "wait",
-            "ms": 5067
+            "ms": 5182
           },
           {
             "cmd": "wait",
-            "ms": 25333,
+            "ms": 25906,
             "note": "ナレーション「指示の出し方にも...」区間を埋める"
           },
           {
@@ -683,7 +683,7 @@
         },
         "syncPoints": [
           {
-            "actionIndex": 7,
+            "actionIndex": 6,
             "phrase": "スクロールしていくと"
           }
         ],
@@ -701,16 +701,10 @@
             "note": "ready 判定後の DOM 安定待ち (共有セッション offscreen)"
           },
           {
-            "cmd": "click",
-            "selector": "button[aria-label*='アーティファクトを開く']",
-            "offscreen": true,
-            "note": "Artifact カードをクリックしてプレビューパネルを開く (共有セッション offscreen)"
-          },
-          {
             "cmd": "wait",
             "ms": 2505,
             "offscreen": true,
-            "note": "プレビューパネルのスライドイン完了待ち (共有セッション offscreen)"
+            "note": "Artifact パネル自動オープン後のレンダリング完了待ち (共有セッション offscreen)"
           },
           {
             "cmd": "mouse_move",
@@ -722,11 +716,11 @@
           },
           {
             "cmd": "wait",
-            "ms": 11720
+            "ms": 7590
           },
           {
             "cmd": "wait",
-            "ms": 11720
+            "ms": 7590
           },
           {
             "cmd": "scroll",
@@ -734,7 +728,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 5261
+            "ms": 7507
           },
           {
             "cmd": "scroll",
@@ -742,7 +736,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 5261
+            "ms": 7507
           },
           {
             "cmd": "scroll",
@@ -750,7 +744,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 5261
+            "ms": 7507
           }
         ]
       }
