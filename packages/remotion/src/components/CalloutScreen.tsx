@@ -100,7 +100,7 @@ export const CalloutScreen: React.FC<CalloutScreenProps> = ({
                 flexShrink: 0,
               }}
             >
-              <NodeIcon icon={displayIcon} size={40} />
+              <NodeIcon icon={displayIcon} size={40} variant="lucide-accent" color={style.color} />
             </div>
             <h2 style={{ fontSize: 40, fontWeight: 700, color: theme.color.textPrimary, margin: 0, lineHeight: 1.3 }}>
               {title}

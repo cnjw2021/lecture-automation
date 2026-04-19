@@ -130,7 +130,7 @@ export const FeatureGridScreen: React.FC<FeatureGridScreenProps> = ({
                     marginBottom: 4,
                   }}
                 >
-                  <NodeIcon icon={feature.icon} size={36} />
+                  <NodeIcon icon={feature.icon} size={36} variant="lucide-accent" color={cardColor} />
                 </div>
               )}
 

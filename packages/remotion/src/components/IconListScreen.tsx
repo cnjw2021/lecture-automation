@@ -77,7 +77,7 @@ export const IconListScreen: React.FC<IconListScreenProps> = ({ title, items, an
                     flexShrink: 0,
                   }}
                 >
-                  <NodeIcon icon={item.icon} size={32} />
+                  <NodeIcon icon={item.icon} size={32} variant="lucide-accent" color={itemColor} />
                 </div>
                 <h3 style={{ fontSize: 30, fontWeight: 700, color: theme.color.textPrimary, margin: 0, lineHeight: 1.3 }}>
                   {item.title}

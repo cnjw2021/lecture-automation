@@ -16,8 +16,12 @@ const emojiToLucide: Record<string, string> = iconsConfig.emojiToLucide;
 
 // --- Pure helpers ---
 
+const isKeycapEmoji = (str: string): boolean => /^(?:[#*0-9]\uFE0F?\u20E3)$/u.test(str);
+const isFlagEmoji = (str: string): boolean => /^(?:\p{Regional_Indicator}{2})$/u.test(str);
+const isPictographicEmoji = (str: string): boolean => /\p{Extended_Pictographic}/u.test(str);
+
 const isEmoji = (str: string): boolean => {
-  return /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}\u{200D}\u{20E3}]/u.test(str);
+  return isKeycapEmoji(str) || isFlagEmoji(str) || isPictographicEmoji(str);
 };
 
 const toLucideComponent = (name: string): React.FC<any> | null => {

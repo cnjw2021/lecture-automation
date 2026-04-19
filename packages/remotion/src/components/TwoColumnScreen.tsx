@@ -56,7 +56,7 @@ export const TwoColumnScreen: React.FC<TwoColumnScreenProps> = ({ title, left, r
         {col.icon && (
           <div style={{ marginBottom: 20 }}>
             <div style={{ width: 60, height: 60, borderRadius: '50%', background: `${colColor}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <NodeIcon icon={col.icon} size={34} />
+              <NodeIcon icon={col.icon} size={34} variant="lucide-accent" color={colColor} />
             </div>
           </div>
         )}
