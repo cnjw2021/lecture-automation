@@ -17,6 +17,12 @@ interface NodeIconProps {
 }
 
 const getToneColor = (variant: NodeIconVariant, color?: string): string => {
+  // highlighted는 "caller가 그린 강조 배경 위에 놓이는 글리프" 역할이라
+  // 배경 tint 신호로 전달되는 color를 그대로 글리프 색으로 쓰면 대비가 무너진다.
+  if (variant === 'highlighted') {
+    return theme.color.textOnAccent;
+  }
+
   if (color) {
     return color;
   }
@@ -24,8 +30,6 @@ const getToneColor = (variant: NodeIconVariant, color?: string): string => {
   switch (variant) {
     case 'lucide-muted':
       return theme.color.textMuted;
-    case 'highlighted':
-      return theme.color.textOnAccent;
     case 'brand-tinted':
       return theme.color.accentSecondary;
     case 'brand-original':

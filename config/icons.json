@@ -40,7 +40,7 @@
     "🔀": "Shuffle", "🔁": "Repeat", "🔘": "CircleDot", "🔝": "ArrowUpToLine",
     "🔡": "CaseLower", "🔤": "CaseUpper",
     "🔲": "Square", "🔳": "SquareDashed",
-    "🔴": "Circle", "🔵": "CircleDot", "🔻": "Triangle", "🔽": "ArrowDown",
+    "🔻": "Triangle", "🔽": "ArrowDown",
     "🖼": "Image", "🖼️": "Image",
 
     "📄": "FileText", "📃": "FileText", "📋": "ClipboardList", "📑": "PanelsTopLeft", "📰": "Newspaper",

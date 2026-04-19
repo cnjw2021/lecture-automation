@@ -17,7 +17,6 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 const videoConfig = JSON.parse(readFileSync(join(ROOT, 'config', 'video.json'), 'utf8'));
-const DEFAULT_DURATION = 600;
 const DEFAULT_CODEC = 'h264';
 const DEFAULT_FALLBACK_SCENE_SECONDS = 20;
 
