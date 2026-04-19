@@ -54,7 +54,7 @@ export const MetricBadge: React.FC<MetricBadgeProps> = ({
           fontWeight: 900,
           color: accentColor,
           lineHeight: 1,
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: theme.font.numeric,
           letterSpacing: '-0.02em',
         }}
       >
@@ -68,7 +68,7 @@ export const MetricBadge: React.FC<MetricBadgeProps> = ({
             fontWeight: 500,
             color: theme.color.textMuted,
             marginTop: 4,
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: theme.font.numeric,
           }}
         >
           {label}

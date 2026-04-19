@@ -105,7 +105,7 @@ export const FeatureGridScreen: React.FC<FeatureGridScreenProps> = ({
                   border: `1px solid ${theme.infographic.panelBorder}`,
                   borderRadius: theme.radius.pill,
                   padding: '4px 14px',
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: theme.font.numeric,
                   textTransform: 'uppercase' as const,
                   letterSpacing: '0.04em',
                 }}

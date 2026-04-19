@@ -111,7 +111,7 @@ export const HierarchyScreen: React.FC<HierarchyScreenProps> = ({
               fontSize: isRoot ? 30 : 24,
               fontWeight: isRoot ? 700 : 600,
               color: theme.color.textPrimary,
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: theme.font.base,
               lineHeight: 1.3,
             }}
           >
@@ -194,7 +194,7 @@ export const HierarchyScreen: React.FC<HierarchyScreenProps> = ({
                   border: `1px solid ${theme.infographic.panelBorder}`,
                   borderRadius: theme.radius.pill,
                   padding: '4px 14px',
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: theme.font.numeric,
                   textTransform: 'uppercase' as const,
                   letterSpacing: '0.04em',
                 }}

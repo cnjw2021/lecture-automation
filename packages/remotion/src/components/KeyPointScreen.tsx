@@ -184,7 +184,7 @@ export const KeyPointScreen: React.FC<KeyPointScreenProps> = ({
                   border: `1px solid ${accentColor}28`,
                   borderRadius: theme.radius.pill,
                   padding: '4px 16px',
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: theme.font.numeric,
                   letterSpacing: '0.04em',
                   textTransform: 'uppercase' as const,
                 }}

@@ -104,7 +104,7 @@ export const TimelineScreen: React.FC<TimelineScreenProps> = ({
                   border: `1px solid ${theme.infographic.panelBorder}`,
                   borderRadius: theme.radius.pill,
                   padding: '4px 14px',
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: theme.font.numeric,
                   textTransform: 'uppercase' as const,
                   letterSpacing: '0.04em',
                 }}
@@ -190,7 +190,7 @@ export const TimelineScreen: React.FC<TimelineScreenProps> = ({
                     fontWeight: 900,
                     color: eventColor,
                     opacity: 0.22,
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: theme.font.numeric,
                     letterSpacing: '-0.03em',
                   }}
                 >

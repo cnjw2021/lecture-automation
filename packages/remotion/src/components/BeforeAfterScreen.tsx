@@ -92,7 +92,7 @@ export const BeforeAfterScreen: React.FC<BeforeAfterScreenProps> = ({
           borderRadius: theme.radius.pill,
           padding: '3px 14px',
           marginBottom: 14,
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: theme.font.numeric,
           letterSpacing: '0.08em',
           textTransform: 'uppercase' as const,
         }}
@@ -163,7 +163,7 @@ export const BeforeAfterScreen: React.FC<BeforeAfterScreenProps> = ({
                   border: `1px solid ${theme.infographic.panelBorder}`,
                   borderRadius: theme.radius.pill,
                   padding: '4px 14px',
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: theme.font.numeric,
                   textTransform: 'uppercase' as const,
                   letterSpacing: '0.04em',
                 }}

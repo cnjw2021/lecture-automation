@@ -142,7 +142,7 @@ export const PieChartScreen: React.FC<PieChartScreenProps> = ({
                   border: `1px solid ${theme.infographic.panelBorder}`,
                   borderRadius: theme.radius.pill,
                   padding: '4px 14px',
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: theme.font.numeric,
                   textTransform: 'uppercase' as const,
                   letterSpacing: '0.04em',
                 }}
@@ -214,7 +214,7 @@ export const PieChartScreen: React.FC<PieChartScreenProps> = ({
               fontSize={38}
               fontWeight={800}
               fill={theme.color.textPrimary}
-              fontFamily="Inter, sans-serif"
+              fontFamily={theme.font.numeric}
             >
               {total}
             </text>
@@ -224,7 +224,7 @@ export const PieChartScreen: React.FC<PieChartScreenProps> = ({
               textAnchor="middle"
               fontSize={15}
               fill={theme.color.textMuted}
-              fontFamily="Inter, sans-serif"
+              fontFamily={theme.font.numeric}
               letterSpacing="0.06em"
             >
               TOTAL
@@ -272,7 +272,7 @@ export const PieChartScreen: React.FC<PieChartScreenProps> = ({
                     fontWeight: 700,
                     color: seg.color,
                     minWidth: 64,
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: theme.font.numeric,
                   }}
                 >
                   {pct}%

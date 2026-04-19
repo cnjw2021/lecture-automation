@@ -188,7 +188,7 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({
                   border: `1px solid ${theme.infographic.panelBorder}`,
                   borderRadius: theme.radius.pill,
                   padding: '4px 14px',
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: theme.font.numeric,
                   textTransform: 'uppercase' as const,
                   letterSpacing: '0.04em',
                 }}
@@ -265,7 +265,7 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({
               color: theme.color.textPrimary,
               transform: `scale(${vsScale})`,
               boxShadow: theme.elevation.raised,
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: theme.font.numeric,
             }}
           >
             {vsLabel}

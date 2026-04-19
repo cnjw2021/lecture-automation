@@ -96,7 +96,7 @@ export const VennDiagramScreen: React.FC<VennDiagramScreenProps> = ({
                   border: `1px solid ${theme.infographic.panelBorder}`,
                   borderRadius: theme.radius.pill,
                   padding: '4px 14px',
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: theme.font.numeric,
                   textTransform: 'uppercase' as const,
                   letterSpacing: '0.04em',
                 }}
@@ -153,7 +153,7 @@ export const VennDiagramScreen: React.FC<VennDiagramScreenProps> = ({
                 maxWidth: 140,
                 textAlign: 'center',
                 lineHeight: 1.35,
-                fontFamily: 'Inter, sans-serif',
+                fontFamily: theme.font.base,
               }}
             >
               {left.label}
@@ -188,7 +188,7 @@ export const VennDiagramScreen: React.FC<VennDiagramScreenProps> = ({
                 maxWidth: 140,
                 textAlign: 'center',
                 lineHeight: 1.35,
-                fontFamily: 'Inter, sans-serif',
+                fontFamily: theme.font.base,
               }}
             >
               {right.label}
@@ -221,7 +221,7 @@ export const VennDiagramScreen: React.FC<VennDiagramScreenProps> = ({
                   fontSize: 26,
                   fontWeight: 700,
                   color: theme.color.textPrimary,
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: theme.font.base,
                   lineHeight: 1.35,
                 }}
               >

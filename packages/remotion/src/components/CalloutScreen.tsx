@@ -137,7 +137,7 @@ export const CalloutScreen: React.FC<CalloutScreenProps> = ({
             letterSpacing: '0.1em',
             color: '#fff',
             textTransform: 'uppercase' as const,
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: theme.font.numeric,
           }}
         >
           {callout.label}
@@ -195,7 +195,7 @@ export const CalloutScreen: React.FC<CalloutScreenProps> = ({
                     border: `1px solid ${callout.color}28`,
                     borderRadius: theme.radius.pill,
                     padding: '4px 14px',
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: theme.font.numeric,
                     textTransform: 'uppercase' as const,
                     letterSpacing: '0.04em',
                   }}

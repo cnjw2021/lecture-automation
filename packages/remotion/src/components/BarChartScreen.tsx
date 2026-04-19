@@ -92,7 +92,7 @@ export const BarChartScreen: React.FC<BarChartScreenProps> = ({
                   border: `1px solid ${theme.infographic.panelBorder}`,
                   borderRadius: theme.radius.pill,
                   padding: '4px 14px',
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: theme.font.numeric,
                   textTransform: 'uppercase' as const,
                   letterSpacing: '0.04em',
                 }}
@@ -175,7 +175,7 @@ export const BarChartScreen: React.FC<BarChartScreenProps> = ({
                         fontSize: 19,
                         fontWeight: 700,
                         color: '#fff',
-                        fontFamily: 'Inter, sans-serif',
+                        fontFamily: theme.font.numeric,
                         letterSpacing: '-0.01em',
                       }}
                     >

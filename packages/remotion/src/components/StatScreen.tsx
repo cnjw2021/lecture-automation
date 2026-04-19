@@ -1,4 +1,4 @@
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate, Easing } from 'remotion';
 import { theme, typographyStyle } from '../theme';
 import { getAnimConfig, resolveSpring } from '../animation';
 import type { ElementAnim } from '../animation';
@@ -69,6 +69,7 @@ export const StatScreen: React.FC<StatScreenProps> = ({
   const countProgress = interpolate(frame, [valueDelay, valueDelay + 30], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
+    easing: Easing.out(Easing.quad),
   });
   const displayValue = isNumeric ? Math.round(numericValue * countProgress).toString() : value;
 
@@ -170,7 +171,7 @@ export const StatScreen: React.FC<StatScreenProps> = ({
                   border: `1px solid ${accentColor}28`,
                   borderRadius: theme.radius.pill,
                   padding: '4px 14px',
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: theme.font.numeric,
                   textTransform: 'uppercase' as const,
                   letterSpacing: '0.04em',
                 }}
