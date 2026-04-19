@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install build run run-force regen-scene run-tts-only render-scene record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
+.PHONY: help install build run run-force regen-scene run-tts-only run-render-only render-scene record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
         sync-playwright save-auth validate-schema
 
 # 기본 변수 설정
@@ -32,6 +32,7 @@ help:
 	@echo "make regen-scene LECTURE=xxx SCENE=5       - 특정 씬만 빠르게 재생성"
 	@echo "make regen-scene LECTURE=xxx SCENE='5 12'  - 여러 씬 동시 재생성"
 	@echo "make run-tts-only LECTURE=xxx SCENE='1 2 3' - 지정 씬 TTS만 재생성 + 미리 듣기 파일 생성"
+	@echo "make run-render-only LECTURE=xxx      - TTS/캡처 제외하고 전체 씬 렌더링 & 클립 병합만 재실행"
 	@echo "make render-scene LECTURE=xxx SCENE=5      - 특정 씬 클립만 렌더링"
 	@echo "make render-scene LECTURE=xxx SCENE='5 12' - 여러 씬 클립 렌더링"
 	@echo "make record-webm LECTURE=xxx SCENE=17      - 특정 Playwright 씬 webm 재생성"
@@ -82,6 +83,10 @@ run-tts-only:
 		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene.alignment.json; \
 	done
 	env TTS_ONLY=1 TARGET_SCENES="$(SCENE)" $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
+
+run-render-only:
+	@echo "🎞️ 사전 준비(TTS, 캡처) 건너뛰고 렌더링 & 병합 시퀀스 실행: $(LECTURE)"
+	env RENDER_ONLY=1 $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
 render-scene:
 	@echo "🎞️  씬 클립 렌더링: $(LECTURE) / Scene $(SCENE)"

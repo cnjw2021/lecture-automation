@@ -22,6 +22,7 @@ async function runAutomation(jsonFileName: string) {
   const forceRegenerate = process.env.FORCE === '1';
   const useSynthCapture = process.env.SYNTH === '1';
   const ttsOnly = process.env.TTS_ONLY === '1';
+  const renderOnly = process.env.RENDER_ONLY === '1';
   const targetSceneIds = parseTargetSceneIds(process.env.TARGET_SCENES);
 
   if (forceRegenerate) {
@@ -32,6 +33,9 @@ async function runAutomation(jsonFileName: string) {
   }
   if (ttsOnly) {
     console.log('🔊 TTS_ONLY 모드 활성화 - TTS 생성 후 중단');
+  }
+  if (renderOnly) {
+    console.log('🎞️ RENDER_ONLY 모드 활성화 - 렌더링 전 단계 생략');
   }
   if (targetSceneIds.length > 0) {
     console.log(`🎯 대상 씬 제한 모드 활성화 - Scene ${targetSceneIds.join(', ')}`);
@@ -50,6 +54,7 @@ async function runAutomation(jsonFileName: string) {
       forceRegenerate,
       useSynthCapture,
       ttsOnly,
+      renderOnly,
       targetSceneIds: targetSceneIds.length > 0 ? targetSceneIds : undefined,
       persistLecture: async updatedLecture => {
         await fs.writeJson(lecturePath, updatedLecture, { spaces: 2 });
