@@ -77,6 +77,14 @@ export const theme = {
     success: t.infographic.success as string,
     warning: t.infographic.warning as string,
     danger: t.infographic.danger as string,
+    info: t.infographic.info as string,
+    chartPalette: t.infographic.chartPalette as string[],
+  },
+  font: {
+    /** Inter + Noto Sans JP 조합 — 일본어/영숫자 혼재 영역에 사용 */
+    base: "'Inter', 'Noto Sans JP', sans-serif",
+    /** Inter 단독 — 순수 숫자·라틴 전용 영역 (metric, 차트 레이블 등) */
+    numeric: "'Inter', sans-serif",
   },
 } as const;
 

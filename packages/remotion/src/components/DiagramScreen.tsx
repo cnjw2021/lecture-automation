@@ -1,7 +1,10 @@
+import { useId } from 'react';
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
-import { theme } from '../theme';
+import { theme, typographyStyle } from '../theme';
 import { NodeIcon } from './NodeIcon';
 import { getAnimConfig, resolveSpring, type DiagramScreenAnim } from '../animation';
+import { SectionEyebrow, MetricBadge, DecorativeBackdrop } from './shared';
+import type { BackdropVariant } from './shared';
 
 interface DiagramNode {
   id: string;
@@ -10,6 +13,7 @@ interface DiagramNode {
   y: number;
   color?: string;
   icon?: string;
+  emphasis?: boolean;
 }
 
 interface DiagramEdge {
@@ -22,56 +26,122 @@ interface DiagramScreenProps {
   title?: string;
   nodes: DiagramNode[];
   edges: DiagramEdge[];
+  eyebrow?: string;
+  badge?: string;
+  metric?: string;
+  caption?: string;
+  backdropVariant?: BackdropVariant;
+  subtitle?: string;
+  footnote?: string;
   animation?: Partial<Record<keyof DiagramScreenAnim, Record<string, unknown>>>;
 }
 
 const NODE_MIN_WIDTH = 220;
-const NODE_CHAR_WIDTH = 28;
-const NODE_PADDING_X = 60;
-const NODE_HEIGHT = 150;
-const ICON_BG_SIZE = 72;
-const ICON_SIZE = 48;
+const NODE_CHAR_WIDTH = 26;
+const NODE_PADDING_X = 64;
+const NODE_HEIGHT = 148;
+const ICON_BG_SIZE = 68;
+const ICON_SIZE = 44;
 
-const getNodeWidth = (label: string): number => {
-  return Math.max(NODE_MIN_WIDTH, label.length * NODE_CHAR_WIDTH + NODE_PADDING_X);
-};
+const getNodeWidth = (label: string): number =>
+  Math.max(NODE_MIN_WIDTH, label.length * NODE_CHAR_WIDTH + NODE_PADDING_X);
 
-export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edges, animation }) => {
+export const DiagramScreen: React.FC<DiagramScreenProps> = ({
+  title,
+  nodes,
+  edges,
+  eyebrow,
+  badge,
+  metric,
+  caption,
+  backdropVariant,
+  subtitle,
+  footnote,
+  animation,
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const a = getAnimConfig<DiagramScreenAnim>('DiagramScreen', animation);
+  const arrowId = useId();
 
-  // Title animation
-  const titleSpring = spring({
-    frame,
-    fps,
-    config: resolveSpring(a.title.spring),
-  });
+  const titleSpring = spring({ frame, fps, config: resolveSpring(a.title.spring) });
   const titleOpacity = interpolate(titleSpring, [0, 1], [0, 1]);
   const titleY = interpolate(titleSpring, [0, 1], [a.title.distance?.y ?? 30, 0]);
 
-  // Node/edge timing from config
   const nodeBaseDelay = (a.node.baseDelay as number) ?? 18;
   const nodeInterval = a.node.staggerInterval ?? 16;
   const edgeExtraDelay = a.edge.extraDelay ?? 10;
   const edgeDrawDuration = a.edge.drawDuration ?? 25;
   const nodeScaleRange = a.node.scale ?? [0, 1];
 
-  // Build node position map with computed widths for edge drawing
   const nodeMap = new Map(nodes.map((n) => [n.id, { ...n, width: getNodeWidth(n.label) }]));
 
+  const captionSpec = typographyStyle('caption');
+  const headlineSpec = typographyStyle('headline');
+  const hasHeader = !!(eyebrow || title || badge || metric || subtitle);
+  const topOffset = hasHeader ? 160 : 80;
+
   return (
-    <AbsoluteFill
-      style={{
-        background: theme.bg.primary,
-      }}
-    >
-      {/* Title */}
-      {title && (
+    <AbsoluteFill style={{ background: theme.bg.primary, overflow: 'hidden' }}>
+      {backdropVariant && (
+        <DecorativeBackdrop variant={backdropVariant} color={theme.color.accent} opacity={0.05} />
+      )}
+
+      {/* Header */}
+      {hasHeader && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 44,
+            left: 0,
+            right: 0,
+            textAlign: 'center',
+            opacity: titleOpacity,
+            transform: `translateY(${titleY}px)`,
+            padding: '0 120px',
+          }}
+        >
+          {eyebrow && <SectionEyebrow text={eyebrow} style={{ textAlign: 'center' }} />}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+            {title && (
+              <h1 style={{ ...headlineSpec, color: theme.color.textPrimary, margin: 0 }}>{title}</h1>
+            )}
+            {badge && (
+              <span
+                style={{
+                  fontSize: 17,
+                  fontWeight: 700,
+                  color: theme.infographic.badgeText,
+                  background: theme.infographic.badgeBg,
+                  border: `1px solid ${theme.infographic.panelBorder}`,
+                  borderRadius: theme.radius.pill,
+                  padding: '4px 14px',
+                  fontFamily: theme.font.numeric,
+                  textTransform: 'uppercase' as const,
+                  letterSpacing: '0.04em',
+                }}
+              >
+                {badge}
+              </span>
+            )}
+            {metric && (
+              <MetricBadge value={metric} color={theme.color.accent} size="sm" animate />
+            )}
+          </div>
+          {subtitle && (
+            <p style={{ ...captionSpec, color: theme.color.textSecondary, marginTop: 8, fontWeight: 400 }}>
+              {subtitle}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Fallback simple title */}
+      {!hasHeader && title && (
         <h1
           style={{
             position: 'absolute',
-            top: 56,
+            top: 44,
             left: 0,
             right: 0,
             textAlign: 'center',
@@ -80,7 +150,6 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
             color: theme.color.textPrimary,
             opacity: titleOpacity,
             transform: `translateY(${titleY}px)`,
-            letterSpacing: '0.02em',
           }}
         >
           {title}
@@ -91,26 +160,19 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
       <div
         style={{
           position: 'absolute',
-          top: title ? 160 : 80,
-          left: 100,
-          right: 100,
-          bottom: 60,
+          top: topOffset,
+          left: 80,
+          right: 80,
+          bottom: caption || footnote ? 80 : 60,
         }}
       >
-        {/* SVG layer for edges */}
+        {/* SVG edges */}
         <svg
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            overflow: 'visible',
-          }}
+          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', overflow: 'visible' }}
         >
           <defs>
             <marker
-              id="arrowhead"
+              id={`arrowhead-${arrowId}`}
               markerWidth="12"
               markerHeight="8"
               refX="10"
@@ -118,20 +180,10 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
               orient="auto"
               markerUnits="userSpaceOnUse"
             >
-              <path
-                d="M 0 0 L 12 4 L 0 8 L 3 4 Z"
-                fill={theme.color.accent}
-                opacity={0.7}
-              />
+              <path d="M 0 0 L 12 4 L 0 8 L 3 4 Z" fill={theme.infographic.connector} opacity={0.8} />
             </marker>
-            <filter id="edgeGlow">
-              <feGaussianBlur stdDeviation="2" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
           </defs>
+
           {edges.map((edge, i) => {
             const fromNode = nodeMap.get(edge.from);
             const toNode = nodeMap.get(edge.to);
@@ -139,10 +191,12 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
 
             const fromIndex = nodes.findIndex((n) => n.id === edge.from);
             const edgeDelay = nodeBaseDelay + fromIndex * nodeInterval + edgeExtraDelay;
-            const edgeProgress = interpolate(frame, [edgeDelay, edgeDelay + edgeDrawDuration], [0, 1], {
-              extrapolateLeft: 'clamp',
-              extrapolateRight: 'clamp',
-            });
+            const edgeProgress = interpolate(
+              frame,
+              [edgeDelay, edgeDelay + edgeDrawDuration],
+              [0, 1],
+              { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+            );
 
             const x1 = fromNode.x;
             const y1 = fromNode.y;
@@ -155,21 +209,18 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
             const ux = dx / len;
             const uy = dy / len;
 
-            const fromWidth = fromNode.width || NODE_MIN_WIDTH;
-            const toWidth = toNode.width || NODE_MIN_WIDTH;
-            const fromOffset = fromWidth / 2 + 10;
-            const toOffset = toWidth / 2 + 10;
-            const sx = x1 + ux * fromOffset;
-            const sy = y1 + uy * fromOffset;
-            const ex = x2 - ux * toOffset;
-            const ey = y2 - uy * toOffset;
+            const fromWidth = (fromNode.width || NODE_MIN_WIDTH) / 2 + 10;
+            const toWidth = (toNode.width || NODE_MIN_WIDTH) / 2 + 10;
+            const sx = x1 + ux * fromWidth;
+            const sy = y1 + uy * fromWidth;
+            const ex = x2 - ux * toWidth;
+            const ey = y2 - uy * toWidth;
 
             const perpX = -uy;
             const perpY = ux;
             const curvature = Math.min(len * 0.12, 40);
             const cpX = (sx + ex) / 2 + perpX * curvature;
             const cpY = (sy + ey) / 2 + perpY * curvature;
-
             const labelX = (sx + 2 * cpX + ex) / 4;
             const labelY = (sy + 2 * cpY + ey) / 4 - 18;
 
@@ -178,31 +229,36 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
             const dashOffset = approxLen * (1 - edgeProgress);
 
             return (
-              <g key={i} opacity={interpolate(edgeProgress, [0, 0.05], [0, 1], { extrapolateRight: 'clamp' })}>
+              <g
+                key={i}
+                opacity={interpolate(edgeProgress, [0, 0.05], [0, 1], { extrapolateRight: 'clamp' })}
+              >
                 <path
                   d={pathD}
                   fill="none"
                   stroke={theme.color.edgeShadow}
-                  strokeWidth={8}
+                  strokeWidth={7}
                   strokeLinecap="round"
                 />
                 <path
                   d={pathD}
                   fill="none"
-                  stroke={theme.color.accent}
+                  stroke={theme.infographic.connector}
                   strokeWidth={2.5}
                   strokeLinecap="round"
                   strokeDasharray={approxLen}
                   strokeDashoffset={dashOffset}
-                  opacity={0.6}
-                  markerEnd="url(#arrowhead)"
+                  opacity={0.75}
+                  markerEnd={`url(#arrowhead-${arrowId})`}
                 />
 
                 {edge.label && edgeProgress > 0.5 && (
-                  <g opacity={interpolate(edgeProgress, [0.5, 0.8], [0, 1], {
-                    extrapolateLeft: 'clamp',
-                    extrapolateRight: 'clamp',
-                  })}>
+                  <g
+                    opacity={interpolate(edgeProgress, [0.5, 0.8], [0, 1], {
+                      extrapolateLeft: 'clamp',
+                      extrapolateRight: 'clamp',
+                    })}
+                  >
                     <rect
                       x={labelX - edge.label.length * 7 - 10}
                       y={labelY - 16}
@@ -217,10 +273,10 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
                       x={labelX}
                       y={labelY + 4}
                       textAnchor="middle"
-                      fill={theme.color.accent}
-                      fontSize={18}
+                      fill={theme.infographic.connector}
+                      fontSize={17}
                       fontWeight={600}
-                      fontFamily="system-ui, -apple-system, sans-serif"
+                      fontFamily={theme.font.numeric}
                     >
                       {edge.label}
                     </text>
@@ -243,6 +299,8 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
           const nodeOpacity = interpolate(nodeSpring, [0, 1], [0, 1]);
           const nodeColor = node.color || theme.color.accent;
           const nodeWidth = getNodeWidth(node.label);
+          const isEmphasis = node.emphasis;
+          const iconVariant = isEmphasis ? 'highlighted' : 'lucide-muted';
 
           return (
             <div
@@ -256,18 +314,19 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                background: theme.color.nodeBackground,
-                border: `1.5px solid ${nodeColor}30`,
+                background: isEmphasis
+                  ? `linear-gradient(160deg, ${nodeColor}22 0%, ${theme.infographic.panelBgStrong} 100%)`
+                  : theme.infographic.panelBgStrong,
+                border: `1px solid ${nodeColor}${isEmphasis ? '50' : '28'}`,
                 borderTop: `4px solid ${nodeColor}`,
-                borderRadius: 20,
-                padding: '24px 20px 20px',
+                borderRadius: theme.radius.card,
+                padding: '22px 18px 18px',
                 opacity: nodeOpacity,
                 transform: `scale(${nodeScale})`,
-                boxShadow: theme.color.nodeShadow,
+                boxShadow: isEmphasis ? theme.elevation.raised : theme.elevation.subtle,
                 overflow: 'hidden',
               }}
             >
-              {/* Step badge */}
               <div
                 style={{
                   position: 'absolute',
@@ -278,37 +337,40 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
                   color: nodeColor,
                   opacity: 0.7,
                   letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
+                  textTransform: 'uppercase' as const,
+                  fontFamily: theme.font.numeric,
                 }}
               >
-                STEP {i + 1}
+                {i + 1}
               </div>
 
-              {/* Icon with circle background */}
               {node.icon && (
-                <div style={{
-                  marginTop: 10,
-                  marginBottom: 14,
-                  width: ICON_BG_SIZE,
-                  height: ICON_BG_SIZE,
-                  borderRadius: '50%',
-                  background: `${nodeColor}15`,
-                  border: `1.5px solid ${nodeColor}25`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  <NodeIcon icon={node.icon} size={ICON_SIZE} />
+                <div
+                  style={{
+                    marginTop: 8,
+                    marginBottom: 12,
+                    width: ICON_BG_SIZE,
+                    height: ICON_BG_SIZE,
+                    borderRadius: isEmphasis ? theme.radius.card : '50%',
+                    background: isEmphasis ? nodeColor : `${nodeColor}16`,
+                    border: `1.5px solid ${isEmphasis ? nodeColor : `${nodeColor}28`}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: isEmphasis ? theme.elevation.raised : theme.elevation.subtle,
+                  }}
+                >
+                  <NodeIcon icon={node.icon} size={ICON_SIZE} variant={iconVariant} color={isEmphasis ? undefined : nodeColor} />
                 </div>
               )}
+
               <span
                 style={{
-                  fontSize: 24,
+                  fontSize: 23,
                   fontWeight: 700,
                   color: theme.color.textPrimary,
                   textAlign: 'center',
                   lineHeight: 1.35,
-                  letterSpacing: '0.01em',
                 }}
               >
                 {node.label}
@@ -317,6 +379,31 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({ title, nodes, edge
           );
         })}
       </div>
+
+      {/* Caption / Footnote */}
+      {(caption || footnote) && (
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 20,
+            left: 120,
+            right: 120,
+            borderTop: `1px solid ${theme.infographic.panelBorder}`,
+            paddingTop: 10,
+            opacity: titleOpacity,
+            textAlign: 'center',
+          }}
+        >
+          {caption && (
+            <p style={{ ...captionSpec, color: theme.color.textMuted, margin: 0 }}>{caption}</p>
+          )}
+          {footnote && (
+            <p style={{ fontSize: 18, color: theme.color.textMuted, margin: '4px 0 0', fontStyle: 'italic' }}>
+              {footnote}
+            </p>
+          )}
+        </div>
+      )}
     </AbsoluteFill>
   );
 };

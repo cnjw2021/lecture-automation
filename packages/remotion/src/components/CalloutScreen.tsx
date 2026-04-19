@@ -1,8 +1,15 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
-import { theme } from '../theme';
+import { theme, typographyStyle } from '../theme';
 import { NodeIcon } from './NodeIcon';
 import { getAnimConfig, resolveSpring } from '../animation';
 import type { ElementAnim } from '../animation';
+import {
+  SectionEyebrow,
+  MetricBadge,
+  DecorativeBackdrop,
+  IllustrationPanel,
+} from './shared';
+import type { BackdropVariant } from './shared';
 
 type CalloutType = 'tip' | 'warning' | 'info' | 'error';
 
@@ -11,6 +18,13 @@ interface CalloutScreenProps {
   title: string;
   body: string;
   icon?: string;
+  eyebrow?: string;
+  badge?: string;
+  metric?: string;
+  caption?: string;
+  illustration?: string;
+  backdropVariant?: BackdropVariant;
+  footnote?: string;
   animation?: Record<string, Partial<ElementAnim>>;
 }
 
@@ -20,10 +34,10 @@ interface CalloutScreenAnim {
 }
 
 const CALLOUT_STYLES: Record<CalloutType, { color: string; defaultIcon: string; label: string }> = {
-  tip: { color: '#22c55e', defaultIcon: '💡', label: 'TIP' },
-  warning: { color: '#f59e0b', defaultIcon: '⚠️', label: 'WARNING' },
-  info: { color: '#3b82f6', defaultIcon: 'ℹ️', label: 'INFO' },
-  error: { color: '#ef4444', defaultIcon: '🚫', label: 'ERROR' },
+  tip: { color: theme.infographic.success, defaultIcon: '💡', label: 'TIP' },
+  warning: { color: theme.infographic.warning, defaultIcon: '⚠️', label: 'WARNING' },
+  info: { color: theme.infographic.info, defaultIcon: 'ℹ️', label: 'INFO' },
+  error: { color: theme.infographic.danger, defaultIcon: '🚫', label: 'ERROR' },
 };
 
 export const CalloutScreen: React.FC<CalloutScreenProps> = ({
@@ -31,38 +45,80 @@ export const CalloutScreen: React.FC<CalloutScreenProps> = ({
   title,
   body,
   icon,
+  eyebrow,
+  badge,
+  metric,
+  caption,
+  illustration,
+  backdropVariant,
+  footnote,
   animation,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const a = getAnimConfig<CalloutScreenAnim>('CalloutScreen', animation);
 
-  const style = CALLOUT_STYLES[type];
-  const displayIcon = icon || style.defaultIcon;
+  const callout = CALLOUT_STYLES[type];
+  const displayIcon = icon || callout.defaultIcon;
 
   const cardSpring = spring({ frame, fps, config: resolveSpring(a.card?.spring) });
   const cardOpacity = interpolate(cardSpring, [0, 1], [0, 1]);
   const cardScale = interpolate(cardSpring, [0, 1], [0.92, 1]);
 
   const txtDelay = a.text?.delay ?? 12;
-  const txtSpring = spring({ frame: Math.max(0, frame - txtDelay), fps, config: resolveSpring(a.text?.spring) });
+  const txtSpring = spring({
+    frame: Math.max(0, frame - txtDelay),
+    fps,
+    config: resolveSpring(a.text?.spring),
+  });
   const txtOpacity = interpolate(txtSpring, [0, 1], [0, 1]);
+  const txtY = interpolate(txtSpring, [0, 1], [20, 0]);
+
+  const titleSpec = typographyStyle('title');
+  const bodySpec = typographyStyle('body');
+  const captionSpec = typographyStyle('caption');
 
   return (
-    <AbsoluteFill style={{ background: theme.bg.primary, justifyContent: 'center', alignItems: 'center', padding: '0 160px' }}>
-      {/* Background glow */}
-      <div style={{ position: 'absolute', width: 800, height: 400, borderRadius: '50%', background: `radial-gradient(ellipse, ${style.color}08 0%, transparent 70%)` }} />
+    <AbsoluteFill
+      style={{
+        background: theme.bg.primary,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: '0 160px',
+        overflow: 'hidden',
+      }}
+    >
+      {backdropVariant && (
+        <DecorativeBackdrop variant={backdropVariant} color={callout.color} opacity={0.055} />
+      )}
+
+      {/* Ambient glow */}
+      <div
+        style={{
+          position: 'absolute',
+          width: 900,
+          height: 450,
+          borderRadius: '50%',
+          background: `radial-gradient(ellipse, ${callout.color}0a 0%, transparent 70%)`,
+          pointerEvents: 'none',
+        }}
+      />
+
+      {illustration && (
+        <IllustrationPanel src={illustration} layout="behind" size={480} />
+      )}
 
       <div
         style={{
           position: 'relative',
           width: '100%',
-          maxWidth: 1200,
-          padding: '52px 60px',
-          borderRadius: 24,
-          background: theme.color.nodeBackground,
-          boxShadow: theme.color.nodeShadow,
-          borderLeft: `6px solid ${style.color}`,
+          maxWidth: 1260,
+          padding: '56px 64px',
+          borderRadius: theme.radius.panel,
+          background: theme.infographic.panelBgStrong,
+          border: `1px solid ${theme.infographic.panelBorderStrong}`,
+          borderLeft: `6px solid ${callout.color}`,
+          boxShadow: theme.elevation.floating,
           opacity: cardOpacity,
           transform: `scale(${cardScale})`,
         }}
@@ -72,44 +128,132 @@ export const CalloutScreen: React.FC<CalloutScreenProps> = ({
           style={{
             position: 'absolute',
             top: -14,
-            left: 40,
-            padding: '4px 16px',
-            borderRadius: 20,
-            background: style.color,
-            fontSize: 14,
-            fontWeight: 700,
-            color: '#fff',
+            left: 48,
+            padding: '4px 18px',
+            borderRadius: theme.radius.pill,
+            background: callout.color,
+            fontSize: 13,
+            fontWeight: 800,
             letterSpacing: '0.1em',
+            color: '#fff',
+            textTransform: 'uppercase' as const,
+            fontFamily: theme.font.numeric,
           }}
         >
-          {style.label}
+          {callout.label}
         </div>
 
-        <div style={{ opacity: txtOpacity }}>
-          {/* Title row: icon + title aligned center */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
-            <div
-              style={{
-                width: 72,
-                height: 72,
-                borderRadius: '50%',
-                background: `${style.color}15`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}
-            >
-              <NodeIcon icon={displayIcon} size={40} variant="lucide-accent" color={style.color} />
-            </div>
-            <h2 style={{ fontSize: 40, fontWeight: 700, color: theme.color.textPrimary, margin: 0, lineHeight: 1.3 }}>
-              {title}
-            </h2>
+        {/* Eyebrow */}
+        {eyebrow && (
+          <div
+            style={{ marginBottom: 12, opacity: txtOpacity, transform: `translateY(${txtY}px)` }}
+          >
+            <SectionEyebrow text={eyebrow} color={callout.color} />
           </div>
-          <p style={{ fontSize: 30, color: theme.color.textSecondary, lineHeight: 1.7, margin: '16px 0 0', paddingLeft: 100 }}>
-            {body}
-          </p>
+        )}
+
+        {/* Title row: icon + title + badge/metric */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 28,
+            marginBottom: 24,
+            opacity: cardOpacity,
+          }}
+        >
+          <div
+            style={{
+              width: 72,
+              height: 72,
+              borderRadius: theme.radius.card,
+              background: `${callout.color}18`,
+              border: `1.5px solid ${callout.color}30`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              boxShadow: theme.elevation.subtle,
+            }}
+          >
+            <NodeIcon icon={displayIcon} size={40} variant="lucide-accent" color={callout.color} />
+          </div>
+
+          <h2 style={{ ...titleSpec, color: theme.color.textPrimary, margin: 0, flex: 1 }}>
+            {title}
+          </h2>
+
+          {(badge || metric) && (
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexShrink: 0 }}>
+              {badge && (
+                <span
+                  style={{
+                    fontSize: 17,
+                    fontWeight: 700,
+                    color: theme.infographic.badgeText,
+                    background: theme.infographic.badgeBg,
+                    border: `1px solid ${callout.color}28`,
+                    borderRadius: theme.radius.pill,
+                    padding: '4px 14px',
+                    fontFamily: theme.font.numeric,
+                    textTransform: 'uppercase' as const,
+                    letterSpacing: '0.04em',
+                  }}
+                >
+                  {badge}
+                </span>
+              )}
+              {metric && <MetricBadge value={metric} color={callout.color} size="sm" />}
+            </div>
+          )}
         </div>
+
+        {/* Body */}
+        <p
+          style={{
+            ...bodySpec,
+            color: theme.color.textSecondary,
+            lineHeight: 1.65,
+            margin: 0,
+            paddingLeft: 100,
+            opacity: txtOpacity,
+            transform: `translateY(${txtY}px)`,
+          }}
+        >
+          {body}
+        </p>
+
+        {/* Caption */}
+        {caption && (
+          <p
+            style={{
+              ...captionSpec,
+              color: theme.color.textMuted,
+              marginTop: 16,
+              paddingLeft: 100,
+              opacity: txtOpacity,
+            }}
+          >
+            {caption}
+          </p>
+        )}
+
+        {/* Footnote */}
+        {footnote && (
+          <p
+            style={{
+              fontSize: 18,
+              color: theme.color.textMuted,
+              marginTop: 20,
+              borderTop: `1px solid ${theme.infographic.panelBorder}`,
+              paddingTop: 16,
+              opacity: txtOpacity,
+              fontStyle: 'italic',
+            }}
+          >
+            {footnote}
+          </p>
+        )}
       </div>
     </AbsoluteFill>
   );

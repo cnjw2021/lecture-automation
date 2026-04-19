@@ -1,6 +1,8 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
-import { theme } from '../theme';
+import { theme, typographyStyle } from '../theme';
 import { getAnimConfig, resolveSpring, type ComparisonScreenAnim } from '../animation';
+import { SectionEyebrow, MetricBadge, InfographicPanel, DecorativeBackdrop } from './shared';
+import type { BackdropVariant } from './shared';
 
 interface Side {
   title: string;
@@ -12,6 +14,13 @@ interface ComparisonScreenProps {
   left: Side;
   right: Side;
   vsLabel?: string;
+  eyebrow?: string;
+  badge?: string;
+  metric?: string;
+  caption?: string;
+  backdropVariant?: BackdropVariant;
+  subtitle?: string;
+  footnote?: string;
   animation?: Partial<Record<keyof ComparisonScreenAnim, Record<string, unknown>>>;
 }
 
@@ -19,22 +28,23 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({
   left,
   right,
   vsLabel = 'VS',
+  eyebrow,
+  badge,
+  metric,
+  caption,
+  backdropVariant,
+  subtitle,
+  footnote,
   animation,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const a = getAnimConfig<ComparisonScreenAnim>('ComparisonScreen', animation);
 
-  // Left panel slides in from left
-  const leftSpring = spring({
-    frame,
-    fps,
-    config: resolveSpring(a.left.spring),
-  });
+  const leftSpring = spring({ frame, fps, config: resolveSpring(a.left.spring) });
   const leftX = interpolate(leftSpring, [0, 1], [a.left.distance?.x ?? -120, 0]);
   const leftOpacity = interpolate(leftSpring, [0, 1], [0, 1]);
 
-  // Right panel slides in from right
   const rightSpring = spring({
     frame: Math.max(0, frame - (a.right.delay ?? 8)),
     fps,
@@ -43,7 +53,6 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({
   const rightX = interpolate(rightSpring, [0, 1], [a.right.distance?.x ?? 120, 0]);
   const rightOpacity = interpolate(rightSpring, [0, 1], [0, 1]);
 
-  // VS label pops in
   const vsSpring = spring({
     frame: Math.max(0, frame - (a.vs.delay ?? 15)),
     fps,
@@ -52,50 +61,57 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({
   const vsScaleRange = a.vs.scale ?? [0, 1];
   const vsScale = interpolate(vsSpring, [0, 1], vsScaleRange);
 
-  // Point stagger config
-  const pointBaseDelay = a.point.baseDelay as number[] ?? [20, 28];
+  const pointBaseDelay = (a.point.baseDelay as number[]) ?? [20, 28];
   const pointInterval = a.point.staggerInterval ?? 15;
+
+  const headlineSpring = spring({ frame, fps, config: resolveSpring(a.left.spring) });
+  const headerOpacity = interpolate(headlineSpring, [0, 1], [0, 1]);
+
+  const captionSpec = typographyStyle('caption');
+
+  const hasHeader = !!(eyebrow || badge || metric || subtitle);
 
   const renderSide = (side: Side, index: number) => {
     const isLeft = index === 0;
     const sideColor = side.color || (isLeft ? theme.color.accent : theme.color.accentSecondary);
 
     return (
-      <div
+      <InfographicPanel
+        variant="strong"
+        borderAccent={sideColor}
+        borderPosition="top"
         style={{
           flex: 1,
-          padding: '60px 50px',
+          padding: '44px 40px',
           display: 'flex',
           flexDirection: 'column',
+          height: '100%',
         }}
       >
-        {/* Side title */}
         <h2
           style={{
-            fontSize: 52,
+            fontSize: 44,
             fontWeight: 800,
             color: sideColor,
-            marginBottom: 40,
+            marginBottom: 28,
             textAlign: 'center',
           }}
         >
           {side.title}
         </h2>
 
-        {/* Divider line */}
         <div
           style={{
-            width: 80,
+            width: 72,
             height: 3,
             background: sideColor,
-            margin: '0 auto 36px',
+            margin: '0 auto 28px',
             borderRadius: 2,
             opacity: 0.6,
           }}
         />
 
-        {/* Points with stagger */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {side.points.map((point, i) => {
             const baseDelay = isLeft ? pointBaseDelay[0] : pointBaseDelay[1];
             const pointDelay = baseDelay + i * pointInterval;
@@ -112,7 +128,7 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({
                 style={{
                   display: 'flex',
                   alignItems: 'flex-start',
-                  gap: 16,
+                  gap: 14,
                   opacity: pointOpacity,
                 }}
               >
@@ -122,40 +138,84 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({
                     height: 10,
                     borderRadius: '50%',
                     background: sideColor,
-                    marginTop: 16,
+                    marginTop: 14,
                     opacity: 0.7,
+                    flexShrink: 0,
                   }}
                 />
-                <span
-                  style={{
-                    fontSize: 34,
-                    color: theme.color.textPrimary,
-                    lineHeight: 1.5,
-                  }}
-                >
+                <span style={{ fontSize: 30, color: theme.color.textPrimary, lineHeight: 1.5 }}>
                   {point}
                 </span>
               </div>
             );
           })}
         </div>
-      </div>
+      </InfographicPanel>
     );
   };
 
   return (
     <AbsoluteFill
-      style={{
-        background: theme.bg.primary,
-      }}
+      style={{ background: theme.bg.primary, overflow: 'hidden' }}
     >
+      {backdropVariant && (
+        <DecorativeBackdrop variant={backdropVariant} color={theme.color.accent} opacity={0.055} />
+      )}
+
+      {/* Top header */}
+      {hasHeader && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 40,
+            left: 0,
+            right: 0,
+            textAlign: 'center',
+            opacity: headerOpacity,
+            padding: '0 120px',
+            zIndex: 1,
+          }}
+        >
+          {eyebrow && <SectionEyebrow text={eyebrow} style={{ textAlign: 'center' }} />}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+            {badge && (
+              <span
+                style={{
+                  fontSize: 17,
+                  fontWeight: 700,
+                  color: theme.infographic.badgeText,
+                  background: theme.infographic.badgeBg,
+                  border: `1px solid ${theme.infographic.panelBorder}`,
+                  borderRadius: theme.radius.pill,
+                  padding: '4px 14px',
+                  fontFamily: theme.font.numeric,
+                  textTransform: 'uppercase' as const,
+                  letterSpacing: '0.04em',
+                }}
+              >
+                {badge}
+              </span>
+            )}
+            {metric && (
+              <MetricBadge value={metric} color={theme.color.accent} size="sm" animate />
+            )}
+          </div>
+          {subtitle && (
+            <p style={{ ...captionSpec, color: theme.color.textSecondary, marginTop: 6, fontWeight: 400 }}>
+              {subtitle}
+            </p>
+          )}
+        </div>
+      )}
+
       <div
         style={{
           display: 'flex',
           width: '100%',
           height: '100%',
           alignItems: 'center',
-          position: 'relative',
+          padding: `${hasHeader ? 120 : 60}px 60px 60px`,
+          gap: 0,
         }}
       >
         {/* Left side */}
@@ -178,31 +238,34 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: 20,
+            gap: 16,
             zIndex: 2,
+            flexShrink: 0,
           }}
         >
           <div
             style={{
               width: 2,
-              height: 200,
-              background: theme.color.divider,
+              height: 160,
+              background: theme.infographic.panelBorderStrong,
             }}
           />
           <div
             style={{
-              width: 80,
-              height: 80,
+              width: 76,
+              height: 76,
               borderRadius: '50%',
-              background: theme.color.surface,
-              border: `2px solid ${theme.color.surfaceBorder}`,
+              background: theme.infographic.panelBg,
+              border: `2px solid ${theme.infographic.panelBorderStrong}`,
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              fontSize: 28,
+              fontSize: 26,
               fontWeight: 800,
               color: theme.color.textPrimary,
               transform: `scale(${vsScale})`,
+              boxShadow: theme.elevation.raised,
+              fontFamily: theme.font.numeric,
             }}
           >
             {vsLabel}
@@ -210,8 +273,8 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({
           <div
             style={{
               width: 2,
-              height: 200,
-              background: theme.color.divider,
+              height: 160,
+              background: theme.infographic.panelBorderStrong,
             }}
           />
         </div>
@@ -230,6 +293,31 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({
           {renderSide(right, 1)}
         </div>
       </div>
+
+      {/* Footnote / Caption */}
+      {(caption || footnote) && (
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 40,
+            left: 120,
+            right: 120,
+            borderTop: `1px solid ${theme.infographic.panelBorder}`,
+            paddingTop: 12,
+            opacity: headerOpacity,
+            textAlign: 'center',
+          }}
+        >
+          {caption && (
+            <p style={{ ...captionSpec, color: theme.color.textMuted, margin: 0 }}>{caption}</p>
+          )}
+          {footnote && (
+            <p style={{ fontSize: 18, color: theme.color.textMuted, margin: '6px 0 0', fontStyle: 'italic' }}>
+              {footnote}
+            </p>
+          )}
+        </div>
+      )}
     </AbsoluteFill>
   );
 };

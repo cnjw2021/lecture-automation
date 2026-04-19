@@ -1,34 +1,38 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
-import { theme } from '../theme';
+import { theme, typographyStyle } from '../theme';
 import { getAnimConfig, resolveSpring, type TitleScreenAnim } from '../animation';
+import { DecorativeBackdrop, IllustrationPanel } from './shared';
+import type { BackdropVariant } from './shared';
 
 interface TitleScreenProps {
   title?: string;
   main?: string;
   sub?: string;
+  illustration?: string;
+  backdropVariant?: BackdropVariant;
   animation?: Partial<Record<keyof TitleScreenAnim, Record<string, unknown>>>;
 }
 
-export const TitleScreen: React.FC<TitleScreenProps> = ({ title, main, sub, animation }) => {
+export const TitleScreen: React.FC<TitleScreenProps> = ({
+  title,
+  main,
+  sub,
+  illustration,
+  backdropVariant,
+  animation,
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const a = getAnimConfig<TitleScreenAnim>('TitleScreen', animation);
 
-  // Background fade-in
   const bgOpacity = interpolate(frame, a.bg.fadeFrames, [0, 1], {
     extrapolateRight: 'clamp',
   });
 
-  // Title spring animation (slide up + fade in)
-  const titleSpring = spring({
-    frame,
-    fps,
-    config: resolveSpring(a.title.spring),
-  });
+  const titleSpring = spring({ frame, fps, config: resolveSpring(a.title.spring) });
   const titleY = interpolate(titleSpring, [0, 1], [a.title.distance?.y ?? 60, 0]);
   const titleOpacity = interpolate(titleSpring, [0, 1], [0, 1]);
 
-  // Subtitle delayed fade-in
   const subDelay = a.sub.delay ?? 18;
   const subSpring = spring({
     frame: Math.max(0, frame - subDelay),
@@ -38,13 +42,14 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ title, main, sub, anim
   const subOpacity = interpolate(subSpring, [0, 1], [0, 1]);
   const subY = interpolate(subSpring, [0, 1], [a.sub.distance?.y ?? 30, 0]);
 
-  // Decorative line animation
   const lineWidth = interpolate(frame, a.line.frames, [0, a.line.width], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
   const displayTitle = title || main || 'Untitled Scene';
+  const titleSpec = typographyStyle('display');
+  const subSpec = typographyStyle('headline');
 
   return (
     <AbsoluteFill
@@ -54,14 +59,24 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ title, main, sub, anim
         alignItems: 'center',
         textAlign: 'center',
         opacity: bgOpacity,
+        overflow: 'hidden',
       }}
     >
-      {/* Subtle glow behind title */}
+      {/* Backdrop decoration */}
+      {backdropVariant && (
+        <DecorativeBackdrop
+          variant={backdropVariant}
+          color={theme.color.accent}
+          opacity={0.06}
+        />
+      )}
+
+      {/* Glow */}
       <div
         style={{
           position: 'absolute',
-          width: 600,
-          height: 600,
+          width: 700,
+          height: 700,
           borderRadius: '50%',
           background: theme.glow.title,
           top: '50%',
@@ -70,13 +85,16 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ title, main, sub, anim
         }}
       />
 
-      <div style={{ position: 'relative', zIndex: 1, padding: '0 120px' }}>
+      {/* Illustration (behind) */}
+      {illustration && (
+        <IllustrationPanel src={illustration} layout="behind" size={560} />
+      )}
+
+      <div style={{ position: 'relative', zIndex: 1, padding: '0 140px' }}>
         <h1
           style={{
-            fontSize: 90,
-            fontWeight: 800,
+            ...titleSpec,
             color: theme.color.textPrimary,
-            lineHeight: 1.2,
             marginBottom: 24,
             opacity: titleOpacity,
             transform: `translateY(${titleY}px)`,
@@ -86,7 +104,6 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ title, main, sub, anim
           {displayTitle}
         </h1>
 
-        {/* Decorative line */}
         <div
           style={{
             width: lineWidth,
@@ -100,7 +117,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ title, main, sub, anim
         {sub && (
           <h2
             style={{
-              fontSize: 44,
+              ...subSpec,
               fontWeight: 400,
               color: theme.color.textSecondary,
               opacity: subOpacity,

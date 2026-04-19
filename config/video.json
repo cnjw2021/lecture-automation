@@ -117,200 +117,633 @@
           "spotlight": "rgba(196,123,90,0.08)",
           "success": "#7BA68C",
           "warning": "#D4A574",
-          "danger": "#C45A5A"
+          "danger": "#C45A5A",
+          "info": "#5B8DB8",
+          "chartPalette": [
+            "#C47B5A",
+            "#7BA68C",
+            "#5B8DB8",
+            "#D4A574",
+            "#C45A5A",
+            "#8B7FB5",
+            "#B5846A",
+            "#6E9FAB"
+          ]
         }
       },
       "animation": {
         "spring": {
-          "default": { "damping": 14, "stiffness": 80, "mass": 0.8 },
-          "bouncy": { "damping": 10, "stiffness": 100, "mass": 0.6 },
-          "gentle": { "damping": 16, "stiffness": 60, "mass": 0.6 },
-          "snappy": { "damping": 10, "stiffness": 120, "mass": 0.5 },
-          "smooth": { "damping": 14, "stiffness": 70, "mass": 0.7 },
-          "emphasis": { "damping": 14, "stiffness": 110, "mass": 0.7 },
-          "sequential": { "damping": 14, "stiffness": 90, "mass": 0.8 },
-          "flow": { "damping": 16, "stiffness": 80, "mass": 0.9 }
+          "default": {
+            "damping": 14,
+            "stiffness": 80,
+            "mass": 0.8
+          },
+          "bouncy": {
+            "damping": 10,
+            "stiffness": 100,
+            "mass": 0.6
+          },
+          "gentle": {
+            "damping": 16,
+            "stiffness": 60,
+            "mass": 0.6
+          },
+          "snappy": {
+            "damping": 10,
+            "stiffness": 120,
+            "mass": 0.5
+          },
+          "smooth": {
+            "damping": 14,
+            "stiffness": 70,
+            "mass": 0.7
+          },
+          "emphasis": {
+            "damping": 14,
+            "stiffness": 110,
+            "mass": 0.7
+          },
+          "sequential": {
+            "damping": 14,
+            "stiffness": 90,
+            "mass": 0.8
+          },
+          "flow": {
+            "damping": 16,
+            "stiffness": 80,
+            "mass": 0.9
+          }
         },
         "semanticPresets": {
           "emphasis": {
-            "spring": { "damping": 14, "stiffness": 110, "mass": 0.7 },
-            "durationMs": [420, 520],
+            "spring": {
+              "damping": 14,
+              "stiffness": 110,
+              "mass": 0.7
+            },
+            "durationMs": [
+              420,
+              520
+            ],
             "staggerMs": null
           },
           "sequential": {
-            "spring": { "damping": 14, "stiffness": 90, "mass": 0.8 },
-            "durationMs": [560, 720],
+            "spring": {
+              "damping": 14,
+              "stiffness": 90,
+              "mass": 0.8
+            },
+            "durationMs": [
+              560,
+              720
+            ],
             "staggerMs": 120
           },
           "flow": {
-            "spring": { "damping": 16, "stiffness": 80, "mass": 0.9 },
-            "durationMs": [650, 800],
+            "spring": {
+              "damping": 16,
+              "stiffness": 80,
+              "mass": 0.9
+            },
+            "durationMs": [
+              650,
+              800
+            ],
             "staggerMs": 100
           }
         },
         "componentPresets": {
-          "TitleScreen": ["emphasis"],
-          "SectionBreakScreen": ["emphasis"],
-          "EndScreen": ["emphasis"],
-          "KeyPointScreen": ["emphasis"],
-          "QuoteScreen": ["emphasis"],
-          "DefinitionScreen": ["emphasis"],
-          "QnAScreen": ["emphasis"],
-          "CalloutScreen": ["emphasis"],
-          "StatScreen": ["emphasis", "flow"],
-          "BulletDetailScreen": ["sequential"],
-          "SummaryScreen": ["sequential"],
-          "NumberedListScreen": ["sequential"],
-          "IconListScreen": ["sequential"],
-          "TwoColumnScreen": ["sequential"],
-          "FeatureGridScreen": ["sequential"],
-          "AgendaScreen": ["sequential"],
-          "ProgressScreen": ["sequential"],
-          "ComparisonScreen": ["sequential", "flow"],
-          "BeforeAfterScreen": ["sequential", "flow"],
-          "DiagramScreen": ["flow"],
-          "TimelineScreen": ["flow"],
-          "HierarchyScreen": ["flow"],
-          "VennDiagramScreen": ["flow"],
-          "BarChartScreen": ["flow"],
-          "PieChartScreen": ["flow"]
+          "TitleScreen": [
+            "emphasis"
+          ],
+          "SectionBreakScreen": [
+            "emphasis"
+          ],
+          "EndScreen": [
+            "emphasis"
+          ],
+          "KeyPointScreen": [
+            "emphasis"
+          ],
+          "QuoteScreen": [
+            "emphasis"
+          ],
+          "DefinitionScreen": [
+            "emphasis"
+          ],
+          "QnAScreen": [
+            "emphasis"
+          ],
+          "CalloutScreen": [
+            "emphasis"
+          ],
+          "StatScreen": [
+            "emphasis",
+            "flow"
+          ],
+          "BulletDetailScreen": [
+            "sequential"
+          ],
+          "SummaryScreen": [
+            "sequential"
+          ],
+          "NumberedListScreen": [
+            "sequential"
+          ],
+          "IconListScreen": [
+            "sequential"
+          ],
+          "TwoColumnScreen": [
+            "sequential"
+          ],
+          "FeatureGridScreen": [
+            "sequential"
+          ],
+          "AgendaScreen": [
+            "sequential"
+          ],
+          "ProgressScreen": [
+            "sequential"
+          ],
+          "ComparisonScreen": [
+            "sequential",
+            "flow"
+          ],
+          "BeforeAfterScreen": [
+            "sequential",
+            "flow"
+          ],
+          "DiagramScreen": [
+            "flow"
+          ],
+          "TimelineScreen": [
+            "flow"
+          ],
+          "HierarchyScreen": [
+            "flow"
+          ],
+          "VennDiagramScreen": [
+            "flow"
+          ],
+          "BarChartScreen": [
+            "flow"
+          ],
+          "PieChartScreen": [
+            "flow"
+          ]
         },
         "TitleScreen": {
-          "bg": { "fadeFrames": [0, 15] },
-          "title": { "spring": "emphasis", "distance": { "y": 60 } },
-          "sub": { "delay": 18, "spring": "gentle", "distance": { "y": 30 } },
-          "line": { "frames": [10, 40], "width": 200 }
+          "bg": {
+            "fadeFrames": [
+              0,
+              15
+            ]
+          },
+          "title": {
+            "spring": "emphasis",
+            "distance": {
+              "y": 60
+            }
+          },
+          "sub": {
+            "delay": 18,
+            "spring": "gentle",
+            "distance": {
+              "y": 30
+            }
+          },
+          "line": {
+            "frames": [
+              10,
+              40
+            ],
+            "width": 200
+          }
         },
         "KeyPointScreen": {
-          "icon": { "spring": "bouncy", "scale": [0, 1] },
-          "headline": { "delay": 12, "spring": "emphasis", "distance": { "y": 50 } },
-          "detail": { "delay": 28, "spring": "gentle", "distance": { "y": 25 } },
-          "line": { "frames": [20, 50], "width": 120 }
+          "icon": {
+            "spring": "bouncy",
+            "scale": [
+              0,
+              1
+            ]
+          },
+          "headline": {
+            "delay": 12,
+            "spring": "emphasis",
+            "distance": {
+              "y": 50
+            }
+          },
+          "detail": {
+            "delay": 28,
+            "spring": "gentle",
+            "distance": {
+              "y": 25
+            }
+          },
+          "line": {
+            "frames": [
+              20,
+              50
+            ],
+            "width": 120
+          }
         },
         "QuoteScreen": {
-          "quoteMark": { "spring": "bouncy", "scale": [0.3, 1], "opacity": [0, 0.15] },
-          "text": { "delay": 10, "spring": "emphasis", "distance": { "y": 40 } },
-          "attribution": { "delay": 25, "spring": "gentle" },
-          "line": { "frames": [15, 45], "width": 100 }
+          "quoteMark": {
+            "spring": "bouncy",
+            "scale": [
+              0.3,
+              1
+            ],
+            "opacity": [
+              0,
+              0.15
+            ]
+          },
+          "text": {
+            "delay": 10,
+            "spring": "emphasis",
+            "distance": {
+              "y": 40
+            }
+          },
+          "attribution": {
+            "delay": 25,
+            "spring": "gentle"
+          },
+          "line": {
+            "frames": [
+              15,
+              45
+            ],
+            "width": 100
+          }
         },
         "SummaryScreen": {
-          "title": { "spring": "sequential", "distance": { "x": -80 } },
-          "item": { "baseDelay": 15, "staggerInterval": 4, "spring": "sequential", "distance": { "x": -50 }, "scale": [0.95, 1] },
-          "check": { "delay": 8, "fadeDuration": 10 }
+          "title": {
+            "spring": "sequential",
+            "distance": {
+              "x": -80
+            }
+          },
+          "item": {
+            "baseDelay": 15,
+            "staggerInterval": 4,
+            "spring": "sequential",
+            "distance": {
+              "x": -50
+            },
+            "scale": [
+              0.95,
+              1
+            ]
+          },
+          "check": {
+            "delay": 8,
+            "fadeDuration": 10
+          }
         },
         "ComparisonScreen": {
-          "left": { "spring": "sequential", "distance": { "x": -120 } },
-          "right": { "delay": 8, "spring": "sequential", "distance": { "x": 120 } },
-          "vs": { "delay": 15, "spring": "snappy", "scale": [0, 1] },
-          "point": { "baseDelay": [20, 28], "staggerInterval": 4, "spring": "sequential" }
+          "left": {
+            "spring": "sequential",
+            "distance": {
+              "x": -120
+            }
+          },
+          "right": {
+            "delay": 8,
+            "spring": "sequential",
+            "distance": {
+              "x": 120
+            }
+          },
+          "vs": {
+            "delay": 15,
+            "spring": "snappy",
+            "scale": [
+              0,
+              1
+            ]
+          },
+          "point": {
+            "baseDelay": [
+              20,
+              28
+            ],
+            "staggerInterval": 4,
+            "spring": "sequential"
+          }
         },
         "DiagramScreen": {
-          "title": { "spring": "flow", "distance": { "y": 30 } },
-          "node": { "baseDelay": 18, "staggerInterval": 3, "spring": "flow", "scale": [0, 1] },
-          "edge": { "extraDelay": 10, "drawDuration": 25 }
+          "title": {
+            "spring": "flow",
+            "distance": {
+              "y": 30
+            }
+          },
+          "node": {
+            "baseDelay": 18,
+            "staggerInterval": 3,
+            "spring": "flow",
+            "scale": [
+              0,
+              1
+            ]
+          },
+          "edge": {
+            "extraDelay": 10,
+            "drawDuration": 25
+          }
         },
         "ProgressScreen": {
-          "title": { "spring": "sequential" },
-          "step": { "baseDelay": 10, "staggerInterval": 4, "spring": "sequential", "distance": { "x": -40 } },
-          "pulse": { "speed": 0.08, "range": [1, 1.02] }
+          "title": {
+            "spring": "sequential"
+          },
+          "step": {
+            "baseDelay": 10,
+            "staggerInterval": 4,
+            "spring": "sequential",
+            "distance": {
+              "x": -40
+            }
+          },
+          "pulse": {
+            "speed": 0.08,
+            "range": [
+              1,
+              1.02
+            ]
+          }
         },
         "SceneTransition": {
           "enterDuration": 15,
           "exitDuration": 10,
-          "distances": { "slideX": 60, "slideY": 40, "zoomScale": [0.9, 1], "zoomExitScale": [1, 1.1] }
+          "distances": {
+            "slideX": 60,
+            "slideY": 40,
+            "zoomScale": [
+              0.9,
+              1
+            ],
+            "zoomExitScale": [
+              1,
+              1.1
+            ]
+          }
         },
         "StatScreen": {
-          "ring": { "spring": "bouncy" },
-          "value": { "delay": 8, "spring": "emphasis" },
-          "label": { "delay": 20, "spring": "gentle", "distance": { "y": 30 } },
-          "description": { "delay": 32, "spring": "gentle" }
+          "ring": {
+            "spring": "bouncy"
+          },
+          "value": {
+            "delay": 8,
+            "spring": "emphasis"
+          },
+          "label": {
+            "delay": 20,
+            "spring": "gentle",
+            "distance": {
+              "y": 30
+            }
+          },
+          "description": {
+            "delay": 32,
+            "spring": "gentle"
+          }
         },
         "TimelineScreen": {
-          "title": { "spring": "flow", "distance": { "y": 30 } },
+          "title": {
+            "spring": "flow",
+            "distance": {
+              "y": 30
+            }
+          },
           "line": {},
-          "event": { "baseDelay": 12, "staggerInterval": 3, "spring": "flow" }
+          "event": {
+            "baseDelay": 12,
+            "staggerInterval": 3,
+            "spring": "flow"
+          }
         },
         "FeatureGridScreen": {
-          "title": { "spring": "sequential", "distance": { "y": 30 } },
-          "card": { "baseDelay": 10, "staggerInterval": 4, "spring": "sequential" }
+          "title": {
+            "spring": "sequential",
+            "distance": {
+              "y": 30
+            }
+          },
+          "card": {
+            "baseDelay": 10,
+            "staggerInterval": 4,
+            "spring": "sequential"
+          }
         },
         "AgendaScreen": {
-          "title": { "spring": "sequential", "distance": { "y": 30 } },
-          "item": { "baseDelay": 8, "staggerInterval": 4, "spring": "sequential" },
+          "title": {
+            "spring": "sequential",
+            "distance": {
+              "y": 30
+            }
+          },
+          "item": {
+            "baseDelay": 8,
+            "staggerInterval": 4,
+            "spring": "sequential"
+          },
           "bar": {}
         },
         "CodeWalkthroughScreen": {
-          "title": { "spring": "default" },
-          "code": { "delay": 10, "spring": "gentle" },
-          "highlight": { "delay": 25 }
+          "title": {
+            "spring": "default"
+          },
+          "code": {
+            "delay": 10,
+            "spring": "gentle"
+          },
+          "highlight": {
+            "delay": 25
+          }
         },
         "BeforeAfterScreen": {
-          "title": { "spring": "sequential" },
-          "before": { "delay": 8, "spring": "sequential" },
-          "arrow": { "delay": 20, "spring": "bouncy" },
-          "after": { "delay": 28, "spring": "sequential" }
+          "title": {
+            "spring": "sequential"
+          },
+          "before": {
+            "delay": 8,
+            "spring": "sequential"
+          },
+          "arrow": {
+            "delay": 20,
+            "spring": "bouncy"
+          },
+          "after": {
+            "delay": 28,
+            "spring": "sequential"
+          }
         },
         "BarChartScreen": {
-          "title": { "spring": "flow" },
-          "bar": { "baseDelay": 12, "staggerInterval": 3, "spring": "flow" }
+          "title": {
+            "spring": "flow"
+          },
+          "bar": {
+            "baseDelay": 12,
+            "staggerInterval": 3,
+            "spring": "flow"
+          }
         },
         "PieChartScreen": {
-          "title": { "spring": "flow" },
-          "chart": { "delay": 10, "spring": "flow" },
-          "legend": { "delay": 30, "spring": "gentle" }
+          "title": {
+            "spring": "flow"
+          },
+          "chart": {
+            "delay": 10,
+            "spring": "flow"
+          },
+          "legend": {
+            "delay": 30,
+            "spring": "gentle"
+          }
         },
         "BulletDetailScreen": {
-          "title": { "spring": "sequential", "distance": { "y": 30 } },
-          "item": { "baseDelay": 10, "staggerInterval": 4, "spring": "sequential" }
+          "title": {
+            "spring": "sequential",
+            "distance": {
+              "y": 30
+            }
+          },
+          "item": {
+            "baseDelay": 10,
+            "staggerInterval": 4,
+            "spring": "sequential"
+          }
         },
         "DefinitionScreen": {
-          "term": { "spring": "emphasis" },
-          "definition": { "delay": 15, "spring": "gentle" },
-          "example": { "delay": 30, "spring": "gentle" }
+          "term": {
+            "spring": "emphasis"
+          },
+          "definition": {
+            "delay": 15,
+            "spring": "gentle"
+          },
+          "example": {
+            "delay": 30,
+            "spring": "gentle"
+          }
         },
         "QnAScreen": {
-          "question": { "spring": "emphasis" },
-          "answer": { "delay": 25, "spring": "gentle" }
+          "question": {
+            "spring": "emphasis"
+          },
+          "answer": {
+            "delay": 25,
+            "spring": "gentle"
+          }
         },
         "SectionBreakScreen": {
-          "section": { "spring": "bouncy" },
-          "title": { "delay": 12, "spring": "emphasis" },
-          "subtitle": { "delay": 22, "spring": "gentle" }
+          "section": {
+            "spring": "bouncy"
+          },
+          "title": {
+            "delay": 12,
+            "spring": "emphasis"
+          },
+          "subtitle": {
+            "delay": 22,
+            "spring": "gentle"
+          }
         },
         "EndScreen": {
-          "title": { "spring": "emphasis" },
-          "message": { "delay": 18, "spring": "gentle" },
-          "credits": { "delay": 35, "spring": "gentle" }
+          "title": {
+            "spring": "emphasis"
+          },
+          "message": {
+            "delay": 18,
+            "spring": "gentle"
+          },
+          "credits": {
+            "delay": 35,
+            "spring": "gentle"
+          }
         },
         "TwoColumnScreen": {
-          "title": { "spring": "sequential" },
-          "left": { "delay": 8, "spring": "sequential" },
-          "right": { "delay": 16, "spring": "sequential" }
+          "title": {
+            "spring": "sequential"
+          },
+          "left": {
+            "delay": 8,
+            "spring": "sequential"
+          },
+          "right": {
+            "delay": 16,
+            "spring": "sequential"
+          }
         },
         "ImagePlaceholderScreen": {
-          "image": { "delay": 5, "spring": "bouncy" },
-          "text": { "delay": 15, "spring": "default" }
+          "image": {
+            "delay": 5,
+            "spring": "bouncy"
+          },
+          "text": {
+            "delay": 15,
+            "spring": "default"
+          }
         },
         "CalloutScreen": {
-          "card": { "spring": "emphasis" },
-          "text": { "delay": 12, "spring": "gentle" }
+          "card": {
+            "spring": "emphasis"
+          },
+          "text": {
+            "delay": 12,
+            "spring": "gentle"
+          }
         },
         "NumberedListScreen": {
-          "title": { "spring": "sequential" },
-          "item": { "baseDelay": 10, "staggerInterval": 4, "spring": "sequential" }
+          "title": {
+            "spring": "sequential"
+          },
+          "item": {
+            "baseDelay": 10,
+            "staggerInterval": 4,
+            "spring": "sequential"
+          }
         },
         "IconListScreen": {
-          "title": { "spring": "sequential", "distance": { "y": 30 } },
-          "item": { "baseDelay": 10, "staggerInterval": 4, "spring": "sequential" }
+          "title": {
+            "spring": "sequential",
+            "distance": {
+              "y": 30
+            }
+          },
+          "item": {
+            "baseDelay": 10,
+            "staggerInterval": 4,
+            "spring": "sequential"
+          }
         },
         "VennDiagramScreen": {
-          "title": { "spring": "flow" },
-          "circle": { "delay": 8, "spring": "flow" },
-          "intersection": { "delay": 25, "spring": "snappy" }
+          "title": {
+            "spring": "flow"
+          },
+          "circle": {
+            "delay": 8,
+            "spring": "flow"
+          },
+          "intersection": {
+            "delay": 25,
+            "spring": "snappy"
+          }
         },
         "HierarchyScreen": {
-          "title": { "spring": "flow" },
-          "node": { "baseDelay": 8, "staggerInterval": 3, "spring": "flow" }
+          "title": {
+            "spring": "flow"
+          },
+          "node": {
+            "baseDelay": 8,
+            "staggerInterval": 3,
+            "spring": "flow"
+          }
         }
       }
     },
@@ -419,107 +852,381 @@
           "spotlight": "rgba(245,197,106,0.06)",
           "success": "#7EC8A0",
           "warning": "#F5C56A",
-          "danger": "#E87070"
+          "danger": "#E87070",
+          "info": "#6BAED6",
+          "chartPalette": [
+            "#F5C56A",
+            "#7FBF7F",
+            "#6BAED6",
+            "#E8956D",
+            "#D06B6B",
+            "#A78BC4",
+            "#5DADE2",
+            "#E59BE9"
+          ]
         }
       },
       "animation": {
         "spring": {
-          "default": { "damping": 14, "stiffness": 80, "mass": 0.8 },
-          "bouncy": { "damping": 10, "stiffness": 100, "mass": 0.6 },
-          "gentle": { "damping": 16, "stiffness": 60, "mass": 0.6 },
-          "snappy": { "damping": 10, "stiffness": 120, "mass": 0.5 },
-          "smooth": { "damping": 14, "stiffness": 70, "mass": 0.7 },
-          "emphasis": { "damping": 14, "stiffness": 110, "mass": 0.7 },
-          "sequential": { "damping": 14, "stiffness": 90, "mass": 0.8 },
-          "flow": { "damping": 16, "stiffness": 80, "mass": 0.9 }
+          "default": {
+            "damping": 14,
+            "stiffness": 80,
+            "mass": 0.8
+          },
+          "bouncy": {
+            "damping": 10,
+            "stiffness": 100,
+            "mass": 0.6
+          },
+          "gentle": {
+            "damping": 16,
+            "stiffness": 60,
+            "mass": 0.6
+          },
+          "snappy": {
+            "damping": 10,
+            "stiffness": 120,
+            "mass": 0.5
+          },
+          "smooth": {
+            "damping": 14,
+            "stiffness": 70,
+            "mass": 0.7
+          },
+          "emphasis": {
+            "damping": 14,
+            "stiffness": 110,
+            "mass": 0.7
+          },
+          "sequential": {
+            "damping": 14,
+            "stiffness": 90,
+            "mass": 0.8
+          },
+          "flow": {
+            "damping": 16,
+            "stiffness": 80,
+            "mass": 0.9
+          }
         },
         "semanticPresets": {
           "emphasis": {
-            "spring": { "damping": 14, "stiffness": 110, "mass": 0.7 },
-            "durationMs": [420, 520],
+            "spring": {
+              "damping": 14,
+              "stiffness": 110,
+              "mass": 0.7
+            },
+            "durationMs": [
+              420,
+              520
+            ],
             "staggerMs": null
           },
           "sequential": {
-            "spring": { "damping": 14, "stiffness": 90, "mass": 0.8 },
-            "durationMs": [560, 720],
+            "spring": {
+              "damping": 14,
+              "stiffness": 90,
+              "mass": 0.8
+            },
+            "durationMs": [
+              560,
+              720
+            ],
             "staggerMs": 120
           },
           "flow": {
-            "spring": { "damping": 16, "stiffness": 80, "mass": 0.9 },
-            "durationMs": [650, 800],
+            "spring": {
+              "damping": 16,
+              "stiffness": 80,
+              "mass": 0.9
+            },
+            "durationMs": [
+              650,
+              800
+            ],
             "staggerMs": 100
           }
         },
         "componentPresets": {
-          "TitleScreen": ["emphasis"],
-          "SectionBreakScreen": ["emphasis"],
-          "EndScreen": ["emphasis"],
-          "KeyPointScreen": ["emphasis"],
-          "QuoteScreen": ["emphasis"],
-          "DefinitionScreen": ["emphasis"],
-          "QnAScreen": ["emphasis"],
-          "CalloutScreen": ["emphasis"],
-          "StatScreen": ["emphasis", "flow"],
-          "BulletDetailScreen": ["sequential"],
-          "SummaryScreen": ["sequential"],
-          "NumberedListScreen": ["sequential"],
-          "IconListScreen": ["sequential"],
-          "TwoColumnScreen": ["sequential"],
-          "FeatureGridScreen": ["sequential"],
-          "AgendaScreen": ["sequential"],
-          "ProgressScreen": ["sequential"],
-          "ComparisonScreen": ["sequential", "flow"],
-          "BeforeAfterScreen": ["sequential", "flow"],
-          "DiagramScreen": ["flow"],
-          "TimelineScreen": ["flow"],
-          "HierarchyScreen": ["flow"],
-          "VennDiagramScreen": ["flow"],
-          "BarChartScreen": ["flow"],
-          "PieChartScreen": ["flow"]
+          "TitleScreen": [
+            "emphasis"
+          ],
+          "SectionBreakScreen": [
+            "emphasis"
+          ],
+          "EndScreen": [
+            "emphasis"
+          ],
+          "KeyPointScreen": [
+            "emphasis"
+          ],
+          "QuoteScreen": [
+            "emphasis"
+          ],
+          "DefinitionScreen": [
+            "emphasis"
+          ],
+          "QnAScreen": [
+            "emphasis"
+          ],
+          "CalloutScreen": [
+            "emphasis"
+          ],
+          "StatScreen": [
+            "emphasis",
+            "flow"
+          ],
+          "BulletDetailScreen": [
+            "sequential"
+          ],
+          "SummaryScreen": [
+            "sequential"
+          ],
+          "NumberedListScreen": [
+            "sequential"
+          ],
+          "IconListScreen": [
+            "sequential"
+          ],
+          "TwoColumnScreen": [
+            "sequential"
+          ],
+          "FeatureGridScreen": [
+            "sequential"
+          ],
+          "AgendaScreen": [
+            "sequential"
+          ],
+          "ProgressScreen": [
+            "sequential"
+          ],
+          "ComparisonScreen": [
+            "sequential",
+            "flow"
+          ],
+          "BeforeAfterScreen": [
+            "sequential",
+            "flow"
+          ],
+          "DiagramScreen": [
+            "flow"
+          ],
+          "TimelineScreen": [
+            "flow"
+          ],
+          "HierarchyScreen": [
+            "flow"
+          ],
+          "VennDiagramScreen": [
+            "flow"
+          ],
+          "BarChartScreen": [
+            "flow"
+          ],
+          "PieChartScreen": [
+            "flow"
+          ]
         },
         "TitleScreen": {
-          "bg": { "fadeFrames": [0, 15] },
-          "title": { "spring": "emphasis", "distance": { "y": 60 } },
-          "sub": { "delay": 18, "spring": "gentle", "distance": { "y": 30 } },
-          "line": { "frames": [10, 40], "width": 200 }
+          "bg": {
+            "fadeFrames": [
+              0,
+              15
+            ]
+          },
+          "title": {
+            "spring": "emphasis",
+            "distance": {
+              "y": 60
+            }
+          },
+          "sub": {
+            "delay": 18,
+            "spring": "gentle",
+            "distance": {
+              "y": 30
+            }
+          },
+          "line": {
+            "frames": [
+              10,
+              40
+            ],
+            "width": 200
+          }
         },
         "KeyPointScreen": {
-          "icon": { "spring": "bouncy", "scale": [0, 1] },
-          "headline": { "delay": 12, "spring": "emphasis", "distance": { "y": 50 } },
-          "detail": { "delay": 28, "spring": "gentle", "distance": { "y": 25 } },
-          "line": { "frames": [20, 50], "width": 120 }
+          "icon": {
+            "spring": "bouncy",
+            "scale": [
+              0,
+              1
+            ]
+          },
+          "headline": {
+            "delay": 12,
+            "spring": "emphasis",
+            "distance": {
+              "y": 50
+            }
+          },
+          "detail": {
+            "delay": 28,
+            "spring": "gentle",
+            "distance": {
+              "y": 25
+            }
+          },
+          "line": {
+            "frames": [
+              20,
+              50
+            ],
+            "width": 120
+          }
         },
         "QuoteScreen": {
-          "quoteMark": { "spring": "bouncy", "scale": [0.3, 1], "opacity": [0, 0.15] },
-          "text": { "delay": 10, "spring": "emphasis", "distance": { "y": 40 } },
-          "attribution": { "delay": 25, "spring": "gentle" },
-          "line": { "frames": [15, 45], "width": 100 }
+          "quoteMark": {
+            "spring": "bouncy",
+            "scale": [
+              0.3,
+              1
+            ],
+            "opacity": [
+              0,
+              0.15
+            ]
+          },
+          "text": {
+            "delay": 10,
+            "spring": "emphasis",
+            "distance": {
+              "y": 40
+            }
+          },
+          "attribution": {
+            "delay": 25,
+            "spring": "gentle"
+          },
+          "line": {
+            "frames": [
+              15,
+              45
+            ],
+            "width": 100
+          }
         },
         "SummaryScreen": {
-          "title": { "spring": "sequential", "distance": { "x": -80 } },
-          "item": { "baseDelay": 15, "staggerInterval": 4, "spring": "sequential", "distance": { "x": -50 }, "scale": [0.95, 1] },
-          "check": { "delay": 8, "fadeDuration": 10 }
+          "title": {
+            "spring": "sequential",
+            "distance": {
+              "x": -80
+            }
+          },
+          "item": {
+            "baseDelay": 15,
+            "staggerInterval": 4,
+            "spring": "sequential",
+            "distance": {
+              "x": -50
+            },
+            "scale": [
+              0.95,
+              1
+            ]
+          },
+          "check": {
+            "delay": 8,
+            "fadeDuration": 10
+          }
         },
         "ComparisonScreen": {
-          "left": { "spring": "sequential", "distance": { "x": -120 } },
-          "right": { "delay": 8, "spring": "sequential", "distance": { "x": 120 } },
-          "vs": { "delay": 15, "spring": "snappy", "scale": [0, 1] },
-          "point": { "baseDelay": [20, 28], "staggerInterval": 4, "spring": "sequential" }
+          "left": {
+            "spring": "sequential",
+            "distance": {
+              "x": -120
+            }
+          },
+          "right": {
+            "delay": 8,
+            "spring": "sequential",
+            "distance": {
+              "x": 120
+            }
+          },
+          "vs": {
+            "delay": 15,
+            "spring": "snappy",
+            "scale": [
+              0,
+              1
+            ]
+          },
+          "point": {
+            "baseDelay": [
+              20,
+              28
+            ],
+            "staggerInterval": 4,
+            "spring": "sequential"
+          }
         },
         "DiagramScreen": {
-          "title": { "spring": "flow", "distance": { "y": 30 } },
-          "node": { "baseDelay": 18, "staggerInterval": 3, "spring": "flow", "scale": [0, 1] },
-          "edge": { "extraDelay": 10, "drawDuration": 25 }
+          "title": {
+            "spring": "flow",
+            "distance": {
+              "y": 30
+            }
+          },
+          "node": {
+            "baseDelay": 18,
+            "staggerInterval": 3,
+            "spring": "flow",
+            "scale": [
+              0,
+              1
+            ]
+          },
+          "edge": {
+            "extraDelay": 10,
+            "drawDuration": 25
+          }
         },
         "ProgressScreen": {
-          "title": { "spring": "sequential" },
-          "step": { "baseDelay": 10, "staggerInterval": 4, "spring": "sequential", "distance": { "x": -40 } },
-          "pulse": { "speed": 0.08, "range": [1, 1.02] }
+          "title": {
+            "spring": "sequential"
+          },
+          "step": {
+            "baseDelay": 10,
+            "staggerInterval": 4,
+            "spring": "sequential",
+            "distance": {
+              "x": -40
+            }
+          },
+          "pulse": {
+            "speed": 0.08,
+            "range": [
+              1,
+              1.02
+            ]
+          }
         },
         "SceneTransition": {
           "enterDuration": 15,
           "exitDuration": 10,
-          "distances": { "slideX": 60, "slideY": 40, "zoomScale": [0.9, 1], "zoomExitScale": [1, 1.1] }
+          "distances": {
+            "slideX": 60,
+            "slideY": 40,
+            "zoomScale": [
+              0.9,
+              1
+            ],
+            "zoomExitScale": [
+              1,
+              1.1
+            ]
+          }
         }
       }
     }
