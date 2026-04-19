@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { theme } from '../../theme';
 
 export type BackdropVariant = 'blob' | 'mesh' | 'grid' | 'contour' | 'soft-shapes';
@@ -13,6 +14,7 @@ export const DecorativeBackdrop: React.FC<DecorativeBackdropProps> = ({
   color,
   opacity = 0.07,
 }) => {
+  const instanceId = useId();
   const tint = color || theme.color.accent;
 
   if (variant === 'grid') {
@@ -46,11 +48,11 @@ export const DecorativeBackdrop: React.FC<DecorativeBackdropProps> = ({
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <pattern id="bd-mesh" x="0" y="0" width="64" height="64" patternUnits="userSpaceOnUse">
+          <pattern id={`bd-mesh-${instanceId}`} x="0" y="0" width="64" height="64" patternUnits="userSpaceOnUse">
             <path d="M 64 0 L 0 0 0 64" fill="none" stroke={tint} strokeWidth="0.8" />
           </pattern>
         </defs>
-        <rect width="1920" height="1080" fill="url(#bd-mesh)" />
+        <rect width="1920" height="1080" fill={`url(#bd-mesh-${instanceId})`} />
       </svg>
     );
   }

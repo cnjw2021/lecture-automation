@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
 import { theme, typographyStyle } from '../theme';
 import { NodeIcon } from './NodeIcon';
@@ -61,6 +62,7 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const a = getAnimConfig<DiagramScreenAnim>('DiagramScreen', animation);
+  const arrowId = useId();
 
   const titleSpring = spring({ frame, fps, config: resolveSpring(a.title.spring) });
   const titleOpacity = interpolate(titleSpring, [0, 1], [0, 1]);
@@ -114,7 +116,7 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({
                   border: `1px solid ${theme.infographic.panelBorder}`,
                   borderRadius: theme.radius.pill,
                   padding: '4px 14px',
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: theme.font.numeric,
                   textTransform: 'uppercase' as const,
                   letterSpacing: '0.04em',
                 }}
@@ -170,7 +172,7 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({
         >
           <defs>
             <marker
-              id="arrowhead"
+              id={`arrowhead-${arrowId}`}
               markerWidth="12"
               markerHeight="8"
               refX="10"
@@ -247,7 +249,7 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({
                   strokeDasharray={approxLen}
                   strokeDashoffset={dashOffset}
                   opacity={0.75}
-                  markerEnd="url(#arrowhead)"
+                  markerEnd={`url(#arrowhead-${arrowId})`}
                 />
 
                 {edge.label && edgeProgress > 0.5 && (
@@ -274,7 +276,7 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({
                       fill={theme.infographic.connector}
                       fontSize={17}
                       fontWeight={600}
-                      fontFamily="Inter, sans-serif"
+                      fontFamily={theme.font.numeric}
                     >
                       {edge.label}
                     </text>
@@ -336,7 +338,7 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({
                   opacity: 0.7,
                   letterSpacing: '0.08em',
                   textTransform: 'uppercase' as const,
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: theme.font.numeric,
                 }}
               >
                 {i + 1}
