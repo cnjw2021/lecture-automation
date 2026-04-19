@@ -93,7 +93,7 @@ export function getStaggerFrames(name: SemanticPresetName): number {
 
 // --- Config resolver ---
 
-export function getAnimConfig<T extends Record<string, ElementAnim>>(
+export function getAnimConfig<T>(
   componentName: string,
   overrides?: AnimationOverrides,
 ): T {
@@ -101,7 +101,8 @@ export function getAnimConfig<T extends Record<string, ElementAnim>>(
   if (!defaults) return {} as T;
   if (!overrides) return { ...defaults };
 
-  const merged = { ...defaults } as Record<string, ElementAnim>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- shallow-merge requires indexing by dynamic keys
+  const merged = { ...defaults } as Record<string, any>;
   for (const key of Object.keys(overrides)) {
     merged[key] = { ...merged[key], ...overrides[key] };
   }
