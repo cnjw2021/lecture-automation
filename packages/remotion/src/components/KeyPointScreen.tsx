@@ -1,13 +1,26 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
-import { theme } from '../theme';
+import { theme, typographyStyle } from '../theme';
 import { NodeIcon } from './NodeIcon';
 import { getAnimConfig, resolveSpring, type KeyPointScreenAnim } from '../animation';
+import {
+  SectionEyebrow,
+  MetricBadge,
+  DecorativeBackdrop,
+  IllustrationPanel,
+} from './shared';
+import type { BackdropVariant } from './shared';
 
 interface KeyPointScreenProps {
   icon?: string;
   headline: string;
   detail?: string;
   color?: string;
+  eyebrow?: string;
+  badge?: string;
+  metric?: string;
+  caption?: string;
+  illustration?: string;
+  backdropVariant?: BackdropVariant;
   animation?: Partial<Record<keyof KeyPointScreenAnim, Record<string, unknown>>>;
 }
 
@@ -16,6 +29,12 @@ export const KeyPointScreen: React.FC<KeyPointScreenProps> = ({
   headline,
   detail,
   color,
+  eyebrow,
+  badge,
+  metric,
+  caption,
+  illustration,
+  backdropVariant,
   animation,
 }) => {
   const frame = useCurrentFrame();
@@ -24,17 +43,11 @@ export const KeyPointScreen: React.FC<KeyPointScreenProps> = ({
 
   const accentColor = color || theme.color.accent;
 
-  // Icon/emoji scale-in with bounce
-  const iconSpring = spring({
-    frame,
-    fps,
-    config: resolveSpring(a.icon.spring),
-  });
+  const iconSpring = spring({ frame, fps, config: resolveSpring(a.icon.spring) });
   const iconScaleRange = a.icon.scale ?? [0, 1];
   const iconScale = interpolate(iconSpring, [0, 1], iconScaleRange);
   const iconOpacity = interpolate(iconSpring, [0, 1], [0, 1]);
 
-  // Headline slides up after icon
   const headlineSpring = spring({
     frame: Math.max(0, frame - (a.headline.delay ?? 12)),
     fps,
@@ -43,7 +56,6 @@ export const KeyPointScreen: React.FC<KeyPointScreenProps> = ({
   const headlineY = interpolate(headlineSpring, [0, 1], [a.headline.distance?.y ?? 50, 0]);
   const headlineOpacity = interpolate(headlineSpring, [0, 1], [0, 1]);
 
-  // Detail fades in after headline
   const detailSpring = spring({
     frame: Math.max(0, frame - (a.detail.delay ?? 28)),
     fps,
@@ -52,11 +64,14 @@ export const KeyPointScreen: React.FC<KeyPointScreenProps> = ({
   const detailOpacity = interpolate(detailSpring, [0, 1], [0, 1]);
   const detailY = interpolate(detailSpring, [0, 1], [a.detail.distance?.y ?? 25, 0]);
 
-  // Accent line grows
   const lineWidth = interpolate(frame, a.line.frames, [0, a.line.width], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
+
+  const headlineSpec = typographyStyle('display');
+  const detailSpec = typographyStyle('title');
+  const captionSpec = typographyStyle('caption');
 
   return (
     <AbsoluteFill
@@ -65,28 +80,52 @@ export const KeyPointScreen: React.FC<KeyPointScreenProps> = ({
         justifyContent: 'center',
         alignItems: 'center',
         textAlign: 'center',
+        overflow: 'hidden',
       }}
     >
-      {/* Background accent circle */}
+      {/* Backdrop */}
+      {backdropVariant && (
+        <DecorativeBackdrop variant={backdropVariant} color={accentColor} opacity={0.065} />
+      )}
+
+      {/* Spotlight glow */}
       <div
         style={{
           position: 'absolute',
-          width: 500,
-          height: 500,
+          width: 600,
+          height: 600,
           borderRadius: '50%',
-          background: `radial-gradient(circle, ${accentColor}15 0%, transparent 70%)`,
+          background: `radial-gradient(circle, ${accentColor}14 0%, transparent 70%)`,
           top: '50%',
           left: '50%',
           transform: `translate(-50%, -50%) scale(${iconScale})`,
         }}
       />
 
-      <div style={{ position: 'relative', zIndex: 1, padding: '0 140px' }}>
+      {/* Illustration behind */}
+      {illustration && (
+        <IllustrationPanel src={illustration} layout="behind" size={500} />
+      )}
+
+      <div style={{ position: 'relative', zIndex: 1, padding: '0 140px', maxWidth: 1400 }}>
+        {/* Eyebrow */}
+        {eyebrow && (
+          <div
+            style={{
+              opacity: headlineOpacity,
+              transform: `translateY(${headlineY}px)`,
+              marginBottom: 16,
+            }}
+          >
+            <SectionEyebrow text={eyebrow} color={accentColor} />
+          </div>
+        )}
+
         {/* Icon */}
         {icon && (
           <div
             style={{
-              marginBottom: 30,
+              marginBottom: 28,
               opacity: iconOpacity,
               transform: `scale(${iconScale})`,
               display: 'flex',
@@ -94,17 +133,15 @@ export const KeyPointScreen: React.FC<KeyPointScreenProps> = ({
               justifyContent: 'center',
             }}
           >
-            <NodeIcon icon={icon} size={80} variant="highlighted" color={accentColor} />
+            <NodeIcon icon={icon} size={88} variant="highlighted" color={accentColor} />
           </div>
         )}
 
         {/* Headline */}
         <h1
           style={{
-            fontSize: 80,
-            fontWeight: 800,
+            ...headlineSpec,
             color: theme.color.textPrimary,
-            lineHeight: 1.3,
             marginBottom: 16,
             opacity: headlineOpacity,
             transform: `translateY(${headlineY}px)`,
@@ -119,24 +156,75 @@ export const KeyPointScreen: React.FC<KeyPointScreenProps> = ({
             width: lineWidth,
             height: 4,
             background: accentColor,
-            margin: '0 auto 28px',
+            margin: '0 auto 24px',
             borderRadius: 2,
           }}
         />
 
-        {/* Detail text */}
+        {/* Badge + Metric row */}
+        {(badge || metric) && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 16,
+              marginBottom: 20,
+              opacity: detailOpacity,
+              transform: `translateY(${detailY}px)`,
+            }}
+          >
+            {badge && (
+              <span
+                style={{
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: theme.infographic.badgeText,
+                  background: theme.infographic.badgeBg,
+                  border: `1px solid ${accentColor}28`,
+                  borderRadius: theme.radius.pill,
+                  padding: '4px 16px',
+                  fontFamily: 'Inter, sans-serif',
+                  letterSpacing: '0.04em',
+                  textTransform: 'uppercase' as const,
+                }}
+              >
+                {badge}
+              </span>
+            )}
+            {metric && (
+              <MetricBadge value={metric} color={accentColor} size="sm" animate />
+            )}
+          </div>
+        )}
+
+        {/* Detail */}
         {detail && (
           <p
             style={{
-              fontSize: 38,
+              ...detailSpec,
               fontWeight: 400,
               color: theme.color.textSecondary,
-              lineHeight: 1.6,
               opacity: detailOpacity,
               transform: `translateY(${detailY}px)`,
             }}
           >
             {detail}
+          </p>
+        )}
+
+        {/* Caption */}
+        {caption && (
+          <p
+            style={{
+              ...captionSpec,
+              color: theme.color.textMuted,
+              opacity: detailOpacity,
+              transform: `translateY(${detailY}px)`,
+              marginTop: 12,
+            }}
+          >
+            {caption}
           </p>
         )}
       </div>
