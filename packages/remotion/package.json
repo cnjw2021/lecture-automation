@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "@remotion/cli": "latest",
+    "@remotion/google-fonts": "^4.0.448",
     "lucide-react": "^1.7.0",
     "react": "latest",
     "react-dom": "latest",

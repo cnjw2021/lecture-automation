@@ -10,6 +10,9 @@ import {
   type SceneData,
 } from './composition/shared';
 import videoConfig from '../../../config/video.json';
+import { waitForFonts } from './fonts/loadFonts';
+
+waitForFonts();
 
 interface LectureProps {
   lectureData: LectureData;
