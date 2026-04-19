@@ -129,7 +129,7 @@ export class RunAutomationPipelineUseCase {
 
     console.log('\n--- 4단계: 씬별 클립 렌더링 ---');
     await this.renderSceneClipsUseCase.execute(lecture, {
-      force: options.forceRegenerate,
+      force: options.renderOnly || options.forceRegenerate,
       scenes: targetSceneIds,
     });
 
