@@ -1,5 +1,6 @@
 import { Lecture, RemotionVisual } from '../../domain/entities/Lecture';
 import { validateSharedSessions } from '../../domain/policies/SharedSessionValidator';
+import { validateRemotionVisualProps, printPropValidationResult } from '../../domain/validation/validateRemotionVisualProps';
 
 export class ValidateLectureUseCase {
   // 현재 Remotion에 실제 구현되어 있는 컴포넌트 목록
@@ -63,5 +64,9 @@ export class ValidateLectureUseCase {
       throw new Error(`Shared session 제약 위반 ${sharedSessionViolations.length}건`);
     }
     console.log(`✅ shared session 제약 검증 완료.`);
+
+    // Props schema validation (warning 모드 — 오류가 있어도 파이프라인 중단 안 함)
+    const schemaResult = validateRemotionVisualProps(lecture.sequence as any, 'warning');
+    printPropValidationResult(schemaResult);
   }
 }
