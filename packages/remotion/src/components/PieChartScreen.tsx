@@ -1,4 +1,4 @@
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate, Easing } from 'remotion';
 import { theme, typographyStyle } from '../theme';
 import { getAnimConfig, resolveSpring } from '../animation';
 import type { ElementAnim } from '../animation';
@@ -61,19 +61,11 @@ export const PieChartScreen: React.FC<PieChartScreenProps> = ({
   const drawProgress = interpolate(frame, [chartDelay, chartDelay + 40], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
+    easing: Easing.out(Easing.quad),
   });
 
   const total = slices.reduce((s, sl) => s + sl.value, 0);
-  const defaultColors = [
-    theme.color.accent,
-    theme.color.accentSecondary,
-    '#6366f1',
-    theme.infographic.warning,
-    theme.infographic.danger,
-    theme.infographic.success,
-    '#8b5cf6',
-    '#ec4899',
-  ];
+  const defaultColors = theme.infographic.chartPalette;
 
   const cx = 200;
   const cy = 200;

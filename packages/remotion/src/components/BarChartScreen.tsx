@@ -54,14 +54,7 @@ export const BarChartScreen: React.FC<BarChartScreenProps> = ({
   const baseDelay = (a.bar?.baseDelay as number) ?? 12;
   const interval = a.bar?.staggerInterval ?? 12;
 
-  const defaultColors = [
-    theme.color.accent,
-    theme.color.accentSecondary,
-    '#6366f1',
-    theme.infographic.warning,
-    theme.infographic.danger,
-    theme.infographic.success,
-  ];
+  const defaultColors = theme.infographic.chartPalette;
 
   const headlineSpec = typographyStyle('headline');
   const captionSpec = typographyStyle('caption');

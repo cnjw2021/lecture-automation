@@ -36,7 +36,7 @@ interface CalloutScreenAnim {
 const CALLOUT_STYLES: Record<CalloutType, { color: string; defaultIcon: string; label: string }> = {
   tip: { color: theme.infographic.success, defaultIcon: '💡', label: 'TIP' },
   warning: { color: theme.infographic.warning, defaultIcon: '⚠️', label: 'WARNING' },
-  info: { color: '#3b82f6', defaultIcon: 'ℹ️', label: 'INFO' },
+  info: { color: theme.infographic.info, defaultIcon: 'ℹ️', label: 'INFO' },
   error: { color: theme.infographic.danger, defaultIcon: '🚫', label: 'ERROR' },
 };
 
