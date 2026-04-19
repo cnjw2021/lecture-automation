@@ -1,107 +1,15 @@
-import { Composition, Sequence, Audio, OffthreadVideo, AbsoluteFill, registerRoot, staticFile } from 'remotion';
-import { MyCodeScene } from './MyCodeScene';
+import { Composition, Sequence, Audio, AbsoluteFill, registerRoot } from 'remotion';
+import { SceneTransition } from './components';
 import {
-  TitleScreen,
-  SummaryScreen,
-  SceneTransition,
-  KeyPointScreen,
-  ComparisonScreen,
-  DiagramScreen,
-  ProgressScreen,
-  QuoteScreen,
-  StatScreen,
-  TimelineScreen,
-  FeatureGridScreen,
-  AgendaScreen,
-  CodeWalkthroughScreen,
-  BeforeAfterScreen,
-  BarChartScreen,
-  PieChartScreen,
-  BulletDetailScreen,
-  DefinitionScreen,
-  QnAScreen,
-  SectionBreakScreen,
-  EndScreen,
-  TwoColumnScreen,
-  ImagePlaceholderScreen,
-  CalloutScreen,
-  NumberedListScreen,
-  IconListScreen,
-  VennDiagramScreen,
-  HierarchyScreen,
-  BrowserMockScreen,
-  ImageScreen,
-  PlaywrightSynthScene,
-} from './components';
+  calcSceneDurationFrames,
+  DefaultScreen,
+  type LectureData,
+  PreviewComposition,
+  type PreviewProps,
+  SceneVisual,
+  type SceneData,
+} from './composition/shared';
 import videoConfig from '../../../config/video.json';
-
-// Fallback for unknown components
-const DefaultScreen: React.FC<{ componentName?: string }> = ({ componentName }) => (
-  <AbsoluteFill style={{ backgroundColor: '#000', color: '#555', justifyContent: 'center', alignItems: 'center' }}>
-    <p style={{ fontSize: '30px' }}>[Missing Component: {componentName || 'Unknown'}]</p>
-  </AbsoluteFill>
-);
-
-// Component registry - add new components here
-const COMPONENT_MAP: Record<string, React.FC<any>> = {
-  TitleScreen,
-  SummaryScreen,
-  MyCodeScene,
-  KeyPointScreen,
-  ComparisonScreen,
-  DiagramScreen,
-  ProgressScreen,
-  QuoteScreen,
-  StatScreen,
-  TimelineScreen,
-  FeatureGridScreen,
-  AgendaScreen,
-  CodeWalkthroughScreen,
-  BeforeAfterScreen,
-  BarChartScreen,
-  PieChartScreen,
-  BulletDetailScreen,
-  DefinitionScreen,
-  QnAScreen,
-  SectionBreakScreen,
-  EndScreen,
-  TwoColumnScreen,
-  ImagePlaceholderScreen,
-  CalloutScreen,
-  NumberedListScreen,
-  IconListScreen,
-  VennDiagramScreen,
-  HierarchyScreen,
-  BrowserMockScreen,
-  ImageScreen,
-};
-
-// Type definitions
-interface TransitionConfig {
-  enter?: 'fade' | 'slide-left' | 'slide-up' | 'zoom' | 'none';
-  exit?: 'fade' | 'slide-right' | 'slide-down' | 'zoom' | 'none';
-  durationFrames?: number;
-}
-
-interface SceneData {
-  scene_id: number;
-  visual: {
-    type: string;
-    component?: string;
-    props?: Record<string, unknown>;
-    transition?: TransitionConfig;
-    url?: string;
-    title?: string;
-    description?: string;
-    layout?: string;
-    animation?: Record<string, unknown>;
-  };
-}
-
-interface LectureData {
-  lecture_id: string;
-  sequence: SceneData[];
-}
 
 interface LectureProps {
   lectureData: LectureData;
@@ -116,53 +24,6 @@ interface SingleSceneProps {
   sceneId: number;
   synthManifests?: Record<string, unknown>;
 }
-
-// --- Shared helpers (SSoT) ---
-
-const calcSceneDurationFrames = (
-  sceneId: number,
-  audioDurations: Record<string, number>,
-  fps: number,
-  scenePaddingSec: number
-): number => {
-  const durationSec = audioDurations[sceneId.toString()] || 10;
-  return Math.ceil((durationSec + scenePaddingSec) * fps);
-};
-
-const SceneVisual: React.FC<{ scene: SceneData; lectureId: string; synthManifest?: unknown }> = ({ scene, lectureId, synthManifest }) => {
-  const captureUrl = staticFile(`captures/${lectureId}/scene-${scene.scene_id}.webm`);
-  const Component = scene.visual.component
-    ? COMPONENT_MAP[scene.visual.component] || DefaultScreen
-    : null;
-
-  if (scene.visual.type === 'playwright') {
-    // 상태 합성형 매니페스트가 있으면 합성 모드 사용
-    if (synthManifest) {
-      return <PlaywrightSynthScene manifest={synthManifest as any} lectureId={lectureId} />;
-    }
-    // 기존 raw video 모드 (하위 호환)
-    return <OffthreadVideo src={captureUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
-  }
-
-  if (scene.visual.type === 'screenshot') {
-    return (
-      <ImageScreen
-        src={`screenshots/${lectureId}/scene-${scene.scene_id}.png`}
-        url={scene.visual.url}
-        title={scene.visual.title}
-        description={scene.visual.description}
-        layout={scene.visual.layout}
-        animation={scene.visual.animation}
-      />
-    );
-  }
-
-  if (Component) {
-    return <Component {...(scene.visual.props || {})} componentName={scene.visual.component} />;
-  }
-
-  return <DefaultScreen componentName={scene.visual.component} />;
-};
 
 // --- Full lecture composition ---
 
@@ -238,18 +99,6 @@ const SingleSceneComposition: React.FC<SingleSceneProps> = ({ lectureData, audio
       <Audio src={audioUrl} />
     </AbsoluteFill>
   );
-};
-
-// --- Preview composition (개발용) ---
-
-interface PreviewProps {
-  componentName: string;
-  props: Record<string, unknown>;
-}
-
-const PreviewComposition: React.FC<PreviewProps> = ({ componentName, props: componentProps }) => {
-  const Component = COMPONENT_MAP[componentName] || DefaultScreen;
-  return <Component {...componentProps} componentName={componentName} />;
 };
 
 export const RemotionRoot: React.FC = () => {

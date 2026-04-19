@@ -94,7 +94,7 @@ export const KeyPointScreen: React.FC<KeyPointScreenProps> = ({
               justifyContent: 'center',
             }}
           >
-            <NodeIcon icon={icon} size={80} />
+            <NodeIcon icon={icon} size={80} variant="highlighted" color={accentColor} />
           </div>
         )}
 
