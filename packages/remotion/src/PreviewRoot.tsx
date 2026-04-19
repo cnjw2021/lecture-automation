@@ -1,5 +1,8 @@
 import { AbsoluteFill, Composition, registerRoot } from 'remotion';
 import { SceneTransition } from './components';
+import { waitForFonts } from './fonts/loadFonts';
+
+waitForFonts();
 import {
   DefaultScreen,
   type LectureData,

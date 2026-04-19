@@ -42,6 +42,82 @@
         },
         "glow": {
           "title": "radial-gradient(circle, rgba(196,123,90,0.12) 0%, transparent 70%)"
+        },
+        "typography": {
+          "eyebrow": {
+            "size": 18,
+            "weight": 700,
+            "lineHeight": 1.2,
+            "letterSpacing": "0.08em",
+            "fontFamily": "'Inter', sans-serif"
+          },
+          "caption": {
+            "size": 22,
+            "weight": 500,
+            "lineHeight": 1.35,
+            "letterSpacing": "0em",
+            "fontFamily": "'Noto Sans JP', sans-serif"
+          },
+          "body": {
+            "size": 28,
+            "weight": 400,
+            "lineHeight": 1.6,
+            "letterSpacing": "0em",
+            "fontFamily": "'Noto Sans JP', sans-serif"
+          },
+          "title": {
+            "size": 44,
+            "weight": 800,
+            "lineHeight": 1.25,
+            "letterSpacing": "-0.01em",
+            "fontFamily": "'Noto Sans JP', sans-serif"
+          },
+          "headline": {
+            "size": 55,
+            "weight": 800,
+            "lineHeight": 1.2,
+            "letterSpacing": "-0.02em",
+            "fontFamily": "'Noto Sans JP', sans-serif"
+          },
+          "display": {
+            "size": 86,
+            "weight": 800,
+            "lineHeight": 1.1,
+            "letterSpacing": "-0.03em",
+            "fontFamily": "'Noto Sans JP', sans-serif"
+          },
+          "metric": {
+            "size": 120,
+            "weight": 900,
+            "lineHeight": 1.0,
+            "letterSpacing": "-0.04em",
+            "fontFamily": "'Inter', sans-serif"
+          }
+        },
+        "elevation": {
+          "subtle": "0 1px 3px rgba(45,41,38,0.06), 0 1px 2px rgba(45,41,38,0.04)",
+          "raised": "0 4px 12px rgba(45,41,38,0.08), 0 2px 4px rgba(45,41,38,0.05)",
+          "floating": "0 8px 24px rgba(45,41,38,0.12), 0 4px 8px rgba(45,41,38,0.06)"
+        },
+        "radius": {
+          "panel": 24,
+          "card": 18,
+          "pill": 999
+        },
+        "infographic": {
+          "panelBg": "rgba(255,255,255,0.6)",
+          "panelBgStrong": "rgba(255,255,255,0.85)",
+          "panelBorder": "rgba(196,123,90,0.12)",
+          "panelBorderStrong": "rgba(196,123,90,0.25)",
+          "badgeBg": "rgba(196,123,90,0.12)",
+          "badgeText": "#C47B5A",
+          "metricBg": "rgba(196,123,90,0.08)",
+          "metricText": "#2D2926",
+          "connector": "rgba(196,123,90,0.35)",
+          "spotlight": "rgba(196,123,90,0.08)",
+          "success": "#7BA68C",
+          "warning": "#D4A574",
+          "danger": "#C45A5A"
         }
       },
       "animation": {
@@ -50,45 +126,92 @@
           "bouncy": { "damping": 10, "stiffness": 100, "mass": 0.6 },
           "gentle": { "damping": 16, "stiffness": 60, "mass": 0.6 },
           "snappy": { "damping": 10, "stiffness": 120, "mass": 0.5 },
-          "smooth": { "damping": 14, "stiffness": 70, "mass": 0.7 }
+          "smooth": { "damping": 14, "stiffness": 70, "mass": 0.7 },
+          "emphasis": { "damping": 14, "stiffness": 110, "mass": 0.7 },
+          "sequential": { "damping": 14, "stiffness": 90, "mass": 0.8 },
+          "flow": { "damping": 16, "stiffness": 80, "mass": 0.9 }
+        },
+        "semanticPresets": {
+          "emphasis": {
+            "spring": { "damping": 14, "stiffness": 110, "mass": 0.7 },
+            "durationMs": [420, 520],
+            "staggerMs": null
+          },
+          "sequential": {
+            "spring": { "damping": 14, "stiffness": 90, "mass": 0.8 },
+            "durationMs": [560, 720],
+            "staggerMs": 120
+          },
+          "flow": {
+            "spring": { "damping": 16, "stiffness": 80, "mass": 0.9 },
+            "durationMs": [650, 800],
+            "staggerMs": 100
+          }
+        },
+        "componentPresets": {
+          "TitleScreen": ["emphasis"],
+          "SectionBreakScreen": ["emphasis"],
+          "EndScreen": ["emphasis"],
+          "KeyPointScreen": ["emphasis"],
+          "QuoteScreen": ["emphasis"],
+          "DefinitionScreen": ["emphasis"],
+          "QnAScreen": ["emphasis"],
+          "CalloutScreen": ["emphasis"],
+          "StatScreen": ["emphasis", "flow"],
+          "BulletDetailScreen": ["sequential"],
+          "SummaryScreen": ["sequential"],
+          "NumberedListScreen": ["sequential"],
+          "IconListScreen": ["sequential"],
+          "TwoColumnScreen": ["sequential"],
+          "FeatureGridScreen": ["sequential"],
+          "AgendaScreen": ["sequential"],
+          "ProgressScreen": ["sequential"],
+          "ComparisonScreen": ["sequential", "flow"],
+          "BeforeAfterScreen": ["sequential", "flow"],
+          "DiagramScreen": ["flow"],
+          "TimelineScreen": ["flow"],
+          "HierarchyScreen": ["flow"],
+          "VennDiagramScreen": ["flow"],
+          "BarChartScreen": ["flow"],
+          "PieChartScreen": ["flow"]
         },
         "TitleScreen": {
           "bg": { "fadeFrames": [0, 15] },
-          "title": { "spring": "default", "distance": { "y": 60 } },
+          "title": { "spring": "emphasis", "distance": { "y": 60 } },
           "sub": { "delay": 18, "spring": "gentle", "distance": { "y": 30 } },
           "line": { "frames": [10, 40], "width": 200 }
         },
         "KeyPointScreen": {
           "icon": { "spring": "bouncy", "scale": [0, 1] },
-          "headline": { "delay": 12, "spring": "default", "distance": { "y": 50 } },
+          "headline": { "delay": 12, "spring": "emphasis", "distance": { "y": 50 } },
           "detail": { "delay": 28, "spring": "gentle", "distance": { "y": 25 } },
           "line": { "frames": [20, 50], "width": 120 }
         },
         "QuoteScreen": {
           "quoteMark": { "spring": "bouncy", "scale": [0.3, 1], "opacity": [0, 0.15] },
-          "text": { "delay": 10, "spring": "default", "distance": { "y": 40 } },
+          "text": { "delay": 10, "spring": "emphasis", "distance": { "y": 40 } },
           "attribution": { "delay": 25, "spring": "gentle" },
           "line": { "frames": [15, 45], "width": 100 }
         },
         "SummaryScreen": {
-          "title": { "spring": "default", "distance": { "x": -80 } },
-          "item": { "baseDelay": 15, "staggerInterval": 20, "spring": "smooth", "distance": { "x": -50 }, "scale": [0.95, 1] },
+          "title": { "spring": "sequential", "distance": { "x": -80 } },
+          "item": { "baseDelay": 15, "staggerInterval": 4, "spring": "sequential", "distance": { "x": -50 }, "scale": [0.95, 1] },
           "check": { "delay": 8, "fadeDuration": 10 }
         },
         "ComparisonScreen": {
-          "left": { "spring": "default", "distance": { "x": -120 } },
-          "right": { "delay": 8, "spring": "default", "distance": { "x": 120 } },
+          "left": { "spring": "sequential", "distance": { "x": -120 } },
+          "right": { "delay": 8, "spring": "sequential", "distance": { "x": 120 } },
           "vs": { "delay": 15, "spring": "snappy", "scale": [0, 1] },
-          "point": { "baseDelay": [20, 28], "staggerInterval": 15, "spring": "gentle" }
+          "point": { "baseDelay": [20, 28], "staggerInterval": 4, "spring": "sequential" }
         },
         "DiagramScreen": {
-          "title": { "spring": "default", "distance": { "y": 30 } },
-          "node": { "baseDelay": 18, "staggerInterval": 16, "spring": "bouncy", "scale": [0, 1] },
+          "title": { "spring": "flow", "distance": { "y": 30 } },
+          "node": { "baseDelay": 18, "staggerInterval": 3, "spring": "flow", "scale": [0, 1] },
           "edge": { "extraDelay": 10, "drawDuration": 25 }
         },
         "ProgressScreen": {
-          "title": { "spring": "default" },
-          "step": { "baseDelay": 10, "staggerInterval": 15, "spring": "smooth", "distance": { "x": -40 } },
+          "title": { "spring": "sequential" },
+          "step": { "baseDelay": 10, "staggerInterval": 4, "spring": "sequential", "distance": { "x": -40 } },
           "pulse": { "speed": 0.08, "range": [1, 1.02] }
         },
         "SceneTransition": {
@@ -98,22 +221,22 @@
         },
         "StatScreen": {
           "ring": { "spring": "bouncy" },
-          "value": { "delay": 8, "spring": "default" },
+          "value": { "delay": 8, "spring": "emphasis" },
           "label": { "delay": 20, "spring": "gentle", "distance": { "y": 30 } },
           "description": { "delay": 32, "spring": "gentle" }
         },
         "TimelineScreen": {
-          "title": { "spring": "default", "distance": { "y": 30 } },
+          "title": { "spring": "flow", "distance": { "y": 30 } },
           "line": {},
-          "event": { "baseDelay": 12, "staggerInterval": 18, "spring": "smooth" }
+          "event": { "baseDelay": 12, "staggerInterval": 3, "spring": "flow" }
         },
         "FeatureGridScreen": {
-          "title": { "spring": "default", "distance": { "y": 30 } },
-          "card": { "baseDelay": 10, "staggerInterval": 10, "spring": "bouncy" }
+          "title": { "spring": "sequential", "distance": { "y": 30 } },
+          "card": { "baseDelay": 10, "staggerInterval": 4, "spring": "sequential" }
         },
         "AgendaScreen": {
-          "title": { "spring": "default", "distance": { "y": 30 } },
-          "item": { "baseDelay": 8, "staggerInterval": 14, "spring": "smooth" },
+          "title": { "spring": "sequential", "distance": { "y": 30 } },
+          "item": { "baseDelay": 8, "staggerInterval": 4, "spring": "sequential" },
           "bar": {}
         },
         "CodeWalkthroughScreen": {
@@ -122,72 +245,72 @@
           "highlight": { "delay": 25 }
         },
         "BeforeAfterScreen": {
-          "title": { "spring": "default" },
-          "before": { "delay": 8, "spring": "default" },
+          "title": { "spring": "sequential" },
+          "before": { "delay": 8, "spring": "sequential" },
           "arrow": { "delay": 20, "spring": "bouncy" },
-          "after": { "delay": 28, "spring": "default" }
+          "after": { "delay": 28, "spring": "sequential" }
         },
         "BarChartScreen": {
-          "title": { "spring": "default" },
-          "bar": { "baseDelay": 12, "staggerInterval": 12, "spring": "smooth" }
+          "title": { "spring": "flow" },
+          "bar": { "baseDelay": 12, "staggerInterval": 3, "spring": "flow" }
         },
         "PieChartScreen": {
-          "title": { "spring": "default" },
-          "chart": { "delay": 10, "spring": "bouncy" },
+          "title": { "spring": "flow" },
+          "chart": { "delay": 10, "spring": "flow" },
           "legend": { "delay": 30, "spring": "gentle" }
         },
         "BulletDetailScreen": {
-          "title": { "spring": "default", "distance": { "y": 30 } },
-          "item": { "baseDelay": 10, "staggerInterval": 16, "spring": "smooth" }
+          "title": { "spring": "sequential", "distance": { "y": 30 } },
+          "item": { "baseDelay": 10, "staggerInterval": 4, "spring": "sequential" }
         },
         "DefinitionScreen": {
-          "term": { "spring": "bouncy" },
+          "term": { "spring": "emphasis" },
           "definition": { "delay": 15, "spring": "gentle" },
           "example": { "delay": 30, "spring": "gentle" }
         },
         "QnAScreen": {
-          "question": { "spring": "default" },
+          "question": { "spring": "emphasis" },
           "answer": { "delay": 25, "spring": "gentle" }
         },
         "SectionBreakScreen": {
           "section": { "spring": "bouncy" },
-          "title": { "delay": 12, "spring": "default" },
+          "title": { "delay": 12, "spring": "emphasis" },
           "subtitle": { "delay": 22, "spring": "gentle" }
         },
         "EndScreen": {
-          "title": { "spring": "default" },
+          "title": { "spring": "emphasis" },
           "message": { "delay": 18, "spring": "gentle" },
           "credits": { "delay": 35, "spring": "gentle" }
         },
         "TwoColumnScreen": {
-          "title": { "spring": "default" },
-          "left": { "delay": 8, "spring": "default" },
-          "right": { "delay": 16, "spring": "default" }
+          "title": { "spring": "sequential" },
+          "left": { "delay": 8, "spring": "sequential" },
+          "right": { "delay": 16, "spring": "sequential" }
         },
         "ImagePlaceholderScreen": {
           "image": { "delay": 5, "spring": "bouncy" },
           "text": { "delay": 15, "spring": "default" }
         },
         "CalloutScreen": {
-          "card": { "spring": "bouncy" },
+          "card": { "spring": "emphasis" },
           "text": { "delay": 12, "spring": "gentle" }
         },
         "NumberedListScreen": {
-          "title": { "spring": "default" },
-          "item": { "baseDelay": 10, "staggerInterval": 16, "spring": "smooth" }
+          "title": { "spring": "sequential" },
+          "item": { "baseDelay": 10, "staggerInterval": 4, "spring": "sequential" }
         },
         "IconListScreen": {
-          "title": { "spring": "default", "distance": { "y": 30 } },
-          "item": { "baseDelay": 10, "staggerInterval": 14, "spring": "smooth" }
+          "title": { "spring": "sequential", "distance": { "y": 30 } },
+          "item": { "baseDelay": 10, "staggerInterval": 4, "spring": "sequential" }
         },
         "VennDiagramScreen": {
-          "title": { "spring": "default" },
-          "circle": { "delay": 8, "spring": "bouncy" },
+          "title": { "spring": "flow" },
+          "circle": { "delay": 8, "spring": "flow" },
           "intersection": { "delay": 25, "spring": "snappy" }
         },
         "HierarchyScreen": {
-          "title": { "spring": "default" },
-          "node": { "baseDelay": 8, "staggerInterval": 10, "spring": "bouncy" }
+          "title": { "spring": "flow" },
+          "node": { "baseDelay": 8, "staggerInterval": 3, "spring": "flow" }
         }
       }
     },
@@ -221,6 +344,82 @@
         },
         "glow": {
           "title": "radial-gradient(circle, rgba(245,197,106,0.1) 0%, transparent 70%)"
+        },
+        "typography": {
+          "eyebrow": {
+            "size": 18,
+            "weight": 700,
+            "lineHeight": 1.2,
+            "letterSpacing": "0.08em",
+            "fontFamily": "'Inter', sans-serif"
+          },
+          "caption": {
+            "size": 22,
+            "weight": 500,
+            "lineHeight": 1.35,
+            "letterSpacing": "0em",
+            "fontFamily": "'Noto Sans JP', sans-serif"
+          },
+          "body": {
+            "size": 28,
+            "weight": 400,
+            "lineHeight": 1.6,
+            "letterSpacing": "0em",
+            "fontFamily": "'Noto Sans JP', sans-serif"
+          },
+          "title": {
+            "size": 44,
+            "weight": 800,
+            "lineHeight": 1.25,
+            "letterSpacing": "-0.01em",
+            "fontFamily": "'Noto Sans JP', sans-serif"
+          },
+          "headline": {
+            "size": 55,
+            "weight": 800,
+            "lineHeight": 1.2,
+            "letterSpacing": "-0.02em",
+            "fontFamily": "'Noto Sans JP', sans-serif"
+          },
+          "display": {
+            "size": 86,
+            "weight": 800,
+            "lineHeight": 1.1,
+            "letterSpacing": "-0.03em",
+            "fontFamily": "'Noto Sans JP', sans-serif"
+          },
+          "metric": {
+            "size": 120,
+            "weight": 900,
+            "lineHeight": 1.0,
+            "letterSpacing": "-0.04em",
+            "fontFamily": "'Inter', sans-serif"
+          }
+        },
+        "elevation": {
+          "subtle": "0 1px 3px rgba(0,0,0,0.15), 0 1px 2px rgba(0,0,0,0.12)",
+          "raised": "0 4px 12px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.15)",
+          "floating": "0 8px 24px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.2)"
+        },
+        "radius": {
+          "panel": 24,
+          "card": 18,
+          "pill": 999
+        },
+        "infographic": {
+          "panelBg": "rgba(255,255,255,0.05)",
+          "panelBgStrong": "rgba(255,255,255,0.1)",
+          "panelBorder": "rgba(245,197,106,0.15)",
+          "panelBorderStrong": "rgba(245,197,106,0.3)",
+          "badgeBg": "rgba(245,197,106,0.15)",
+          "badgeText": "#F5C56A",
+          "metricBg": "rgba(245,197,106,0.08)",
+          "metricText": "#E8E4D9",
+          "connector": "rgba(245,197,106,0.4)",
+          "spotlight": "rgba(245,197,106,0.06)",
+          "success": "#7EC8A0",
+          "warning": "#F5C56A",
+          "danger": "#E87070"
         }
       },
       "animation": {
@@ -229,45 +428,92 @@
           "bouncy": { "damping": 10, "stiffness": 100, "mass": 0.6 },
           "gentle": { "damping": 16, "stiffness": 60, "mass": 0.6 },
           "snappy": { "damping": 10, "stiffness": 120, "mass": 0.5 },
-          "smooth": { "damping": 14, "stiffness": 70, "mass": 0.7 }
+          "smooth": { "damping": 14, "stiffness": 70, "mass": 0.7 },
+          "emphasis": { "damping": 14, "stiffness": 110, "mass": 0.7 },
+          "sequential": { "damping": 14, "stiffness": 90, "mass": 0.8 },
+          "flow": { "damping": 16, "stiffness": 80, "mass": 0.9 }
+        },
+        "semanticPresets": {
+          "emphasis": {
+            "spring": { "damping": 14, "stiffness": 110, "mass": 0.7 },
+            "durationMs": [420, 520],
+            "staggerMs": null
+          },
+          "sequential": {
+            "spring": { "damping": 14, "stiffness": 90, "mass": 0.8 },
+            "durationMs": [560, 720],
+            "staggerMs": 120
+          },
+          "flow": {
+            "spring": { "damping": 16, "stiffness": 80, "mass": 0.9 },
+            "durationMs": [650, 800],
+            "staggerMs": 100
+          }
+        },
+        "componentPresets": {
+          "TitleScreen": ["emphasis"],
+          "SectionBreakScreen": ["emphasis"],
+          "EndScreen": ["emphasis"],
+          "KeyPointScreen": ["emphasis"],
+          "QuoteScreen": ["emphasis"],
+          "DefinitionScreen": ["emphasis"],
+          "QnAScreen": ["emphasis"],
+          "CalloutScreen": ["emphasis"],
+          "StatScreen": ["emphasis", "flow"],
+          "BulletDetailScreen": ["sequential"],
+          "SummaryScreen": ["sequential"],
+          "NumberedListScreen": ["sequential"],
+          "IconListScreen": ["sequential"],
+          "TwoColumnScreen": ["sequential"],
+          "FeatureGridScreen": ["sequential"],
+          "AgendaScreen": ["sequential"],
+          "ProgressScreen": ["sequential"],
+          "ComparisonScreen": ["sequential", "flow"],
+          "BeforeAfterScreen": ["sequential", "flow"],
+          "DiagramScreen": ["flow"],
+          "TimelineScreen": ["flow"],
+          "HierarchyScreen": ["flow"],
+          "VennDiagramScreen": ["flow"],
+          "BarChartScreen": ["flow"],
+          "PieChartScreen": ["flow"]
         },
         "TitleScreen": {
           "bg": { "fadeFrames": [0, 15] },
-          "title": { "spring": "default", "distance": { "y": 60 } },
+          "title": { "spring": "emphasis", "distance": { "y": 60 } },
           "sub": { "delay": 18, "spring": "gentle", "distance": { "y": 30 } },
           "line": { "frames": [10, 40], "width": 200 }
         },
         "KeyPointScreen": {
           "icon": { "spring": "bouncy", "scale": [0, 1] },
-          "headline": { "delay": 12, "spring": "default", "distance": { "y": 50 } },
+          "headline": { "delay": 12, "spring": "emphasis", "distance": { "y": 50 } },
           "detail": { "delay": 28, "spring": "gentle", "distance": { "y": 25 } },
           "line": { "frames": [20, 50], "width": 120 }
         },
         "QuoteScreen": {
           "quoteMark": { "spring": "bouncy", "scale": [0.3, 1], "opacity": [0, 0.15] },
-          "text": { "delay": 10, "spring": "default", "distance": { "y": 40 } },
+          "text": { "delay": 10, "spring": "emphasis", "distance": { "y": 40 } },
           "attribution": { "delay": 25, "spring": "gentle" },
           "line": { "frames": [15, 45], "width": 100 }
         },
         "SummaryScreen": {
-          "title": { "spring": "default", "distance": { "x": -80 } },
-          "item": { "baseDelay": 15, "staggerInterval": 20, "spring": "smooth", "distance": { "x": -50 }, "scale": [0.95, 1] },
+          "title": { "spring": "sequential", "distance": { "x": -80 } },
+          "item": { "baseDelay": 15, "staggerInterval": 4, "spring": "sequential", "distance": { "x": -50 }, "scale": [0.95, 1] },
           "check": { "delay": 8, "fadeDuration": 10 }
         },
         "ComparisonScreen": {
-          "left": { "spring": "default", "distance": { "x": -120 } },
-          "right": { "delay": 8, "spring": "default", "distance": { "x": 120 } },
+          "left": { "spring": "sequential", "distance": { "x": -120 } },
+          "right": { "delay": 8, "spring": "sequential", "distance": { "x": 120 } },
           "vs": { "delay": 15, "spring": "snappy", "scale": [0, 1] },
-          "point": { "baseDelay": [20, 28], "staggerInterval": 15, "spring": "gentle" }
+          "point": { "baseDelay": [20, 28], "staggerInterval": 4, "spring": "sequential" }
         },
         "DiagramScreen": {
-          "title": { "spring": "default", "distance": { "y": 30 } },
-          "node": { "baseDelay": 18, "staggerInterval": 16, "spring": "bouncy", "scale": [0, 1] },
+          "title": { "spring": "flow", "distance": { "y": 30 } },
+          "node": { "baseDelay": 18, "staggerInterval": 3, "spring": "flow", "scale": [0, 1] },
           "edge": { "extraDelay": 10, "drawDuration": 25 }
         },
         "ProgressScreen": {
-          "title": { "spring": "default" },
-          "step": { "baseDelay": 10, "staggerInterval": 15, "spring": "smooth", "distance": { "x": -40 } },
+          "title": { "spring": "sequential" },
+          "step": { "baseDelay": 10, "staggerInterval": 4, "spring": "sequential", "distance": { "x": -40 } },
           "pulse": { "speed": 0.08, "range": [1, 1.02] }
         },
         "SceneTransition": {
