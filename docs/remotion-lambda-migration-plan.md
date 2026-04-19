@@ -23,9 +23,10 @@
 도입이 완료되면 현재의 로컬 `npm run build` 스크립트는 삭제되고, 코드는 다음과 같은 흐름으로 작동하게 됩니다.
 
 1. **Bundle & Deploy**: Remotion 소스 코드를 번들링하여 AWS S3에 업로드 (`deploySite()`). 코드가 바뀌지 않았다면 재사용.
-2. **Parallel Invoke**: 렌더링이 필요한 씬 전체에 대해 `renderMediaOnLambda()`를 동시에 호출 (`Promise.all`). 씬 1개당 Lambda 함수 1개가 할당되며, Lambda 내부의 프레임 분산은 사용하지 않는다.
-3. **Poll**: 각 Lambda의 진행 상황을 `getRenderProgress()`로 폴링하여 터미널에 표시.
-4. **Download & Cleanup**: 모든 씬 렌더 완료 후 출력 파일을 로컬로 다운로드, S3 결과물 정리, concat 실행.
+2. **Assets Upload**: TTS(wav) + Playwright 녹화(webm) + 스크린샷 완료 후, 생성된 파일을 S3의 사이트 번들과 동일한 경로에 업로드한다. 이렇게 하면 Remotion 컴포지션 내 `staticFile()` 호출이 코드 수정 없이 S3 경로로 자동 해석된다.
+3. **Parallel Invoke**: 렌더링이 필요한 씬 전체에 대해 `renderMediaOnLambda()`를 동시에 호출 (`Promise.all`). 씬 1개당 Lambda 함수 1개가 할당되며, Lambda 내부의 프레임 분산은 사용하지 않는다.
+4. **Poll**: 각 Lambda의 진행 상황을 `getRenderProgress()`로 폴링하여 터미널에 표시.
+5. **Download & Cleanup**: 모든 씬 렌더 완료 후 출력 파일을 로컬로 다운로드, S3 결과물 정리, concat 실행.
 
 ---
 
@@ -45,8 +46,8 @@
 ### Phase 2: 스크립트 및 환경 구성 (의존성 패키지 설치)
 현재 `automation` 패키지(실제 렌더 오케스트레이션을 담당하는 로직)에 Lambda 전용 모듈을 설치합니다.
 ```bash
-# automation 패키지에 lambda 도구 설치
-npm install @remotion/lambda --workspace packages/automation
+# automation 패키지에 lambda 도구 및 S3 업로드 SDK 설치
+npm install @remotion/lambda @aws-sdk/client-s3 --workspace packages/automation
 ```
 > [!IMPORTANT]  
 > `@remotion/lambda` 버전은 루트에 설치된 `remotion`, `@remotion/bundler`, `@remotion/player`, `@remotion/react` 등 **모든 `@remotion/*` 패키지와 100% 동일하게 일치**해야 합니다.
@@ -93,9 +94,15 @@ import { deploySite, renderMediaOnLambda, getRenderProgress } from '@remotion/la
 
 처리 흐름:
 1. **serveUrl 결정**: 환경변수 `REMOTION_SERVE_URL`을 읽어 재사용. 코드가 변경된 경우에만 `deploySite()`를 호출하여 새 serveUrl을 얻는다. (Phase 5 참조)
-2. **씬 전체 동시 호출**: 렌더링이 필요한 씬 목록 전체에 대해 `renderMediaOnLambda()`를 `Promise.all`로 동시에 호출한다. 각 씬은 독립된 Lambda 함수 1개가 처리한다. `framesPerLambda`는 씬의 총 프레임 수 이상으로 설정하여 Lambda 내부의 추가 프레임 분산이 발생하지 않도록 한다.
-3. **진행률 표시**: 각 호출에서 반환되는 `renderId`를 활용해 `getRenderProgress()`를 폴링하여 씬별 진행률을 터미널에 표시한다.
-4. **다운로드 및 정리**: 모든 씬 완료 후 각 출력 URL에서 파일을 받아 지정된 로컬 `outPath`에 저장한다. 이후 S3에 남은 렌더 결과물을 삭제하여 스토리지 비용이 누적되지 않도록 한다.
+2. **Assets S3 업로드**: `renderMediaOnLambda()` 호출 전에, 해당 강의의 wav/webm/screenshots 파일을 AWS SDK(`@aws-sdk/client-s3`)로 S3에 업로드한다. 업로드 대상 경로는 `serveUrl`에서 버킷명과 prefix를 파싱하여 결정하며, 로컬의 `public/` 디렉토리 구조와 동일하게 맞춘다.
+   ```
+   로컬: packages/remotion/public/audio/01/scene-1.wav
+   S3:   s3://remotionlambda-xxxx/sites/lecture-automation/audio/01/scene-1.wav
+   ```
+   이 구조를 유지하면 Remotion 컴포지션의 `staticFile('audio/01/scene-1.wav')` 호출이 **코드 수정 없이** Lambda 환경에서 올바른 S3 URL로 해석된다.
+3. **씬 전체 동시 호출**: 렌더링이 필요한 씬 목록 전체에 대해 `renderMediaOnLambda()`를 `Promise.all`로 동시에 호출한다. 각 씬은 독립된 Lambda 함수 1개가 처리한다. `framesPerLambda`는 씬의 총 프레임 수 이상으로 설정하여 Lambda 내부의 추가 프레임 분산이 발생하지 않도록 한다.
+4. **진행률 표시**: 각 호출에서 반환되는 `renderId`를 활용해 `getRenderProgress()`를 폴링하여 씬별 진행률을 터미널에 표시한다.
+5. **다운로드 및 정리**: 모든 씬 완료 후 각 출력 URL에서 파일을 받아 지정된 로컬 `outPath`에 저장한다. 이후 S3에 남은 렌더 결과물과 업로드했던 assets를 삭제하여 스토리지 비용이 누적되지 않도록 한다.
 
 ### Phase 5: 최적화 및 롤아웃 워크플로우 구성
 1. **serveUrl 재사용**: Remotion 소스 코드가 변경되지 않았다면 `deploySite()`를 매번 호출하지 않고, 이미 배포된 `REMOTION_SERVE_URL`을 그대로 사용한다. 코드 변경 감지는 번들 해시 또는 수동 플래그로 판단한다.
