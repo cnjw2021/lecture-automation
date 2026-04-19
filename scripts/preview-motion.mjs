@@ -9,18 +9,21 @@
  */
 
 import { execFileSync } from 'child_process';
-import { existsSync, mkdirSync, readFileSync } from 'fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
+import { tmpdir } from 'os';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
-const DEFAULT_DURATION = 180;
+const videoConfig = JSON.parse(readFileSync(join(ROOT, 'config', 'video.json'), 'utf8'));
+const DEFAULT_DURATION = 600;
 const DEFAULT_CODEC = 'h264';
+const DEFAULT_FALLBACK_SCENE_SECONDS = 20;
 
 const lectureFile = process.argv[2];
 const sceneId = Number.parseInt(process.argv[3] ?? '', 10);
-const durationInFrames = Number.parseInt(process.argv[4] ?? '', 10) || DEFAULT_DURATION;
+const durationArg = Number.parseInt(process.argv[4] ?? '', 10);
 const codec = process.argv[5] || DEFAULT_CODEC;
 
 if (!lectureFile || Number.isNaN(sceneId)) {
@@ -59,12 +62,29 @@ if (!existsSync(outputDir)) {
   mkdirSync(outputDir, { recursive: true });
 }
 
-const outputPath = join(outputDir, `scene-${sceneId}-${componentName}-${durationInFrames}f.mp4`);
-const inputProps = JSON.stringify({
+const durationInFrames = Number.isFinite(durationArg)
+  ? durationArg
+  : Math.max(
+      Math.ceil((scene.durationSec ?? DEFAULT_FALLBACK_SCENE_SECONDS) * videoConfig.fps),
+      videoConfig.fps * 4
+    );
+
+const outputExtension = (() => {
+  if (codec === 'prores') return 'mov';
+  if (codec === 'vp8' || codec === 'vp9') return 'webm';
+  if (codec === 'gif') return 'gif';
+  return 'mp4';
+})();
+
+const outputPath = join(outputDir, `scene-${sceneId}-${componentName}-${durationInFrames}f.${outputExtension}`);
+const inputProps = {
   lectureData,
   sceneId,
   durationInFrames,
-});
+};
+const propsTempDir = mkdtempSync(join(tmpdir(), 'lecture-preview-props-'));
+const propsFilePath = join(propsTempDir, `scene-${sceneId}.json`);
+writeFileSync(propsFilePath, JSON.stringify(inputProps), 'utf8');
 
 console.log(`🎞️ 모션 프리뷰 렌더링 중...`);
 console.log(`   강의: ${lectureFile}`);
@@ -72,21 +92,25 @@ console.log(`   씬: ${sceneId} (${componentName})`);
 console.log(`   길이: ${durationInFrames} frames`);
 console.log(`   코덱: ${codec}`);
 
-execFileSync(
-  'npx',
-  [
-    'remotion',
-    'render',
-    'src/PreviewRoot.tsx',
-    'PreviewScene',
-    outputPath,
-    `--codec=${codec}`,
-    `--props=${inputProps}`,
-  ],
-  {
-    cwd: join(ROOT, 'packages/remotion'),
-    stdio: 'inherit',
-  }
-);
+try {
+  execFileSync(
+    'npx',
+    [
+      'remotion',
+      'render',
+      'src/PreviewRoot.tsx',
+      'PreviewScene',
+      outputPath,
+      `--codec=${codec}`,
+      `--props=${propsFilePath}`,
+    ],
+    {
+      cwd: join(ROOT, 'packages/remotion'),
+      stdio: 'inherit',
+    }
+  );
+} finally {
+  rmSync(propsTempDir, { recursive: true, force: true });
+}
 
 console.log(`\n✅ 모션 프리뷰 저장 완료: ${outputPath}`);

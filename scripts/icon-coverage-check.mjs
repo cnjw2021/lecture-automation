@@ -13,6 +13,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 const DATA_DIR = join(ROOT, 'data');
 const ICONS_DIR = join(ROOT, 'packages', 'remotion', 'public', 'icons');
+const allowedEmojiFallbacks = new Set(iconsConfig.allowedEmojiFallbacks ?? []);
 
 const isKeycapEmoji = (value) => /^(?:[#*0-9]\uFE0F?\u20E3)$/u.test(value);
 const isFlagEmoji = (value) => /^(?:\p{Regional_Indicator}{2})$/u.test(value);
@@ -66,7 +67,8 @@ lectureFiles.forEach((file) => {
 
 const usedIcons = [...iconUsage.keys()].sort();
 const emojiIcons = usedIcons.filter(isEmoji);
-const unmappedEmoji = emojiIcons.filter((icon) => !iconsConfig.emojiToLucide[icon]);
+const unmappedEmoji = emojiIcons.filter((icon) => !iconsConfig.emojiToLucide[icon] && !allowedEmojiFallbacks.has(icon));
+const preservedEmojiFallbacks = emojiIcons.filter((icon) => allowedEmojiFallbacks.has(icon));
 const invalidLucideMappings = Object.entries(iconsConfig.emojiToLucide)
   .filter(([, lucideName]) => !hasLucideIcon(lucideName))
   .map(([emoji, lucideName]) => ({ emoji, lucideName }));
@@ -81,7 +83,12 @@ const topIcons = [...iconUsage.entries()]
 console.log(`Lecture files: ${lectureFiles.length}`);
 console.log(`Unique icon values: ${usedIcons.length}`);
 console.log(`Emoji-like icon values: ${emojiIcons.length}`);
+console.log(`Allowed raw emoji fallbacks: ${preservedEmojiFallbacks.length}`);
 console.log(`Top icons: ${topIcons.join(', ')}`);
+
+if (preservedEmojiFallbacks.length > 0) {
+  console.log(`Preserved emoji fallbacks: ${preservedEmojiFallbacks.join(', ')}`);
+}
 
 if (invalidLucideMappings.length > 0) {
   console.error('\nInvalid emojiToLucide mappings:');

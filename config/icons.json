@@ -2,6 +2,10 @@
   "brandIcons": [
     "claude", "chatgpt", "cursor", "v0"
   ],
+  "allowedEmojiFallbacks": [
+    "⚪", "⚫", "🇯🇵", "🐸", "🐙", "💆", "🧘",
+    "🔴", "🔵", "🟠", "🟡", "🟢", "🟫"
+  ],
   "emojiToLucide": {
     "#️⃣": "ListOrdered", "1️⃣": "ListOrdered", "2️⃣": "ListOrdered", "3️⃣": "ListOrdered", "4️⃣": "ListOrdered", "5️⃣": "ListOrdered",
     "⏳": "Hourglass", "⬜": "Square",
@@ -24,7 +28,6 @@
     "📱": "Smartphone", "📲": "Smartphone",
     "📟": "Tablet", "📶": "Signal",
     "🌐": "Globe", "🌍": "Globe", "🌎": "Globe", "🌏": "Globe",
-    "🇯🇵": "Languages",
     "🔗": "Link", "🔌": "Plug",
     "⚙️": "Settings", "🔧": "Wrench", "🛠️": "Wrench",
     "🔨": "Hammer", "✏️": "Pencil", "🖊️": "PenLine",
@@ -44,7 +47,7 @@
     "📁": "Folder", "📂": "FolderOpen", "🗂️": "FolderTree", "🪆": "SquareStack",
     "📖": "BookOpen", "📚": "Library", "📕": "Book", "📗": "Book", "📘": "Book", "🃏": "LayoutGrid",
 
-    "✅": "CheckCircle", "❌": "XCircle", "⭕": "Circle", "⚪": "Circle", "⚫": "CircleDot",
+    "✅": "CheckCircle", "❌": "XCircle", "⭕": "Circle",
     "✨": "Sparkles", "⭐": "Star", "🌟": "Star",
     "💡": "Lightbulb", "🔍": "Search", "🔎": "SearchCheck",
     "🚀": "Rocket", "🎯": "Target", "🏆": "Trophy", "🏅": "Medal",
@@ -74,18 +77,17 @@
     "☀️": "Sun", "🌙": "Moon", "🌤️": "CloudSun",
     "🌑": "Moon", "🌈": "Rainbow", "💧": "Droplet", "🌊": "Waves",
     "🌱": "Sprout", "🌿": "Leaf", "🍀": "Clover",
-    "🌸": "Flower2", "🐢": "Turtle", "🐙": "GitBranch", "🐸": "Gamepad2", "🍎": "Apple",
+    "🌸": "Flower2", "🐢": "Turtle", "🍎": "Apple",
 
     "👍": "ThumbsUp", "👎": "ThumbsDown", "👋": "Hand",
     "🤝": "Handshake", "✋": "Hand", "☝️": "Pointer",
-    "💪": "Dumbbell", "💆": "HandPlatter", "🧘": "Leaf",
+    "💪": "Dumbbell",
 
     "😀": "Smile", "😊": "Smile", "😃": "Smile",
     "😢": "Frown", "😓": "Frown", "😕": "Frown", "😰": "Frown", "😡": "Angry",
     "🤔": "HelpCircle", "❓": "HelpCircle", "❗": "AlertCircle",
     "⚠️": "AlertTriangle", "🚫": "Ban", "⛔": "Ban",
     "ℹ️": "Info", "💯": "BadgeCheck",
-    "🟠": "Circle", "🟡": "Circle", "🟢": "Circle", "🟫": "Square",
     "🦴": "Bone", "🧹": "Eraser", "🪟": "Monitor"
   }
 }

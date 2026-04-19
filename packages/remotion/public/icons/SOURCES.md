@@ -11,6 +11,17 @@ Updated: 2026-04-19
 - Do not distort official proportions or shapes
 - `brand-tinted` variants may only change a logo to a single-tone treatment
 
+## Raw Emoji Exceptions
+
+Some icons intentionally stay as raw emoji instead of being force-mapped to Lucide.
+
+- Color-only symbols such as `🔴`, `🔵`, `🟠`, `🟡`, `🟢`, `⚫`, `⚪`, `🟫`
+  - Reason: the color itself is the meaning, and Lucide replacement loses that signal.
+- Locale or character-specific symbols such as `🇯🇵`, `🐸`, `🐙`, `💆`, `🧘`
+  - Reason: broad semantic remapping created more meaning loss than keeping the original emoji.
+
+These exceptions are tracked in `config/icons.json > allowedEmojiFallbacks` and are treated as valid by `scripts/icon-coverage-check.mjs`.
+
 ## Current Assets
 
 | asset | source | license | modifications | attribution | notes |

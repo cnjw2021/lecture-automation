@@ -24,7 +24,8 @@ help:
 	@echo "make run-force       - 기존 에셋 무시하고 전체 재생성"
 	@echo "make clean           - 생성된 모든 에셋 및 결과물 삭제"
 	@echo "make preview SCENE=6 - 특정 씬의 프리뷰 이미지 생성 (PNG)"
-	@echo "make preview-motion SCENE=6 - 특정 씬의 no-audio 모션 프리뷰 생성 (MP4)"
+	@echo "make preview-motion LECTURE=lecture-01-03.json SCENE=6 - 특정 씬의 no-audio 모션 프리뷰 생성"
+	@echo "make preview-motion LECTURE=lecture-01-03.json SCENE=6 DURATION=150 - 프리뷰 길이 지정"
 	@echo "make icon-coverage   - lecture JSON의 icon 매핑 누락/오타 검사"
 	@echo "make tts-sample      - 현재 프로바이더로 TTS 샘플 생성"
 	@echo "make tts-sample TTS=gemini_cloud_tts RATE=0.7 - 프로바이더/속도 지정"
@@ -108,9 +109,9 @@ preview:
 
 preview-motion:
 	@echo "🎞️ no-audio 모션 프리뷰 생성 중..."
-	@echo "사용법: make preview-motion SCENE=6"
-	@echo "       make preview-motion SCENE=6 FRAME=150"
-	@node scripts/preview-motion.mjs $(LECTURE) $(SCENE) $(FRAME)
+	@echo "사용법: make preview-motion LECTURE=lecture-01-03.json SCENE=6"
+	@echo "       make preview-motion LECTURE=lecture-01-03.json SCENE=6 DURATION=150"
+	@node scripts/preview-motion.mjs $(LECTURE) $(SCENE) $(or $(DURATION),$(FRAME))
 
 icon-coverage:
 	@echo "🧭 icon coverage 검사 중..."

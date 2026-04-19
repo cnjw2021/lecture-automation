@@ -43,19 +43,6 @@ export const NodeIcon: React.FC<NodeIconProps> = ({
 }) => {
   const resolved = resolveIcon(icon);
   const toneColor = getToneColor(variant, color);
-  const highlightedWrapper: React.CSSProperties =
-    variant === 'highlighted'
-      ? {
-          width: size,
-          height: size,
-          borderRadius: '50%',
-          background: `linear-gradient(135deg, ${color || theme.color.accent} 0%, ${theme.color.accentSecondary} 100%)`,
-          boxShadow: `0 14px 30px ${color || theme.color.accent}30`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }
-      : {};
 
   switch (resolved.type) {
     case 'brand':
@@ -99,43 +86,37 @@ export const NodeIcon: React.FC<NodeIconProps> = ({
     case 'lucide': {
       const LucideIcon = resolved.Component;
       return (
-        <div style={highlightedWrapper}>
-          <LucideIcon
-            size={variant === 'highlighted' ? size * 0.48 : size * 0.75}
-            color={toneColor}
-            strokeWidth={variant === 'highlighted' ? 2.2 : 1.8}
-          />
-        </div>
+        <LucideIcon
+          size={variant === 'highlighted' ? size * 0.82 : size * 0.75}
+          color={toneColor}
+          strokeWidth={variant === 'highlighted' ? 2.1 : 1.8}
+        />
       );
     }
 
     case 'emoji':
       return (
-        <div style={highlightedWrapper}>
-          <span style={{
-            fontSize: variant === 'highlighted' ? size * 0.42 : size * 0.8,
-            lineHeight: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            {resolved.value}
-          </span>
-        </div>
+        <span style={{
+          fontSize: variant === 'highlighted' ? size * 0.88 : size * 0.8,
+          lineHeight: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          {resolved.value}
+        </span>
       );
 
     case 'text':
       return (
-        <div style={highlightedWrapper}>
-          <span style={{
-            fontSize: variant === 'highlighted' ? size * 0.28 : size * 0.45,
-            fontWeight: 700,
-            color: toneColor,
-            lineHeight: 1,
-          }}>
-            {resolved.value}
-          </span>
-        </div>
+        <span style={{
+          fontSize: variant === 'highlighted' ? size * 0.52 : size * 0.45,
+          fontWeight: 700,
+          color: toneColor,
+          lineHeight: 1,
+        }}>
+          {resolved.value}
+        </span>
       );
   }
 };

@@ -82,6 +82,7 @@ export interface TransitionConfig {
 
 export interface SceneData {
   scene_id: number;
+  durationSec?: number;
   visual: {
     type: string;
     component?: string;

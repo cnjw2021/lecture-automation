@@ -17,7 +17,7 @@ interface PreviewSceneProps {
   synthManifests?: Record<string, unknown>;
 }
 
-const DEFAULT_PREVIEW_DURATION = 180;
+const DEFAULT_PREVIEW_DURATION = 600;
 
 const findScene = (lectureData: LectureData, sceneId: number): SceneData | undefined =>
   lectureData.sequence.find(scene => scene.scene_id === sceneId);
@@ -67,11 +67,19 @@ export const PreviewRoot: React.FC = () => {
         defaultProps={{
           lectureData: { lecture_id: '', sequence: [] },
           sceneId: 1,
-          durationInFrames: DEFAULT_PREVIEW_DURATION,
         } as PreviewSceneProps}
         calculateMetadata={async ({ props }) => {
-          const { durationInFrames = DEFAULT_PREVIEW_DURATION } = props as PreviewSceneProps;
-          return { durationInFrames };
+          const { lectureData, sceneId, durationInFrames } = props as PreviewSceneProps;
+          if (durationInFrames) {
+            return { durationInFrames };
+          }
+
+          const scene = findScene(lectureData, sceneId);
+          const derivedDuration = scene?.durationSec
+            ? Math.max(Math.ceil(scene.durationSec * fps), fps * 4)
+            : DEFAULT_PREVIEW_DURATION;
+
+          return { durationInFrames: derivedDuration };
         }}
       />
 
