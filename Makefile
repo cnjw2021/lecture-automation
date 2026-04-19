@@ -1,7 +1,7 @@
 # Lecture Automation Makefile
 
 .PHONY: help install build run run-force regen-scene run-tts-only render-scene record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
-        sync-playwright save-auth
+        sync-playwright save-auth validate-schema
 
 # 기본 변수 설정
 LECTURE ?= lecture-01-01.json
@@ -137,6 +137,14 @@ save-auth:
 		exit 1; \
 	fi
 	npx tsx packages/automation/src/presentation/cli/save-auth.ts $(SERVICE)
+
+validate-schema:
+	@echo "🔍 Schema validation: $(LECTURE)"
+	@if [ -z "$(LECTURE)" ]; then \
+		echo "❌ LECTURE 값을 지정해 주세요. 예: make validate-schema LECTURE=lecture-01-03.json"; \
+		exit 1; \
+	fi
+	npx tsx packages/automation/src/presentation/cli/validate-lecture-schema.ts $(LECTURE) $(if $(filter 1,$(STRICT)),--strict,)
 
 clean:
 	@echo "🧹 생성된 에셋 및 결과물 정리 중..."
