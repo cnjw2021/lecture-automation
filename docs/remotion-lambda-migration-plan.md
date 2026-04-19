@@ -6,12 +6,26 @@
 
 ## 🏗️ 전체 아키텍처 개요
 
+### 핵심 설계 원칙: 씬 단위 병렬화
+
+현재 40~50개 씬을 로컬에서 순차적으로 렌더링하는 구조를 **씬마다 Lambda 함수 1개를 동시에 호출**하는 구조로 전환한다. 전체 렌더링 시간은 "모든 씬의 합산" 에서 "가장 오래 걸리는 씬 1개의 시간"으로 단축된다.
+
+```
+[현재] scene-1 → scene-2 → scene-3 → ... → scene-50  (순차, 로컬)
+
+[목표] scene-1  → Lambda ①  ┐
+       scene-2  → Lambda ②  ├─→ Promise.all 완료 → 다운로드 → concat
+       scene-3  → Lambda ③  │
+       ...                   │
+       scene-50 → Lambda ⑤⓪ ┘
+```
+
 도입이 완료되면 현재의 로컬 `npm run build` 스크립트는 삭제되고, 코드는 다음과 같은 흐름으로 작동하게 됩니다.
 
-1. **Bundle & Deploy**: 현재 설계된 React(Remotion) 코드를 번들링하여 AWS S3 버킷에 업로드 (`deploySite()`)
-2. **Invoke**: 해당 S3 URL과 렌더링할 Props(JSON)를 지정하여 AWS Lambda 함수 호출 (`renderMediaOnLambda()`)
-3. **Poll Pipeline**: 클라이언트 코드가 AWS에 작업 진척도를 계속 묻고(Polling), AWS는 내부적으로 수십 대의 워커(Lambda)를 띄워 샷을 병렬 처리
-4. **Download**: 최종 합체된 MP4/WebM 파일이 생성되면 완성본을 로컬로 다운로드, S3 객체 정리
+1. **Bundle & Deploy**: Remotion 소스 코드를 번들링하여 AWS S3에 업로드 (`deploySite()`). 코드가 바뀌지 않았다면 재사용.
+2. **Parallel Invoke**: 렌더링이 필요한 씬 전체에 대해 `renderMediaOnLambda()`를 동시에 호출 (`Promise.all`). 씬 1개당 Lambda 함수 1개가 할당되며, Lambda 내부의 프레임 분산은 사용하지 않는다.
+3. **Poll**: 각 Lambda의 진행 상황을 `getRenderProgress()`로 폴링하여 터미널에 표시.
+4. **Download & Cleanup**: 모든 씬 렌더 완료 후 출력 파일을 로컬로 다운로드, S3 결과물 정리, concat 실행.
 
 ---
 
@@ -70,7 +84,7 @@ REMOTION_SERVE_URL=https://s3.amazonaws.com/remotionlambda-xxxx/sites/lecture-au
 - 임시 props.json 파일을 쓴다.
 - `child_process`로 `npm run build` CLI 명령어를 실행한다.
 
-#### [변경 후 로직] Lambda API (목표)
+#### [변경 후 로직] Lambda 씬 단위 병렬 호출 (목표)
 `deploySite()`, `renderMediaOnLambda()`, `getRenderProgress()` 는 모두 **`@remotion/lambda`** 에서 import합니다. (`@remotion/bundler`는 로컬 번들링 전용이며 여기서는 사용하지 않습니다.)
 
 ```typescript
@@ -79,11 +93,11 @@ import { deploySite, renderMediaOnLambda, getRenderProgress } from '@remotion/la
 
 처리 흐름:
 1. **serveUrl 결정**: 환경변수 `REMOTION_SERVE_URL`을 읽어 재사용. 코드가 변경된 경우에만 `deploySite()`를 호출하여 새 serveUrl을 얻는다. (Phase 5 참조)
-2. **렌더 호출**: `renderMediaOnLambda()` 실행. `functionName`은 환경변수 `REMOTION_LAMBDA_FUNCTION_NAME`에서 읽고, Props로 `lectureData`를 직접 주입한다.
-3. **진행률 표시**: 반환되는 `renderId`를 활용해 주기적으로 `getRenderProgress()`를 호출하여 진행률(예: 100/300 프레임 완료)을 터미널에 표시한다.
-4. **다운로드 및 정리**: 완료 후 AWS에서 반환하는 출력 URL로 파일을 받아 지정된 로컬 `outPath`에 저장한다. 이후 S3에 남은 렌더 결과물을 삭제하여 스토리지 비용이 누적되지 않도록 한다.
+2. **씬 전체 동시 호출**: 렌더링이 필요한 씬 목록 전체에 대해 `renderMediaOnLambda()`를 `Promise.all`로 동시에 호출한다. 각 씬은 독립된 Lambda 함수 1개가 처리한다. `framesPerLambda`는 씬의 총 프레임 수 이상으로 설정하여 Lambda 내부의 추가 프레임 분산이 발생하지 않도록 한다.
+3. **진행률 표시**: 각 호출에서 반환되는 `renderId`를 활용해 `getRenderProgress()`를 폴링하여 씬별 진행률을 터미널에 표시한다.
+4. **다운로드 및 정리**: 모든 씬 완료 후 각 출력 URL에서 파일을 받아 지정된 로컬 `outPath`에 저장한다. 이후 S3에 남은 렌더 결과물을 삭제하여 스토리지 비용이 누적되지 않도록 한다.
 
 ### Phase 5: 최적화 및 롤아웃 워크플로우 구성
-1. **serveUrl 재사용**: 여러 씬(혹은 여러 강의)을 렌더링할 때 Remotion 소스 코드가 변경되지 않았다면 `deploySite()`를 매번 호출하지 않고, 이미 배포된 `REMOTION_SERVE_URL`을 그대로 사용한다. 코드 변경 감지는 번들 해시 또는 수동 플래그로 판단한다.
+1. **serveUrl 재사용**: Remotion 소스 코드가 변경되지 않았다면 `deploySite()`를 매번 호출하지 않고, 이미 배포된 `REMOTION_SERVE_URL`을 그대로 사용한다. 코드 변경 감지는 번들 해시 또는 수동 플래그로 판단한다.
 2. **Makefile 타겟 추가**: `make render-scene-lambda` 타겟을 구성하여 기존 로컬 렌더(`make render-scene`)와 A/B 테스트를 진행한다.
-3. **concurrency 관리**: `renderMediaOnLambda()`의 `concurrencyPerLambda` 옵션을 조정하여 AWS Lambda 계정 기본 한도(동시 실행 1,000개)를 초과하지 않도록 제어한다.
+3. **동시 호출 수 상한 관리**: AWS Lambda 계정의 기본 동시 실행 한도는 1,000개다. 씬 50개 동시 호출은 한도 내에 충분히 수용되지만, 향후 여러 강의를 동시에 처리하는 경우를 대비해 `Promise.all` 대신 `p-limit` 등으로 동시 호출 수의 상한을 설정해 두는 것이 안전하다.
