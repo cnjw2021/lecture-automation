@@ -1,4 +1,5 @@
 import { ZodError } from 'zod';
+import { Scene } from '../entities/Lecture';
 import { REMOTION_PROPS_SCHEMAS } from './remotionPropsSchemas';
 
 export type ValidationMode = 'warning' | 'strict';
@@ -22,7 +23,7 @@ export interface PropValidationResult {
  * mode === 'strict'  : 오류가 하나라도 있으면 예외를 던짐
  */
 export function validateRemotionVisualProps(
-  scenes: Array<{ scene_id: number; visual: { type: string; component?: string; props?: Record<string, any> } }>,
+  scenes: Scene[],
   mode: ValidationMode = 'warning',
 ): PropValidationResult {
   const issues: PropValidationIssue[] = [];

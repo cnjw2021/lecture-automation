@@ -66,7 +66,7 @@ export class ValidateLectureUseCase {
     console.log(`✅ shared session 제약 검증 완료.`);
 
     // Props schema validation (warning 모드 — 오류가 있어도 파이프라인 중단 안 함)
-    const schemaResult = validateRemotionVisualProps(lecture.sequence as any, 'warning');
+    const schemaResult = validateRemotionVisualProps(lecture.sequence, 'warning');
     printPropValidationResult(schemaResult);
   }
 }

@@ -17,7 +17,8 @@ const commonOptional = {
 // ─── 기본/전환 ────────────────────────────────────────────────────────────────
 
 export const TitleScreenSchema = z.object({
-  title: z.string(),
+  title: z.string().optional(),
+  main: z.string().optional(),
   sub: z.string().optional(),
   illustration: z.string().optional(),
   backdropVariant: z.string().optional(),
@@ -119,7 +120,6 @@ export const IconListScreenSchema = z.object({
     badge: z.string().optional(),
     metric: z.string().optional(),
     emphasis: z.boolean().optional(),
-    connector: z.string().optional(),
   })).min(1),
   ...commonOptional,
 }).passthrough();
@@ -195,6 +195,7 @@ export const StatScreenSchema = z.object({
   prefix: z.string().optional(),
   suffix: z.string().optional(),
   description: z.string().optional(),
+  color: z.string().optional(),
   ...commonOptional,
 }).passthrough();
 

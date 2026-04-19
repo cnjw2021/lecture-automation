@@ -2,7 +2,7 @@
  * validate-lecture-schema.ts
  *
  * Usage:
- *   ts-node src/presentation/cli/validate-lecture-schema.ts lecture-01-03.json [--strict]
+ *   npx tsx src/presentation/cli/validate-lecture-schema.ts lecture-01-03.json [--strict]
  *
  * 롤아웃 전략:
  *   - 기본: warning 모드 (오류가 있어도 exit 0)
@@ -37,12 +37,8 @@ async function main() {
   console.log(`\n🔍 Schema validation: ${jsonFileName} (mode=${mode})`);
 
   try {
-    const result = validateRemotionVisualProps(lecture.sequence as any, mode);
+    const result = validateRemotionVisualProps(lecture.sequence, mode);
     printPropValidationResult(result);
-
-    if (result.hasErrors && mode === 'strict') {
-      process.exit(1);
-    }
   } catch (err) {
     console.error(`❌ ${(err as Error).message}`);
     process.exit(1);

@@ -144,7 +144,7 @@ validate-schema:
 		echo "❌ LECTURE 값을 지정해 주세요. 예: make validate-schema LECTURE=lecture-01-03.json"; \
 		exit 1; \
 	fi
-	npx ts-node packages/automation/src/presentation/cli/validate-lecture-schema.ts $(LECTURE) $(if $(filter 1,$(STRICT)),--strict,)
+	npx tsx packages/automation/src/presentation/cli/validate-lecture-schema.ts $(LECTURE) $(if $(filter 1,$(STRICT)),--strict,)
 
 clean:
 	@echo "🧹 생성된 에셋 및 결과물 정리 중..."
