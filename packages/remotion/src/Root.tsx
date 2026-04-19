@@ -1,4 +1,4 @@
-import { Composition, Sequence, Audio, AbsoluteFill, registerRoot } from 'remotion';
+import { Composition, Sequence, Audio, AbsoluteFill, registerRoot, staticFile } from 'remotion';
 import { SceneTransition } from './components';
 import {
   calcSceneDurationFrames,
