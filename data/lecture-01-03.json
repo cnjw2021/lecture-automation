@@ -450,13 +450,13 @@
           "left": {
             "title": "Claude",
             "body": "アンソロピック社のAI\n無料プランあり\n日本語でHTML/CSS生成\nこの講座のメインツール",
-            "icon": "🟠",
+            "icon": "claude",
             "color": "#6366f1"
           },
           "right": {
             "title": "ChatGPT",
             "body": "オープンエーアイ社のAI\n無料プランあり\n日本語でHTML/CSS生成\n比較・使い分けに活用",
-            "icon": "🟢",
+            "icon": "chatgpt",
             "color": "#6366f1"
           }
         }
@@ -515,7 +515,7 @@
           "title": "紹介ツール①",
           "items": [
             {
-              "icon": "▲",
+              "icon": "v0",
               "title": "v0.dev",
               "detail": "高品質UIだがリアクト+テールウィンド前提。無料枠に月上限あり",
               "color": "#94a3b8"
@@ -541,13 +541,13 @@
           "title": "紹介ツール②",
           "items": [
             {
-              "icon": "🎨",
+              "icon": "canva",
               "title": "Canva",
               "detail": "デザインツールとして有名。レイアウト確認には便利だが実習対象外",
               "color": "#94a3b8"
             },
             {
-              "icon": "✏️",
+              "icon": "figma",
               "title": "Figma Make",
               "detail": "プロ向けデザインツールのAI版。講座の実習とは目的が異なる",
               "color": "#94a3b8"

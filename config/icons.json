@@ -1,9 +1,11 @@
 {
   "brandIcons": [
-    "claude", "chatgpt", "cursor", "v0"
+    "claude", "chatgpt", "cursor", "v0",
+    "github", "netlify", "figma", "stackblitz", "chrome", "html5",
+    "codepen", "css3", "vscode", "canva"
   ],
   "allowedEmojiFallbacks": [
-    "⚪", "⚫", "🇯🇵", "🐸", "🐙", "💆", "🧘",
+    "⚪", "⚫", "🇯🇵", "🐸", "💆", "🧘",
     "🔴", "🔵", "🟠", "🟡", "🟢", "🟫"
   ],
   "emojiToLucide": {

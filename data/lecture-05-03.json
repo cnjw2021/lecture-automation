@@ -371,7 +371,7 @@
           "title": "次のステップへ",
           "features": [
             { "icon": "📄", "title": "複数ページのWebサイト", "description": "情報量が増えたらページを分ける", "color": "#f59e0b" },
-            { "icon": "🐙", "title": "GitHubでバージョン管理", "description": "変更履歴の記録と前の状態への復元", "color": "#f59e0b" },
+            { "icon": "github", "title": "GitHubでバージョン管理", "description": "変更履歴の記録と前の状態への復元", "color": "#f59e0b" },
             { "icon": "🔍", "title": "SEOとアクセス解析", "description": "検索流入と訪問者データの活用", "color": "#f59e0b" },
             { "icon": "🌐", "title": "カスタムドメイン", "description": "mysite.comのような自分だけのアドレス", "color": "#f59e0b" }
           ],
@@ -414,7 +414,7 @@
         "type": "remotion",
         "component": "KeyPointScreen",
         "props": {
-          "icon": "🐙",
+          "icon": "github",
           "headline": "GitHubでバージョン管理",
           "detail": "変更履歴を記録。いつでも前の状態に戻せる。チーム作業にも必須のツール",
           "color": "#f59e0b"
