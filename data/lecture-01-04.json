@@ -528,7 +528,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 0
+            "ms": 4440
           },
           {
             "cmd": "mouse_move",
@@ -539,7 +539,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 0
+            "ms": 30040
           },
           {
             "cmd": "mouse_move",
@@ -550,7 +550,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 0
+            "ms": 24940
           },
           {
             "cmd": "mouse_move",
@@ -561,7 +561,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 0
+            "ms": 3461
           },
           {
             "cmd": "mouse_move",
@@ -572,7 +572,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 0
+            "ms": 3846
           },
           {
             "cmd": "mouse_move",
@@ -583,7 +583,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 0
+            "ms": 6973
           },
           {
             "cmd": "mouse_move",
@@ -594,7 +594,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 0
+            "ms": 7160
           },
           {
             "cmd": "mouse_move",
@@ -605,7 +605,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 0
+            "ms": 17080
           },
           {
             "cmd": "mouse_move",
@@ -616,7 +616,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 0
+            "ms": 15060
           },
           {
             "cmd": "mouse_move",
@@ -627,7 +627,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 0
+            "ms": 5412
           },
           {
             "cmd": "mouse_move",
@@ -638,7 +638,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 0
+            "ms": 20544
           }
         ]
       }
