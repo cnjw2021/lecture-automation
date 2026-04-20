@@ -15,6 +15,7 @@ export interface AuditReport {
   auditedScenes: number;
   passedScenes: number;
   warningScenes: number;
+  errorScenes: number;
   skippedScenes: number;
   results: STTSceneAuditResult[];
   totalFindingCount: number;
@@ -53,19 +54,21 @@ export class AuditTTSUseCase {
         const result = await this.sttProvider.audit(audioPath, scene.narration, scene.scene_id);
         results.push(result);
 
-        if (result.passed) {
+        if (result.passed === true) {
           console.log(`     ✅ 異常なし`);
         } else {
           console.log(`     ⚠️  ${result.findings.length}件 検出`);
         }
       } catch (error) {
-        console.error(`     ❌ Scene ${scene.scene_id} 検査エラー: ${(error as Error).message}`);
-        results.push({ sceneId: scene.scene_id, passed: false, findings: [] });
+        const msg = (error as Error).message;
+        console.error(`     ❌ Scene ${scene.scene_id} 検査エラー: ${msg}`);
+        results.push({ sceneId: scene.scene_id, passed: 'error', findings: [], errorMessage: msg });
       }
     }
 
-    const passedScenes = results.filter(r => r.passed).length;
-    const warningScenes = results.filter(r => !r.passed).length;
+    const passedScenes = results.filter(r => r.passed === true).length;
+    const warningScenes = results.filter(r => r.passed === false).length;
+    const errorScenes = results.filter(r => r.passed === 'error').length;
     const totalFindingCount = results.reduce((sum, r) => sum + r.findings.length, 0);
 
     return {
@@ -75,6 +78,7 @@ export class AuditTTSUseCase {
       auditedScenes: results.length,
       passedScenes,
       warningScenes,
+      errorScenes,
       skippedScenes,
       results,
       totalFindingCount,

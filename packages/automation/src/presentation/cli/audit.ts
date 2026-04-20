@@ -67,8 +67,10 @@ function printReport(report: AuditReport): void {
   console.log('─'.repeat(60));
 
   for (const result of report.results) {
-    if (result.passed) {
+    if (result.passed === true) {
       console.log(`  씬 ${String(result.sceneId).padStart(3)}  ✅ 이상 없음`);
+    } else if (result.passed === 'error') {
+      console.log(`  씬 ${String(result.sceneId).padStart(3)}  ❌ API 에러: ${result.errorMessage ?? ''}`);
     } else {
       console.log(`  씬 ${String(result.sceneId).padStart(3)}  ⚠️  ${result.findings.length}건 의심`);
       for (const f of result.findings) {
@@ -82,9 +84,9 @@ function printReport(report: AuditReport): void {
   }
 
   console.log('─'.repeat(60));
-  console.log(
-    `요약: ${report.passedScenes}/${report.auditedScenes} 씬 통과, ${report.warningScenes} 씬 의심 (총 ${report.totalFindingCount}건)`,
-  );
+  const parts = [`${report.passedScenes}/${report.auditedScenes} 씬 통과`, `${report.warningScenes} 씬 의심 (총 ${report.totalFindingCount}건)`];
+  if (report.errorScenes > 0) parts.push(`${report.errorScenes} 씬 에러`);
+  console.log(`요약: ${parts.join(', ')}`);
 }
 
 async function main() {
@@ -130,7 +132,7 @@ async function main() {
 
   printReport(report);
 
-  process.exit(report.warningScenes > 0 ? 1 : 0);
+  process.exit(report.warningScenes > 0 || report.errorScenes > 0 ? 1 : 0);
 }
 
 main().catch(err => {
