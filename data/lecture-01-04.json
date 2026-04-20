@@ -49,19 +49,19 @@
               "title": "GitHubアカウント作成",
               "description": "コード共有サービスに登録",
               "icon": "🔑",
-              "duration": "6分"
+              "duration": ""
             },
             {
               "title": "CodePenセットアップ",
               "description": "オンラインエディタを準備",
               "icon": "✏️",
-              "duration": "6.5分"
+              "duration": ""
             },
             {
               "title": "Hello World",
               "description": "はじめてのHTMLを書く",
               "icon": "🌍",
-              "duration": "6分"
+              "duration": ""
             }
           ]
         }
@@ -198,7 +198,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 3000
+            "ms": 1320
           },
           {
             "cmd": "mouse_move",
@@ -209,7 +209,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 25000
+            "ms": 11000
           },
           {
             "cmd": "highlight",
@@ -218,7 +218,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 18000
+            "ms": 20940
           },
           {
             "cmd": "highlight",
@@ -227,7 +227,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 27000
+            "ms": 28840
           },
           {
             "cmd": "highlight",
@@ -236,7 +236,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 19000
+            "ms": 7600
           },
           {
             "cmd": "highlight",
@@ -245,7 +245,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 8000
+            "ms": 1100
           },
           {
             "cmd": "highlight",
@@ -254,7 +254,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 14000
+            "ms": 5720
           },
           {
             "cmd": "mouse_move",
@@ -270,7 +270,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 10000
+            "ms": 4111
           }
         ]
       }
@@ -318,14 +318,14 @@
     },
     {
       "scene_id": 11,
-      "narration": "メールに記載されている6桁の数字を、先ほどの認証画面に入力してください。これでアカウント作成のステップはほぼ終わりです。",
+      "narration": "メールに記載されている8桁の数字を、先ほどの認証画面に入力してください。これでアカウント作成のステップはほぼ終わりです。",
       "durationSec": 11,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
         "props": {
           "icon": "🔢",
-          "headline": "6桁のコードを入力",
+          "headline": "8桁のコードを入力",
           "detail": "メールに届いた番号を認証画面に入力するとほぼ完了",
           "color": "#6366f1"
         }
@@ -430,7 +430,7 @@
     },
     {
       "scene_id": 15,
-      "narration": "GitHubの画面に切り替わって、「Authorize CodePen」という確認が出てきたら、「Authorize」をクリックしてください。「CodePenにGitHubアカウントでのログインを許可しますよ」という意味です。画面が切り替わるまで少し待ちましょう。",
+      "narration": "GitHubの画面に切り替わって、「オーソライズ CodePen」という確認が出てきたら、「オーソライズ」をクリックしてください。「CodePenにGitHubアカウントでのログインを許可しますよ」という意味です。画面が切り替わるまで少し待ちましょう。",
       "durationSec": 26,
       "visual": {
         "type": "remotion",
