@@ -67,6 +67,17 @@ describe('A-tts-landmines', () => {
     expect(issues).toHaveLength(0);
   });
 
+  it('detects Authorize (CodePen↔GitHub 連携ボタン)', () => {
+    const lec = makeLecture([
+      '「Authorize CodePen」という確認が出てきたら、「Authorize」をクリック',
+      'これは関係ないAuthorizedText',
+    ]);
+    const issues = ttsLandminesRule.run(lec);
+    expect(issues).toHaveLength(1);
+    expect(issues[0].sceneId).toBe(1);
+    expect(issues[0].fixDescription).toBe('「Authorize」→「オーソライズ」');
+  });
+
   it('detects HTML 見出しタグ h1~h6', () => {
     const lec = makeLecture([
       'この「h1」というのは見出しタグです',
