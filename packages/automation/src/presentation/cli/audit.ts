@@ -25,6 +25,7 @@ import { config } from '../../infrastructure/config';
 
 interface CliOptions {
   sceneIds: number[];
+  runs?: number;
 }
 
 function parseArgs(args: string[]): { jsonFileName: string; options: CliOptions } {
@@ -34,9 +35,9 @@ function parseArgs(args: string[]): { jsonFileName: string; options: CliOptions 
   }
 
   const jsonFileName = args[0];
+
   const sceneFlag = args.indexOf('--scene');
   let sceneIds: number[] = [];
-
   if (sceneFlag !== -1 && args[sceneFlag + 1]) {
     sceneIds = args[sceneFlag + 1]
       .split(/[,\s]+/)
@@ -46,13 +47,20 @@ function parseArgs(args: string[]): { jsonFileName: string; options: CliOptions 
       .filter(n => !isNaN(n));
   }
 
-  return { jsonFileName, options: { sceneIds } };
+  const runsFlag = args.indexOf('--runs');
+  let runs: number | undefined;
+  if (runsFlag !== -1 && args[runsFlag + 1]) {
+    const n = parseInt(args[runsFlag + 1], 10);
+    if (!isNaN(n) && n >= 1) runs = n;
+  }
+
+  return { jsonFileName, options: { sceneIds, runs } };
 }
 
 function printUsage() {
-  console.error('Usage: audit.ts <lecture-XX.json> [--scene <id|ids>]');
+  console.error('Usage: audit.ts <lecture-XX.json> [--scene <id|ids>] [--runs N]');
   console.error('  例: audit.ts lecture-01-04.json --scene 31');
-  console.error('  例: audit.ts lecture-01-04.json --scene "5 12 31"');
+  console.error('  例: audit.ts lecture-01-04.json --scene "5 12 31" --runs 3');
 }
 
 function formatTime(sec: number): string {
@@ -125,9 +133,15 @@ async function main() {
     console.log(`   対象씬: ${options.sceneIds.join(', ')}`);
   }
 
+  const runs = options.runs ?? auditConfig.runs;
+  if (runs && runs > 1) {
+    console.log(`   runs: ${runs}回 (1回でも⚠️ → 疑い判定)`);
+  }
+
   const report = await auditUseCase.execute(lecture, {
     sceneIds: options.sceneIds.length > 0 ? options.sceneIds : undefined,
     excludeSceneIds: auditConfig.excludeScenes,
+    runs,
   });
 
   printReport(report);

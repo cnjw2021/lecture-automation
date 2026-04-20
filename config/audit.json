@@ -6,5 +6,6 @@
       "temperature": 0
     }
   },
-  "excludeScenes": []
+  "excludeScenes": [],
+  "runs": 2
 }

@@ -1,11 +1,13 @@
 import * as fs from 'fs-extra';
 import { Lecture } from '../../domain/entities/Lecture';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
-import { ISTTProvider, STTSceneAuditResult } from '../../domain/interfaces/ISTTProvider';
+import { ISTTProvider, STTFinding, STTSceneAuditResult } from '../../domain/interfaces/ISTTProvider';
 
 export interface AuditTTSUseCaseOptions {
   sceneIds?: number[];
   excludeSceneIds?: number[];
+  /** 동일 씬을 몇 번 감사할지. 1번이라도 ⚠️ → 의심 판정 (기본: 1) */
+  runs?: number;
 }
 
 export interface AuditReport {
@@ -28,7 +30,7 @@ export class AuditTTSUseCase {
   ) {}
 
   async execute(lecture: Lecture, options: AuditTTSUseCaseOptions = {}): Promise<AuditReport> {
-    const { sceneIds, excludeSceneIds = [] } = options;
+    const { sceneIds, excludeSceneIds = [], runs = 1 } = options;
 
     const targetScenes = lecture.sequence.filter(scene => {
       if (excludeSceneIds.includes(scene.scene_id)) return false;
@@ -48,16 +50,18 @@ export class AuditTTSUseCase {
         continue;
       }
 
-      console.log(`  🎧 Scene ${scene.scene_id} 検査中...`);
+      const runLabel = runs > 1 ? ` (${runs}回実行)` : '';
+      console.log(`  🎧 Scene ${scene.scene_id} 検査中...${runLabel}`);
 
       try {
-        const result = await this.sttProvider.audit(audioPath, scene.narration, scene.scene_id);
-        results.push(result);
+        const merged = await this.auditWithRetries(audioPath, scene.narration, scene.scene_id, runs);
+        results.push(merged);
 
-        if (result.passed === true) {
+        if (merged.passed === true) {
           console.log(`     ✅ 異常なし`);
         } else {
-          console.log(`     ⚠️  ${result.findings.length}件 検出`);
+          const hitRuns = merged.hitRuns ?? 1;
+          console.log(`     ⚠️  ${merged.findings.length}件 検出 (${hitRuns}/${runs}回で検出)`);
         }
       } catch (error) {
         const msg = (error as Error).message;
@@ -67,6 +71,7 @@ export class AuditTTSUseCase {
     }
 
     const passedScenes = results.filter(r => r.passed === true).length;
+
     const warningScenes = results.filter(r => r.passed === false).length;
     const errorScenes = results.filter(r => r.passed === 'error').length;
     const totalFindingCount = results.reduce((sum, r) => sum + r.findings.length, 0);
@@ -83,5 +88,50 @@ export class AuditTTSUseCase {
       results,
       totalFindingCount,
     };
+  }
+
+  private async auditWithRetries(
+    audioPath: string,
+    narration: string,
+    sceneId: number,
+    runs: number,
+  ): Promise<STTSceneAuditResult> {
+    if (runs === 1) {
+      return this.sttProvider.audit(audioPath, narration, sceneId);
+    }
+
+    const runResults: STTSceneAuditResult[] = [];
+    for (let i = 0; i < runs; i++) {
+      try {
+        const result = await this.sttProvider.audit(audioPath, narration, sceneId);
+        runResults.push(result);
+      } catch (error) {
+        console.warn(`     run ${i + 1}/${runs} 失敗: ${(error as Error).message}`);
+      }
+    }
+
+    if (runResults.length === 0) {
+      throw new Error(`全 ${runs} 回失敗`);
+    }
+
+    const hitRuns = runResults.filter(r => r.passed === false).length;
+    const allFindings = runResults.flatMap(r => r.findings);
+    const findings = this.deduplicateFindings(allFindings);
+
+    return { sceneId, passed: findings.length === 0, findings, hitRuns };
+  }
+
+  private deduplicateFindings(findings: STTFinding[], windowSec = 2.0): STTFinding[] {
+    if (findings.length <= 1) return findings;
+    const sorted = [...findings].sort((a, b) => a.timeSec - b.timeSec);
+    const result: STTFinding[] = [];
+    let groupEnd = -Infinity;
+    for (const f of sorted) {
+      if (f.timeSec > groupEnd) {
+        result.push(f);
+        groupEnd = f.timeSec + windowSec;
+      }
+    }
+    return result;
   }
 }

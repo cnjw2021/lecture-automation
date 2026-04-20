@@ -143,6 +143,7 @@ export const config = {
       modelName: providerConfig.modelName ?? 'gemini-2.5-flash',
       temperature: typeof providerConfig.temperature === 'number' ? providerConfig.temperature : 0,
       excludeScenes: Array.isArray(audit.excludeScenes) ? (audit.excludeScenes as number[]) : [],
+      runs: typeof audit.runs === 'number' ? audit.runs : 1,
     };
   },
 };
