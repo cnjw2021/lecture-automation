@@ -1,5 +1,7 @@
 import { ttsLandminesRule } from './A-tts-landmines';
 import { symbolViolationsRule } from './B-symbol-violations';
+import { playwrightShapeRule } from './D-playwright-shape';
+import { narrationLengthRule } from './E-narration-length';
 import { allRules } from './index';
 
 function makeLecture(narrations: string[]) {
@@ -113,6 +115,149 @@ describe('B-symbol-violations', () => {
   it('does not flag ASCII parens', () => {
     const lec = makeLecture(['ASCII (paren) は対象外']);
     expect(symbolViolationsRule.run(lec)).toHaveLength(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// D — Playwright shape
+// ---------------------------------------------------------------------------
+
+function makePlaywrightLecture(scenes: any[]) {
+  return {
+    lecture_id: 'test',
+    sequence: scenes.map((s, i) => ({
+      scene_id: i + 1,
+      narration: s.narration ?? 'テスト',
+      visual: {
+        type: 'playwright',
+        action: s.action ?? [],
+        ...(s.syncPoints ? { syncPoints: s.syncPoints } : {}),
+      },
+    })),
+  };
+}
+
+describe('D-playwright-shape', () => {
+  it('detects action without cmd field (legacy {goto: url} format)', () => {
+    const lec = makePlaywrightLecture([{ action: [{ goto: 'https://example.com' }] }]);
+    const issues = playwrightShapeRule.run(lec);
+    expect(issues).toHaveLength(1);
+    expect(issues[0].message).toContain('cmd 필드 없음');
+    expect(issues[0].message).toContain('goto');
+  });
+
+  it('detects unknown cmd value', () => {
+    const lec = makePlaywrightLecture([{ action: [{ cmd: 'fly_to_the_moon' }] }]);
+    const issues = playwrightShapeRule.run(lec);
+    expect(issues).toHaveLength(1);
+    expect(issues[0].message).toContain('정의되지 않은 액션');
+  });
+
+  it('accepts well-formed actions', () => {
+    const lec = makePlaywrightLecture([{
+      action: [
+        { cmd: 'goto', url: 'https://example.com' },
+        { cmd: 'wait', ms: 1000 },
+        { cmd: 'click', selector: '.btn' },
+      ],
+    }]);
+    expect(playwrightShapeRule.run(lec)).toHaveLength(0);
+  });
+
+  it('detects out-of-range syncPoints actionIndex', () => {
+    const lec = makePlaywrightLecture([{
+      action: [{ cmd: 'goto', url: 'x' }],
+      syncPoints: [{ actionIndex: 5, phrase: 'テスト' }],
+    }]);
+    const issues = playwrightShapeRule.run(lec);
+    expect(issues.some(i => i.message.includes('actionIndex=5'))).toBe(true);
+  });
+
+  it('detects syncPoints phrase not in narration', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '実際のナレーション',
+      action: [{ cmd: 'goto', url: 'x' }, { cmd: 'wait', ms: 100 }],
+      syncPoints: [{ actionIndex: 1, phrase: '存在しない文字列' }],
+    }]);
+    const issues = playwrightShapeRule.run(lec);
+    expect(issues.some(i => i.message.includes('narration 안에 없음'))).toBe(true);
+  });
+
+  it('detects non-unique syncPoints phrase', () => {
+    const lec = makePlaywrightLecture([{
+      narration: 'テスト テスト テスト',
+      action: [{ cmd: 'goto', url: 'x' }, { cmd: 'wait', ms: 100 }],
+      syncPoints: [{ actionIndex: 1, phrase: 'テスト' }],
+    }]);
+    const issues = playwrightShapeRule.run(lec);
+    expect(issues.some(i => i.message.includes('3회 등장'))).toBe(true);
+  });
+
+  it('skips non-playwright scenes', () => {
+    const lec = makeLecture(['普通のナレーション']);
+    expect(playwrightShapeRule.run(lec)).toHaveLength(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// E — Narration length
+// ---------------------------------------------------------------------------
+
+function makeRemotionScene(opts: { narration: string; durationSec: number; component?: string }) {
+  return {
+    scene_id: 1,
+    narration: opts.narration,
+    durationSec: opts.durationSec,
+    visual: { type: 'remotion', component: opts.component ?? 'KeyPointScreen', props: {} },
+  };
+}
+
+describe('E-narration-length', () => {
+  it('flags scene with rate > 11 chars/sec', () => {
+    // 220자 / 18초 = 12.2자/초 > 11
+    const lec = { sequence: [makeRemotionScene({ narration: 'あ'.repeat(220), durationSec: 18 })] };
+    const issues = narrationLengthRule.run(lec);
+    expect(issues).toHaveLength(1);
+    expect(issues[0].severity).toBe('warning');
+    expect(issues[0].message).toContain('TTS 가 잘릴 위험');
+  });
+
+  it('passes scene with rate <= 11 chars/sec', () => {
+    // 110자 / 11초 = 10자/초
+    const lec = { sequence: [makeRemotionScene({ narration: 'あ'.repeat(110), durationSec: 11 })] };
+    expect(narrationLengthRule.run(lec)).toHaveLength(0);
+  });
+
+  it('does not flag long durationSec (intentional silence)', () => {
+    // 11자 / 5초 = 2.2자/초 (긴 여백)
+    const lec = { sequence: [makeRemotionScene({ narration: 'あ'.repeat(11), durationSec: 5 })] };
+    expect(narrationLengthRule.run(lec)).toHaveLength(0);
+  });
+
+  it('skips MyCodeScene and CodeWalkthroughScreen', () => {
+    const lec = {
+      sequence: [
+        makeRemotionScene({ narration: 'あ'.repeat(220), durationSec: 5, component: 'MyCodeScene' }),
+        makeRemotionScene({ narration: 'あ'.repeat(220), durationSec: 5, component: 'CodeWalkthroughScreen' }),
+      ],
+    };
+    expect(narrationLengthRule.run(lec)).toHaveLength(0);
+  });
+
+  it('skips playwright and screenshot scenes', () => {
+    const lec = {
+      sequence: [
+        { scene_id: 1, narration: 'あ'.repeat(500), durationSec: 5, visual: { type: 'playwright', action: [] } },
+        { scene_id: 2, narration: 'あ'.repeat(500), durationSec: 5, visual: { type: 'screenshot', url: 'x' } },
+      ],
+    };
+    expect(narrationLengthRule.run(lec)).toHaveLength(0);
+  });
+
+  it('handles missing durationSec safely', () => {
+    const lec = { sequence: [{ scene_id: 1, narration: 'テスト', visual: { type: 'remotion', component: 'KeyPointScreen', props: {} } }] };
+    expect(() => narrationLengthRule.run(lec)).not.toThrow();
+    expect(narrationLengthRule.run(lec)).toHaveLength(0);
   });
 });
 
