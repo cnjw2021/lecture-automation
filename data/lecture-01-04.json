@@ -92,9 +92,6 @@
           "term": "GitHub",
           "reading": "ギットハブ",
           "definition": "世界中のプログラマーが使う、コードを保存・共有するためのサービス。今日はCodePenのログインに使う。"
-        },
-        "transition": {
-          "enter": "slide-left"
         }
       }
     },
@@ -411,9 +408,6 @@
           "headline": "はじめてのHTML",
           "detail": "HTML入力エリアをクリックして、コードを書き始めよう",
           "color": "#6366f1"
-        },
-        "transition": {
-          "enter": "slide-left"
         }
       }
     },
@@ -574,15 +568,11 @@
       "durationSec": 24,
       "visual": {
         "type": "remotion",
-        "component": "CodeWalkthroughScreen",
+        "component": "MyCodeScene",
         "props": {
-          "title": "ここまでのコード",
           "code": "<h1>Hello World</h1>\n<p>はじめてのWebページです！</p>",
-          "highlightLines": [
-            1,
-            2
-          ],
-          "caption": "たった2行で、見出しと段落があるWebページ"
+          "language": "html",
+          "title": "ここまでのコード"
         },
         "transition": {
           "enter": "slide-up"
