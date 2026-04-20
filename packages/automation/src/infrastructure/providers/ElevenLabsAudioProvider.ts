@@ -241,20 +241,39 @@ export class ElevenLabsAudioProvider implements IAudioProvider {
           if (!alignment || alignment.character_end_times_seconds.length === 0) {
             console.warn('  ⚠️ alignment 없음 — tail trim 불가');
           } else {
-            const lastEndSec = alignment.character_end_times_seconds[alignment.character_end_times_seconds.length - 1];
-            const cutSec = lastEndSec + this.tailPadding.paddingMs / 1000;
+            const isPunctuation = (c: string) => /^[\s。、，．？！「」『』（）()\[\]【】〈〉《》\.,?!;:…‥・]+$/.test(c);
+            let lastSpeechIdx = alignment.characters.length - 1;
+            while (lastSpeechIdx >= 0 && isPunctuation(alignment.characters[lastSpeechIdx])) {
+              lastSpeechIdx--;
+            }
 
-            const { sampleRate, channels, bitDepth } = this.audioConfig;
-            const bytesPerFrame = channels * (bitDepth / 8);
-            const bytesPerSec = sampleRate * bytesPerFrame;
-            const rawCutBytes = Math.floor(cutSec * bytesPerSec);
-            const cutBytes = Math.floor(rawCutBytes / bytesPerFrame) * bytesPerFrame;
+            if (lastSpeechIdx < 0) {
+              console.warn('  ⚠️ 발화 가능 문자 없음 — tail trim 스킵');
+            } else {
+              const lastEndSec = alignment.character_end_times_seconds[lastSpeechIdx];
+              const cutSec = lastEndSec + this.tailPadding.paddingMs / 1000;
 
-            if (cutBytes < pcmBuffer.length) {
-              const removedBytes = pcmBuffer.length - cutBytes;
-              const removedSec = removedBytes / bytesPerSec;
-              pcmBuffer = pcmBuffer.slice(0, cutBytes);
-              console.log(`  ✂️  tail trim: ${removedSec.toFixed(3)}초 (${removedBytes}bytes) 제거 (last char end ${lastEndSec.toFixed(3)}s + padding ${this.tailPadding.paddingMs}ms)`);
+              const { sampleRate, channels, bitDepth } = this.audioConfig;
+              const bytesPerFrame = channels * (bitDepth / 8);
+              const bytesPerSec = sampleRate * bytesPerFrame;
+              const rawCutBytes = Math.floor(cutSec * bytesPerSec);
+              const cutBytes = Math.floor(rawCutBytes / bytesPerFrame) * bytesPerFrame;
+
+              if (cutBytes < pcmBuffer.length) {
+                const removedBytes = pcmBuffer.length - cutBytes;
+                const removedSec = removedBytes / bytesPerSec;
+                pcmBuffer = pcmBuffer.slice(0, cutBytes);
+
+                const keepCount = lastSpeechIdx + 1;
+                const trimmedTailChars = alignment.characters.length - keepCount;
+                const lastChar = alignment.characters[lastSpeechIdx];
+                alignment = {
+                  characters: alignment.characters.slice(0, keepCount),
+                  character_start_times_seconds: alignment.character_start_times_seconds.slice(0, keepCount),
+                  character_end_times_seconds: alignment.character_end_times_seconds.slice(0, keepCount),
+                };
+                console.log(`  ✂️  tail trim: ${removedSec.toFixed(3)}초 (${removedBytes}bytes) 제거 (last speech char '${lastChar}' end ${lastEndSec.toFixed(3)}s + padding ${this.tailPadding.paddingMs}ms, 꼬리 구두점 ${trimmedTailChars}자 제거)`);
+              }
             }
           }
         }
