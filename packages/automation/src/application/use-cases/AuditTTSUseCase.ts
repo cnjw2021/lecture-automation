@@ -1,7 +1,8 @@
 import * as fs from 'fs-extra';
 import { Lecture } from '../../domain/entities/Lecture';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
-import { ISTTProvider, STTFinding, STTSceneAuditResult } from '../../domain/interfaces/ISTTProvider';
+import { ISTTProvider, STTSceneAuditResult } from '../../domain/interfaces/ISTTProvider';
+import { groupFindingsByWindow } from '../../domain/utils/STTFindingGrouping';
 
 export interface AuditTTSUseCaseOptions {
   sceneIds?: number[];
@@ -61,7 +62,9 @@ export class AuditTTSUseCase {
           console.log(`     ✅ 異常なし`);
         } else {
           const hitRuns = merged.hitRuns ?? 1;
-          console.log(`     ⚠️  ${merged.findings.length}件 検出 (${hitRuns}/${runs}回で検出)`);
+          const successRuns = merged.successRuns ?? runs;
+          const failedSuffix = successRuns < runs ? ` / ${runs - successRuns}回失敗` : '';
+          console.log(`     ⚠️  ${merged.findings.length}件 検出 (${hitRuns}/${successRuns}回で検出${failedSuffix})`);
         }
       } catch (error) {
         const msg = (error as Error).message;
@@ -97,7 +100,12 @@ export class AuditTTSUseCase {
     runs: number,
   ): Promise<STTSceneAuditResult> {
     if (runs === 1) {
-      return this.sttProvider.audit(audioPath, narration, sceneId);
+      const result = await this.sttProvider.audit(audioPath, narration, sceneId);
+      return {
+        ...result,
+        hitRuns: result.passed === false ? 1 : 0,
+        successRuns: 1,
+      };
     }
 
     const runResults: STTSceneAuditResult[] = [];
@@ -116,22 +124,14 @@ export class AuditTTSUseCase {
 
     const hitRuns = runResults.filter(r => r.passed === false).length;
     const allFindings = runResults.flatMap(r => r.findings);
-    const findings = this.deduplicateFindings(allFindings);
+    const findings = groupFindingsByWindow(allFindings);
 
-    return { sceneId, passed: findings.length === 0, findings, hitRuns };
-  }
-
-  private deduplicateFindings(findings: STTFinding[], windowSec = 2.0): STTFinding[] {
-    if (findings.length <= 1) return findings;
-    const sorted = [...findings].sort((a, b) => a.timeSec - b.timeSec);
-    const result: STTFinding[] = [];
-    let groupEnd = -Infinity;
-    for (const f of sorted) {
-      if (f.timeSec > groupEnd) {
-        result.push(f);
-        groupEnd = f.timeSec + windowSec;
-      }
-    }
-    return result;
+    return {
+      sceneId,
+      passed: findings.length === 0,
+      findings,
+      hitRuns,
+      successRuns: runResults.length,
+    };
   }
 }

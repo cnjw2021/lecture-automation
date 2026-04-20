@@ -1,7 +1,7 @@
 /**
  * audit.ts
  *
- * TTS 오독 자동 감사 CLI (Gemini 2.0 Flash STT 대조)
+ * TTS 오독 자동 감사 CLI (Gemini 2.5 Flash STT 대조)
  *
  * Usage:
  *   npx tsx audit.ts lecture-01-04.json

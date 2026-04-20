@@ -1,5 +1,6 @@
 import * as fs from 'fs-extra';
 import { ISTTProvider, STTFinding, STTSceneAuditResult } from '../../domain/interfaces/ISTTProvider';
+import { groupFindingsByWindow } from '../../domain/utils/STTFindingGrouping';
 import { GeminiApiClient } from './GeminiApiClient';
 
 export interface GeminiSTTProviderOptions {
@@ -22,7 +23,7 @@ const buildPrompt = (narration: string) => `
    例: 「エイチワン」と聞こえたら actual は「エイチワン」。「H 1」と書かない
 4. 以下は差異とみなさない（スキップする）:
    - 「」『』などの括弧・引用符の有無
-   - 数字とカタカナの表記揺れ（「2」と「ツー」、「パート2」と「パート2」のスペース差など）
+   - 数字とカタカナの表記揺れ（「2」と「ツー」、「パート2」と「パート 2」のスペース差など）
    - 読点・句点・スペースの有無
 5. 差異がなければ空配列 [] を返す
 6. JSON配列のみ返答し、説明文・マークダウンは不要
@@ -54,7 +55,7 @@ export class GeminiSTTProvider implements ISTTProvider {
     this.apiKey = options.apiKey;
     this.modelName = options.modelName ?? 'gemini-2.0-flash';
     this.temperature = options.temperature ?? 0;
-    this.client = new GeminiApiClient({ timeoutMs: 60 * 1000 });
+    this.client = new GeminiApiClient({ timeoutMs: 2 * 60 * 1000 });
   }
 
   async audit(audioPath: string, narration: string, sceneId: number): Promise<STTSceneAuditResult> {
@@ -102,27 +103,10 @@ export class GeminiSTTProvider implements ISTTProvider {
           actual: f.actual,
           ...(f.reason ? { reason: f.reason } : {}),
         }));
-      return this.groupNearbyFindings(raw);
+      return groupFindingsByWindow(raw);
     } catch {
       console.warn(`  ⚠️ Scene ${sceneId}: Gemini STT 응답 파싱 실패 — 통과로 처리`);
       return [];
     }
-  }
-
-  /**
-   * 연속 오독으로 인한 타이밍 경계 이탈 false positive 제거.
-   * GROUPING_WINDOW_SEC 이내에 연속 발생한 finding은 첫 번째 finding(원인)만 남기고 나머지 제거.
-   */
-  private groupNearbyFindings(findings: STTFinding[], windowSec = 2.0): STTFinding[] {
-    if (findings.length <= 1) return findings;
-    const result: STTFinding[] = [];
-    let groupEnd = -Infinity;
-    for (const f of findings) {
-      if (f.timeSec > groupEnd) {
-        result.push(f);
-        groupEnd = f.timeSec + windowSec;
-      }
-    }
-    return result;
   }
 }

@@ -44,7 +44,7 @@ help:
 	@echo "make save-auth SERVICE=claude             - 브라우저 인증 상태 저장 (Claude/ChatGPT 등)"
 	@echo "make lint LECTURE=xxx                     - 강의 JSON lint 검사 (TTS 지뢰, 기호 위반 등)"
 	@echo "make lint-fix LECTURE=xxx                 - lint + 자동 수정 가능 항목 적용"
-	@echo "make audit LECTURE=xxx                    - TTS 오독 자동 감사 (Gemini 2.0 Flash STT 대조)"
+	@echo "make audit LECTURE=xxx                    - TTS 오독 자동 감사 (Gemini 2.5 Flash STT 대조)"
 	@echo "make audit LECTURE=xxx SCENE='5 31'       - 특정 씬만 감사"
 	@echo "--------------------------------------------------"
 
