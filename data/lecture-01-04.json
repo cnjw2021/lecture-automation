@@ -22,7 +22,7 @@
     },
     {
       "scene_id": 2,
-      "narration": "でも、同時にこうもお話ししました。「エーアイが作ったものを修正するには、私たちの側にも基礎知識が必要だ」と。さて、いよいよ今日から、皆さん自身の手でコードを書いていきます。パート1の最初の講義で「パート1の最後の講義が終わるまでに、皆さんの画面にはじめてのウェブページが表示されます」とお約束しましたよね。今日がその日です。",
+      "narration": "でも、同時にこうもお話ししました。「エーアイが作ったものを修正するには、私たちの側にも基礎知識が必要だ」と。さて、いよいよ今日から、皆さん自身の手でコードを書いていきます。パートワンの最初の講義で「パートワンの最後の講義が終わるまでに、皆さんの画面にはじめてのウェブページが表示されます」とお約束しましたよね。今日がその日です。",
       "durationSec": 32,
       "visual": {
         "type": "remotion",
@@ -100,14 +100,22 @@
       "narration": "では、ブラウザでGitHubのサイトを開きます。Chromeのアドレスバーに「github.com」と入力して、Enter を押してください。画面が表示されましたね。英語のサイトですが、心配しないでください。必要な箇所だけ一緒に確認しながら進めていきます。右上に「Sign up」というボタンがあります。サインアップ、つまり「新規登録」という意味ですね。これをクリックしましょう。",
       "durationSec": 38,
       "visual": {
-        "type": "remotion",
-        "component": "BrowserMockScreen",
-        "props": {
-          "url": "https://github.com",
-          "title": "GitHubにアクセス",
-          "description": "右上の「Sign up」ボタンをクリックして新規登録を始めます",
-          "color": "#6366f1"
-        }
+        "type": "playwright",
+        "syncPoints": [
+          { "actionIndex": 4, "phrase": "右上に「Sign up」というボタンがあります" }
+        ],
+        "action": [
+          { "cmd": "goto", "url": "https://github.com" },
+          { "cmd": "wait", "ms": 6000 },
+          { "cmd": "mouse_move", "to": [960, 400] },
+          { "cmd": "wait", "ms": 8000 },
+          { "cmd": "highlight", "selector": "header a[href='/signup'], a[href='/signup']", "note": "右上 Sign up ボタン" },
+          { "cmd": "wait", "ms": 8000 },
+          { "cmd": "mouse_move", "to": [1780, 65] },
+          { "cmd": "wait", "ms": 7000 },
+          { "cmd": "highlight", "selector": "header a[href='/signup'], a[href='/signup']", "note": "再度ハイライト" },
+          { "cmd": "wait", "ms": 6000 }
+        ]
       }
     },
     {
@@ -245,14 +253,23 @@
       "narration": "ブラウザの新しいタブを開いて、アドレスバーに「codepen.io」と入力してください。画面が表示されました。こちらも英語のサイトですが、使うボタンは限られていますので安心してください。右上の「Sign Up」をクリックします。ログインの方法がいくつか表示されますので、「Continue with GitHub」を選んでください。先ほど作ったGitHubのアカウントでそのままログインできます。",
       "durationSec": 40,
       "visual": {
-        "type": "remotion",
-        "component": "BrowserMockScreen",
-        "props": {
-          "url": "https://codepen.io",
-          "title": "CodePenにアクセス",
-          "description": "「Sign Up」→「Continue with GitHub」でGitHubアカウントを使ってログイン",
-          "color": "#6366f1"
-        }
+        "type": "playwright",
+        "syncPoints": [
+          { "actionIndex": 4, "phrase": "右上の「Sign Up」をクリックします" },
+          { "actionIndex": 8, "phrase": "「Continue with GitHub」を選んでください" }
+        ],
+        "action": [
+          { "cmd": "goto", "url": "https://codepen.io" },
+          { "cmd": "wait", "ms": 6000 },
+          { "cmd": "mouse_move", "to": [960, 400] },
+          { "cmd": "wait", "ms": 6000 },
+          { "cmd": "highlight", "selector": "a[href*='/accounts/signup'], a:has-text('Sign Up')", "note": "右上 Sign Up ボタン" },
+          { "cmd": "wait", "ms": 4000 },
+          { "cmd": "goto", "url": "https://codepen.io/accounts/signup/user/free" },
+          { "cmd": "wait", "ms": 6000 },
+          { "cmd": "highlight", "selector": "a[href*='/github/'], a:has-text('GitHub')", "note": "Continue with GitHub" },
+          { "cmd": "wait", "ms": 8000 }
+        ]
       }
     },
     {
@@ -289,13 +306,23 @@
       "narration": "では、さっそくコードを書く画面を開いてみましょう。左上のメニューから「Pen」を選んで、新しいペンを作成します。「ペン」というのはCodePenでの作業ファイルのようなもので、1つのペンに1つのウェブページを作っていくイメージです。この画面がCodePenの編集画面です。初めて見る方は少しごちゃごちゃして見えるかもしれませんが、大丈夫です。少しずつ見ていきましょう。",
       "durationSec": 37,
       "visual": {
-        "type": "remotion",
-        "component": "DefinitionScreen",
-        "props": {
-          "term": "Pen",
-          "reading": "ペン",
-          "definition": "CodePenでの作業ファイル。1つのペンに1つのWebページを作っていく。"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          { "actionIndex": 4, "phrase": "この画面がCodePenの編集画面です" }
+        ],
+        "action": [
+          { "cmd": "goto", "url": "https://codepen.io/pen/" },
+          { "cmd": "wait", "ms": 8000 },
+          { "cmd": "mouse_move", "to": [320, 200] },
+          { "cmd": "wait", "ms": 10000 },
+          { "cmd": "mouse_move", "to": [960, 540] },
+          { "cmd": "wait", "ms": 6000 },
+          { "cmd": "mouse_move", "to": [320, 200] },
+          { "cmd": "wait", "ms": 6000 },
+          { "cmd": "mouse_move", "to": [960, 800] },
+          { "cmd": "wait", "ms": 6000 }
+        ]
       }
     },
     {
@@ -416,16 +443,19 @@
       "narration": "まずはシンプルに、こう入力してみてください。大文字と小文字に気をつけてくださいね。「H」「e」「l」「l」「o」、半角スペース、「W」「o」「r」「l」「d」。",
       "durationSec": 18,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "Hello World",
-          "language": "html",
-          "title": "はじめての入力"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          { "actionIndex": 4, "phrase": "「H」「e」「l」「l」「o」" }
+        ],
+        "action": [
+          { "cmd": "goto", "url": "https://codepen.io/pen/" },
+          { "cmd": "wait", "ms": 6000 },
+          { "cmd": "click", "selector": "#box-html .CodeMirror" },
+          { "cmd": "wait", "ms": 2000 },
+          { "cmd": "type", "selector": "#box-html .CodeMirror textarea", "key": "Hello World" },
+          { "cmd": "wait", "ms": 5000 }
+        ]
       }
     },
     {
@@ -475,16 +505,20 @@
       "narration": "焦らなくて大丈夫です。山括弧は普段あまり打たないキーなので、最初は少し戸惑うかもしれません。ゆっくり、一文字ずつ入力してみてください。プレビューを見てください。さっきより文字がぐっと大きくなりましたよね。",
       "durationSec": 22,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<h1>Hello World</h1>",
-          "language": "html",
-          "title": "h1タグで見出しに"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          { "actionIndex": 4, "phrase": "ゆっくり、一文字ずつ入力してみてください" },
+          { "actionIndex": 5, "phrase": "プレビューを見てください" }
+        ],
+        "action": [
+          { "cmd": "goto", "url": "https://codepen.io/pen/" },
+          { "cmd": "wait", "ms": 6000 },
+          { "cmd": "click", "selector": "#box-html .CodeMirror" },
+          { "cmd": "wait", "ms": 2000 },
+          { "cmd": "type", "selector": "#box-html .CodeMirror textarea", "key": "<h1>Hello World</h1>" },
+          { "cmd": "wait", "ms": 6000 }
+        ]
       }
     },
     {
@@ -522,16 +556,21 @@
       "narration": "では次に、もう1行追加してみましょう。h1タグの下の行にカーソルを移動して、Enter を押して新しい行を作ります。そこに、こう書いてください。",
       "durationSec": 16,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<p>はじめてのWebページです！</p>",
-          "language": "html",
-          "title": "段落を追加"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          { "actionIndex": 6, "phrase": "そこに、こう書いてください" }
+        ],
+        "action": [
+          { "cmd": "goto", "url": "https://codepen.io/pen/" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "click", "selector": "#box-html .CodeMirror" },
+          { "cmd": "wait", "ms": 1500 },
+          { "cmd": "type", "selector": "#box-html .CodeMirror textarea", "key": "<h1>Hello World</h1>" },
+          { "cmd": "press", "key": "Enter" },
+          { "cmd": "type", "selector": "#box-html .CodeMirror textarea", "key": "<p>はじめてのWebページです！</p>" },
+          { "cmd": "wait", "ms": 2000 }
+        ]
       }
     },
     {
@@ -567,16 +606,21 @@
       "narration": "ここまでのコードをまとめると、こうなっています。たった2行です。たった2行のコードで、見出しと段落があるウェブページができました。もちろん、まだ色も装飾もない、とてもシンプルな状態です。でも、これが立派なHTMLなんです。",
       "durationSec": 24,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<h1>Hello World</h1>\n<p>はじめてのWebページです！</p>",
-          "language": "html",
-          "title": "ここまでのコード"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          { "actionIndex": 7, "phrase": "見出しと段落があるウェブページができました" }
+        ],
+        "action": [
+          { "cmd": "goto", "url": "https://codepen.io/pen/" },
+          { "cmd": "wait", "ms": 5000 },
+          { "cmd": "click", "selector": "#box-html .CodeMirror" },
+          { "cmd": "wait", "ms": 1500 },
+          { "cmd": "type", "selector": "#box-html .CodeMirror textarea", "key": "<h1>Hello World</h1>" },
+          { "cmd": "press", "key": "Enter" },
+          { "cmd": "type", "selector": "#box-html .CodeMirror textarea", "key": "<p>はじめてのWebページです！</p>" },
+          { "cmd": "wait", "ms": 8000 }
+        ]
       }
     },
     {

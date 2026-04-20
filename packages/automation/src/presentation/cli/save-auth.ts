@@ -10,6 +10,7 @@
  * 예시:
  *   npx tsx ... claude https://claude.ai
  *   npx tsx ... chatgpt https://chatgpt.com
+ *   npx tsx ... codepen https://codepen.io/login
  */
 
 import { chromium } from 'playwright';
@@ -76,6 +77,7 @@ function getDefaultUrl(service?: string): string {
   switch (service) {
     case 'claude': return 'https://claude.ai';
     case 'chatgpt': return 'https://chatgpt.com';
+    case 'codepen': return 'https://codepen.io/login';
     default: return 'https://example.com';
   }
 }
