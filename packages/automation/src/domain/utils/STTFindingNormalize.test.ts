@@ -22,13 +22,22 @@ describe('normalizeForCompare', () => {
   });
 
   it('공백·읽점·구점 제거', () => {
-    expect(normalizeForCompare('文 章 が 表 示')).toBe('文章が表示');
+    expect(normalizeForCompare('文 章 が 表 示')).toBe('文章ガ表示');
     expect(normalizeForCompare('パート 2')).toBe('パート2');
-    expect(normalizeForCompare('こんにちは、世界。')).toBe('こんにちは世界');
+    expect(normalizeForCompare('こんにちは、世界。')).toBe('コンニチハ世界');
   });
 
   it('동일 텍스트는 동일 정규화', () => {
     expect(normalizeForCompare('文章が表示')).toBe(normalizeForCompare('文章が表示'));
+  });
+
+  it('히라가나 → 카타카나 통일 (발음 동일)', () => {
+    expect(normalizeForCompare('ぺん')).toBe('ペン');
+    expect(normalizeForCompare('ぴー')).toBe('ピー');
+    expect(normalizeForCompare('ぷろもーしょん')).toBe('プロモーション');
+    // 양쪽 모두 같은 정규화 결과 → identical 비교 가능
+    expect(normalizeForCompare('ぺん')).toBe(normalizeForCompare('ペン'));
+    expect(normalizeForCompare('ぴー')).toBe(normalizeForCompare('ピー'));
   });
 });
 
@@ -95,5 +104,14 @@ describe('shouldSuppressFinding', () => {
     expect(shouldSuppressFinding(f('プロモーション', 'クロモーション'))).toBe(false);
     expect(shouldSuppressFinding(f('いちばん', 'いち'))).toBe(false);
     expect(shouldSuppressFinding(f('エイチワン', 'エイチワンチ'))).toBe(false);
+  });
+
+  it('히라가나 ↔ 카타카나 표기 차이만 있는 경우 억제 (발음 동일)', () => {
+    // 사용자가 회피용으로 히라가나를 썼지만 Gemini가 카타카나로 transcribe → 발음은 같음
+    expect(shouldSuppressFinding(f('ぺん', 'ペン'))).toBe(true);
+    expect(shouldSuppressFinding(f('ぴー', 'ピー'))).toBe(true);
+    expect(shouldSuppressFinding(f('ぷろもーしょん', 'プロモーション'))).toBe(true);
+    // 역방향
+    expect(shouldSuppressFinding(f('ペン', 'ぺん'))).toBe(true);
   });
 });

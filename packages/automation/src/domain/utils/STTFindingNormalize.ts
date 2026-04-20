@@ -1,15 +1,25 @@
 import { STTFinding } from '../interfaces/ISTTProvider';
 
 /**
+ * ひらがな (U+3041..U+3096) をカタカナ (U+30A1..U+30F6) に変換する。
+ * `ぺん` ↔ `ペン`, `ぴー` ↔ `ピー` のような表記差を発音上等価とみなすため。
+ */
+function hiraganaToKatakana(s: string): string {
+  return s.replace(/[\u3041-\u3096]/g, ch =>
+    String.fromCharCode(ch.charCodeAt(0) + 0x60),
+  );
+}
+
+/**
  * 比較用に文字列を正規化する:
  *  - Unicode NFKC (全角/半角統一、互換文字統一)
+ *  - ひらがな → カタカナ統一 (発音は等価)
  *  - 括弧・引用符・スペース・改行・読点・句点の除去
  *
  * 発音比較の観点で「表記差しかない」ペアを等価にするための前処理。
  */
 export function normalizeForCompare(s: string): string {
-  return s
-    .normalize('NFKC')
+  return hiraganaToKatakana(s.normalize('NFKC'))
     .replace(/[「」『』（）()\[\]【】"'“”‘’\s　、。・,.\-]/g, '')
     .trim();
 }
