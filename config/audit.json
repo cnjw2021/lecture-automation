@@ -1,0 +1,11 @@
+{
+  "provider": "gemini",
+  "providers": {
+    "gemini": {
+      "modelName": "gemini-2.5-flash",
+      "temperature": 0
+    }
+  },
+  "excludeScenes": [],
+  "runs": 2
+}

@@ -129,4 +129,21 @@ export const config = {
       paddingMs: typeof tp?.paddingMs === 'number' ? tp.paddingMs : 150,
     };
   },
+
+  getAuditConfig: () => {
+    const auditConfigPath = path.join(ROOT_DIR, 'config/audit.json');
+    if (!fs.existsSync(auditConfigPath)) {
+      throw new Error(`config/audit.json 파일이 없습니다: ${auditConfigPath}`);
+    }
+    const audit = fs.readJsonSync(auditConfigPath);
+    const providerName: string = process.env.AUDIT_PROVIDER ?? audit.provider ?? 'gemini';
+    const providerConfig = audit.providers?.[providerName] ?? {};
+    return {
+      providerName,
+      modelName: providerConfig.modelName ?? 'gemini-2.5-flash',
+      temperature: typeof providerConfig.temperature === 'number' ? providerConfig.temperature : 0,
+      excludeScenes: Array.isArray(audit.excludeScenes) ? (audit.excludeScenes as number[]) : [],
+      runs: typeof audit.runs === 'number' ? audit.runs : 1,
+    };
+  },
 };
