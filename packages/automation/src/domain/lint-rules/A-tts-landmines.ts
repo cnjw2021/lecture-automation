@@ -46,6 +46,12 @@ const LANDMINES: Landmine[] = [
   // Authorize: CodePen↔GitHub 연동 버튼 라벨. 단어 경계에서만 (혼합어 회피, 대소문자 구분)
   { pattern: /(?<![A-Za-z])Authorize(?![A-Za-z])/g, from: 'Authorize', to: 'オーソライズ', reason: 'Authorize 영단어 오독 → 카타카나 변환' },
 
+  // A-3b: 動詞 焦る (あせる) — ElevenLabs v3 가 "じら/じる" 등으로 오독
+  { pattern: /焦ら/g, from: '焦ら', to: 'あせら', reason: '焦る 동사 → "じら" 오독 회피 (焦らない/焦らず/焦らなくて)' },
+  { pattern: /焦り/g, from: '焦り', to: 'あせり', reason: '焦る 동사 → "じり" 오독 회피' },
+  { pattern: /焦る/g, from: '焦る', to: 'あせる', reason: '焦る 동사 → "じる" 오독 회피' },
+  { pattern: /焦って/g, from: '焦って', to: 'あせって', reason: '焦る 동사 → "じって" 오독 회피' },
+
   // A-4: HTML 見出しタグ h1~h6 (영문자+숫자 조합, "エイチワンチ" 등으로 오독)
   // 나레이션에서 단독 토큰으로 등장할 때만 검출 (URL, "高h1" 같은 혼합어 회피).
   { pattern: /(?<![A-Za-z0-9])h1(?![A-Za-z0-9])/g, from: 'h1', to: 'エイチワン', reason: 'h1 → "エイチワンチ" 등으로 오독' },
