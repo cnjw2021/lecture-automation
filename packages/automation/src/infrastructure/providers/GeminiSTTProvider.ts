@@ -1,6 +1,7 @@
 import * as fs from 'fs-extra';
 import { ISTTProvider, STTFinding, STTSceneAuditResult } from '../../domain/interfaces/ISTTProvider';
 import { groupFindingsByWindow } from '../../domain/utils/STTFindingGrouping';
+import { shouldSuppressFinding } from '../../domain/utils/STTFindingNormalize';
 import { GeminiApiClient } from './GeminiApiClient';
 
 export interface GeminiSTTProviderOptions {
@@ -9,7 +10,7 @@ export interface GeminiSTTProviderOptions {
   temperature?: number;
 }
 
-// プロンプトB方式 — 原文と照合し、LLM的な「親切な正正」を禁止
+// プロンプトB方式 — 原文と照合し、LLM的な「親切な訂正」を禁止
 const buildPrompt = (narration: string) => `
 以下は日本語ナレーションの原文です。
 
@@ -21,12 +22,31 @@ const buildPrompt = (narration: string) => `
 2. 原文と**発音が**異なる箇所だけを下記JSONスキーマで返す
 3. actualには必ずカタカナ・ひらがな・漢字で聞こえた通りの音を書くこと。英字・数字への変換禁止
    例: 「エイチワン」と聞こえたら actual は「エイチワン」。「H 1」と書かない
-4. 以下は差異とみなさない（スキップする）:
-   - 「」『』などの括弧・引用符の有無
-   - 数字とカタカナの表記揺れ（「2」と「ツー」、「パート2」と「パート 2」のスペース差など）
-   - 読点・句点・スペースの有無
-5. 差異がなければ空配列 [] を返す
-6. JSON配列のみ返答し、説明文・マークダウンは不要
+4. 以下は**発音上の差異ではない**ため、絶対に報告しない（スキップする）:
+   4-1. 括弧・引用符の有無（「」『』（）"" など）
+   4-2. 数字とカタカナの表記揺れ（「2」と「ツー」、「パート2」と「パート 2」のスペース差など）
+   4-3. 読点・句点・スペース・改行の有無
+   4-4. **原文の英字を音声がカタカナで読むケース — これは正しい日本語TTSの動作であり差異ではない**:
+        - 「CodePen」→「コードペン」
+        - 「HTML」→「エイチティーエムエル」
+        - 「CSS」→「シーエスエス」
+        - 「JavaScript」→「ジャバスクリプト」
+        - 「GitHub」→「ギットハブ」
+        - 「Claude」→「クロード」
+        - 「ChatGPT」→「チャットジーピーティー」
+        - 「Sign Up」→「サインアップ」
+        - 「Change View」→「チェンジビュー」
+        - 「Authorize」→「オーソライズ」
+        - 「Hello World」→「ハローワールド」
+        - 「codepen.io」→「コードペンドットアイオー」
+        - その他、原文に英字があり音声で自然なカタカナ読みをしている場合すべて該当
+   4-5. 原文と actual を正規化すると同一になるケース（表記だけ違う場合）
+5. 報告すべきは「音として聞き間違えた」「単語を飲み込んだ」「別の単語に読み替えた」ケースのみ
+   例: 「プロモーション」→「クロモーション」（プ→ク 誤読）
+   例: 「いちばん」→「いち」（ばん 脱落）
+   例: 「エイチワン」→「エイチワンチ」（末尾に余計な音）
+6. 差異がなければ空配列 [] を返す
+7. JSON配列のみ返答し、説明文・マークダウンは不要
 `.trim();
 
 const RESPONSE_SCHEMA = {
@@ -103,7 +123,9 @@ export class GeminiSTTProvider implements ISTTProvider {
           actual: f.actual,
           ...(f.reason ? { reason: f.reason } : {}),
         }));
-      return groupFindingsByWindow(raw);
+      // 英語→カタカナ 読み·正規化同一 などのプロンプトで制御しきれない FP を code-level でさらに抑制
+      const suppressed = raw.filter(f => !shouldSuppressFinding(f));
+      return groupFindingsByWindow(suppressed);
     } catch {
       console.warn(`  ⚠️ Scene ${sceneId}: Gemini STT 응답 파싱 실패 — 통과로 처리`);
       return [];
