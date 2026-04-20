@@ -2,7 +2,7 @@
   "lecture_id": "01-04",
   "title": "CodePenセットアップ + Hello World",
   "part": 1,
-  "totalDurationSec": 1245,
+  "totalDurationSec": 1294,
   "sequence": [
     {
       "scene_id": 1,
@@ -161,93 +161,154 @@
     },
     {
       "scene_id": 7,
-      "narration": "まず、メールアドレスを入力します。普段お使いのメールアドレスで大丈夫です。GmailでもYahooメールでも、なんでも構いません。ただ、一つだけ注意してほしいのは、この後メール認証のステップがありますので、すぐにメールを確認できるアドレスを使ってくださいね。入力できたら、「Continue」ボタンを押して次に進みます。",
-      "durationSec": 32,
+      "narration": "この画面がサインアップのフォームです。「Continue with Google」や「Continue with Apple」というボタンも見えますが、今回はメールアドレスで登録しますので、その下の入力欄を使っていきます。上から順に一つずつ見ていきましょう。まず「Email」、メールアドレスです。普段お使いのアドレスで大丈夫です。GmailでもYahooメールでも、なんでも構いません。ただ、この後メール認証のステップがありますので、すぐにメールを確認できるアドレスを使ってくださいね。次に「Password」、パスワードです。ここで大事なポイントです。このパスワードは、忘れないようにしっかりメモしておいてください。紙に書いても、スマートフォンのメモ帳に残しても構いません。パスワードは15文字以上、もしくは数字と英小文字を含む8文字以上が条件になっています。その下が「Username」、ユーザーネームです。自分の好きな名前で大丈夫です。英数字とハイフンが使えます。すでに使われている名前だった場合は、数字を付けたりして別の名前にしてみてください。そして「Your Country/Region」。ここは「Japan」、日本を選んでおきましょう。最後に「Email preferences」、GitHubからのお知らせを受け取るかどうかのチェックボックスです。今はチェックを入れなくて大丈夫です。すべて入力できたら、一番下の黒い「Create account」ボタンを押して次に進みます。",
+      "durationSec": 125,
       "visual": {
-        "type": "remotion",
-        "component": "NumberedListScreen",
-        "props": {
-          "title": "GitHubサインアップ手順",
-          "items": [
-            {
-              "title": "メールアドレス入力",
-              "description": "すぐ確認できるアドレスを使う"
-            },
-            {
-              "title": "パスワード設定",
-              "description": "忘れないようにメモ"
-            },
-            {
-              "title": "ユーザーネーム入力",
-              "description": "好きな名前でOK"
-            },
-            {
-              "title": "メール認証",
-              "description": "届いた6桁のコードを入力"
-            }
-          ]
-        }
+        "type": "playwright",
+        "syncPoints": [
+          {
+            "actionIndex": 4,
+            "phrase": "まず「Email」"
+          },
+          {
+            "actionIndex": 6,
+            "phrase": "次に「Password」"
+          },
+          {
+            "actionIndex": 8,
+            "phrase": "その下が「Username」"
+          },
+          {
+            "actionIndex": 10,
+            "phrase": "そして「Your Country/Region」"
+          },
+          {
+            "actionIndex": 12,
+            "phrase": "最後に「Email preferences」"
+          },
+          {
+            "actionIndex": 14,
+            "phrase": "すべて入力できたら"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://github.com/signup"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3000
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              1100,
+              500
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 25000
+          },
+          {
+            "cmd": "highlight",
+            "selector": "input#email, input[name='email'], input[type='email']",
+            "note": "Email入力欄"
+          },
+          {
+            "cmd": "wait",
+            "ms": 18000
+          },
+          {
+            "cmd": "highlight",
+            "selector": "input#password, input[name='password'], input[type='password']",
+            "note": "Password入力欄"
+          },
+          {
+            "cmd": "wait",
+            "ms": 27000
+          },
+          {
+            "cmd": "highlight",
+            "selector": "input#login, input[name='login'], input[autocomplete='username']",
+            "note": "Username入力欄"
+          },
+          {
+            "cmd": "wait",
+            "ms": 19000
+          },
+          {
+            "cmd": "highlight",
+            "selector": "select[name='country_region'], select, [role='combobox']",
+            "note": "Country/Region ドロップダウン"
+          },
+          {
+            "cmd": "wait",
+            "ms": 8000
+          },
+          {
+            "cmd": "highlight",
+            "selector": "input[name='opt_in'], input[type='checkbox']",
+            "note": "Email preferences チェックボックス"
+          },
+          {
+            "cmd": "wait",
+            "ms": 14000
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              1300,
+              920
+            ]
+          },
+          {
+            "cmd": "highlight",
+            "selector": "button[type='submit']",
+            "note": "Create account ボタン"
+          },
+          {
+            "cmd": "wait",
+            "ms": 10000
+          }
+        ]
       }
     },
     {
       "scene_id": 8,
-      "narration": "次にパスワードを設定します。ここで大事なポイントです。このパスワードは、忘れないようにしっかりメモしておいてください。紙に書いても、スマートフォンのメモ帳に残しても構いません。この後CodePenにログインするときにも使います。パスワードは15文字以上、もしくは数字と英小文字を含む8文字以上が条件になっています。",
-      "durationSec": 31,
+      "narration": "ボタンを押すと、パズルのような認証が出てくることがあります。ロボットではないことを確認するためのものなので、画面の指示に従って操作してくださいね。",
+      "durationSec": 15,
       "visual": {
         "type": "remotion",
         "component": "CalloutScreen",
         "props": {
-          "type": "warning",
-          "title": "パスワードを必ずメモ！",
-          "body": "CodePenログインとPART 5のサイト公開で必要です。紙でもスマホのメモ帳でもOK。"
+          "type": "info",
+          "title": "認証パズルが出てきたら",
+          "body": "ロボットではないことの確認です。画面の指示に従って操作すればOK。",
+          "icon": "🧩"
         }
       }
     },
     {
       "scene_id": 9,
-      "narration": "ユーザーネームを入力します。これは自分の好きな名前で大丈夫です。英数字とハイフンが使えます。もし入力した名前がすでに使われている場合は、数字を付けたりして別の名前にしてみてください。画面の案内に従って進めていくと、パズルのような認証が出てくることがあります。ロボットではないことを確認するためのものなので、画面の指示に従って操作してくださいね。",
-      "durationSec": 34,
-      "visual": {
-        "type": "remotion",
-        "component": "BulletDetailScreen",
-        "props": {
-          "title": "残りの入力項目",
-          "items": [
-            {
-              "title": "ユーザーネーム",
-              "detail": "好きな名前。英数字とハイフンが使える",
-              "icon": "👤",
-              "color": "#6366f1"
-            },
-            {
-              "title": "パズル認証",
-              "detail": "ロボットでないことの確認。画面の指示に従う",
-              "icon": "🧩",
-              "color": "#6366f1"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "scene_id": 10,
-      "narration": "次に、メール認証の画面が出てきます。「Enter code」と表示されていますね。ここで一旦、別のタブかウィンドウでメールの受信ボックスを開いてください。GitHubから認証コードが届いているはずです。",
-      "durationSec": 20,
+      "narration": "認証が終わると、メール認証の画面に切り替わります。「Enter code」と表示されていますね。ここで一旦、別のタブかウィンドウでメールの受信ボックスを開いてください。GitHubから認証コードが届いているはずです。",
+      "durationSec": 21,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
         "props": {
           "icon": "📧",
           "headline": "メール認証",
-          "detail": "GitHubから届いた6桁の認証コードを入力する",
+          "detail": "GitHubから届いた6桁の認証コードを入力",
           "color": "#6366f1"
         }
       }
     },
     {
-      "scene_id": 11,
-      "narration": "メールが届くまで少し時間がかかることもあります。30秒くらい待っても届かない場合は、迷惑メールフォルダも確認してみてください。Gmailの場合は「ぷろもーしょん」タブに入ることもあります。メールに記載されている6桁の数字を、先ほどの画面に入力します。",
-      "durationSec": 25,
+      "scene_id": 10,
+      "narration": "メールが届くまで少し時間がかかることもあります。30秒くらい待っても届かない場合は、迷惑メールフォルダも確認してみてください。Gmailの場合は「ぷろもーしょん」タブに入ることもあります。",
+      "durationSec": 19,
       "visual": {
         "type": "remotion",
         "component": "CalloutScreen",
@@ -255,6 +316,21 @@
           "type": "tip",
           "title": "メールが届かない場合",
           "body": "迷惑メールフォルダを確認。Gmailなら「プロモーション」タブもチェック。"
+        }
+      }
+    },
+    {
+      "scene_id": 11,
+      "narration": "メールに記載されている6桁の数字を、先ほどの認証画面に入力してください。これでアカウント作成のステップはほぼ終わりです。",
+      "durationSec": 11,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🔢",
+          "headline": "6桁のコードを入力",
+          "detail": "メールに届いた番号を認証画面に入力するとほぼ完了",
+          "color": "#6366f1"
         }
       }
     },
