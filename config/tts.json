@@ -37,6 +37,10 @@
         "enabled": true,
         "text": "これからお話しします。",
         "trimGuardMs": 0
+      },
+      "tailPadding": {
+        "enabled": true,
+        "paddingMs": 150
       }
     }
   }

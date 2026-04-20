@@ -2,7 +2,7 @@
   "lecture_id": "01-04",
   "title": "CodePenセットアップ + Hello World",
   "part": 1,
-  "totalDurationSec": 1252,
+  "totalDurationSec": 1245,
   "sequence": [
     {
       "scene_id": 1,
@@ -22,7 +22,7 @@
     },
     {
       "scene_id": 2,
-      "narration": "でも、同時にこうもお話ししました。「エーアイが作ったものを修正するには、私たちの側にも基礎知識が必要だ」と。さて、いよいよ今日から、皆さん自身の手でコードを書いていきます。パート1の最初の講義で「パート1の最後の講義が終わるまでに、皆さんの画面にはじめてのウェブページが表示されます」とお約束しましたよね。今日がその日です。",
+      "narration": "でも、同時にこうもお話ししました。「エーアイが作ったものを修正するには、私たちの側にも基礎知識が必要だ」と。さて、いよいよ今日から、皆さん自身の手でコードを書いていきます。パートワンの最初の講義で「パートワンの最後の講義が終わるまでに、皆さんの画面にはじめてのウェブページが表示されます」とお約束しましたよね。今日がその日です。",
       "durationSec": 32,
       "visual": {
         "type": "remotion",
@@ -92,9 +92,6 @@
           "term": "GitHub",
           "reading": "ギットハブ",
           "definition": "世界中のプログラマーが使う、コードを保存・共有するためのサービス。今日はCodePenのログインに使う。"
-        },
-        "transition": {
-          "enter": "slide-left"
         }
       }
     },
@@ -103,14 +100,63 @@
       "narration": "では、ブラウザでGitHubのサイトを開きます。Chromeのアドレスバーに「github.com」と入力して、Enter を押してください。画面が表示されましたね。英語のサイトですが、心配しないでください。必要な箇所だけ一緒に確認しながら進めていきます。右上に「Sign up」というボタンがあります。サインアップ、つまり「新規登録」という意味ですね。これをクリックしましょう。",
       "durationSec": 38,
       "visual": {
-        "type": "remotion",
-        "component": "BrowserMockScreen",
-        "props": {
-          "url": "https://github.com",
-          "title": "GitHubにアクセス",
-          "description": "右上の「Sign up」ボタンをクリックして新規登録を始めます",
-          "color": "#6366f1"
-        }
+        "type": "playwright",
+        "syncPoints": [
+          {
+            "actionIndex": 4,
+            "phrase": "右上に「Sign up」というボタンがあります"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://github.com"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4286
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              400
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 5714
+          },
+          {
+            "cmd": "highlight",
+            "selector": "header a[href='/signup'], a[href='/signup']",
+            "note": "右上 Sign up ボタン"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4336
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              1780,
+              65
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 3794
+          },
+          {
+            "cmd": "highlight",
+            "selector": "header a[href='/signup'], a[href='/signup']",
+            "note": "再度ハイライト"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3252
+          }
+        ]
       }
     },
     {
@@ -200,7 +246,7 @@
     },
     {
       "scene_id": 11,
-      "narration": "メールが届くまで少し時間がかかることもあります。30秒くらい待っても届かない場合は、迷惑メールフォルダも確認してみてください。Gmailの場合は「プロモーション」タブに入ることもあります。メールに記載されている6桁の数字を、先ほどの画面に入力します。",
+      "narration": "メールが届くまで少し時間がかかることもあります。30秒くらい待っても届かない場合は、迷惑メールフォルダも確認してみてください。Gmailの場合は「ぷろもーしょん」タブに入ることもあります。メールに記載されている6桁の数字を、先ほどの画面に入力します。",
       "durationSec": 25,
       "visual": {
         "type": "remotion",
@@ -245,17 +291,68 @@
     },
     {
       "scene_id": 14,
-      "narration": "ブラウザの新しいタブを開いて、アドレスバーに「codepen.io」と入力してください。画面が表示されました。こちらも英語のサイトですが、使うボタンは限られていますので安心してください。右上の「Sign Up」をクリックします。ログインの方法がいくつか表示されますので、「Continue with GitHub」を選んでください。先ほど作ったGitHubのアカウントでそのままログインできます。",
+      "narration": "ブラウザの新しいタブを開いて、アドレスバーに「codepen.io」と入力してください。画面が表示されました。こちらも英語のサイトですが、使うボタンは限られていますので安心してください。右上の「Sign Up」をクリックします。登録方法がいくつか表示されますので、「Sign Up with GitHub」を選んでください。先ほど作ったGitHubのアカウントでそのままログインできます。",
       "durationSec": 40,
       "visual": {
-        "type": "remotion",
-        "component": "BrowserMockScreen",
-        "props": {
-          "url": "https://codepen.io",
-          "title": "CodePenにアクセス",
-          "description": "「Sign Up」→「Continue with GitHub」でGitHubアカウントを使ってログイン",
-          "color": "#6366f1"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen-signup.json",
+        "syncPoints": [
+          {
+            "actionIndex": 4,
+            "phrase": "右上の「Sign Up」をクリックします"
+          },
+          {
+            "actionIndex": 8,
+            "phrase": "「Sign Up with GitHub」を選んでください"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4820
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              400
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 4820
+          },
+          {
+            "cmd": "highlight",
+            "selector": "a[href*='/accounts/signup'], a:has-text('Sign Up')",
+            "note": "右上 Sign Up ボタン"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/accounts/signup/user/free"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "highlight",
+            "selector": "a[href*='/github/'], a:has-text('GitHub')",
+            "note": "Sign Up with GitHub"
+          },
+          {
+            "cmd": "wait",
+            "ms": 7549
+          }
+        ]
       }
     },
     {
@@ -275,35 +372,105 @@
     },
     {
       "scene_id": 16,
-      "narration": "はい、CodePenにログインできましたね。うまくいきましたか？もしエラーが出た場合は、一度ブラウザを更新してからもう一度「Continue with GitHub」を試してみてください。ここまで来れば、もう準備はほぼ完了です。",
-      "durationSec": 23,
+      "narration": "はい、CodePenにログインできましたね。うまくいきましたか？。ここまでこれば、もう準備はほぼ完了です。",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "✅",
+          "headline": "ログイン完了",
+          "detail": "これでCodePenが使えるようになりました",
+          "color": "#6366f1"
+        }
+      }
+    },
+    {
+      "scene_id": 17,
+      "narration": "もしエラーが出た場合は、一度ブラウザを更新してからもう一度「Sign Up with GitHub」を試してみてください。",
+      "durationSec": 14,
       "visual": {
         "type": "remotion",
         "component": "CalloutScreen",
         "props": {
           "type": "tip",
           "title": "エラーが出た場合",
-          "body": "ブラウザを更新してから、もう一度「Continue with GitHub」を試してみてください。"
-        }
-      }
-    },
-    {
-      "scene_id": 17,
-      "narration": "では、さっそくコードを書く画面を開いてみましょう。左上のメニューから「Pen」を選んで、新しいペンを作成します。「ペン」というのはCodePenでの作業ファイルのようなもので、1つのペンに1つのウェブページを作っていくイメージです。この画面がCodePenの編集画面です。初めて見る方は少しごちゃごちゃして見えるかもしれませんが、大丈夫です。少しずつ見ていきましょう。",
-      "durationSec": 37,
-      "visual": {
-        "type": "remotion",
-        "component": "DefinitionScreen",
-        "props": {
-          "term": "Pen",
-          "reading": "ペン",
-          "definition": "CodePenでの作業ファイル。1つのペンに1つのWebページを作っていく。"
+          "body": "ブラウザを更新してから、もう一度「Sign Up with GitHub」を試してみてください。"
         }
       }
     },
     {
       "scene_id": 18,
-      "narration": "画面の上半分に3つの領域が並んでいますね。左から順に「HTML」「CSS」「JS」と書いてあります。覚えていますか？前々回の講義で学んだ、ウェブサイトを構成する3つの言語です。HTMLは骨組み、CSSはインテリア、JavaScriptは家電製品。その3つが、そのまま3つの入力エリアになっているんです。",
+      "narration": "では、さっそくコードを書く画面を開いてみましょう。左上のメニューから「Classic 'ぺ'ん」を選んで、新しい 'ぺ'ん を作成します。'ぺ'んというのはCodePenでの作業ファイルのようなもので、1つの'ぺ'んに1つのウェブページを作っていくイメージです。この画面がCodePenの編集画面です。初めて見る方は少し ごちゃ ごちゃ して見えるかもしれませんが、大丈夫です。少しずつ見ていきましょう。",
+      "durationSec": 37,
+      "visual": {
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 4,
+            "phrase": "この画面がCodePenの編集画面です"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              320,
+              200
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              540
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 7704
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              320,
+              200
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 7704
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 7704
+          }
+        ]
+      }
+    },
+    {
+      "scene_id": 19,
+      "narration": "画面の上のエリアに3つの領域が並んでいますね。左から順に「HTML」「CSS」「JS」と書いてあります。覚えていますか？前々回の講義で学んだ、ウェブサイトを構成する3つの言語です。HTMLは骨組み、CSSはインテリア、JavaScriptは家電製品。その3つが、そのまま3つの入力エリアになっているんです。",
       "durationSec": 30,
       "visual": {
         "type": "remotion",
@@ -334,7 +501,7 @@
       }
     },
     {
-      "scene_id": 19,
+      "scene_id": 20,
       "narration": "今日使うのは一番左の「HTML」と書かれた領域だけです。CSSとJSの領域は、パート2以降の講義で使っていきますので、今は空のままで構いません。",
       "durationSec": 14,
       "visual": {
@@ -349,8 +516,8 @@
       }
     },
     {
-      "scene_id": 20,
-      "narration": "そして画面の下半分。ここがプレビューエリアです。上の3つの領域にコードを書くと、その結果がここにリアルタイムで表示されます。コードを変えた瞬間に、プレビューもすぐ変わる。これがCodePenの最大の魅力です。",
+      "scene_id": 21,
+      "narration": "そして画面の下のエリア。ここがプレビューエリアです。上の3つの領域にコードを書くと、その結果がここにリアルタイムで表示されます。コードを変えた瞬間に、プレビューもすぐ変わる。これがCodePenの最大の魅力です。",
       "durationSec": 21,
       "visual": {
         "type": "remotion",
@@ -362,7 +529,7 @@
       }
     },
     {
-      "scene_id": 21,
+      "scene_id": 22,
       "narration": "もし画面のレイアウトが違う場合は、左上の「Change View」というボタンをクリックして、上下分割のレイアウトを選んでください。上がコード、下がプレビュー、という配置になるはずです。",
       "durationSec": 19,
       "visual": {
@@ -376,8 +543,8 @@
       }
     },
     {
-      "scene_id": 22,
-      "narration": "この講座では、この後のパート2からパート4まで、ほぼすべての実習をこのCodePenで行います。今のうちに画面の配置を確認しておきましょう。上がコードを書く場所、下がその結果を確認する場所。とてもシンプルですね。ちなみに、CodePenで作ったペンは自動的に保存されます。うっかりブラウザを閉じてしまっても、次にログインすれば戻ってきますので安心してくださいね。",
+      "scene_id": 23,
+      "narration": "この講座では、この後のパート2からパート4まで、ほぼすべての実習をこのCodePenで行います。今のうちに画面の配置を確認しておきましょう。上がコードを書く場所、下がその結果を確認する場所。とてもシンプルですね。ちなみに、CodePenで作った'ぺ'ん は自動的に保存されます。うっかりブラウザを閉じてしまっても、次にログインすれば戻ってきますので安心してくださいね。",
       "durationSec": 36,
       "visual": {
         "type": "remotion",
@@ -400,44 +567,95 @@
       }
     },
     {
-      "scene_id": 23,
+      "scene_id": 24,
       "narration": "さあ、いよいよコードを書いてみましょう。皆さんにとって、生まれてはじめてのHTMLです。左上の「HTML」と書かれた入力エリアをクリックしてください。カーソルが点滅していますね。ここに、キーボードから文字を入力していきます。",
       "durationSec": 22,
       "visual": {
-        "type": "remotion",
-        "component": "KeyPointScreen",
-        "props": {
-          "icon": "✨",
-          "headline": "はじめてのHTML",
-          "detail": "HTML入力エリアをクリックして、コードを書き始めよう",
-          "color": "#6366f1"
-        },
-        "transition": {
-          "enter": "slide-left"
-        }
-      }
-    },
-    {
-      "scene_id": 24,
-      "narration": "まずはシンプルに、こう入力してみてください。大文字と小文字に気をつけてくださいね。「H」「e」「l」「l」「o」、半角スペース、「W」「o」「r」「l」「d」。",
-      "durationSec": 18,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "Hello World",
-          "language": "html",
-          "title": "はじめての入力"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 4,
+            "phrase": "左上の「HTML」と書かれた入力エリアをクリック"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 700
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 420
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 10948
+          }
+        ]
       }
     },
     {
       "scene_id": 25,
-      "narration": "入力できましたか？下のプレビューエリアを見てみてください。「Hello World」と表示されていますね。たったこれだけで、皆さんのブラウザ画面にテキストが表示されました。これが、ウェブページの最も基本的な姿です。特別なことは何もしていません。テキストを入力しただけ。でもこれが、立派なウェブページの始まりなんです。",
-      "durationSec": 32,
+      "narration": "まずはシンプルに、こう入力してみてください。大文字と小文字に気をつけてくださいね。「H」「e」「l」「l」「o」、半角スペース、「W」「o」「r」「l」「d」。入力できましたか？下のプレビューエリアを見てみてください。「Hello World」と表示されていますね。",
+      "durationSec": 28,
+      "visual": {
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 4,
+            "phrase": "「H」「e」「l」「l」「o」"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 345
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 115
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "Hello World"
+          },
+          {
+            "cmd": "wait",
+            "ms": 22632
+          }
+        ]
+      }
+    },
+    {
+      "scene_id": 26,
+      "narration": "たったこれだけで、皆さんのブラウザ画面にテキストが表示されました。これが、ウェブページの最も基本的な姿です。特別なことは何もしていません。テキストを入力しただけ。でもこれが、立派なウェブページの始まりなんです。",
+      "durationSec": 22,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -450,20 +668,97 @@
       }
     },
     {
-      "scene_id": 26,
+      "scene_id": 27,
       "narration": "でも、「Hello World」とだけ書くのでは少し味気ないですよね。文字のサイズも小さいですし、見出しっぽくありません。ここで、HTMLの「タグ」というものを使ってみましょう。先ほど書いた「Hello World」を一度全部消してください。キーボードのバックスペースキーで消せます。消えたらプレビューも空になりましたよね。",
       "durationSec": 32,
       "visual": {
-        "type": "remotion",
-        "component": "QnAScreen",
-        "props": {
-          "question": "文字が小さくて味気ない？",
-          "answer": "HTMLの「タグ」を使えば、見出しらしい大きな文字にできます。"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 6,
+            "phrase": "先ほど書いた「Hello World」を一度全部消して"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4156
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 831
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "Hello World"
+          },
+          {
+            "cmd": "wait",
+            "ms": 2493
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "wait",
+            "ms": 9802
+          }
+        ]
       }
     },
     {
-      "scene_id": 27,
+      "scene_id": 28,
       "narration": "では、今度はこう書いてみてください。半角の山括弧を使います。Shiftキーを押しながら、キーボードの「ね」のキーを押すと「小なり記号」が出ます。逆に、Shiftキーを押しながら「む」のキーを押すと「大なり記号」が出ます。",
       "durationSec": 22,
       "visual": {
@@ -477,25 +772,54 @@
       }
     },
     {
-      "scene_id": 28,
+      "scene_id": 29,
       "narration": "焦らなくて大丈夫です。山括弧は普段あまり打たないキーなので、最初は少し戸惑うかもしれません。ゆっくり、一文字ずつ入力してみてください。プレビューを見てください。さっきより文字がぐっと大きくなりましたよね。",
       "durationSec": 22,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<h1>Hello World</h1>",
-          "language": "html",
-          "title": "h1タグで見出しに"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 4,
+            "phrase": "ゆっくり、一文字ずつ入力してみてください"
+          },
+          {
+            "actionIndex": 5,
+            "phrase": "プレビューを見てください"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3750
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1250
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h1>Hello World</h1>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 2482
+          }
+        ]
       }
     },
     {
-      "scene_id": 29,
-      "narration": "この「h1」というのは「見出し」を意味するタグです。新聞の一面の大見出しをイメージしてください。「h」はヘディング、つまり見出しの略です。そして「1」はいちばん大きな見出し、という意味です。",
+      "scene_id": 30,
+      "narration": "この「エイチワン」というのは「見出し」を意味するタグです。新聞の一面の大見出しをイメージしてください。「h」はヘディング、つまり見出しの略です。そして「1」はいちばん大きな見出し、という意味です。",
       "durationSec": 19,
       "visual": {
         "type": "remotion",
@@ -509,8 +833,8 @@
       }
     },
     {
-      "scene_id": 30,
-      "narration": "山括弧で囲まれたこの目印が「タグ」です。h1の前後に、この山括弧のタグがペアで付いていますよね。今はこの形をなんとなく覚えておくだけで大丈夫です。タグの詳しい書き方のルールは、次のパート2でじっくり学んでいきます。",
+      "scene_id": 31,
+      "narration": "山括弧で囲まれたこの目印が「タグ」です。エイチワンの前後に、この山括弧のタグがペアで付いていますよね。今はこの形をなんとなく覚えておくだけで大丈夫です。タグの詳しい書き方のルールは、次のパート2でじっくり学んでいきます。",
       "durationSec": 21,
       "visual": {
         "type": "remotion",
@@ -524,25 +848,59 @@
       }
     },
     {
-      "scene_id": 31,
-      "narration": "では次に、もう1行追加してみましょう。h1タグの下の行にカーソルを移動して、Enter を押して新しい行を作ります。そこに、こう書いてください。",
+      "scene_id": 32,
+      "narration": "では次に、もう1行追加してみましょう。エイチワンタグの下の行にカーソルを移動して、Enter を押して新しい行を作ります。そこに、こう書いてください。",
       "durationSec": 16,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<p>はじめてのWebページです！</p>",
-          "language": "html",
-          "title": "段落を追加"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 6,
+            "phrase": "そこに、こう書いてください"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h1>Hello World</h1>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>はじめてのWebページです！</p>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 5541
+          }
+        ]
       }
     },
     {
-      "scene_id": 32,
-      "narration": "プレビューを見ると、大きな見出しの下に、普通のサイズの文章が表示されましたね。この「p」というタグは「段落」を意味します。英語のパラグラフの略です。本文を書くときに使うタグで、これもウェブページでいちばんよく使うタグの一つです。",
+      "scene_id": 33,
+      "narration": "プレビューを見ると、大きな見出しの下に、普通のサイズの文章が表示されましたね。この「ぴー」というタグは「段落」を意味します。英語のパラグラフの略です。本文を書くときに使うタグで、これもウェブページでいちばんよく使うタグの一つです。",
       "durationSec": 23,
       "visual": {
         "type": "remotion",
@@ -555,7 +913,7 @@
       }
     },
     {
-      "scene_id": 33,
+      "scene_id": 34,
       "narration": "入力できたら、プレビューを見てみてください。大きな見出しの下に、普通のサイズの文章が表示されていますね。もしうまく表示されない場合は、山括弧の向きが逆になっていないか、スラッシュの位置が合っているか、確認してみてください。コードは1文字でも違うと動かないことがあるので、焦らずチェックしてみましょう。",
       "durationSec": 30,
       "visual": {
@@ -569,28 +927,58 @@
       }
     },
     {
-      "scene_id": 34,
+      "scene_id": 35,
       "narration": "ここまでのコードをまとめると、こうなっています。たった2行です。たった2行のコードで、見出しと段落があるウェブページができました。もちろん、まだ色も装飾もない、とてもシンプルな状態です。でも、これが立派なHTMLなんです。",
       "durationSec": 24,
       "visual": {
-        "type": "remotion",
-        "component": "CodeWalkthroughScreen",
-        "props": {
-          "title": "ここまでのコード",
-          "code": "<h1>Hello World</h1>\n<p>はじめてのWebページです！</p>",
-          "highlightLines": [
-            1,
-            2
-          ],
-          "caption": "たった2行で、見出しと段落があるWebページ"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 7,
+            "phrase": "見出しと段落があるウェブページができました"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 2702
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 811
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h1>Hello World</h1>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>はじめてのWebページです！</p>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 6319
+          }
+        ]
       }
     },
     {
-      "scene_id": 35,
+      "scene_id": 36,
       "narration": "おめでとうございます。皆さんは今、ウェブ開発者になりました。大げさに聞こえるかもしれませんが、これは本当のことなんです。世界中のウェブ開発者が最初にやることは、画面に「Hello World」を表示させることです。プログラミングの世界では、これが伝統的な最初の一歩なんですね。皆さんは今、まさにその一歩を踏み出しました。",
       "durationSec": 32,
       "visual": {
@@ -603,7 +991,7 @@
       }
     },
     {
-      "scene_id": 36,
+      "scene_id": 37,
       "narration": "ちなみに「Hello World」というのは、1970年代にプログラミングの教科書で使われたのが始まりだと言われています。それ以来、何十年もの間、プログラミングを始める人が最初に画面に表示させるお決まりのフレーズになっているんです。ちょっとした伝統行事みたいなものですね。",
       "durationSec": 27,
       "visual": {
@@ -618,8 +1006,8 @@
       }
     },
     {
-      "scene_id": 37,
-      "narration": "さて、ここで小さなチャレンジをしてみましょう。「Hello World」の部分を、皆さんの名前に変えてみてください。たとえば「田中太郎のページ」とか、「さくらのホームページ」とか、なんでも好きなものに変えてみましょう。h1タグの山括弧はそのままにして、中のテキストだけ書き換えてくださいね。その下の段落の文章も、自由に変えてみてください。「趣味は映画鑑賞です」でも、「ネイルサロンを経営しています」でも、なんでも構いません。",
+      "scene_id": 38,
+      "narration": "さて、ここで小さなチャレンジをやってみましょう。「Hello World」の部分を、皆さんの名前に変えてみてください。たとえば「田中太郎のページ」とか、「さくらのホームページ」とか、なんでも好きなものに変えてみましょう。エイチワンタグの山括弧はそのままにして、中のテキストだけ書き換えてくださいね。その下の段落の文章も、自由に変えてみてください。「趣味は映画鑑賞です」でも、「ネイルサロンを経営しています」でも、なんでも構いません。",
       "durationSec": 42,
       "visual": {
         "type": "remotion",
@@ -636,7 +1024,7 @@
       }
     },
     {
-      "scene_id": 38,
+      "scene_id": 39,
       "narration": "コードを変えた瞬間に、プレビューが更新されますよね。この「書いたらすぐ反映される」というリアルタイムの感覚、これがCodePenの醍醐味です。余裕がある方は、もう1行pタグを追加してみてもいいですよ。たとえば、今ある2行の下にもう1行、好きな文章を同じpタグの形で書いてみてください。プレビューに3行目が増えるはずです。",
       "durationSec": 32,
       "visual": {
@@ -651,7 +1039,7 @@
       }
     },
     {
-      "scene_id": 39,
+      "scene_id": 40,
       "narration": "自分の名前が画面に表示されると、なんだかちょっとうれしい気持ちになりませんか？今はまだ白い画面に黒い文字だけのシンプルな見た目ですが、パート3でCSSを学ぶと、ここに色をつけたり、レイアウトを整えたりできるようになります。楽しみにしていてくださいね。これが皆さんのウェブページの第一歩です。",
       "durationSec": 29,
       "visual": {
@@ -679,7 +1067,7 @@
       }
     },
     {
-      "scene_id": 40,
+      "scene_id": 41,
       "narration": "それでは、今日のポイントをまとめましょう。1つ目。GitHubアカウントを作成しました。このアカウントはCodePenのログインに使いますし、PART 5でサイトを公開するときにも必要です。メールアドレスとパスワード、忘れないでくださいね。もしまだメモしていない方は、今のうちにどこかに控えておくことをおすすめします。",
       "durationSec": 32,
       "visual": {
@@ -696,8 +1084,8 @@
       }
     },
     {
-      "scene_id": 41,
-      "narration": "2つ目。CodePenをセットアップして、画面の構成を確認しました。HTML、CSS、JSの3つの入力エリアと、下にプレビュー。コードを書くとリアルタイムで結果が反映される。この講座の実習は、ほぼすべてこのCodePenで行います。もしログインの方法を忘れてしまっても、GitHubアカウントさえあれば「Continue with GitHub」ですぐ入れますので心配いりません。",
+      "scene_id": 42,
+      "narration": "2つ目。CodePenをセットアップして、画面の構成を確認しました。HTML、CSS、JSの3つの入力エリアと、下にプレビュー。コードを書くとリアルタイムで結果が反映される。この講座の実習は、ほぼすべてこのCodePenで行います。もしログインの方法を忘れてしまっても、GitHubアカウントさえあれば「Log In with GitHub」ですぐ入れますので心配いりません。",
       "durationSec": 38,
       "visual": {
         "type": "remotion",
@@ -722,8 +1110,8 @@
       }
     },
     {
-      "scene_id": 42,
-      "narration": "3つ目。はじめてのHTMLを書きました。h1タグで見出しを、pタグで段落を作りました。たった2行のコードで、立派なウェブページが表示されましたね。今日覚えてほしいことは、実はこの3つだけです。細かい操作手順は忘れてしまっても大丈夫。大事なのは、「自分の手でコードを書いて、画面に表示できた」というこの体験です。",
+      "scene_id": 43,
+      "narration": "3つ目。はじめてのHTMLを書きました。エイチワンタグで見出しを、pタグで段落を作りました。たった2行のコードで、立派なウェブページが表示されましたね。今日覚えてほしいことは、実はこの3つだけです。細かい操作手順は忘れてしまっても大丈夫。大事なのは、「自分の手でコードを書いて、画面に表示できた」というこの体験です。",
       "durationSec": 31,
       "visual": {
         "type": "remotion",
@@ -737,8 +1125,8 @@
       }
     },
     {
-      "scene_id": 43,
-      "narration": "さて、次の講義からはいよいよパート2に入ります。「HTML、ウェブの骨格を読む」。今日は「h1」と「p」の2つのタグだけ使いましたが、次回からは、HTMLのタグのルール、つまり書き方の約束事をちゃんと学んでいきます。タグにはどんなルールがあるのか、タグ同士の親子関係とは何か、HTMLの基本ルールを一つずつ見ていきましょう。",
+      "scene_id": 44,
+      "narration": "さて、次の講義からはいよいよパート2に入ります。「HTML、ウェブの骨格を読む」。今日は「エイチワン」と「p」の2つのタグだけ使いましたが、次回からは、HTMLのタグのルール、つまり書き方の約束事をちゃんと学んでいきます。タグにはどんなルールがあるのか、タグ同士の親子関係とは何か、HTMLの基本ルールを一つずつ見ていきましょう。",
       "durationSec": 32,
       "visual": {
         "type": "remotion",
@@ -751,7 +1139,7 @@
       }
     },
     {
-      "scene_id": 44,
+      "scene_id": 45,
       "narration": "今日書いた「Hello World」のコードは、CodePenに自動保存されていますので、いつでも見返せますよ。次の講義までに、もう一度CodePenにログインして開いて、自分のコードがちゃんと残っていることを確認してみてください。",
       "durationSec": 23,
       "visual": {
@@ -765,7 +1153,7 @@
       }
     },
     {
-      "scene_id": 45,
+      "scene_id": 46,
       "narration": "皆さん、お疲れ様でした。それでは、次の講義でお会いしましょう。",
       "durationSec": 6,
       "visual": {
