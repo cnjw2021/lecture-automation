@@ -94,7 +94,7 @@ export class GeminiSTTProvider implements ISTTProvider {
     try {
       const parsed = JSON.parse(text);
       if (!Array.isArray(parsed)) return [];
-      return parsed
+      const raw: STTFinding[] = parsed
         .filter((f: any) => typeof f.timeSec === 'number' && typeof f.expected === 'string' && typeof f.actual === 'string')
         .map((f: any): STTFinding => ({
           timeSec: f.timeSec,
@@ -102,9 +102,27 @@ export class GeminiSTTProvider implements ISTTProvider {
           actual: f.actual,
           ...(f.reason ? { reason: f.reason } : {}),
         }));
+      return this.groupNearbyFindings(raw);
     } catch {
       console.warn(`  ⚠️ Scene ${sceneId}: Gemini STT 응답 파싱 실패 — 통과로 처리`);
       return [];
     }
+  }
+
+  /**
+   * 연속 오독으로 인한 타이밍 경계 이탈 false positive 제거.
+   * GROUPING_WINDOW_SEC 이내에 연속 발생한 finding은 첫 번째 finding(원인)만 남기고 나머지 제거.
+   */
+  private groupNearbyFindings(findings: STTFinding[], windowSec = 2.0): STTFinding[] {
+    if (findings.length <= 1) return findings;
+    const result: STTFinding[] = [];
+    let groupEnd = -Infinity;
+    for (const f of findings) {
+      if (f.timeSec > groupEnd) {
+        result.push(f);
+        groupEnd = f.timeSec + windowSec;
+      }
+    }
+    return result;
   }
 }
