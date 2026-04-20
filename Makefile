@@ -1,7 +1,7 @@
 # Lecture Automation Makefile
 
 .PHONY: help install build run run-force regen-scene run-tts-only run-render-only render-scene record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
-        sync-playwright save-auth validate-schema
+        sync-playwright save-auth validate-schema lint lint-fix
 
 # 기본 변수 설정
 LECTURE ?= lecture-01-01.json
@@ -41,6 +41,8 @@ help:
 	@echo "make sync-playwright LECTURE=xxx           - Playwright 씬 narration-action 싱크 자동 조정"
 	@echo "make sync-playwright LECTURE=xxx SCENE=17  - 특정 씬만 싱크 조정"
 	@echo "make save-auth SERVICE=claude             - 브라우저 인증 상태 저장 (Claude/ChatGPT 등)"
+	@echo "make lint LECTURE=xxx                     - 강의 JSON lint 검사 (TTS 지뢰, 기호 위반 등)"
+	@echo "make lint-fix LECTURE=xxx                 - lint + 자동 수정 가능 항목 적용"
 	@echo "--------------------------------------------------"
 
 install:
@@ -51,11 +53,11 @@ build:
 	@echo "🔨 automation 패키지 빌드 중..."
 	npm run build -w packages/automation
 
-run:
+run: lint
 	@echo "🚀 강의 자동화 파이프라인 시작: $(LECTURE)"
 	env $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
-run-force:
+run-force: lint
 	@echo "🔄 강제 재생성 모드로 파이프라인 시작: $(LECTURE)"
 	env FORCE=1 $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
@@ -150,6 +152,23 @@ validate-schema:
 		exit 1; \
 	fi
 	npx tsx packages/automation/src/presentation/cli/validate-lecture-schema.ts $(LECTURE) $(if $(filter 1,$(STRICT)),--strict,)
+
+lint:
+	@echo "🧹 Lint: $(LECTURE)"
+	@if [ -z "$(LECTURE)" ]; then \
+		echo "❌ LECTURE 값을 지정해 주세요. 예: make lint LECTURE=lecture-01-04.json"; \
+		exit 1; \
+	fi
+	@npx tsx packages/automation/src/presentation/cli/lint-lecture.ts $(LECTURE) $(if $(filter 1,$(STRICT)),--strict,) || \
+		(echo ""; echo "⛔ lint 차단됨 — 자동 수정 가능 항목은 'make lint-fix LECTURE=$(LECTURE)' 로 처리하세요"; exit 1)
+
+lint-fix:
+	@echo "🧹 Lint --fix: $(LECTURE)"
+	@if [ -z "$(LECTURE)" ]; then \
+		echo "❌ LECTURE 값을 지정해 주세요. 예: make lint-fix LECTURE=lecture-01-04.json"; \
+		exit 1; \
+	fi
+	npx tsx packages/automation/src/presentation/cli/lint-lecture.ts $(LECTURE) --fix $(if $(filter 1,$(STRICT)),--strict,)
 
 clean:
 	@echo "🧹 생성된 에셋 및 결과물 정리 중..."
