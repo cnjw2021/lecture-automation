@@ -1,7 +1,7 @@
 # Lecture Automation Makefile
 
 .PHONY: help install build run run-force regen-scene regen-visual run-tts-only run-render-only render-scene record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
-        sync-playwright save-auth validate-schema lint lint-fix
+        sync-playwright save-auth validate-schema lint lint-fix audit
 
 # 기본 변수 설정
 LECTURE ?= lecture-01-01.json
@@ -44,6 +44,8 @@ help:
 	@echo "make save-auth SERVICE=claude             - 브라우저 인증 상태 저장 (Claude/ChatGPT 등)"
 	@echo "make lint LECTURE=xxx                     - 강의 JSON lint 검사 (TTS 지뢰, 기호 위반 등)"
 	@echo "make lint-fix LECTURE=xxx                 - lint + 자동 수정 가능 항목 적용"
+	@echo "make audit LECTURE=xxx                    - TTS 오독 자동 감사 (Gemini 2.0 Flash STT 대조)"
+	@echo "make audit LECTURE=xxx SCENE='5 31'       - 특정 씬만 감사"
 	@echo "--------------------------------------------------"
 
 install:
@@ -187,6 +189,14 @@ lint-fix:
 		exit 1; \
 	fi
 	npx tsx packages/automation/src/presentation/cli/lint-lecture.ts $(LECTURE) --fix $(if $(filter 1,$(STRICT)),--strict,)
+
+audit:
+	@echo "🎧 TTS Audit: $(LECTURE)"
+	@if [ -z "$(LECTURE)" ]; then \
+		echo "❌ LECTURE 값을 지정해 주세요. 예: make audit LECTURE=lecture-01-04.json"; \
+		exit 1; \
+	fi
+	npx tsx packages/automation/src/presentation/cli/audit.ts $(LECTURE) $(if $(SCENE),--scene '$(SCENE)',)
 
 clean:
 	@echo "🧹 생성된 에셋 및 결과물 정리 중..."
