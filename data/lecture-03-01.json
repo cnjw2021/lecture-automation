@@ -39,7 +39,7 @@
     },
     {
       "scene_id": 3,
-      "narration": "パート2までの旅を少しだけ振り返ってみましょう。パート1ではウェブの全体像を掴みました。パート2ではHTMLを学んで、ウェブページの「骨格」を自分の手で組み立てられるようになりました。そして今日からのパート3では、その骨格に「見た目」を加えていきます。",
+      "narration": "パート2までの旅を少しだけ振り返ってみましょう。パートワンではウェブの全体像を掴みました。パート2ではHTMLを学んで、ウェブページの「骨格」を自分の手で組み立てられるようになりました。そして今日からのパート3では、その骨格に「見た目」を加えていきます。",
       "durationSec": 22,
       "visual": {
         "type": "remotion",
@@ -71,11 +71,21 @@
           "title": "HTMLだけのページは...",
           "before": {
             "label": "HTMLだけ",
-            "points": ["黒い文字が並ぶ", "リンクが青い", "余白がない", "デザインがない"]
+            "points": [
+              "黒い文字が並ぶ",
+              "リンクが青い",
+              "余白がない",
+              "デザインがない"
+            ]
           },
           "after": {
             "label": "CSS追加後",
-            "points": ["おしゃれな色", "きれいなフォント", "心地よい余白", "プロのデザイン"]
+            "points": [
+              "おしゃれな色",
+              "きれいなフォント",
+              "心地よい余白",
+              "プロのデザイン"
+            ]
           }
         }
       }
@@ -136,10 +146,26 @@
         "props": {
           "title": "今日やること",
           "items": [
-            { "title": "CSSとは何か", "icon": "💡", "description": "役割と基本概念" },
-            { "title": "3つの適用方法", "icon": "📋", "description": "インライン・内部・外部" },
-            { "title": "CSSの基本構文", "icon": "📝", "description": "セレクタ・プロパティ・値" },
-            { "title": "CodePenで実践", "icon": "💻", "description": "実際にCSSを書いて体験" }
+            {
+              "title": "CSSとは何か",
+              "icon": "💡",
+              "description": "役割と基本概念"
+            },
+            {
+              "title": "3つの適用方法",
+              "icon": "📋",
+              "description": "インライン・内部・外部"
+            },
+            {
+              "title": "CSSの基本構文",
+              "icon": "📝",
+              "description": "セレクタ・プロパティ・値"
+            },
+            {
+              "title": "CodePenで実践",
+              "icon": "💻",
+              "description": "実際にCSSを書いて体験"
+            }
           ]
         }
       }
@@ -164,7 +190,7 @@
     },
     {
       "scene_id": 10,
-      "narration": "パート1の最初の講義で、ウェブサイトを支える3つの言語の話をしましたね。HTMLが「構造」、CSSが「見た目」、JavaScriptが「動き」。今日からその2つ目の言語に入るわけです。",
+      "narration": "パートワンの最初の講義で、ウェブサイトを支える3つの言語の話をしましたね。HTMLが「構造」、CSSが「見た目」、JavaScriptが「動き」。今日からその2つ目の言語に入るわけです。",
       "durationSec": 20,
       "visual": {
         "type": "remotion",
@@ -172,9 +198,28 @@
         "props": {
           "title": "Webを支える3つの言語",
           "nodes": [
-            { "id": "html", "label": "HTML\n構造", "x": 300, "y": 400, "icon": "🏗️" },
-            { "id": "css", "label": "CSS\n見た目", "x": 840, "y": 400, "icon": "🎨", "color": "#3b82f6" },
-            { "id": "js", "label": "JavaScript\n動き", "x": 1380, "y": 400, "icon": "⚡" }
+            {
+              "id": "html",
+              "label": "HTML\n構造",
+              "x": 300,
+              "y": 400,
+              "icon": "🏗️"
+            },
+            {
+              "id": "css",
+              "label": "CSS\n見た目",
+              "x": 840,
+              "y": 400,
+              "icon": "🎨",
+              "color": "#3b82f6"
+            },
+            {
+              "id": "js",
+              "label": "JavaScript\n動き",
+              "x": 1380,
+              "y": 400,
+              "icon": "⚡"
+            }
           ],
           "edges": []
         }
@@ -190,10 +235,27 @@
         "props": {
           "title": "CSSでできること",
           "items": [
-            { "icon": "🎨", "title": "色を変える", "description": "文字色・背景色・ボタン色", "color": "#3b82f6" },
-            { "icon": "📏", "title": "サイズを調整", "description": "文字サイズ・幅・高さ" },
-            { "icon": "📐", "title": "配置を整える", "description": "中央揃え・左右・余白" },
-            { "icon": "📱", "title": "デバイス対応", "description": "スマホはPC表示を切り替え" }
+            {
+              "icon": "🎨",
+              "title": "色を変える",
+              "description": "文字色・背景色・ボタン色",
+              "color": "#3b82f6"
+            },
+            {
+              "icon": "📏",
+              "title": "サイズを調整",
+              "description": "文字サイズ・幅・高さ"
+            },
+            {
+              "icon": "📐",
+              "title": "配置を整える",
+              "description": "中央揃え・左右・余白"
+            },
+            {
+              "icon": "📱",
+              "title": "デバイス対応",
+              "description": "スマホはPC表示を切り替え"
+            }
           ]
         }
       }
@@ -260,9 +322,21 @@
         "props": {
           "title": "CSSの3つの適用方法",
           "features": [
-            { "icon": "1️⃣", "title": "インラインスタイル", "description": "タグに直接書く" },
-            { "icon": "2️⃣", "title": "内部スタイルシート", "description": "ページ内のheadに書く" },
-            { "icon": "3️⃣", "title": "外部スタイルシート", "description": "別ファイルに書いて読み込む" }
+            {
+              "icon": "1️⃣",
+              "title": "インラインスタイル",
+              "description": "タグに直接書く"
+            },
+            {
+              "icon": "2️⃣",
+              "title": "内部スタイルシート",
+              "description": "ページ内のheadに書く"
+            },
+            {
+              "icon": "3️⃣",
+              "title": "外部スタイルシート",
+              "description": "別ファイルに書いて読み込む"
+            }
           ],
           "columns": 3
         },
@@ -403,11 +477,28 @@
         "props": {
           "title": "外部スタイルシートの仕組み",
           "nodes": [
-            { "id": "html", "label": "index.html", "x": 420, "y": 400, "icon": "📄" },
-            { "id": "css", "label": "style.css", "x": 1260, "y": 400, "icon": "🎨", "color": "#3b82f6" }
+            {
+              "id": "html",
+              "label": "index.html",
+              "x": 420,
+              "y": 400,
+              "icon": "📄"
+            },
+            {
+              "id": "css",
+              "label": "style.css",
+              "x": 1260,
+              "y": 400,
+              "icon": "🎨",
+              "color": "#3b82f6"
+            }
           ],
           "edges": [
-            { "from": "html", "to": "css", "label": "<link>で読み込む" }
+            {
+              "from": "html",
+              "to": "css",
+              "label": "<link>で読み込む"
+            }
           ]
         }
       }
@@ -439,8 +530,16 @@
         "props": {
           "title": "外部スタイルシートのメリット",
           "items": [
-            { "icon": "🔗", "title": "複数ページで共有", "detail": "全ページが同一のCSSファイルを読み込む" },
-            { "icon": "✏️", "title": "変更は1箇所だけ", "detail": "style.cssを1つ修正するだけで全ページ更新" }
+            {
+              "icon": "🔗",
+              "title": "複数ページで共有",
+              "detail": "全ページが同一のCSSファイルを読み込む"
+            },
+            {
+              "icon": "✏️",
+              "title": "変更は1箇所だけ",
+              "detail": "style.cssを1つ修正するだけで全ページ更新"
+            }
           ]
         }
       }
@@ -484,9 +583,22 @@
         "props": {
           "title": "3つの方法まとめ",
           "items": [
-            { "icon": "1️⃣", "title": "インラインスタイル", "detail": "タグに直接書く。手軽だが管理が大変（テープで貼る）" },
-            { "icon": "2️⃣", "title": "内部スタイルシート", "detail": "headにまとめて書く。そのページ専用（1ページ分の服）" },
-            { "icon": "3️⃣", "title": "外部スタイルシート", "detail": "別ファイルで全ページ共有。変更1回でOK（クローゼット）", "color": "#3b82f6" }
+            {
+              "icon": "1️⃣",
+              "title": "インラインスタイル",
+              "detail": "タグに直接書く。手軽だが管理が大変（テープで貼る）"
+            },
+            {
+              "icon": "2️⃣",
+              "title": "内部スタイルシート",
+              "detail": "headにまとめて書く。そのページ専用（1ページ分の服）"
+            },
+            {
+              "icon": "3️⃣",
+              "title": "外部スタイルシート",
+              "detail": "別ファイルで全ページ共有。変更1回でOK（クローゼット）",
+              "color": "#3b82f6"
+            }
           ]
         },
         "transition": {
@@ -535,13 +647,40 @@
         "props": {
           "title": "CSSの基本構文",
           "nodes": [
-            { "id": "sel", "label": "セレクタ\n（どの要素に）", "x": 280, "y": 400, "icon": "🎯", "color": "#3b82f6" },
-            { "id": "prop", "label": "プロパティ\n（何を）", "x": 840, "y": 400, "icon": "🔧" },
-            { "id": "val", "label": "値\n（どう変えるか）", "x": 1400, "y": 400, "icon": "✅" }
+            {
+              "id": "sel",
+              "label": "セレクタ\n（どの要素に）",
+              "x": 280,
+              "y": 400,
+              "icon": "🎯",
+              "color": "#3b82f6"
+            },
+            {
+              "id": "prop",
+              "label": "プロパティ\n（何を）",
+              "x": 840,
+              "y": 400,
+              "icon": "🔧"
+            },
+            {
+              "id": "val",
+              "label": "値\n（どう変えるか）",
+              "x": 1400,
+              "y": 400,
+              "icon": "✅"
+            }
           ],
           "edges": [
-            { "from": "sel", "to": "prop", "label": "{ " },
-            { "from": "prop", "to": "val", "label": ": " }
+            {
+              "from": "sel",
+              "to": "prop",
+              "label": "{ "
+            },
+            {
+              "from": "prop",
+              "to": "val",
+              "label": ": "
+            }
           ]
         }
       }
@@ -587,7 +726,11 @@
         "props": {
           "title": "コードを確認しよう",
           "code": "body {\n  background-color: lightblue;\n}",
-          "highlightLines": [1, 2, 3],
+          "highlightLines": [
+            1,
+            2,
+            3
+          ],
           "caption": "body=ページ全体（セレクタ）/ background-color=背景色（プロパティ）/ lightblue=値"
         }
       }
@@ -699,8 +842,16 @@
         "props": {
           "title": "今日のポイント（続き）",
           "items": [
-            { "icon": "📝", "title": "CSSの基本構文", "detail": "セレクタ { プロパティ: 値; } — この形をこの先ずっと使う" },
-            { "icon": "🏗️", "title": "HTML=構造、CSS=見た目", "detail": "役割を分けて管理。変えたい方だけ触ればいい" }
+            {
+              "icon": "📝",
+              "title": "CSSの基本構文",
+              "detail": "セレクタ { プロパティ: 値; } — この形をこの先ずっと使う"
+            },
+            {
+              "icon": "🏗️",
+              "title": "HTML=構造、CSS=見た目",
+              "detail": "役割を分けて管理。変えたい方だけ触ればいい"
+            }
           ]
         }
       }
