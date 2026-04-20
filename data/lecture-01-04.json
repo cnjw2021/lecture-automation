@@ -470,7 +470,7 @@
     },
     {
       "scene_id": 19,
-      "narration": "画面の上半分に3つの領域が並んでいますね。左から順に「HTML」「CSS」「JS」と書いてあります。覚えていますか？前々回の講義で学んだ、ウェブサイトを構成する3つの言語です。HTMLは骨組み、CSSはインテリア、JavaScriptは家電製品。その3つが、そのまま3つの入力エリアになっているんです。",
+      "narration": "画面の上のエリアに3つの領域が並んでいますね。左から順に「HTML」「CSS」「JS」と書いてあります。覚えていますか？前々回の講義で学んだ、ウェブサイトを構成する3つの言語です。HTMLは骨組み、CSSはインテリア、JavaScriptは家電製品。その3つが、そのまま3つの入力エリアになっているんです。",
       "durationSec": 30,
       "visual": {
         "type": "remotion",
@@ -517,7 +517,7 @@
     },
     {
       "scene_id": 21,
-      "narration": "そして画面の下半分。ここがプレビューエリアです。上の3つの領域にコードを書くと、その結果がここにリアルタイムで表示されます。コードを変えた瞬間に、プレビューもすぐ変わる。これがCodePenの最大の魅力です。",
+      "narration": "そして画面の下のエリア。ここがプレビューエリアです。上の3つの領域にコードを書くと、その結果がここにリアルタイムで表示されます。コードを変えた瞬間に、プレビューもすぐ変わる。これがCodePenの最大の魅力です。",
       "durationSec": 21,
       "visual": {
         "type": "remotion",
@@ -571,20 +571,49 @@
       "narration": "さあ、いよいよコードを書いてみましょう。皆さんにとって、生まれてはじめてのHTMLです。左上の「HTML」と書かれた入力エリアをクリックしてください。カーソルが点滅していますね。ここに、キーボードから文字を入力していきます。",
       "durationSec": 22,
       "visual": {
-        "type": "remotion",
-        "component": "KeyPointScreen",
-        "props": {
-          "icon": "✨",
-          "headline": "はじめてのHTML",
-          "detail": "HTML入力エリアをクリックして、コードを書き始めよう",
-          "color": "#6366f1"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 4,
+            "phrase": "左上の「HTML」と書かれた入力エリアをクリック"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 700
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 420
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 10948
+          }
+        ]
       }
     },
     {
       "scene_id": 25,
-      "narration": "まずはシンプルに、こう入力してみてください。大文字と小文字に気をつけてくださいね。「H」「e」「l」「l」「o」、半角スペース、「W」「o」「r」「l」「d」。",
-      "durationSec": 18,
+      "narration": "まずはシンプルに、こう入力してみてください。大文字と小文字に気をつけてくださいね。「H」「e」「l」「l」「o」、半角スペース、「W」「o」「r」「l」「d」。入力できましたか？下のプレビューエリアを見てみてください。「Hello World」と表示されていますね。",
+      "durationSec": 28,
       "visual": {
         "type": "playwright",
         "storageState": "config/auth/codepen.json",
@@ -601,7 +630,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 5865
+            "ms": 345
           },
           {
             "cmd": "click",
@@ -609,7 +638,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 1955
+            "ms": 115
           },
           {
             "cmd": "type",
@@ -618,15 +647,15 @@
           },
           {
             "cmd": "wait",
-            "ms": 6152
+            "ms": 22632
           }
         ]
       }
     },
     {
       "scene_id": 26,
-      "narration": "入力できましたか？下のプレビューエリアを見てみてください。「Hello World」と表示されていますね。たったこれだけで、皆さんのブラウザ画面にテキストが表示されました。これが、ウェブページの最も基本的な姿です。特別なことは何もしていません。テキストを入力しただけ。でもこれが、立派なウェブページの始まりなんです。",
-      "durationSec": 32,
+      "narration": "たったこれだけで、皆さんのブラウザ画面にテキストが表示されました。これが、ウェブページの最も基本的な姿です。特別なことは何もしていません。テキストを入力しただけ。でもこれが、立派なウェブページの始まりなんです。",
+      "durationSec": 22,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -643,12 +672,89 @@
       "narration": "でも、「Hello World」とだけ書くのでは少し味気ないですよね。文字のサイズも小さいですし、見出しっぽくありません。ここで、HTMLの「タグ」というものを使ってみましょう。先ほど書いた「Hello World」を一度全部消してください。キーボードのバックスペースキーで消せます。消えたらプレビューも空になりましたよね。",
       "durationSec": 32,
       "visual": {
-        "type": "remotion",
-        "component": "QnAScreen",
-        "props": {
-          "question": "文字が小さくて味気ない？",
-          "answer": "HTMLの「タグ」を使えば、見出しらしい大きな文字にできます。"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 6,
+            "phrase": "先ほど書いた「Hello World」を一度全部消して"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4156
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 831
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "Hello World"
+          },
+          {
+            "cmd": "wait",
+            "ms": 2493
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "wait",
+            "ms": 9802
+          }
+        ]
       }
     },
     {
