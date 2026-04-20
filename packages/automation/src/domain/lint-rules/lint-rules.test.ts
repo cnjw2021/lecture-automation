@@ -67,6 +67,29 @@ describe('A-tts-landmines', () => {
     expect(issues).toHaveLength(0);
   });
 
+  it('detects HTML 見出しタグ h1~h6', () => {
+    const lec = makeLecture([
+      'この「h1」というのは見出しタグです',
+      'h2 と h3 は小見出し',
+      'h6 が一番小さい',
+    ]);
+    const fixDescs = ttsLandminesRule.run(lec).map(i => i.fixDescription).sort();
+    expect(fixDescs).toEqual([
+      '「h1」→「エイチワン」',
+      '「h2」→「エイチツー」',
+      '「h3」→「エイチスリー」',
+      '「h6」→「エイチシックス」',
+    ]);
+  });
+
+  it('does not match h1 inside larger words (highlight, ph1 등)', () => {
+    const lec = makeLecture([
+      'highlight を押すと選択されます',
+      'ph1losophy のような假想単語',
+    ]);
+    expect(ttsLandminesRule.run(lec)).toHaveLength(0);
+  });
+
   it('fix function applies correctly and removes the issue', () => {
     const lec = makeLecture(['パート1の最初の講義']);
     const issues = ttsLandminesRule.run(lec);

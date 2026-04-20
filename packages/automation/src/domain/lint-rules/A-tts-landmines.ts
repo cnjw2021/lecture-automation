@@ -43,6 +43,15 @@ const LANDMINES: Landmine[] = [
   { pattern: /(?<![A-Za-z])gap(?![A-Za-z])/g, from: 'gap', to: 'ギャップ', reason: 'gap → "がっぷ" 로 오독' },
   { pattern: /(?<![A-Za-z])px(?![A-Za-z])/g, from: 'px', to: 'ピクセル', reason: 'px → "ピクセクる" 로 오독' },
   { pattern: /http:\/\//g, from: 'http://', to: 'エイチティーティーピーコロンスラッシュスラッシュ', reason: 'http:// 의 콜론을 "ころぶ" 로 오독' },
+
+  // A-4: HTML 見出しタグ h1~h6 (영문자+숫자 조합, "エイチワンチ" 등으로 오독)
+  // 나레이션에서 단독 토큰으로 등장할 때만 검출 (URL, "高h1" 같은 혼합어 회피).
+  { pattern: /(?<![A-Za-z0-9])h1(?![A-Za-z0-9])/g, from: 'h1', to: 'エイチワン', reason: 'h1 → "エイチワンチ" 등으로 오독' },
+  { pattern: /(?<![A-Za-z0-9])h2(?![A-Za-z0-9])/g, from: 'h2', to: 'エイチツー', reason: 'h2 → 영문자+数字 오독' },
+  { pattern: /(?<![A-Za-z0-9])h3(?![A-Za-z0-9])/g, from: 'h3', to: 'エイチスリー', reason: 'h3 → 영문자+数字 오독' },
+  { pattern: /(?<![A-Za-z0-9])h4(?![A-Za-z0-9])/g, from: 'h4', to: 'エイチフォー', reason: 'h4 → 영문자+数字 오독' },
+  { pattern: /(?<![A-Za-z0-9])h5(?![A-Za-z0-9])/g, from: 'h5', to: 'エイチファイブ', reason: 'h5 → 영문자+数字 오독' },
+  { pattern: /(?<![A-Za-z0-9])h6(?![A-Za-z0-9])/g, from: 'h6', to: 'エイチシックス', reason: 'h6 → 영문자+数字 오독' },
 ];
 
 /**
