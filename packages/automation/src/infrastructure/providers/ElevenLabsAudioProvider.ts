@@ -15,6 +15,11 @@ interface WarmupPaddingConfig {
   trimGuardMs: number;
 }
 
+interface TailPaddingConfig {
+  enabled: boolean;
+  paddingMs: number;
+}
+
 export class ElevenLabsAudioProvider implements IAudioProvider {
   private readonly withTimestampsUrl = 'https://api.elevenlabs.io/v1/text-to-speech';
 
@@ -90,6 +95,7 @@ export class ElevenLabsAudioProvider implements IAudioProvider {
     private readonly voiceSettings: ElevenLabsVoiceSettings,
     private readonly audioConfig: AudioConfig,
     private readonly warmupPadding: WarmupPaddingConfig = { enabled: false, text: '', trimGuardMs: 0 },
+    private readonly tailPadding: TailPaddingConfig = { enabled: true, paddingMs: 150 },
   ) {}
 
   private async sleep(ms: number): Promise<void> {
@@ -227,6 +233,28 @@ export class ElevenLabsAudioProvider implements IAudioProvider {
               };
 
               console.log(`  ✂️  warmup trim: ${trimSec.toFixed(3)}초 (${trimBytes}bytes) 제거`);
+            }
+          }
+        }
+
+        if (this.tailPadding.enabled) {
+          if (!alignment || alignment.character_end_times_seconds.length === 0) {
+            console.warn('  ⚠️ alignment 없음 — tail trim 불가');
+          } else {
+            const lastEndSec = alignment.character_end_times_seconds[alignment.character_end_times_seconds.length - 1];
+            const cutSec = lastEndSec + this.tailPadding.paddingMs / 1000;
+
+            const { sampleRate, channels, bitDepth } = this.audioConfig;
+            const bytesPerFrame = channels * (bitDepth / 8);
+            const bytesPerSec = sampleRate * bytesPerFrame;
+            const rawCutBytes = Math.floor(cutSec * bytesPerSec);
+            const cutBytes = Math.floor(rawCutBytes / bytesPerFrame) * bytesPerFrame;
+
+            if (cutBytes < pcmBuffer.length) {
+              const removedBytes = pcmBuffer.length - cutBytes;
+              const removedSec = removedBytes / bytesPerSec;
+              pcmBuffer = pcmBuffer.slice(0, cutBytes);
+              console.log(`  ✂️  tail trim: ${removedSec.toFixed(3)}초 (${removedBytes}bytes) 제거 (last char end ${lastEndSec.toFixed(3)}s + padding ${this.tailPadding.paddingMs}ms)`);
             }
           }
         }

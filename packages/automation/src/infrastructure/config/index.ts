@@ -118,4 +118,15 @@ export const config = {
       trimGuardMs: typeof wp?.trimGuardMs === 'number' ? wp.trimGuardMs : 0,
     };
   },
+
+  getTailPaddingConfig: () => {
+    const tts = getTtsJson();
+    const activeProvider = tts.activeProvider;
+    const providerConfig = tts.providers?.[activeProvider];
+    const tp = providerConfig?.tailPadding;
+    return {
+      enabled: tp?.enabled ?? true,
+      paddingMs: typeof tp?.paddingMs === 'number' ? tp.paddingMs : 150,
+    };
+  },
 };
