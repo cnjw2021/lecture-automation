@@ -2,7 +2,7 @@
   "lecture_id": "01-04",
   "title": "CodePenセットアップ + Hello World",
   "part": 1,
-  "totalDurationSec": 1294,
+  "totalDurationSec": 1323,
   "sequence": [
     {
       "scene_id": 1,
@@ -277,45 +277,42 @@
     },
     {
       "scene_id": 8,
-      "narration": "ボタンを押すと、パズルのような認証が出てくることがあります。ロボットではないことを確認するためのものなので、画面の指示に従って操作してくださいね。",
-      "durationSec": 15,
+      "narration": "「Create account」を押すと、「Verify your account」という本人確認の画面に切り替わります。ロボットではないことの確認ですね。「Visual puzzle」と「Audio puzzle」という二つの選択肢がありますので、目で見て解ける「Visual puzzle」のほうを選んでみましょう。",
+      "durationSec": 25,
       "visual": {
         "type": "remotion",
-        "component": "CalloutScreen",
+        "component": "ImageScreen",
         "props": {
-          "type": "info",
-          "title": "認証パズルが出てきたら",
-          "body": "ロボットではないことの確認です。画面の指示に従って操作すればOK。",
-          "icon": "🧩"
+          "src": "captures/github-1-select-puzzle.png",
+          "layout": "full"
         }
       }
     },
     {
       "scene_id": 9,
-      "narration": "認証が終わると、メール認証の画面に切り替わります。「Enter code」と表示されていますね。ここで一旦、別のタブかウィンドウでメールの受信ボックスを開いてください。GitHubから認証コードが届いているはずです。",
-      "durationSec": 21,
+      "narration": "Visual puzzleを選ぶと、このような画面になります。左側に数字が表示されていて、右側のサイコロの目の合計を、その数字と同じになるように合わせていきます。矢印のボタンでサイコロの面を切り替えて、合計が一致したら下の「Submit」ボタンを押してください。",
+      "durationSec": 24,
       "visual": {
         "type": "remotion",
-        "component": "KeyPointScreen",
+        "component": "ImageScreen",
         "props": {
-          "icon": "📧",
-          "headline": "メール認証",
-          "detail": "GitHubから届いた6桁の認証コードを入力",
-          "color": "#6366f1"
+          "src": "captures/github-2-puzzle.png",
+          "layout": "full"
         }
       }
     },
     {
       "scene_id": 10,
-      "narration": "メールが届くまで少し時間がかかることもあります。30秒くらい待っても届かない場合は、迷惑メールフォルダも確認してみてください。Gmailの場合は「ぷろもーしょん」タブに入ることもあります。",
-      "durationSec": 19,
+      "narration": "認証が終わると、メール認証の画面に切り替わります。「Enter code」と表示されていますね。ここで一旦、別のタブかウィンドウでメールの受信ボックスを開いてください。GitHubから認証コードが届いているはずです。メールが届くまで少し時間がかかることもあります。30秒くらい待っても届かない場合は、迷惑メールフォルダも確認してみてください。Gmailの場合は「ぷろもーしょん」タブに入ることもあります。",
+      "durationSec": 35,
       "visual": {
         "type": "remotion",
-        "component": "CalloutScreen",
+        "component": "KeyPointScreen",
         "props": {
-          "type": "tip",
-          "title": "メールが届かない場合",
-          "body": "迷惑メールフォルダを確認。Gmailなら「プロモーション」タブもチェック。"
+          "icon": "📧",
+          "headline": "メール認証コードを確認",
+          "detail": "別タブで受信ボックスへ。届かないときは迷惑メールやプロモーションタブも確認",
+          "color": "#6366f1"
         }
       }
     },
