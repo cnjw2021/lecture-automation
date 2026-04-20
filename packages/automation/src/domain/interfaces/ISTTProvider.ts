@@ -12,6 +12,8 @@ export interface STTSceneAuditResult {
   findings: STTFinding[];
   /** passed === 'error' 일 때 에러 메시지 */
   errorMessage?: string;
+  /** 다수결 모드에서 finding이 발견된 실행 횟수 */
+  hitRuns?: number;
 }
 
 export interface ISTTProvider {
