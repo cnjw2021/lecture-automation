@@ -111,130 +111,76 @@ import { deploySite, renderMediaOnLambda, getRenderProgress } from '@remotion/la
 
 ---
 
-## 🚀 처음 세팅하기 (스텝바이스텝)
+## 🚀 처음 세팅하기
 
-위 5단계는 설계 이력이다. 이 섹션은 신규 팀원이 빈 AWS 계정에서 시작해 Lambda 렌더가 동작할 때까지 **그대로 따라하기만 하면 되는** 순서를 담는다.
+### 전체 흐름
 
-### 1단계: AWS Credentials 등록
+| # | 어디서 | 무엇을 | 결과 → 저장 위치 |
+|---|---|---|---|
+| 1 | AWS 콘솔 | IAM 사용자 + Access Key 생성 | Access Key ID / Secret |
+| 2 | 로컬 터미널 | `aws configure` | `~/.aws/credentials` |
+| 3 | 로컬 + 콘솔 | User policy 부여 | IAM user inline policy |
+| 4 | 로컬 터미널 | Lambda 함수 배포 | `.env` → `REMOTION_LAMBDA_FUNCTION_NAME` |
+| 5 | 콘솔 | Role policy 부여 (4 이후) | `remotion-lambda-role` inline policy |
+| 6 | 로컬 터미널 | 권한 검증 | — |
+| 7 | 로컬 터미널 | 사이트 배포 | `.env` → `REMOTION_SERVE_URL` |
+| 8 | `.env` 파일 | 환경변수 확정 | 프로젝트 루트 `.env` |
+| 9 | 로컬 터미널 | 실행 | 씬 클립 MP4 |
 
-#### 1-1. IAM 사용자 생성
-AWS 콘솔 → IAM → Users → Create user
-- 사용자 이름 예: `remotion-lambda-deployer`
-- Access type: **Programmatic access**
+### 1. AWS 콘솔: IAM 사용자 + Access Key 생성
 
-`AdministratorAccess` 는 과도한 권한이므로 **쓰지 않는다**. 아래 1-2에서 Remotion 전용 최소 권한을 부여한다.
+- IAM → Users → Create user → Programmatic access
+- (해당 사용자) → Security credentials → Create access key → CLI
+- Secret 은 이 화면에서만 표시됨. 즉시 복사
 
-#### 1-2. 최소 권한 정책 부여
-로컬 터미널에서 정책 JSON 출력:
+### 2. 로컬 CLI 자격 증명 등록
+
+```bash
+aws configure
+# AWS Access Key ID [None]:     AKIA...
+# AWS Secret Access Key [None]: ...
+# Default region name [None]:   us-east-1
+# Default output format [None]: json
+```
+
+### 3. User policy 부여
 
 ```bash
 npx remotion lambda policies print
 ```
 
-두 덩어리의 JSON 이 나온다. 순서대로 적용한다:
+출력된 두 JSON 중 **첫 번째**를 IAM → Users → (해당 사용자) → Add permissions → Create inline policy → JSON 에 붙여넣기.
 
-- **User policy** (지금 바로): IAM → Users → (해당 사용자) → Permissions → Add permissions → Create inline policy → JSON 탭 → 첫 번째 JSON 붙여넣기
-- **Role policy** (2단계 이후): 2단계 `functions deploy` 실행 시 `remotion-lambda-role` 이 자동 생성된다. 생성 후 IAM → Roles → `remotion-lambda-role` → Add permissions → Create inline policy → 두 번째 JSON 붙여넣기
+### 4. Lambda 함수 배포
 
-#### 1-3. Access Key 발급
-IAM → (해당 사용자) → Security credentials → Create access key → CLI 용도 선택
-- Access key ID + Secret access key 발급
-- **Secret 은 이 화면에서만 표시된다**. 즉시 안전한 곳에 복사
-
-#### 1-4. 로컬 CLI에 등록 (둘 중 택1)
-
-**방법 A: `aws configure` (권장 — 여러 프로젝트 공유)**
 ```bash
-aws configure
-# AWS Access Key ID [None]: AKIA...
-# AWS Secret Access Key [None]: ...
-# Default region name [None]: us-east-1
-# Default output format [None]: json
+npx remotion lambda functions deploy --memory=2048 --timeout=900 --region=us-east-1
 ```
-`~/.aws/credentials`, `~/.aws/config` 에 저장되어 AWS SDK 가 자동 인식한다.
 
-**방법 B: 프로젝트 `.env`**
-프로젝트 루트 `.env` 에 추가:
-```env
-AWS_ACCESS_KEY_ID=AKIA...
-AWS_SECRET_ACCESS_KEY=...
-AWS_REGION=us-east-1
-```
-`packages/automation/src/infrastructure/config/index.ts` 의 `dotenv.config()` 가 프로세스 시작 시 자동 로드한다. `.env` 는 `.gitignore` 에 포함되어 있어야 한다.
+출력된 함수명(`remotion-render-...`)을 `.env` 의 `REMOTION_LAMBDA_FUNCTION_NAME` 에 기록.
 
-#### 1-5. 권한 검증
+### 5. Role policy 부여
+
+4단계에서 `remotion-lambda-role` 이 자동 생성됨. 3단계 출력의 **두 번째** JSON 을 IAM → Roles → `remotion-lambda-role` → Add permissions → Create inline policy → JSON 에 붙여넣기.
+
+### 6. 권한 검증
+
 ```bash
 npx remotion lambda policies validate
 ```
-부족한 권한이 있으면 여기서 에러로 즉시 발견된다.
 
-
-### 2단계: Lambda 함수 배포 → `REMOTION_LAMBDA_FUNCTION_NAME`
+### 7. 사이트 배포
 
 ```bash
-npx remotion lambda functions deploy \
-  --memory=2048 \
-  --timeout=900 \
-  --region=us-east-1
-```
-- `--memory=2048`: 2GB (렌더 속도/비용 밸런스 기본값)
-- `--timeout=900`: 15분 (긴 씬 대비 여유)
-- `--region`: 1-4 에서 지정한 `AWS_REGION` 과 반드시 일치
-
-출력 예:
-```
-Deployed as "remotion-render-4-0-443-mem2048mb-disk2048mb-900sec"
+npx remotion lambda sites create --site-name=lecture-automation --region=us-east-1 packages/remotion/src/Root.tsx
 ```
 
-이 함수명을 `.env` 에 기록:
-```env
-REMOTION_LAMBDA_FUNCTION_NAME=remotion-render-4-0-443-mem2048mb-disk2048mb-900sec
-```
+출력된 Serve URL 을 `.env` 의 `REMOTION_SERVE_URL` 에 기록.
 
-**이 시점에 1-2 의 Role policy 를 적용한다** (함수 배포 시점에 `remotion-lambda-role` 이 자동 생성됨).
-
-배포 확인:
-```bash
-npx remotion lambda functions ls
-```
-
-
-### 3단계: Remotion 사이트 배포 → `REMOTION_SERVE_URL`
-
-```bash
-npx remotion lambda sites create \
-  --site-name=lecture-automation \
-  --region=us-east-1 \
-  packages/remotion/src/Root.tsx
-```
-- `--site-name=lecture-automation`: `LambdaRenderConfigReader` 의 `REMOTION_LAMBDA_SITE_NAME` 기본값과 일치
-- 마지막 인자: Remotion 엔트리 파일 경로
-
-출력 예:
-```
-Serve URL: https://remotionlambda-useast1-xxxxx.s3.us-east-1.amazonaws.com/sites/lecture-automation/index.html
-```
-virtual-hosted / path-style 두 형식 모두 지원된다 (`RemotionServeUrlParser`).
-
-`.env` 에 기록:
-```env
-REMOTION_SERVE_URL=https://remotionlambda-useast1-xxxxx.s3.us-east-1.amazonaws.com/sites/lecture-automation/index.html
-```
-
-Remotion 소스 코드가 바뀐 경우에만 이 명령을 재실행(덮어쓰기). 바뀌지 않았다면 기존 serveUrl 을 계속 재사용한다.
-
-
-### 4단계: `.env` 최종 상태 확인
-
-프로젝트 루트 `.env` 예시:
+### 8. `.env` 확정
 
 ```env
-# AWS credentials (1-4 방법 B를 쓸 때만. 방법 A면 생략)
-AWS_ACCESS_KEY_ID=AKIA...
-AWS_SECRET_ACCESS_KEY=...
 AWS_REGION=us-east-1
-
-# Remotion Lambda 필수
 REMOTION_LAMBDA_FUNCTION_NAME=remotion-render-4-0-443-mem2048mb-disk2048mb-900sec
 REMOTION_SERVE_URL=https://remotionlambda-useast1-xxxxx.s3.us-east-1.amazonaws.com/sites/lecture-automation/index.html
 
@@ -251,16 +197,15 @@ REMOTION_SERVE_URL=https://remotionlambda-useast1-xxxxx.s3.us-east-1.amazonaws.c
 # REMOTION_LAMBDA_CLEANUP_RENDERS=1
 ```
 
+AWS credentials 를 `aws configure` 대신 `.env` 로 관리하려면 `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` 도 추가 (2단계 생략 가능). `.env` 는 `.gitignore` 에 포함돼 있어야 한다.
 
-### 5단계: 실행
+### 9. 실행
 
-특정 씬만 Lambda 로 렌더:
 ```bash
+# 특정 씬만 Lambda 렌더
 make render-scene-lambda LECTURE=lecture-01-03.json SCENE='28 29'
-```
 
-전체 파이프라인에서 렌더 단계만 Lambda 사용:
-```bash
+# 전체 파이프라인 중 렌더 단계만 Lambda
 REMOTION_RENDER_MODE=lambda make run-render-only LECTURE=lecture-01-03.json
 ```
 
