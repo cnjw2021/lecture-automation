@@ -18,6 +18,7 @@ import { PlaywrightScreenshotProvider } from '../providers/PlaywrightScreenshotP
 import { PlaywrightStateCaptureProvider } from '../providers/PlaywrightStateCaptureProvider';
 import { PlaywrightVisualProvider } from '../providers/PlaywrightVisualProvider';
 import { SharedPlaywrightStateCaptureProvider } from '../providers/SharedPlaywrightStateCaptureProvider';
+import { RemotionLambdaSceneClipRenderProvider } from '../providers/RemotionLambdaSceneClipRenderProvider';
 import { RemotionSceneClipRenderProvider } from '../providers/RemotionSceneClipRenderProvider';
 import { FileClipRepository } from '../repositories/FileClipRepository';
 import { FileLectureRepository } from '../repositories/FileLectureRepository';
@@ -51,8 +52,11 @@ export function createAutomationPipeline(): RunAutomationPipelineUseCase {
     new SharedPlaywrightStateCaptureProvider(),
     lectureRepository,
   );
+  const sceneClipRenderProvider = process.env.REMOTION_RENDER_MODE === 'lambda'
+    ? new RemotionLambdaSceneClipRenderProvider(lectureRepository)
+    : new RemotionSceneClipRenderProvider(lectureRepository);
   const renderSceneClipsUseCase = new RenderSceneClipsUseCase(
-    new RemotionSceneClipRenderProvider(lectureRepository),
+    sceneClipRenderProvider,
     clipRepository,
     lectureRepository,
   );

@@ -35,9 +35,10 @@
 ### Phase 1: AWS 인프라 세팅 (인프라/권한 설정)
 가장 기본적인, 그리고 프로젝트 팀원들의 로컬 환경에서 가장 헷갈리기 쉬운 파트입니다.
 1. AWS 계정에 접속하여 **IAM 사용자(User)** 생성
-2. 아래 명령어로 Remotion이 요구하는 **최소 권한 정책 JSON**을 출력하여 해당 사용자에 부여
+2. 아래 두 명령어로 Remotion이 요구하는 **최소 권한 정책 JSON**을 각각 출력하여 사용자와 역할에 부여
    ```bash
-   npx remotion lambda policies print
+   npx remotion lambda policies user    # IAM 사용자에 부여할 정책
+   npx remotion lambda policies role    # remotion-lambda-role 에 부여할 정책 (Role 은 콘솔에서 수동 생성 필요)
    ```
    > `AdministratorAccess`는 과도한 권한이므로 사용하지 않는다.
 3. CLI 환경에 AWS 자격 증명(Access Key / Secret Key) 등록 (`aws configure`)
@@ -61,11 +62,11 @@ npx remotion lambda policies validate
 
 # 2. Lambda 함수 배포 (렌더링 timeout을 충분히 확보)
 #    출력되는 함수 이름을 REMOTION_LAMBDA_FUNCTION_NAME에 저장
-npx remotion lambda functions deploy --memory=2048 --timeout=900 --region=us-east-1
+npx remotion lambda functions deploy --memory=2048 --timeout=900 --region=ap-northeast-1
 
 # 3. 사이트(번들) S3 업로드
 #    출력되는 serveUrl을 REMOTION_SERVE_URL에 저장
-npx remotion lambda sites create --site-name=lecture-automation --region=us-east-1
+npx remotion lambda sites create --site-name=lecture-automation --region=ap-northeast-1
 ```
 
 > [!NOTE]  
@@ -73,7 +74,7 @@ npx remotion lambda sites create --site-name=lecture-automation --region=us-east
 
 **환경변수 설정** — 위 명령어 출력값을 `.env`에 기록합니다:
 ```env
-AWS_REGION=us-east-1
+AWS_REGION=ap-northeast-1
 REMOTION_LAMBDA_FUNCTION_NAME=remotion-render-xxxxxxxxxx
 REMOTION_SERVE_URL=https://s3.amazonaws.com/remotionlambda-xxxx/sites/lecture-automation/index.html
 ```
@@ -108,3 +109,185 @@ import { deploySite, renderMediaOnLambda, getRenderProgress } from '@remotion/la
 1. **serveUrl 재사용**: Remotion 소스 코드가 변경되지 않았다면 `deploySite()`를 매번 호출하지 않고, 이미 배포된 `REMOTION_SERVE_URL`을 그대로 사용한다. 코드 변경 감지는 번들 해시 또는 수동 플래그로 판단한다.
 2. **Makefile 타겟 추가**: `make render-scene-lambda` 타겟을 구성하여 기존 로컬 렌더(`make render-scene`)와 A/B 테스트를 진행한다.
 3. **동시 호출 수 상한 관리**: AWS Lambda 계정의 기본 동시 실행 한도는 1,000개다. 씬 50개 동시 호출은 한도 내에 충분히 수용되지만, 향후 여러 강의를 동시에 처리하는 경우를 대비해 `Promise.all` 대신 `p-limit` 등으로 동시 호출 수의 상한을 설정해 두는 것이 안전하다.
+
+---
+
+## 🚀 처음 세팅하기
+
+### 전체 흐름
+
+| # | 어디서 | 무엇을 | 결과 → 저장 위치 |
+|---|---|---|---|
+| 1 | AWS 콘솔 | IAM 사용자 + Access Key 생성 | Access Key ID / Secret |
+| 2 (선택) | 로컬 터미널 | AWS CLI 설치 + `aws configure` | `~/.aws/credentials` |
+| 3 | 로컬 + 콘솔 | User policy 부여 | IAM user inline policy |
+| 4 | AWS 콘솔 | `remotion-lambda-role` Role 생성 (Lambda 신뢰) | IAM Role |
+| 5 | 로컬 + 콘솔 | Role policy 부여 | `remotion-lambda-role` inline policy |
+| 6 | 로컬 터미널 | 권한 검증 | — |
+| 7 | 로컬 터미널 | Lambda 함수 배포 | `.env` → `REMOTION_LAMBDA_FUNCTION_NAME` |
+| 8 | 로컬 터미널 | 사이트 배포 | `.env` → `REMOTION_SERVE_URL` |
+| 9 | `.env` 파일 | 환경변수 확정 | 프로젝트 루트 `.env` |
+| 10 | 로컬 터미널 | 실행 | 씬 클립 MP4 |
+
+> ⚠️ `remotion-lambda-role` 은 `functions deploy` 가 **자동 생성하지 않는다.** Lambda 함수 배포(7단계) 전에 4·5단계로 Role + Role policy 를 수동으로 만들어 두어야 `InvalidParameterValueException: The role defined for the function cannot be assumed by Lambda.` 에러가 안 난다.
+
+> **2단계는 선택.** AWS CLI 를 설치하지 않고 8단계 `.env` 에 `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` 를 직접 적는 방식이어도 된다. `@remotion/lambda` 계열 명령(3~7단계의 `policies`, `functions deploy`, `sites create` 등) 은 `.env` 자격 증명만으로 동작한다. 다른 AWS 작업 예정이 없다면 2단계를 건너뛰는 쪽이 더 빠르다.
+
+### 1. AWS 콘솔: IAM 사용자 + Access Key 생성
+
+**1-1. 사용자 생성**
+- IAM → ユーザー → `ユーザーの作成`
+- ユーザー名 입력 (예: `remotion-lambda-deployer`)
+- `AWS マネジメントコンソールへのユーザーアクセスを提供する` **체크 해제** (프로그램 접근만 필요)
+- `次へ` → 許可を設定 단계는 아무 옵션도 선택하지 않음 (정책은 3단계에서 inline 으로 부여) → `次へ` → `ユーザーの作成`
+
+**1-2. Access Key 발급**
+- 생성된 사용자 클릭 → `セキュリティ認証情報` 탭 → `アクセスキーを作成`
+- ユースケース: `コマンドラインインターフェイス (CLI)` 선택
+  - AWS 가 `aws login` / CloudShell 대체안을 권장하나, 로컬에서 `make render-scene-lambda` 를 돌리는 현재 워크플로우엔 장기 Access Key 가 실용적
+- `上記のレコメンデーションを理解し、アクセスキーを作成します` **체크**
+- `次へ` → (説明タグ 생략 가능, 예: `Purpose=remotion-lambda`) → `アクセスキーを作成`
+- **Access Key ID + Secret Access Key 복사** (Secret 은 이 화면에서만 표시됨 — `.csv ダウンロード` 권장)
+
+### 2. 로컬 CLI 자격 증명 등록
+
+**2-1. AWS CLI 설치 (macOS)**
+
+`aws` 명령이 없다면 먼저 설치한다. Homebrew 가 가장 간단:
+
+```bash
+brew install awscli
+aws --version   # aws-cli/2.x.x ... 가 찍히면 OK
+```
+
+Homebrew 가 없거나 공식 pkg 인스톨러를 선호하면:
+
+```bash
+curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
+sudo installer -pkg AWSCLIV2.pkg -target /
+rm AWSCLIV2.pkg
+```
+
+**2-2. `aws configure`**
+
+```bash
+aws configure
+# AWS Access Key ID [None]:     AKIA...
+# AWS Secret Access Key [None]: ...
+# Default region name [None]:   ap-northeast-1
+# Default output format [None]: json
+```
+
+### 3. User policy 부여
+
+```bash
+npx remotion lambda policies user
+```
+
+출력된 JSON 을 IAM → Users → (해당 사용자) → Add permissions → Create inline policy → JSON 에 붙여넣기.
+
+### 4. `remotion-lambda-role` Role 생성
+
+AWS 콘솔 → IAM → `ロール(Roles)` → `ロールを作成`
+- 信頼されたエンティティタイプ: **AWS のサービス**
+- ユースケース: **Lambda** → `次へ`
+- 許可ポリシー 추가 단계는 그냥 `次へ` (inline policy 는 5단계에서 붙임)
+- ロール名: **`remotion-lambda-role`** (정확히 이 이름. Remotion 이 하드코딩)
+- `ロールを作成`
+
+### 5. Role policy 부여
+
+```bash
+npx remotion lambda policies role
+```
+
+출력된 JSON 을 IAM → Roles → `remotion-lambda-role` → `許可` 탭 → `許可を追加` → `インラインポリシーを作成` → JSON 에 붙여넣기. 정책명은 `RemotionLambdaRolePolicy` 권장.
+
+### 6. 권한 검증
+
+```bash
+npx remotion lambda policies validate
+```
+
+### 7. Lambda 함수 배포
+
+```bash
+npx remotion lambda functions deploy --memory=2048 --timeout=900 --region=ap-northeast-1
+```
+
+출력된 함수명(`remotion-render-...`)을 `.env` 의 `REMOTION_LAMBDA_FUNCTION_NAME` 에 기록.
+
+### 8. 사이트 배포
+
+```bash
+npx remotion lambda sites create --site-name=lecture-automation --region=ap-northeast-1 packages/remotion/src/Root.tsx
+```
+
+출력된 Serve URL 을 `.env` 의 `REMOTION_SERVE_URL` 에 기록.
+
+### 9. `.env` 확정
+
+```env
+AWS_REGION=ap-northeast-1
+REMOTION_LAMBDA_FUNCTION_NAME=remotion-render-4-0-443-mem2048mb-disk2048mb-900sec
+REMOTION_SERVE_URL=https://remotionlambda-apnortheast1-xxxxx.s3.ap-northeast-1.amazonaws.com/sites/lecture-automation/index.html
+
+# 선택 (기본값으로 충분)
+# REMOTION_LAMBDA_DEPLOY=1                   # serveUrl 없거나 강제 재배포 시
+# REMOTION_LAMBDA_SITE_NAME=lecture-automation
+# REMOTION_LAMBDA_BUCKET_NAME=remotionlambda-apnortheast1-xxxxx
+# REMOTION_LAMBDA_CONCURRENCY=20             # 씬 병렬 호출 상한 (기본 20)
+# REMOTION_LAMBDA_FRAMES_PER_LAMBDA=10000    # 씬 내부 분산 방지 (기본 10000)
+# REMOTION_LAMBDA_TAB_CONCURRENCY=2          # Lambda 내부 탭 병렬 수 (기본 미지정)
+# REMOTION_LAMBDA_POLL_INTERVAL_MS=5000
+# REMOTION_LAMBDA_PRIVACY=private
+# REMOTION_LAMBDA_CLEANUP_ASSETS=1
+# REMOTION_LAMBDA_CLEANUP_RENDERS=1
+```
+
+AWS credentials 를 `aws configure` 대신 `.env` 로 관리하려면 `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` 도 추가 (2단계 생략 가능). `.env` 는 `.gitignore` 에 포함돼 있어야 한다.
+
+### 10. 실행
+
+```bash
+# 전체 파이프라인 (TTS · 캡처 · 렌더 · 병합) 을 Lambda 모드로 실행
+make run-lambda LECTURE=lecture-02-01.json
+
+# 위와 동일하지만 기존 에셋 무시하고 강제 재생성
+make run-force-lambda LECTURE=lecture-02-01.json
+
+# TTS / 캡처는 건너뛰고 렌더 & 병합만 Lambda 로 재실행
+make run-render-only-lambda LECTURE=lecture-01-03.json
+
+# 특정 씬 클립만 Lambda 렌더
+make render-scene-lambda LECTURE=lecture-01-03.json SCENE='28 29'
+```
+
+로컬 렌더로 되돌리려면 `-lambda` 접미사가 없는 타겟 (`make run`, `make render-scene` 등) 을 사용한다. 내부적으로는 `REMOTION_RENDER_MODE=lambda` 환경 변수로 전환된다.
+
+
+### 문제 해결 체크리스트
+
+| 증상 | 확인 포인트 |
+|---|---|
+| `REMOTION_LAMBDA_FUNCTION_NAME 환경변수가 필요` | `.env` 누락 또는 `dotenv.config()` 전에 해당 값 참조. `config/index.ts` 가 import 되는지 확인 |
+| `AccessDenied` / `not authorized to perform: ...` | User/Role policy 누락. 1-5 의 `policies validate` 재실행. 특히 Role policy 는 2단계 이후에 붙여야 하므로 순서 주의 |
+| `REMOTION_SERVE_URL에서 S3 bucket을 파싱할 수 없습니다` | serveUrl 복사 실수. 공백·개행·따옴표 포함 여부 확인 (path-style / virtual-hosted 모두 지원) |
+| Lambda 렌더 도중 Timeout | 2단계의 `--timeout=900` 으로 재배포. 15분으로도 부족한 긴 씬은 분할 검토 |
+| `staticFile('audio/...')` 404 | S3 콘솔에서 `sites/lecture-automation/audio/<lectureId>/scene-N.wav` 존재 여부 확인 (assets 업로드는 자동 수행됨) |
+| Remotion 버전 경고 | 루트 `remotion`, `@remotion/lambda`, `packages/remotion/` 의 패키지들이 모두 동일 버전(`4.0.443`) 인지 확인 |
+
+
+### 리소스 삭제/정리
+
+```bash
+# 사이트
+npx remotion lambda sites ls --region=ap-northeast-1
+npx remotion lambda sites rm lecture-automation --region=ap-northeast-1
+
+# 함수
+npx remotion lambda functions ls --region=ap-northeast-1
+npx remotion lambda functions rm <function-name> --region=ap-northeast-1
+```
+
+렌더 결과물과 업로드 assets 는 `REMOTION_LAMBDA_CLEANUP_RENDERS=1` / `REMOTION_LAMBDA_CLEANUP_ASSETS=1` (기본값) 에 의해 자동 삭제된다. 수동 정리는 S3 콘솔에서 해당 버킷의 `renders/`, `sites/lecture-automation/` prefix 를 직접 삭제.

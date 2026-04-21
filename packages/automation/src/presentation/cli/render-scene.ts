@@ -9,6 +9,7 @@ import * as path from 'path';
 import { config } from '../../infrastructure/config';
 import { FileLectureRepository } from '../../infrastructure/repositories/FileLectureRepository';
 import { FileClipRepository } from '../../infrastructure/repositories/FileClipRepository';
+import { RemotionLambdaSceneClipRenderProvider } from '../../infrastructure/providers/RemotionLambdaSceneClipRenderProvider';
 import { RemotionSceneClipRenderProvider } from '../../infrastructure/providers/RemotionSceneClipRenderProvider';
 import { RenderSceneClipsUseCase } from '../../application/use-cases/RenderSceneClipsUseCase';
 import { Lecture } from '../../domain/entities/Lecture';
@@ -18,7 +19,9 @@ async function runRenderScene(jsonFileName: string, sceneIds: number[]) {
 
   const lectureRepository = new FileLectureRepository();
   const clipRepository = new FileClipRepository();
-  const sceneClipRenderProvider = new RemotionSceneClipRenderProvider(lectureRepository);
+  const sceneClipRenderProvider = process.env.REMOTION_RENDER_MODE === 'lambda'
+    ? new RemotionLambdaSceneClipRenderProvider(lectureRepository)
+    : new RemotionSceneClipRenderProvider(lectureRepository);
   const renderSceneClipsUseCase = new RenderSceneClipsUseCase(sceneClipRenderProvider, clipRepository, lectureRepository);
 
   const filePath = path.join(config.paths.data, jsonFileName);

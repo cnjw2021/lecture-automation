@@ -1,6 +1,6 @@
 import { Lecture } from '../../domain/entities/Lecture';
 import { IClipRepository } from '../../domain/interfaces/IClipRepository';
-import { ISceneClipRenderProvider } from '../../domain/interfaces/ISceneClipRenderProvider';
+import { ISceneClipRenderProvider, SceneClipRenderRequest } from '../../domain/interfaces/ISceneClipRenderProvider';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
 
 export interface RenderSceneClipsOptions {
@@ -31,6 +31,7 @@ export class RenderSceneClipsUseCase {
 
     let rendered = 0;
     let skipped = 0;
+    const renderRequests: SceneClipRenderRequest[] = [];
 
     for (const scene of targetScenes) {
       const exists = await this.clipRepository.existsClip(lecture.lecture_id, scene.scene_id);
@@ -40,16 +41,33 @@ export class RenderSceneClipsUseCase {
         continue;
       }
 
-      console.log(`  🎞️  Scene ${scene.scene_id} 렌더링 중...`);
       const outPath = this.clipRepository.getClipPath(lecture.lecture_id, scene.scene_id);
-      await this.sceneClipRenderProvider.renderScene(
-        lecture.lecture_id,
-        scene.scene_id,
+      renderRequests.push({
+        lectureId: lecture.lecture_id,
+        sceneId: scene.scene_id,
         outPath,
-        lecture,
-        audioDurations
-      );
-      rendered++;
+        lectureData: lecture,
+        audioDurations,
+      });
+    }
+
+    if (renderRequests.length > 0) {
+      if (this.sceneClipRenderProvider.renderScenes) {
+        await this.sceneClipRenderProvider.renderScenes(renderRequests);
+      } else {
+        for (const request of renderRequests) {
+          console.log(`  🎞️  Scene ${request.sceneId} 렌더링 중...`);
+          await this.sceneClipRenderProvider.renderScene(
+            request.lectureId,
+            request.sceneId,
+            request.outPath,
+            request.lectureData,
+            request.audioDurations,
+          );
+        }
+      }
+
+      rendered = renderRequests.length;
     }
 
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);

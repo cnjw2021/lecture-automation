@@ -4,11 +4,18 @@ import * as fs from 'fs-extra';
 import { Lecture } from '../../domain/entities/Lecture';
 import { ISceneClipRenderProvider } from '../../domain/interfaces/ISceneClipRenderProvider';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
-import { isSharedSessionScene } from '../../domain/policies/LiveDemoScenePolicy';
 import { config } from '../config';
+import { SharedSessionManifestLoader } from '../services/SharedSessionManifestLoader';
 
 export class RemotionSceneClipRenderProvider implements ISceneClipRenderProvider {
-  constructor(private readonly lectureRepository: ILectureRepository) {}
+  private readonly sharedSessionManifestLoader: SharedSessionManifestLoader;
+
+  constructor(
+    lectureRepository: ILectureRepository,
+    sharedSessionManifestLoader?: SharedSessionManifestLoader,
+  ) {
+    this.sharedSessionManifestLoader = sharedSessionManifestLoader ?? new SharedSessionManifestLoader(lectureRepository);
+  }
 
   async renderScene(
     lectureId: string,
@@ -20,7 +27,7 @@ export class RemotionSceneClipRenderProvider implements ISceneClipRenderProvider
     const startTime = Date.now();
     await fs.ensureDir(path.dirname(outPath));
 
-    const synthManifests = await this.loadSynthManifests(lectureId, sceneId, lectureData);
+    const synthManifests = await this.sharedSessionManifestLoader.load(lectureId, sceneId, lectureData);
 
     const propsPath = path.join(config.paths.output, `${lectureId}-scene-${sceneId}-props.json`);
     await fs.ensureDir(path.dirname(propsPath));
@@ -61,27 +68,4 @@ export class RemotionSceneClipRenderProvider implements ISceneClipRenderProvider
     });
   }
 
-  private async loadSynthManifests(
-    lectureId: string,
-    sceneId: number,
-    lectureData: Lecture,
-  ): Promise<Record<string, unknown> | null> {
-    const scene = lectureData.sequence.find(s => s.scene_id === sceneId);
-    if (!scene || !isSharedSessionScene(scene)) return null;
-
-    const sessionId = (scene.visual as any).session!.id as string;
-    const manifestPath = path.join(
-      this.lectureRepository.getSessionSceneCaptureDir(lectureId, sessionId, sceneId),
-      'manifest.json',
-    );
-
-    if (!await fs.pathExists(manifestPath)) {
-      // shared 씬은 webm 폴백이 없다(RecordVisualUseCase가 항상 스킵).
-      // manifest 없이 렌더하면 잘못된 결과물이 나오므로 즉시 실패시킨다.
-      throw new Error(`Scene ${sceneId} shared session manifest 없음: ${manifestPath}\n  → 캡처를 먼저 실행하세요: make regen-scene LECTURE=... SCENE=${sceneId}`);
-    }
-
-    const manifest = await fs.readJson(manifestPath);
-    return { [sceneId.toString()]: manifest };
-  }
 }

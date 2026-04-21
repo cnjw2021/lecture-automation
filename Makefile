@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install build run run-force regen-scene regen-visual run-tts-only run-render-only render-scene record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
+.PHONY: help install build run run-lambda run-force run-force-lambda regen-scene regen-visual run-tts-only run-render-only run-render-only-lambda render-scene render-scene-lambda record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
         sync-playwright save-auth validate-schema lint lint-fix audit
 
 # 기본 변수 설정
@@ -21,7 +21,9 @@ help:
 	@echo "make run             - 전 공정 실행 (기본: lecture-01-01.json)"
 	@echo "make run LECTURE=xxx - 특정 강의 JSON 파일로 실행"
 	@echo "                       config/tts.json의 activeProvider로 씬별 TTS 생성"
+	@echo "make run-lambda LECTURE=xxx - 전 공정 실행 + 씬 클립은 Remotion Lambda로 병렬 렌더링"
 	@echo "make run-force       - 기존 에셋 무시하고 전체 재생성"
+	@echo "make run-force-lambda LECTURE=xxx - Lambda 모드 + 강제 재생성"
 	@echo "make clean           - 생성된 모든 에셋 및 결과물 삭제"
 	@echo "make preview SCENE=6 - 특정 씬의 프리뷰 이미지 생성 (PNG)"
 	@echo "make preview-motion LECTURE=lecture-01-03.json SCENE=6 - 특정 씬의 no-audio 모션 프리뷰 생성"
@@ -34,8 +36,10 @@ help:
 	@echo "make regen-visual LECTURE=xxx SCENE='6 14' - 씬 visual만 재생성 (webm + 클립, TTS 유지)"
 	@echo "make run-tts-only LECTURE=xxx SCENE='1 2 3' - 지정 씬 TTS만 재생성 + 미리 듣기 파일 생성"
 	@echo "make run-render-only LECTURE=xxx      - TTS/캡처 제외하고 전체 씬 렌더링 & 클립 병합만 재실행"
+	@echo "make run-render-only-lambda LECTURE=xxx - run-render-only + Remotion Lambda 사용"
 	@echo "make render-scene LECTURE=xxx SCENE=5      - 특정 씬 클립만 렌더링"
 	@echo "make render-scene LECTURE=xxx SCENE='5 12' - 여러 씬 클립 렌더링"
+	@echo "make render-scene-lambda LECTURE=xxx SCENE='5 12' - Remotion Lambda로 씬 클립 병렬 렌더링"
 	@echo "make record-webm LECTURE=xxx SCENE=17      - 특정 Playwright 씬 webm 재생성"
 	@echo "make record-webm LECTURE=xxx SCENE='17 18' - 여러 Playwright 씬 webm 재생성"
 	@echo "make concat-scenes LECTURE=xxx             - 씬 클립 이어붙여 최종 MP4 생성"
@@ -60,9 +64,17 @@ run: lint
 	@echo "🚀 강의 자동화 파이프라인 시작: $(LECTURE)"
 	env $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
+run-lambda: lint build
+	@echo "☁️  Remotion Lambda 모드로 파이프라인 시작: $(LECTURE)"
+	env REMOTION_RENDER_MODE=lambda $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
+
 run-force: lint
 	@echo "🔄 강제 재생성 모드로 파이프라인 시작: $(LECTURE)"
 	env FORCE=1 $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
+
+run-force-lambda: lint build
+	@echo "☁️🔄 Remotion Lambda + 강제 재생성 모드로 파이프라인 시작: $(LECTURE)"
+	env FORCE=1 REMOTION_RENDER_MODE=lambda $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
 regen-scene: build
 	@echo "🔄 특정 Scene 재생성: $(LECTURE) / Scene $(SCENE)"
@@ -110,9 +122,17 @@ run-render-only:
 	@echo "🎞️ 사전 준비(TTS, 캡처) 건너뛰고 렌더링 & 병합 시퀀스 실행: $(LECTURE)"
 	env RENDER_ONLY=1 $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
+run-render-only-lambda: build
+	@echo "☁️🎞️  Remotion Lambda 로 렌더링 & 병합 시퀀스 실행: $(LECTURE)"
+	env RENDER_ONLY=1 REMOTION_RENDER_MODE=lambda $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
+
 render-scene:
 	@echo "🎞️  씬 클립 렌더링: $(LECTURE) / Scene $(SCENE)"
 	node $(ENGINE_RENDER_SCENE) $(LECTURE) $(SCENE)
+
+render-scene-lambda: build
+	@echo "☁️  Remotion Lambda 씬 클립 렌더링: $(LECTURE) / Scene $(SCENE)"
+	env REMOTION_RENDER_MODE=lambda node $(ENGINE_RENDER_SCENE) $(LECTURE) $(SCENE)
 
 record-webm:
 	@echo "🎥 Playwright 씬 webm 녹화: $(LECTURE) / Scene $(SCENE)"
