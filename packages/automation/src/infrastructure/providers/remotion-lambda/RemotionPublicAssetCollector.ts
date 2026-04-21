@@ -48,13 +48,19 @@ export class RemotionPublicAssetCollector {
     );
     const files = await this.listFilesRecursive(captureDir);
 
-    return files.map(file => this.assetPaths.stateCaptureFile(
-      request.lectureId,
-      sessionId,
-      request.sceneId,
-      file,
-      this.toPosix(path.relative(captureDir, file)),
-    ));
+    return files
+      .map(file => ({
+        file,
+        relativePath: this.toPosix(path.relative(captureDir, file)),
+      }))
+      .filter(({ relativePath }) => relativePath !== 'manifest.json')
+      .map(({ file, relativePath }) => this.assetPaths.stateCaptureFile(
+        request.lectureId,
+        sessionId,
+        request.sceneId,
+        file,
+        relativePath,
+      ));
   }
 
   private findScene(request: SceneClipRenderRequest): Scene {

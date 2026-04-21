@@ -1,9 +1,11 @@
 import {
   DeleteObjectsCommand,
+  HeadObjectCommand,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
 import type { AwsRegion } from '@remotion/lambda';
+import * as crypto from 'crypto';
 import * as nodeFs from 'fs';
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -21,6 +23,7 @@ export class S3AssetSyncService {
   ): Promise<string[]> {
     const s3 = new S3Client({ region });
     const uniqueAssets = new Map<string, RemotionPublicAsset>();
+    let skipped = 0;
 
     for (const asset of assets) {
       uniqueAssets.set(asset.publicPath, asset);
@@ -39,6 +42,11 @@ export class S3AssetSyncService {
         }
 
         const key = this.assetPaths.toS3Key(s3Location.sitePrefix, asset.publicPath);
+        if (await this.remoteObjectMatches(s3, s3Location.bucketName, key, asset.localPath)) {
+          skipped++;
+          return null;
+        }
+
         await s3.send(new PutObjectCommand({
           Bucket: s3Location.bucketName,
           Key: key,
@@ -50,7 +58,7 @@ export class S3AssetSyncService {
     );
 
     const uploaded = uploadedKeys.filter((key): key is string => Boolean(key));
-    console.log(`  ☁️  Lambda 에셋 업로드 완료 — ${uploaded.length}개`);
+    console.log(`  ☁️  Lambda 에셋 업로드 완료 — 업로드 ${uploaded.length}개, 스킵 ${skipped}개`);
     return uploaded;
   }
 
@@ -91,5 +99,38 @@ export class S3AssetSyncService {
       default:
         return undefined;
     }
+  }
+
+  private async remoteObjectMatches(
+    s3: S3Client,
+    bucketName: string,
+    key: string,
+    localPath: string,
+  ): Promise<boolean> {
+    try {
+      const [head, localHash] = await Promise.all([
+        s3.send(new HeadObjectCommand({ Bucket: bucketName, Key: key })),
+        this.calculateMd5(localPath),
+      ]);
+      const remoteEtag = head.ETag?.replace(/^"|"$/g, '');
+      return remoteEtag === localHash;
+    } catch (error) {
+      const statusCode = (error as { $metadata?: { httpStatusCode?: number } }).$metadata?.httpStatusCode;
+      const name = (error as { name?: string }).name;
+      if (statusCode === 404 || name === 'NotFound' || name === 'NoSuchKey') {
+        return false;
+      }
+      throw error;
+    }
+  }
+
+  private calculateMd5(localPath: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const hash = crypto.createHash('md5');
+      const stream = nodeFs.createReadStream(localPath);
+      stream.on('error', reject);
+      stream.on('data', chunk => hash.update(chunk));
+      stream.on('end', () => resolve(hash.digest('hex')));
+    });
   }
 }

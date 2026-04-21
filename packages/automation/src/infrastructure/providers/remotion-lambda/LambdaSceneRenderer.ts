@@ -2,15 +2,14 @@ import { deleteRender, downloadMedia } from '@remotion/lambda';
 import { renderMediaOnLambda } from '@remotion/lambda/client';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { Scene } from '../../../domain/entities/Lecture';
 import { SceneClipRenderRequest } from '../../../domain/interfaces/ISceneClipRenderProvider';
-import { SceneDurationFrameCalculator } from '../../services/SceneDurationFrameCalculator';
 import { SharedSessionManifestLoader } from '../../services/SharedSessionManifestLoader';
 import { LambdaRenderConfig } from './types';
 import { LambdaRenderProgressPoller } from './LambdaRenderProgressPoller';
 
 export class LambdaSceneRenderer {
   constructor(
-    private readonly durationFrameCalculator: SceneDurationFrameCalculator,
     private readonly progressPoller: LambdaRenderProgressPoller,
     private readonly sharedSessionManifestLoader: SharedSessionManifestLoader,
   ) {}
@@ -28,12 +27,17 @@ export class LambdaSceneRenderer {
       request.sceneId,
       request.lectureData,
     );
-    const durationInFrames = this.durationFrameCalculator.getDurationFrames(
-      request.sceneId,
-      request.audioDurations,
-    );
+    const scene = this.findScene(request);
+    const sceneDurationSec = request.audioDurations[request.sceneId.toString()];
+    const sceneAudioDurations = typeof sceneDurationSec === 'number'
+      ? { [request.sceneId.toString()]: sceneDurationSec }
+      : {};
+    const singleSceneLectureData = {
+      lecture_id: request.lectureId,
+      sequence: [scene],
+    };
 
-    console.log(`  🎞️  Scene ${request.sceneId} Lambda 렌더링 시작 (${durationInFrames} frames)`);
+    console.log(`  🎞️  Scene ${request.sceneId} Lambda 렌더링 시작`);
 
     const { bucketName, renderId, cloudWatchLogs } = await renderMediaOnLambda({
       region: lambdaConfig.region,
@@ -41,15 +45,14 @@ export class LambdaSceneRenderer {
       serveUrl,
       composition: 'SingleScene',
       inputProps: {
-        lectureData: request.lectureData,
-        audioDurations: request.audioDurations,
+        lectureData: singleSceneLectureData,
+        audioDurations: sceneAudioDurations,
         sceneId: request.sceneId,
         ...(synthManifests && { synthManifests }),
       },
       codec: 'h264',
       audioCodec: 'aac',
-      framesPerLambda: Math.max(durationInFrames, 4),
-      forceDurationInFrames: durationInFrames,
+      concurrency: 1,
       outName: `scene-${request.sceneId}.mp4`,
       overwrite: true,
       privacy: lambdaConfig.privacy,
@@ -91,5 +94,13 @@ export class LambdaSceneRenderer {
 
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
     console.log(`    ✅ Scene ${request.sceneId} Lambda 완료 (${elapsed}초)`);
+  }
+
+  private findScene(request: SceneClipRenderRequest): Scene {
+    const scene = request.lectureData.sequence.find(item => item.scene_id === request.sceneId);
+    if (!scene) {
+      throw new Error(`Scene ${request.sceneId}을 lecture data에서 찾을 수 없습니다.`);
+    }
+    return scene;
   }
 }

@@ -1,7 +1,6 @@
 import { ISceneClipRenderProvider, SceneClipRenderRequest } from '../../domain/interfaces/ISceneClipRenderProvider';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
 import { Lecture } from '../../domain/entities/Lecture';
-import { SceneDurationFrameCalculator } from '../services/SceneDurationFrameCalculator';
 import { SharedSessionManifestLoader } from '../services/SharedSessionManifestLoader';
 import { mapWithConcurrency } from '../utils/mapWithConcurrency';
 import { LambdaRenderConfigReader } from './remotion-lambda/LambdaRenderConfigReader';
@@ -38,7 +37,6 @@ export class RemotionLambdaSceneClipRenderProvider implements ISceneClipRenderPr
       assetCollector: deps?.assetCollector ?? new RemotionPublicAssetCollector(lectureRepository),
       assetSyncService: deps?.assetSyncService ?? new S3AssetSyncService(),
       sceneRenderer: deps?.sceneRenderer ?? new LambdaSceneRenderer(
-        new SceneDurationFrameCalculator(),
         progressPoller,
         manifestLoader,
       ),
@@ -77,6 +75,7 @@ export class RemotionLambdaSceneClipRenderProvider implements ISceneClipRenderPr
         requests,
         lambdaConfig.maxConcurrentScenes,
         request => this.deps.sceneRenderer.renderScene(request, lambdaConfig, serveUrl),
+        { stopSchedulingOnError: true },
       );
     } finally {
       if (lambdaConfig.cleanupAssets && uploadedKeys.length > 0) {
