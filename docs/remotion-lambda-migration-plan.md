@@ -38,7 +38,7 @@
 2. 아래 두 명령어로 Remotion이 요구하는 **최소 권한 정책 JSON**을 각각 출력하여 사용자와 역할에 부여
    ```bash
    npx remotion lambda policies user    # IAM 사용자에 부여할 정책
-   npx remotion lambda policies role    # remotion-lambda-role 에 부여할 정책 (함수 배포 후 생성됨)
+   npx remotion lambda policies role    # remotion-lambda-role 에 부여할 정책 (Role 은 콘솔에서 수동 생성 필요)
    ```
    > `AdministratorAccess`는 과도한 권한이므로 사용하지 않는다.
 3. CLI 환경에 AWS 자격 증명(Access Key / Secret Key) 등록 (`aws configure`)
@@ -121,12 +121,15 @@ import { deploySite, renderMediaOnLambda, getRenderProgress } from '@remotion/la
 | 1 | AWS 콘솔 | IAM 사용자 + Access Key 생성 | Access Key ID / Secret |
 | 2 (선택) | 로컬 터미널 | AWS CLI 설치 + `aws configure` | `~/.aws/credentials` |
 | 3 | 로컬 + 콘솔 | User policy 부여 | IAM user inline policy |
-| 4 | 로컬 터미널 | Lambda 함수 배포 | `.env` → `REMOTION_LAMBDA_FUNCTION_NAME` |
-| 5 | 콘솔 | Role policy 부여 (4 이후) | `remotion-lambda-role` inline policy |
+| 4 | AWS 콘솔 | `remotion-lambda-role` Role 생성 (Lambda 신뢰) | IAM Role |
+| 5 | 로컬 + 콘솔 | Role policy 부여 | `remotion-lambda-role` inline policy |
 | 6 | 로컬 터미널 | 권한 검증 | — |
-| 7 | 로컬 터미널 | 사이트 배포 | `.env` → `REMOTION_SERVE_URL` |
-| 8 | `.env` 파일 | 환경변수 확정 | 프로젝트 루트 `.env` |
-| 9 | 로컬 터미널 | 실행 | 씬 클립 MP4 |
+| 7 | 로컬 터미널 | Lambda 함수 배포 | `.env` → `REMOTION_LAMBDA_FUNCTION_NAME` |
+| 8 | 로컬 터미널 | 사이트 배포 | `.env` → `REMOTION_SERVE_URL` |
+| 9 | `.env` 파일 | 환경변수 확정 | 프로젝트 루트 `.env` |
+| 10 | 로컬 터미널 | 실행 | 씬 클립 MP4 |
+
+> ⚠️ `remotion-lambda-role` 은 `functions deploy` 가 **자동 생성하지 않는다.** Lambda 함수 배포(7단계) 전에 4·5단계로 Role + Role policy 를 수동으로 만들어 두어야 `InvalidParameterValueException: The role defined for the function cannot be assumed by Lambda.` 에러가 안 난다.
 
 > **2단계는 선택.** AWS CLI 를 설치하지 않고 8단계 `.env` 에 `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` 를 직접 적는 방식이어도 된다. `@remotion/lambda` 계열 명령(3~7단계의 `policies`, `functions deploy`, `sites create` 등) 은 `.env` 자격 증명만으로 동작한다. 다른 AWS 작업 예정이 없다면 2단계를 건너뛰는 쪽이 더 빠르다.
 
@@ -183,21 +186,22 @@ npx remotion lambda policies user
 
 출력된 JSON 을 IAM → Users → (해당 사용자) → Add permissions → Create inline policy → JSON 에 붙여넣기.
 
-### 4. Lambda 함수 배포
+### 4. `remotion-lambda-role` Role 생성
 
-```bash
-npx remotion lambda functions deploy --memory=2048 --timeout=900 --region=us-east-1
-```
-
-출력된 함수명(`remotion-render-...`)을 `.env` 의 `REMOTION_LAMBDA_FUNCTION_NAME` 에 기록.
+AWS 콘솔 → IAM → `ロール(Roles)` → `ロールを作成`
+- 信頼されたエンティティタイプ: **AWS のサービス**
+- ユースケース: **Lambda** → `次へ`
+- 許可ポリシー 추가 단계는 그냥 `次へ` (inline policy 는 5단계에서 붙임)
+- ロール名: **`remotion-lambda-role`** (정확히 이 이름. Remotion 이 하드코딩)
+- `ロールを作成`
 
 ### 5. Role policy 부여
-
-4단계에서 `remotion-lambda-role` 이 자동 생성됨. 아래 명령으로 Role 용 JSON 을 출력한 뒤 IAM → Roles → `remotion-lambda-role` → Add permissions → Create inline policy → JSON 에 붙여넣기.
 
 ```bash
 npx remotion lambda policies role
 ```
+
+출력된 JSON 을 IAM → Roles → `remotion-lambda-role` → `許可` 탭 → `許可を追加` → `インラインポリシーを作成` → JSON 에 붙여넣기. 정책명은 `RemotionLambdaRolePolicy` 권장.
 
 ### 6. 권한 검증
 
@@ -205,7 +209,15 @@ npx remotion lambda policies role
 npx remotion lambda policies validate
 ```
 
-### 7. 사이트 배포
+### 7. Lambda 함수 배포
+
+```bash
+npx remotion lambda functions deploy --memory=2048 --timeout=900 --region=us-east-1
+```
+
+출력된 함수명(`remotion-render-...`)을 `.env` 의 `REMOTION_LAMBDA_FUNCTION_NAME` 에 기록.
+
+### 8. 사이트 배포
 
 ```bash
 npx remotion lambda sites create --site-name=lecture-automation --region=us-east-1 packages/remotion/src/Root.tsx
@@ -213,7 +225,7 @@ npx remotion lambda sites create --site-name=lecture-automation --region=us-east
 
 출력된 Serve URL 을 `.env` 의 `REMOTION_SERVE_URL` 에 기록.
 
-### 8. `.env` 확정
+### 9. `.env` 확정
 
 ```env
 AWS_REGION=us-east-1
@@ -235,7 +247,7 @@ REMOTION_SERVE_URL=https://remotionlambda-useast1-xxxxx.s3.us-east-1.amazonaws.c
 
 AWS credentials 를 `aws configure` 대신 `.env` 로 관리하려면 `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` 도 추가 (2단계 생략 가능). `.env` 는 `.gitignore` 에 포함돼 있어야 한다.
 
-### 9. 실행
+### 10. 실행
 
 ```bash
 # 특정 씬만 Lambda 렌더
