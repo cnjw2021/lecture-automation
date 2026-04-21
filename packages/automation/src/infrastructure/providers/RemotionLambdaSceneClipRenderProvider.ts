@@ -5,6 +5,7 @@ import { SharedSessionManifestLoader } from '../services/SharedSessionManifestLo
 import { mapWithConcurrency } from '../utils/mapWithConcurrency';
 import { LambdaRenderConfigReader } from './remotion-lambda/LambdaRenderConfigReader';
 import { LambdaRenderProgressPoller } from './remotion-lambda/LambdaRenderProgressPoller';
+import { LambdaRenderProgressRenderer } from './remotion-lambda/LambdaRenderProgressRenderer';
 import { LambdaSceneRenderer } from './remotion-lambda/LambdaSceneRenderer';
 import { RemotionPublicAssetCollector } from './remotion-lambda/RemotionPublicAssetCollector';
 import { RemotionServeUrlParser } from './remotion-lambda/RemotionServeUrlParser';
@@ -18,6 +19,7 @@ interface RemotionLambdaSceneClipRenderProviderDeps {
   assetCollector: RemotionPublicAssetCollector;
   assetSyncService: S3AssetSyncService;
   sceneRenderer: LambdaSceneRenderer;
+  progressRenderer: LambdaRenderProgressRenderer;
 }
 
 export class RemotionLambdaSceneClipRenderProvider implements ISceneClipRenderProvider {
@@ -28,7 +30,8 @@ export class RemotionLambdaSceneClipRenderProvider implements ISceneClipRenderPr
     deps?: Partial<RemotionLambdaSceneClipRenderProviderDeps>,
   ) {
     const manifestLoader = new SharedSessionManifestLoader(lectureRepository);
-    const progressPoller = new LambdaRenderProgressPoller();
+    const progressRenderer = deps?.progressRenderer ?? new LambdaRenderProgressRenderer();
+    const progressPoller = new LambdaRenderProgressPoller(progressRenderer);
 
     this.deps = {
       configReader: deps?.configReader ?? new LambdaRenderConfigReader(),
@@ -39,7 +42,9 @@ export class RemotionLambdaSceneClipRenderProvider implements ISceneClipRenderPr
       sceneRenderer: deps?.sceneRenderer ?? new LambdaSceneRenderer(
         progressPoller,
         manifestLoader,
+        progressRenderer,
       ),
+      progressRenderer,
     };
   }
 
@@ -70,6 +75,8 @@ export class RemotionLambdaSceneClipRenderProvider implements ISceneClipRenderPr
       assets,
     );
 
+    this.deps.progressRenderer.begin(requests.map(request => request.sceneId));
+
     try {
       await mapWithConcurrency(
         requests,
@@ -78,6 +85,7 @@ export class RemotionLambdaSceneClipRenderProvider implements ISceneClipRenderPr
         { stopSchedulingOnError: true },
       );
     } finally {
+      this.deps.progressRenderer.done();
       if (lambdaConfig.cleanupAssets && uploadedKeys.length > 0) {
         await this.deps.assetSyncService.deleteUploadedAssets(
           lambdaConfig.region,

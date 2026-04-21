@@ -1,5 +1,6 @@
 import type { AwsRegion } from '@remotion/lambda';
 import { getRenderProgress, type RenderProgress } from '@remotion/lambda/client';
+import { ILambdaRenderProgressRenderer } from './LambdaRenderProgressRenderer';
 
 export interface LambdaRenderProgressPollInput {
   sceneId: number;
@@ -11,9 +12,9 @@ export interface LambdaRenderProgressPollInput {
 }
 
 export class LambdaRenderProgressPoller {
-  async waitForCompletion(input: LambdaRenderProgressPollInput): Promise<RenderProgress> {
-    let lastLoggedPercent = -10;
+  constructor(private readonly progressRenderer: ILambdaRenderProgressRenderer) {}
 
+  async waitForCompletion(input: LambdaRenderProgressPollInput): Promise<RenderProgress> {
     while (true) {
       const progress = await getRenderProgress({
         region: input.region,
@@ -31,13 +32,8 @@ export class LambdaRenderProgressPoller {
       }
 
       const percent = Math.floor(progress.overallProgress * 100);
-      if (progress.done || percent >= lastLoggedPercent + 10) {
-        lastLoggedPercent = percent;
-        const chunks = progress.renderMetadata
-          ? `${progress.chunks}/${progress.renderMetadata.totalChunks}`
-          : `${progress.chunks}`;
-        console.log(`      Scene ${input.sceneId}: ${percent}% (chunks ${chunks})`);
-      }
+      const totalChunks = progress.renderMetadata ? progress.renderMetadata.totalChunks : null;
+      this.progressRenderer.updateProgress(input.sceneId, percent, progress.chunks, totalChunks);
 
       if (progress.done) {
         return progress;
