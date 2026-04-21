@@ -129,9 +129,19 @@ import { deploySite, renderMediaOnLambda, getRenderProgress } from '@remotion/la
 
 ### 1. AWS 콘솔: IAM 사용자 + Access Key 생성
 
-- IAM → Users → Create user → Programmatic access
-- (해당 사용자) → Security credentials → Create access key → CLI
-- Secret 은 이 화면에서만 표시됨. 즉시 복사
+**1-1. 사용자 생성**
+- IAM → ユーザー → `ユーザーの作成`
+- ユーザー名 입력 (예: `remotion-lambda-deployer`)
+- `AWS マネジメントコンソールへのユーザーアクセスを提供する` **체크 해제** (프로그램 접근만 필요)
+- `次へ` → 許可を設定 단계는 아무 옵션도 선택하지 않음 (정책은 3단계에서 inline 으로 부여) → `次へ` → `ユーザーの作成`
+
+**1-2. Access Key 발급**
+- 생성된 사용자 클릭 → `セキュリティ認証情報` 탭 → `アクセスキーを作成`
+- ユースケース: `コマンドラインインターフェイス (CLI)` 선택
+  - AWS 가 `aws login` / CloudShell 대체안을 권장하나, 로컬에서 `make render-scene-lambda` 를 돌리는 현재 워크플로우엔 장기 Access Key 가 실용적
+- `上記のレコメンデーションを理解し、アクセスキーを作成します` **체크**
+- `次へ` → (説明タグ 생략 가능, 예: `Purpose=remotion-lambda`) → `アクセスキーを作成`
+- **Access Key ID + Secret Access Key 복사** (Secret 은 이 화면에서만 표시됨 — `.csv ダウンロード` 권장)
 
 ### 2. 로컬 CLI 자격 증명 등록
 
