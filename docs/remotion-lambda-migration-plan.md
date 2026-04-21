@@ -35,9 +35,10 @@
 ### Phase 1: AWS 인프라 세팅 (인프라/권한 설정)
 가장 기본적인, 그리고 프로젝트 팀원들의 로컬 환경에서 가장 헷갈리기 쉬운 파트입니다.
 1. AWS 계정에 접속하여 **IAM 사용자(User)** 생성
-2. 아래 명령어로 Remotion이 요구하는 **최소 권한 정책 JSON**을 출력하여 해당 사용자에 부여
+2. 아래 두 명령어로 Remotion이 요구하는 **최소 권한 정책 JSON**을 각각 출력하여 사용자와 역할에 부여
    ```bash
-   npx remotion lambda policies print
+   npx remotion lambda policies user    # IAM 사용자에 부여할 정책
+   npx remotion lambda policies role    # remotion-lambda-role 에 부여할 정책 (함수 배포 후 생성됨)
    ```
    > `AdministratorAccess`는 과도한 권한이므로 사용하지 않는다.
 3. CLI 환경에 AWS 자격 증명(Access Key / Secret Key) 등록 (`aws configure`)
@@ -177,10 +178,10 @@ aws configure
 ### 3. User policy 부여
 
 ```bash
-npx remotion lambda policies print
+npx remotion lambda policies user
 ```
 
-출력된 두 JSON 중 **첫 번째**를 IAM → Users → (해당 사용자) → Add permissions → Create inline policy → JSON 에 붙여넣기.
+출력된 JSON 을 IAM → Users → (해당 사용자) → Add permissions → Create inline policy → JSON 에 붙여넣기.
 
 ### 4. Lambda 함수 배포
 
@@ -192,7 +193,11 @@ npx remotion lambda functions deploy --memory=2048 --timeout=900 --region=us-eas
 
 ### 5. Role policy 부여
 
-4단계에서 `remotion-lambda-role` 이 자동 생성됨. 3단계 출력의 **두 번째** JSON 을 IAM → Roles → `remotion-lambda-role` → Add permissions → Create inline policy → JSON 에 붙여넣기.
+4단계에서 `remotion-lambda-role` 이 자동 생성됨. 아래 명령으로 Role 용 JSON 을 출력한 뒤 IAM → Roles → `remotion-lambda-role` → Add permissions → Create inline policy → JSON 에 붙여넣기.
+
+```bash
+npx remotion lambda policies role
+```
 
 ### 6. 권한 검증
 
