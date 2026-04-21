@@ -118,7 +118,7 @@ import { deploySite, renderMediaOnLambda, getRenderProgress } from '@remotion/la
 | # | 어디서 | 무엇을 | 결과 → 저장 위치 |
 |---|---|---|---|
 | 1 | AWS 콘솔 | IAM 사용자 + Access Key 생성 | Access Key ID / Secret |
-| 2 | 로컬 터미널 | `aws configure` | `~/.aws/credentials` |
+| 2 | 로컬 터미널 | AWS CLI 설치 + `aws configure` | `~/.aws/credentials` |
 | 3 | 로컬 + 콘솔 | User policy 부여 | IAM user inline policy |
 | 4 | 로컬 터미널 | Lambda 함수 배포 | `.env` → `REMOTION_LAMBDA_FUNCTION_NAME` |
 | 5 | 콘솔 | Role policy 부여 (4 이후) | `remotion-lambda-role` inline policy |
@@ -144,6 +144,27 @@ import { deploySite, renderMediaOnLambda, getRenderProgress } from '@remotion/la
 - **Access Key ID + Secret Access Key 복사** (Secret 은 이 화면에서만 표시됨 — `.csv ダウンロード` 권장)
 
 ### 2. 로컬 CLI 자격 증명 등록
+
+**2-1. AWS CLI 설치 (macOS)**
+
+`aws` 명령이 없다면 먼저 설치한다. Homebrew 가 가장 간단:
+
+```bash
+brew install awscli
+aws --version   # aws-cli/2.x.x ... 가 찍히면 OK
+```
+
+Homebrew 가 없거나 공식 pkg 인스톨러를 선호하면:
+
+```bash
+curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
+sudo installer -pkg AWSCLIV2.pkg -target /
+rm AWSCLIV2.pkg
+```
+
+> CLI 설치 없이 진행하고 싶다면 2-2 를 건너뛰고 8단계에서 `.env` 에 `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` 를 직접 적어도 된다. `@remotion/lambda` 계열 명령(`policies validate`, `functions deploy`, `sites create` 등) 은 `.env` 자격 증명만으로도 동작한다.
+
+**2-2. `aws configure`**
 
 ```bash
 aws configure
