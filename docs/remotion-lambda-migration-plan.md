@@ -62,11 +62,11 @@ npx remotion lambda policies validate
 
 # 2. Lambda 함수 배포 (렌더링 timeout을 충분히 확보)
 #    출력되는 함수 이름을 REMOTION_LAMBDA_FUNCTION_NAME에 저장
-npx remotion lambda functions deploy --memory=2048 --timeout=900 --region=us-east-1
+npx remotion lambda functions deploy --memory=2048 --timeout=900 --region=ap-northeast-1
 
 # 3. 사이트(번들) S3 업로드
 #    출력되는 serveUrl을 REMOTION_SERVE_URL에 저장
-npx remotion lambda sites create --site-name=lecture-automation --region=us-east-1
+npx remotion lambda sites create --site-name=lecture-automation --region=ap-northeast-1
 ```
 
 > [!NOTE]  
@@ -74,7 +74,7 @@ npx remotion lambda sites create --site-name=lecture-automation --region=us-east
 
 **환경변수 설정** — 위 명령어 출력값을 `.env`에 기록합니다:
 ```env
-AWS_REGION=us-east-1
+AWS_REGION=ap-northeast-1
 REMOTION_LAMBDA_FUNCTION_NAME=remotion-render-xxxxxxxxxx
 REMOTION_SERVE_URL=https://s3.amazonaws.com/remotionlambda-xxxx/sites/lecture-automation/index.html
 ```
@@ -174,7 +174,7 @@ rm AWSCLIV2.pkg
 aws configure
 # AWS Access Key ID [None]:     AKIA...
 # AWS Secret Access Key [None]: ...
-# Default region name [None]:   us-east-1
+# Default region name [None]:   ap-northeast-1
 # Default output format [None]: json
 ```
 
@@ -212,7 +212,7 @@ npx remotion lambda policies validate
 ### 7. Lambda 함수 배포
 
 ```bash
-npx remotion lambda functions deploy --memory=2048 --timeout=900 --region=us-east-1
+npx remotion lambda functions deploy --memory=2048 --timeout=900 --region=ap-northeast-1
 ```
 
 출력된 함수명(`remotion-render-...`)을 `.env` 의 `REMOTION_LAMBDA_FUNCTION_NAME` 에 기록.
@@ -220,7 +220,7 @@ npx remotion lambda functions deploy --memory=2048 --timeout=900 --region=us-eas
 ### 8. 사이트 배포
 
 ```bash
-npx remotion lambda sites create --site-name=lecture-automation --region=us-east-1 packages/remotion/src/Root.tsx
+npx remotion lambda sites create --site-name=lecture-automation --region=ap-northeast-1 packages/remotion/src/Root.tsx
 ```
 
 출력된 Serve URL 을 `.env` 의 `REMOTION_SERVE_URL` 에 기록.
@@ -228,14 +228,14 @@ npx remotion lambda sites create --site-name=lecture-automation --region=us-east
 ### 9. `.env` 확정
 
 ```env
-AWS_REGION=us-east-1
+AWS_REGION=ap-northeast-1
 REMOTION_LAMBDA_FUNCTION_NAME=remotion-render-4-0-443-mem2048mb-disk2048mb-900sec
-REMOTION_SERVE_URL=https://remotionlambda-useast1-xxxxx.s3.us-east-1.amazonaws.com/sites/lecture-automation/index.html
+REMOTION_SERVE_URL=https://remotionlambda-apnortheast1-xxxxx.s3.ap-northeast-1.amazonaws.com/sites/lecture-automation/index.html
 
 # 선택 (기본값으로 충분)
 # REMOTION_LAMBDA_DEPLOY=1                   # serveUrl 없거나 강제 재배포 시
 # REMOTION_LAMBDA_SITE_NAME=lecture-automation
-# REMOTION_LAMBDA_BUCKET_NAME=remotionlambda-useast1-xxxxx
+# REMOTION_LAMBDA_BUCKET_NAME=remotionlambda-apnortheast1-xxxxx
 # REMOTION_LAMBDA_CONCURRENCY=20             # 씬 병렬 호출 상한 (기본 20)
 # REMOTION_LAMBDA_FRAMES_PER_LAMBDA=10000    # 씬 내부 분산 방지 (기본 10000)
 # REMOTION_LAMBDA_TAB_CONCURRENCY=2          # Lambda 내부 탭 병렬 수 (기본 미지정)
@@ -276,12 +276,12 @@ REMOTION_RENDER_MODE=lambda make run-render-only LECTURE=lecture-01-03.json
 
 ```bash
 # 사이트
-npx remotion lambda sites ls --region=us-east-1
-npx remotion lambda sites rm lecture-automation --region=us-east-1
+npx remotion lambda sites ls --region=ap-northeast-1
+npx remotion lambda sites rm lecture-automation --region=ap-northeast-1
 
 # 함수
-npx remotion lambda functions ls --region=us-east-1
-npx remotion lambda functions rm <function-name> --region=us-east-1
+npx remotion lambda functions ls --region=ap-northeast-1
+npx remotion lambda functions rm <function-name> --region=ap-northeast-1
 ```
 
 렌더 결과물과 업로드 assets 는 `REMOTION_LAMBDA_CLEANUP_RENDERS=1` / `REMOTION_LAMBDA_CLEANUP_ASSETS=1` (기본값) 에 의해 자동 삭제된다. 수동 정리는 S3 콘솔에서 해당 버킷의 `renders/`, `sites/lecture-automation/` prefix 를 직접 삭제.
