@@ -16,6 +16,8 @@ export class LambdaRenderConfigReader {
       forceDeploy: process.env.REMOTION_LAMBDA_DEPLOY === '1',
       bucketName: process.env.REMOTION_LAMBDA_BUCKET_NAME?.trim() || undefined,
       maxConcurrentScenes: this.readPositiveIntegerEnv('REMOTION_LAMBDA_CONCURRENCY', 20),
+      framesPerLambda: this.readPositiveIntegerEnv('REMOTION_LAMBDA_FRAMES_PER_LAMBDA', 10000),
+      tabConcurrency: this.readOptionalPositiveIntegerEnv('REMOTION_LAMBDA_TAB_CONCURRENCY'),
       pollIntervalMs: this.readPositiveIntegerEnv('REMOTION_LAMBDA_POLL_INTERVAL_MS', 5000),
       cleanupAssets: process.env.REMOTION_LAMBDA_CLEANUP_ASSETS !== '0',
       cleanupRenders: process.env.REMOTION_LAMBDA_CLEANUP_RENDERS !== '0',
@@ -33,6 +35,17 @@ export class LambdaRenderConfigReader {
   private readPositiveIntegerEnv(envName: string, fallback: number): number {
     const raw = process.env[envName];
     if (!raw) return fallback;
+
+    const value = Number.parseInt(raw, 10);
+    if (!Number.isFinite(value) || value <= 0) {
+      throw new Error(`${envName}는 양의 정수여야 합니다: ${raw}`);
+    }
+    return value;
+  }
+
+  private readOptionalPositiveIntegerEnv(envName: string): number | undefined {
+    const raw = process.env[envName];
+    if (!raw) return undefined;
 
     const value = Number.parseInt(raw, 10);
     if (!Number.isFinite(value) || value <= 0) {

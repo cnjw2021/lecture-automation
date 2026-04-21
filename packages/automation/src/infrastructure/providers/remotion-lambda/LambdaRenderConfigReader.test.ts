@@ -4,18 +4,9 @@ describe('LambdaRenderConfigReader', () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
-    process.env = { ...originalEnv };
-    delete process.env.AWS_REGION;
-    delete process.env.REMOTION_SERVE_URL;
-    delete process.env.REMOTION_LAMBDA_SITE_NAME;
-    delete process.env.REMOTION_LAMBDA_DEPLOY;
-    delete process.env.REMOTION_LAMBDA_BUCKET_NAME;
-    delete process.env.REMOTION_LAMBDA_CONCURRENCY;
-    delete process.env.REMOTION_LAMBDA_POLL_INTERVAL_MS;
-    delete process.env.REMOTION_LAMBDA_CLEANUP_ASSETS;
-    delete process.env.REMOTION_LAMBDA_CLEANUP_RENDERS;
-    delete process.env.REMOTION_LAMBDA_PRIVACY;
-    process.env.REMOTION_LAMBDA_FUNCTION_NAME = 'remotion-render-test';
+    process.env = {
+      REMOTION_LAMBDA_FUNCTION_NAME: 'remotion-render-test',
+    };
   });
 
   afterAll(() => {
@@ -29,19 +20,25 @@ describe('LambdaRenderConfigReader', () => {
     expect(config.functionName).toBe('remotion-render-test');
     expect(config.siteName).toBe('lecture-automation');
     expect(config.maxConcurrentScenes).toBe(20);
+    expect(config.framesPerLambda).toBe(10000);
+    expect(config.tabConcurrency).toBeUndefined();
     expect(config.pollIntervalMs).toBe(5000);
     expect(config.cleanupAssets).toBe(true);
     expect(config.cleanupRenders).toBe(true);
     expect(config.privacy).toBe('private');
   });
 
-  it('reads explicit concurrency and privacy', () => {
+  it('reads explicit concurrency controls and privacy', () => {
     process.env.REMOTION_LAMBDA_CONCURRENCY = '12';
+    process.env.REMOTION_LAMBDA_FRAMES_PER_LAMBDA = '12000';
+    process.env.REMOTION_LAMBDA_TAB_CONCURRENCY = '2';
     process.env.REMOTION_LAMBDA_PRIVACY = 'no-acl';
 
     const config = new LambdaRenderConfigReader().read();
 
     expect(config.maxConcurrentScenes).toBe(12);
+    expect(config.framesPerLambda).toBe(12000);
+    expect(config.tabConcurrency).toBe(2);
     expect(config.privacy).toBe('no-acl');
   });
 
@@ -55,6 +52,12 @@ describe('LambdaRenderConfigReader', () => {
     process.env.REMOTION_LAMBDA_CONCURRENCY = '0';
 
     expect(() => new LambdaRenderConfigReader().read()).toThrow('REMOTION_LAMBDA_CONCURRENCY');
+  });
+
+  it('rejects invalid optional positive integer env values', () => {
+    process.env.REMOTION_LAMBDA_TAB_CONCURRENCY = '0';
+
+    expect(() => new LambdaRenderConfigReader().read()).toThrow('REMOTION_LAMBDA_TAB_CONCURRENCY');
   });
 
   it('rejects invalid privacy values', () => {

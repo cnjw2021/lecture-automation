@@ -144,6 +144,12 @@ REMOTION_LAMBDA_SITE_NAME=lecture-automation
 # 여러 강의를 동시에 돌릴 때 씬 병렬 호출 수 제한
 REMOTION_LAMBDA_CONCURRENCY=20
 
+# 씬 내부 프레임 청크 분산 방지. 기본값 10000.
+REMOTION_LAMBDA_FRAMES_PER_LAMBDA=10000
+
+# 지정하지 않으면 Remotion 기본값 사용. 필요할 때만 Lambda 내부 탭 수 조정.
+REMOTION_LAMBDA_TAB_CONCURRENCY=2
+
 # 기본값은 private / 정리 활성화
 REMOTION_LAMBDA_PRIVACY=private
 REMOTION_LAMBDA_CLEANUP_ASSETS=1

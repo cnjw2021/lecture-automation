@@ -14,6 +14,8 @@ import { RemotionPublicAssetPaths } from './RemotionPublicAssetPaths';
 import { ParsedServeUrl, RemotionPublicAsset } from './types';
 
 export class S3AssetSyncService {
+  private warnedNonMd5Etag = false;
+
   constructor(private readonly assetPaths = new RemotionPublicAssetPaths()) {}
 
   async uploadAssets(
@@ -112,6 +114,11 @@ export class S3AssetSyncService {
         s3.send(new HeadObjectCommand({ Bucket: bucketName, Key: key })),
         this.calculateMd5(localPath),
       ]);
+      if (head.ServerSideEncryption === 'aws:kms' || head.ServerSideEncryption === 'aws:kms:dsse') {
+        this.warnNonMd5EtagOnce();
+        return false;
+      }
+
       const remoteEtag = head.ETag?.replace(/^"|"$/g, '');
       return remoteEtag === localHash;
     } catch (error) {
@@ -122,6 +129,13 @@ export class S3AssetSyncService {
       }
       throw error;
     }
+  }
+
+  private warnNonMd5EtagOnce(): void {
+    if (this.warnedNonMd5Etag) return;
+
+    console.warn('  ⚠️  S3 ETag가 MD5가 아닌 SSE-KMS 객체입니다. 에셋 변경 감지를 건너뛰고 재업로드합니다.');
+    this.warnedNonMd5Etag = true;
   }
 
   private calculateMd5(localPath: string): Promise<string> {

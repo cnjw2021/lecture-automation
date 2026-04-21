@@ -8,6 +8,8 @@ export interface LambdaRenderConfig {
   forceDeploy: boolean;
   bucketName?: string;
   maxConcurrentScenes: number;
+  framesPerLambda: number;
+  tabConcurrency?: number;
   pollIntervalMs: number;
   cleanupAssets: boolean;
   cleanupRenders: boolean;
