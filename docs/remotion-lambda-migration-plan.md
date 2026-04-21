@@ -111,47 +111,184 @@ import { deploySite, renderMediaOnLambda, getRenderProgress } from '@remotion/la
 
 ---
 
-## 현재 구현된 실행 경로
+## 🚀 처음 세팅하기 (스텝바이스텝)
 
-로컬 렌더는 기존 `make render-scene` 경로로 유지하고, Lambda 렌더는 별도 모드로 선택한다.
+위 5단계는 설계 이력이다. 이 섹션은 신규 팀원이 빈 AWS 계정에서 시작해 Lambda 렌더가 동작할 때까지 **그대로 따라하기만 하면 되는** 순서를 담는다.
 
+### 1단계: AWS Credentials 등록
+
+#### 1-1. IAM 사용자 생성
+AWS 콘솔 → IAM → Users → Create user
+- 사용자 이름 예: `remotion-lambda-deployer`
+- Access type: **Programmatic access**
+
+`AdministratorAccess` 는 과도한 권한이므로 **쓰지 않는다**. 아래 1-2에서 Remotion 전용 최소 권한을 부여한다.
+
+#### 1-2. 최소 권한 정책 부여
+로컬 터미널에서 정책 JSON 출력:
+
+```bash
+npx remotion lambda policies print
+```
+
+두 덩어리의 JSON 이 나온다. 순서대로 적용한다:
+
+- **User policy** (지금 바로): IAM → Users → (해당 사용자) → Permissions → Add permissions → Create inline policy → JSON 탭 → 첫 번째 JSON 붙여넣기
+- **Role policy** (2단계 이후): 2단계 `functions deploy` 실행 시 `remotion-lambda-role` 이 자동 생성된다. 생성 후 IAM → Roles → `remotion-lambda-role` → Add permissions → Create inline policy → 두 번째 JSON 붙여넣기
+
+#### 1-3. Access Key 발급
+IAM → (해당 사용자) → Security credentials → Create access key → CLI 용도 선택
+- Access key ID + Secret access key 발급
+- **Secret 은 이 화면에서만 표시된다**. 즉시 안전한 곳에 복사
+
+#### 1-4. 로컬 CLI에 등록 (둘 중 택1)
+
+**방법 A: `aws configure` (권장 — 여러 프로젝트 공유)**
+```bash
+aws configure
+# AWS Access Key ID [None]: AKIA...
+# AWS Secret Access Key [None]: ...
+# Default region name [None]: us-east-1
+# Default output format [None]: json
+```
+`~/.aws/credentials`, `~/.aws/config` 에 저장되어 AWS SDK 가 자동 인식한다.
+
+**방법 B: 프로젝트 `.env`**
+프로젝트 루트 `.env` 에 추가:
+```env
+AWS_ACCESS_KEY_ID=AKIA...
+AWS_SECRET_ACCESS_KEY=...
+AWS_REGION=us-east-1
+```
+`packages/automation/src/infrastructure/config/index.ts` 의 `dotenv.config()` 가 프로세스 시작 시 자동 로드한다. `.env` 는 `.gitignore` 에 포함되어 있어야 한다.
+
+#### 1-5. 권한 검증
+```bash
+npx remotion lambda policies validate
+```
+부족한 권한이 있으면 여기서 에러로 즉시 발견된다.
+
+
+### 2단계: Lambda 함수 배포 → `REMOTION_LAMBDA_FUNCTION_NAME`
+
+```bash
+npx remotion lambda functions deploy \
+  --memory=2048 \
+  --timeout=900 \
+  --region=us-east-1
+```
+- `--memory=2048`: 2GB (렌더 속도/비용 밸런스 기본값)
+- `--timeout=900`: 15분 (긴 씬 대비 여유)
+- `--region`: 1-4 에서 지정한 `AWS_REGION` 과 반드시 일치
+
+출력 예:
+```
+Deployed as "remotion-render-4-0-443-mem2048mb-disk2048mb-900sec"
+```
+
+이 함수명을 `.env` 에 기록:
+```env
+REMOTION_LAMBDA_FUNCTION_NAME=remotion-render-4-0-443-mem2048mb-disk2048mb-900sec
+```
+
+**이 시점에 1-2 의 Role policy 를 적용한다** (함수 배포 시점에 `remotion-lambda-role` 이 자동 생성됨).
+
+배포 확인:
+```bash
+npx remotion lambda functions ls
+```
+
+
+### 3단계: Remotion 사이트 배포 → `REMOTION_SERVE_URL`
+
+```bash
+npx remotion lambda sites create \
+  --site-name=lecture-automation \
+  --region=us-east-1 \
+  packages/remotion/src/Root.tsx
+```
+- `--site-name=lecture-automation`: `LambdaRenderConfigReader` 의 `REMOTION_LAMBDA_SITE_NAME` 기본값과 일치
+- 마지막 인자: Remotion 엔트리 파일 경로
+
+출력 예:
+```
+Serve URL: https://remotionlambda-useast1-xxxxx.s3.us-east-1.amazonaws.com/sites/lecture-automation/index.html
+```
+virtual-hosted / path-style 두 형식 모두 지원된다 (`RemotionServeUrlParser`).
+
+`.env` 에 기록:
+```env
+REMOTION_SERVE_URL=https://remotionlambda-useast1-xxxxx.s3.us-east-1.amazonaws.com/sites/lecture-automation/index.html
+```
+
+Remotion 소스 코드가 바뀐 경우에만 이 명령을 재실행(덮어쓰기). 바뀌지 않았다면 기존 serveUrl 을 계속 재사용한다.
+
+
+### 4단계: `.env` 최종 상태 확인
+
+프로젝트 루트 `.env` 예시:
+
+```env
+# AWS credentials (1-4 방법 B를 쓸 때만. 방법 A면 생략)
+AWS_ACCESS_KEY_ID=AKIA...
+AWS_SECRET_ACCESS_KEY=...
+AWS_REGION=us-east-1
+
+# Remotion Lambda 필수
+REMOTION_LAMBDA_FUNCTION_NAME=remotion-render-4-0-443-mem2048mb-disk2048mb-900sec
+REMOTION_SERVE_URL=https://remotionlambda-useast1-xxxxx.s3.us-east-1.amazonaws.com/sites/lecture-automation/index.html
+
+# 선택 (기본값으로 충분)
+# REMOTION_LAMBDA_DEPLOY=1                   # serveUrl 없거나 강제 재배포 시
+# REMOTION_LAMBDA_SITE_NAME=lecture-automation
+# REMOTION_LAMBDA_BUCKET_NAME=remotionlambda-useast1-xxxxx
+# REMOTION_LAMBDA_CONCURRENCY=20             # 씬 병렬 호출 상한 (기본 20)
+# REMOTION_LAMBDA_FRAMES_PER_LAMBDA=10000    # 씬 내부 분산 방지 (기본 10000)
+# REMOTION_LAMBDA_TAB_CONCURRENCY=2          # Lambda 내부 탭 병렬 수 (기본 미지정)
+# REMOTION_LAMBDA_POLL_INTERVAL_MS=5000
+# REMOTION_LAMBDA_PRIVACY=private
+# REMOTION_LAMBDA_CLEANUP_ASSETS=1
+# REMOTION_LAMBDA_CLEANUP_RENDERS=1
+```
+
+
+### 5단계: 실행
+
+특정 씬만 Lambda 로 렌더:
 ```bash
 make render-scene-lambda LECTURE=lecture-01-03.json SCENE='28 29'
 ```
 
-전체 파이프라인에서 Lambda 렌더를 사용하려면 렌더 단계 실행 시 `REMOTION_RENDER_MODE=lambda`를 지정한다.
-
+전체 파이프라인에서 렌더 단계만 Lambda 사용:
 ```bash
 REMOTION_RENDER_MODE=lambda make run-render-only LECTURE=lecture-01-03.json
 ```
 
-필수 환경변수:
+로컬 렌더로 되돌리려면 `REMOTION_RENDER_MODE` 를 비우거나 `make render-scene` 사용.
 
-```env
-AWS_REGION=us-east-1
-REMOTION_LAMBDA_FUNCTION_NAME=remotion-render-xxxxxxxxxx
-REMOTION_SERVE_URL=https://s3.amazonaws.com/remotionlambda-xxxx/sites/lecture-automation/index.html
+
+### 문제 해결 체크리스트
+
+| 증상 | 확인 포인트 |
+|---|---|
+| `REMOTION_LAMBDA_FUNCTION_NAME 환경변수가 필요` | `.env` 누락 또는 `dotenv.config()` 전에 해당 값 참조. `config/index.ts` 가 import 되는지 확인 |
+| `AccessDenied` / `not authorized to perform: ...` | User/Role policy 누락. 1-5 의 `policies validate` 재실행. 특히 Role policy 는 2단계 이후에 붙여야 하므로 순서 주의 |
+| `REMOTION_SERVE_URL에서 S3 bucket을 파싱할 수 없습니다` | serveUrl 복사 실수. 공백·개행·따옴표 포함 여부 확인 (path-style / virtual-hosted 모두 지원) |
+| Lambda 렌더 도중 Timeout | 2단계의 `--timeout=900` 으로 재배포. 15분으로도 부족한 긴 씬은 분할 검토 |
+| `staticFile('audio/...')` 404 | S3 콘솔에서 `sites/lecture-automation/audio/<lectureId>/scene-N.wav` 존재 여부 확인 (assets 업로드는 자동 수행됨) |
+| Remotion 버전 경고 | 루트 `remotion`, `@remotion/lambda`, `packages/remotion/` 의 패키지들이 모두 동일 버전(`4.0.443`) 인지 확인 |
+
+
+### 리소스 삭제/정리
+
+```bash
+# 사이트
+npx remotion lambda sites ls --region=us-east-1
+npx remotion lambda sites rm lecture-automation --region=us-east-1
+
+# 함수
+npx remotion lambda functions ls --region=us-east-1
+npx remotion lambda functions rm <function-name> --region=us-east-1
 ```
 
-선택 환경변수:
-
-```env
-# REMOTION_SERVE_URL이 없거나 강제 재배포가 필요한 경우 사용
-REMOTION_LAMBDA_DEPLOY=1
-REMOTION_LAMBDA_BUCKET_NAME=remotionlambda-xxxx
-REMOTION_LAMBDA_SITE_NAME=lecture-automation
-
-# 여러 강의를 동시에 돌릴 때 씬 병렬 호출 수 제한
-REMOTION_LAMBDA_CONCURRENCY=20
-
-# 씬 내부 프레임 청크 분산 방지. 기본값 10000.
-REMOTION_LAMBDA_FRAMES_PER_LAMBDA=10000
-
-# 지정하지 않으면 Remotion 기본값 사용. 필요할 때만 Lambda 내부 탭 수 조정.
-REMOTION_LAMBDA_TAB_CONCURRENCY=2
-
-# 기본값은 private / 정리 활성화
-REMOTION_LAMBDA_PRIVACY=private
-REMOTION_LAMBDA_CLEANUP_ASSETS=1
-REMOTION_LAMBDA_CLEANUP_RENDERS=1
-```
+렌더 결과물과 업로드 assets 는 `REMOTION_LAMBDA_CLEANUP_RENDERS=1` / `REMOTION_LAMBDA_CLEANUP_ASSETS=1` (기본값) 에 의해 자동 삭제된다. 수동 정리는 S3 콘솔에서 해당 버킷의 `renders/`, `sites/lecture-automation/` prefix 를 직접 삭제.
