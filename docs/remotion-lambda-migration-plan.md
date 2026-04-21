@@ -250,14 +250,20 @@ AWS credentials 를 `aws configure` 대신 `.env` 로 관리하려면 `AWS_ACCES
 ### 10. 실행
 
 ```bash
-# 특정 씬만 Lambda 렌더
-make render-scene-lambda LECTURE=lecture-01-03.json SCENE='28 29'
+# 전체 파이프라인 (TTS · 캡처 · 렌더 · 병합) 을 Lambda 모드로 실행
+make run-lambda LECTURE=lecture-02-01.json
 
-# 전체 파이프라인 중 렌더 단계만 Lambda
-REMOTION_RENDER_MODE=lambda make run-render-only LECTURE=lecture-01-03.json
+# 위와 동일하지만 기존 에셋 무시하고 강제 재생성
+make run-force-lambda LECTURE=lecture-02-01.json
+
+# TTS / 캡처는 건너뛰고 렌더 & 병합만 Lambda 로 재실행
+make run-render-only-lambda LECTURE=lecture-01-03.json
+
+# 특정 씬 클립만 Lambda 렌더
+make render-scene-lambda LECTURE=lecture-01-03.json SCENE='28 29'
 ```
 
-로컬 렌더로 되돌리려면 `REMOTION_RENDER_MODE` 를 비우거나 `make render-scene` 사용.
+로컬 렌더로 되돌리려면 `-lambda` 접미사가 없는 타겟 (`make run`, `make render-scene` 등) 을 사용한다. 내부적으로는 `REMOTION_RENDER_MODE=lambda` 환경 변수로 전환된다.
 
 
 ### 문제 해결 체크리스트

@@ -79,10 +79,14 @@ type PlaywrightCmd = 'goto' | 'wait' | 'wait_for' | 'mouse_move' | 'click' | 'ty
 
 ```bash
 make run LECTURE=lecture-01-02.json          # activeProvider로 전체 파이프라인
+make run-lambda LECTURE=lecture-02-01.json   # 전체 파이프라인 + 씬 클립은 Remotion Lambda로 병렬 렌더링
 make run-force LECTURE=lecture-01-02.json    # 강제 재생성 모드로 전체 파이프라인
+make run-force-lambda LECTURE=lecture-02-01.json  # Lambda + 강제 재생성
 make regen-scene LECTURE=lecture-03-01.json SCENE='11 12 14'  # 특정 씬 재생성 + concat
 make run-tts-only LECTURE=lecture-01-01.json SCENE='1 2 3'   # 지정 씬 TTS만 재생성 + 미리 듣기 파일 생성 (씬 간 1.5초 갭)
 make render-scene LECTURE=lecture-03-01.json SCENE=11         # 클립 렌더링만
+make render-scene-lambda LECTURE=lecture-03-01.json SCENE='11 12' # 씬 클립을 Remotion Lambda로 병렬 렌더링
+make run-render-only-lambda LECTURE=lecture-01-03.json        # TTS/캡처 생략, Lambda로 렌더 & 병합
 make concat-scenes LECTURE=lecture-01-02.json                 # concat만 (~5초)
 make preview SCENE=6                         # 씬 프리뷰 PNG
 ```
