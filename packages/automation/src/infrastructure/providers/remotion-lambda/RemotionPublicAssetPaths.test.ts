@@ -27,9 +27,9 @@ describe('RemotionPublicAssetPaths', () => {
     });
   });
 
-  it('joins S3 site prefix and public path without duplicate slashes', () => {
+  it('inserts public/ between site prefix and asset path (Remotion Lambda staticFile 해석 규칙)', () => {
     expect(assetPaths.toS3Key('/sites/lecture-automation/', '/audio/01-03/scene-28.wav')).toBe(
-      'sites/lecture-automation/audio/01-03/scene-28.wav',
+      'sites/lecture-automation/public/audio/01-03/scene-28.wav',
     );
   });
 });

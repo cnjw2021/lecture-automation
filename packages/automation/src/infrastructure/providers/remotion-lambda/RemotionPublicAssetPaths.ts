@@ -46,7 +46,9 @@ export class RemotionPublicAssetPaths {
   }
 
   toS3Key(sitePrefix: string, publicPath: string): string {
-    return [sitePrefix, publicPath]
+    // Remotion 번들은 public/ 폴더를 보존한 채 S3 에 업로드되고, Lambda 의 staticFile()
+    // 은 {sitePrefix}/public/{path} 로 해석한다. 업로드 키에도 public/ 프리픽스 필수.
+    return [sitePrefix, 'public', publicPath]
       .filter(Boolean)
       .map(part => part.replace(/^\/+|\/+$/g, ''))
       .join('/');
