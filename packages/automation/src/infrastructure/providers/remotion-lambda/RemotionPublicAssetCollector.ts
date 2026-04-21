@@ -4,6 +4,7 @@ import { Scene } from '../../../domain/entities/Lecture';
 import { ILectureRepository } from '../../../domain/interfaces/ILectureRepository';
 import { SceneClipRenderRequest } from '../../../domain/interfaces/ISceneClipRenderProvider';
 import { isSharedSessionScene } from '../../../domain/policies/LiveDemoScenePolicy';
+import { findSceneById } from '../../../domain/utils/LectureSceneLookup';
 import { RemotionPublicAssetPaths } from './RemotionPublicAssetPaths';
 import { RemotionPublicAsset } from './types';
 
@@ -17,7 +18,7 @@ export class RemotionPublicAssetCollector {
     const assets: RemotionPublicAsset[] = [];
 
     for (const request of requests) {
-      const scene = this.findScene(request);
+      const scene = findSceneById(request.lectureData, request.sceneId);
       assets.push(this.assetPaths.audio(request.lectureId, request.sceneId));
 
       if (scene.visual.type === 'playwright' && !isSharedSessionScene(scene)) {
@@ -61,14 +62,6 @@ export class RemotionPublicAssetCollector {
         file,
         relativePath,
       ));
-  }
-
-  private findScene(request: SceneClipRenderRequest): Scene {
-    const scene = request.lectureData.sequence.find(item => item.scene_id === request.sceneId);
-    if (!scene) {
-      throw new Error(`Scene ${request.sceneId}을 lecture data에서 찾을 수 없습니다.`);
-    }
-    return scene;
   }
 
   private async listFilesRecursive(dir: string): Promise<string[]> {

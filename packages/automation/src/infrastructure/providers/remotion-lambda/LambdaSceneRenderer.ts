@@ -2,8 +2,8 @@ import { deleteRender, downloadMedia } from '@remotion/lambda';
 import { renderMediaOnLambda } from '@remotion/lambda/client';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { Scene } from '../../../domain/entities/Lecture';
 import { SceneClipRenderRequest } from '../../../domain/interfaces/ISceneClipRenderProvider';
+import { findSceneById } from '../../../domain/utils/LectureSceneLookup';
 import { SharedSessionManifestLoader } from '../../services/SharedSessionManifestLoader';
 import { LambdaRenderConfig } from './types';
 import { LambdaRenderProgressPoller } from './LambdaRenderProgressPoller';
@@ -27,7 +27,7 @@ export class LambdaSceneRenderer {
       request.sceneId,
       request.lectureData,
     );
-    const scene = this.findScene(request);
+    const scene = findSceneById(request.lectureData, request.sceneId);
     const sceneDurationSec = request.audioDurations[request.sceneId.toString()];
     const sceneAudioDurations = typeof sceneDurationSec === 'number'
       ? { [request.sceneId.toString()]: sceneDurationSec }
@@ -95,13 +95,5 @@ export class LambdaSceneRenderer {
 
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
     console.log(`    ✅ Scene ${request.sceneId} Lambda 완료 (${elapsed}초)`);
-  }
-
-  private findScene(request: SceneClipRenderRequest): Scene {
-    const scene = request.lectureData.sequence.find(item => item.scene_id === request.sceneId);
-    if (!scene) {
-      throw new Error(`Scene ${request.sceneId}을 lecture data에서 찾을 수 없습니다.`);
-    }
-    return scene;
   }
 }

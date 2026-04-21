@@ -96,8 +96,6 @@ export class S3AssetSyncService {
         return 'image/jpeg';
       case '.svg':
         return 'image/svg+xml';
-      case '.json':
-        return 'application/json';
       default:
         return undefined;
     }

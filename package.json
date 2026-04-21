@@ -1,6 +1,9 @@
 {
   "name": "lecture-automation-root",
   "private": true,
+  "engines": {
+    "node": ">=18"
+  },
   "workspaces": [
     "packages/*"
   ],
