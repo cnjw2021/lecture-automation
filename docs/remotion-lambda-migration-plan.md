@@ -108,3 +108,44 @@ import { deploySite, renderMediaOnLambda, getRenderProgress } from '@remotion/la
 1. **serveUrl 재사용**: Remotion 소스 코드가 변경되지 않았다면 `deploySite()`를 매번 호출하지 않고, 이미 배포된 `REMOTION_SERVE_URL`을 그대로 사용한다. 코드 변경 감지는 번들 해시 또는 수동 플래그로 판단한다.
 2. **Makefile 타겟 추가**: `make render-scene-lambda` 타겟을 구성하여 기존 로컬 렌더(`make render-scene`)와 A/B 테스트를 진행한다.
 3. **동시 호출 수 상한 관리**: AWS Lambda 계정의 기본 동시 실행 한도는 1,000개다. 씬 50개 동시 호출은 한도 내에 충분히 수용되지만, 향후 여러 강의를 동시에 처리하는 경우를 대비해 `Promise.all` 대신 `p-limit` 등으로 동시 호출 수의 상한을 설정해 두는 것이 안전하다.
+
+---
+
+## 현재 구현된 실행 경로
+
+로컬 렌더는 기존 `make render-scene` 경로로 유지하고, Lambda 렌더는 별도 모드로 선택한다.
+
+```bash
+make render-scene-lambda LECTURE=lecture-01-03.json SCENE='28 29'
+```
+
+전체 파이프라인에서 Lambda 렌더를 사용하려면 렌더 단계 실행 시 `REMOTION_RENDER_MODE=lambda`를 지정한다.
+
+```bash
+REMOTION_RENDER_MODE=lambda make run-render-only LECTURE=lecture-01-03.json
+```
+
+필수 환경변수:
+
+```env
+AWS_REGION=us-east-1
+REMOTION_LAMBDA_FUNCTION_NAME=remotion-render-xxxxxxxxxx
+REMOTION_SERVE_URL=https://s3.amazonaws.com/remotionlambda-xxxx/sites/lecture-automation/index.html
+```
+
+선택 환경변수:
+
+```env
+# REMOTION_SERVE_URL이 없거나 강제 재배포가 필요한 경우 사용
+REMOTION_LAMBDA_DEPLOY=1
+REMOTION_LAMBDA_BUCKET_NAME=remotionlambda-xxxx
+REMOTION_LAMBDA_SITE_NAME=lecture-automation
+
+# 여러 강의를 동시에 돌릴 때 씬 병렬 호출 수 제한
+REMOTION_LAMBDA_CONCURRENCY=20
+
+# 기본값은 private / 정리 활성화
+REMOTION_LAMBDA_PRIVACY=private
+REMOTION_LAMBDA_CLEANUP_ASSETS=1
+REMOTION_LAMBDA_CLEANUP_RENDERS=1
+```

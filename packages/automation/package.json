@@ -19,7 +19,9 @@
     ]
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "3.986.0",
     "@google/generative-ai": "^0.24.1",
+    "@remotion/lambda": "4.0.443",
     "dotenv": "^16.4.5",
     "fs-extra": "^11.3.4",
     "zod": "^4.3.6"
