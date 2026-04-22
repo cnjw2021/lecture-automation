@@ -50,7 +50,7 @@
     "🖼": "Image", "🖼️": "Image",
 
     "📄": "FileText", "📃": "FileText", "📋": "ClipboardList", "📑": "PanelsTopLeft", "📰": "Newspaper",
-    "📁": "Folder", "📂": "FolderOpen", "🗂️": "FolderTree", "🪆": "Layers",
+    "📁": "Folder", "📂": "FolderOpen", "🗂️": "FolderTree",
     "📖": "BookOpen", "📚": "Library", "📕": "Book", "📗": "Book", "📘": "Book", "🃏": "LayoutGrid",
 
     "✅": "CheckCircle", "❌": "XCircle", "⭕": "Circle",
