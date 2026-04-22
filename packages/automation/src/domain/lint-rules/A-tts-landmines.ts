@@ -124,7 +124,14 @@ const LANDMINES: Landmine[] = [
     fixPattern: /(?<![ァ-ヴー])ペア(?![ァ-ヴー])/g,
   },
 
-  // A-11: タグ → "だぐ" 오독 (T→D 자소 오독). ひらがな + ASCII 따옴표 분리로 회피
+  // A-11a: タグ名 / 'たぐ'名 → "타그네" 오독 (名 が 단독 접미사로 "ね" 로 오독)
+  // lecture-02-01 씬 10 실측. タグ 치환 전후 두 형태 모두 같은 CLI --fix 패스에서 잡히도록 쌍으로 등록.
+  // "タグの名前" 로 풀어 씀 — 씬 6/8 에서 이미 같은 표현을 사용해 안정적으로 읽힘.
+  // A-11b(タグ→'たぐ') 보다 먼저 적용되어야 한다 (A-11b 가 タグの名前 에 남은 タグ 만 치환하도록).
+  { pattern: /タグ名/g, from: 'タグ名', to: 'タグの名前', reason: 'タグ名 → "타그네" 오독 (名 접미사 오독). "タグの名前" 로 풀어 씀' },
+  { pattern: /'たぐ'名/g, from: "'たぐ'名", to: "'たぐ'の名前", reason: "'たぐ'名 → \"타그네\" 오독. \"'たぐ'の名前\" 로 풀어 씀 (タグ 치환 후 상태)" },
+
+  // A-11b: タグ → "だぐ" 오독 (T→D 자소 오독). ひらがな + ASCII 따옴표 분리로 회피
   // lecture-02-01 19:33 실측. HTML タグ 설명 전반에 등장
   // ひらがな "たぐ" 만으로 부족해 토큰 경계를 강제 (ペン → 'ぺ'ん 과 동일 기법)
   { pattern: /タグ/g, from: 'タグ', to: "'たぐ'", reason: 'タグ → "だぐ" 오독 (T→D 자소 오독). ひらがな + ASCII 따옴표 분리' },
@@ -175,7 +182,7 @@ function makeRegexFix(sceneIdx: number, pattern: RegExp, to: string) {
 
 export const ttsLandminesRule: LintRule = {
   id: 'A-tts-landmines',
-  description: 'TTS 오독 패턴 검출 및 자동 수정 (パート1, 上半分, 段落, gap, px, http://, 行の, セットアップ, ペイン, ペン, Pen, 改行, ペア, タグ 등)',
+  description: 'TTS 오독 패턴 검출 및 자동 수정 (パート1, 上半分, 段落, gap, px, http://, 行の, セットアップ, ペイン, ペン, Pen, 改行, ペア, タグ, タグ名 등)',
 
   run(lecture: any): LintIssue[] {
     const issues: LintIssue[] = [];
