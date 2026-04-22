@@ -18,6 +18,11 @@ interface Landmine {
   to: string;
   /** 사용자 보고용 메시지. */
   reason: string;
+  /**
+   * 치환 시 사용할 정규식. 지정하면 split/join 대신 regex.replace 를 사용.
+   * lookbehind/lookahead 가 필요한 복합어 제외 케이스에 사용.
+   */
+  fixPattern?: RegExp;
 }
 
 const LANDMINES: Landmine[] = [
@@ -60,6 +65,26 @@ const LANDMINES: Landmine[] = [
   { pattern: /(?<![A-Za-z0-9])h4(?![A-Za-z0-9])/g, from: 'h4', to: 'エイチフォー', reason: 'h4 → 영문자+数字 오독' },
   { pattern: /(?<![A-Za-z0-9])h5(?![A-Za-z0-9])/g, from: 'h5', to: 'エイチファイブ', reason: 'h5 → 영문자+数字 오독' },
   { pattern: /(?<![A-Za-z0-9])h6(?![A-Za-z0-9])/g, from: 'h6', to: 'エイチシックス', reason: 'h6 → 영문자+数字 오독' },
+
+  // A-5: 行の → ゴーの (漢字 行 を英語 go として오독)
+  // 漢字に先行されている場合(改行の・実行の・進行の等)は複合語なので除外。
+  {
+    pattern: /(?<![一-龯])行の/g,
+    from: '行の',
+    to: 'ぎょうの',
+    reason: '行の → "ゴーの" 오독 (行を英語 go として읽음). 漢字先行の複合語は除外',
+    fixPattern: /(?<![一-龯])行の/g,
+  },
+
+  // A-6: ペイン → 店員 (P→T 자소 오독 계열, Hinata 보이스)
+  // スペイン・ペイント・ペインティング 등 복합어는 제외.
+  {
+    pattern: /(?<![ァ-ヴーA-Za-z])ペイン(?![ァ-ヴーA-Za-z])/g,
+    from: 'ペイン',
+    to: 'パネル',
+    reason: 'ペイン → "店員" 오독 (P→T 자소 오독 계열). スペイン・ペイント等の複合語は除外',
+    fixPattern: /(?<![ァ-ヴーA-Za-z])ペイン(?![ァ-ヴーA-Za-z])/g,
+  },
 ];
 
 /**
@@ -74,9 +99,21 @@ function makeFix(sceneIdx: number, from: string, to: string) {
   };
 }
 
+/**
+ * 정규식 치환을 적용하는 fix 함수 생성.
+ * lookbehind/lookahead 가 필요한 복합어 제외 케이스(行の, ペイン 등)에 사용.
+ */
+function makeRegexFix(sceneIdx: number, pattern: RegExp, to: string) {
+  return (lecture: any) => {
+    const scene = lecture.sequence[sceneIdx];
+    if (!scene || typeof scene.narration !== 'string') return;
+    scene.narration = scene.narration.replace(pattern, to);
+  };
+}
+
 export const ttsLandminesRule: LintRule = {
   id: 'A-tts-landmines',
-  description: 'TTS 오독 패턴 검출 및 자동 수정 (パート1, 上半分, gap, px, http:// 등)',
+  description: 'TTS 오독 패턴 검출 및 자동 수정 (パート1, 上半分, gap, px, http://, 行の, ペイン 등)',
 
   run(lecture: any): LintIssue[] {
     const issues: LintIssue[] = [];
@@ -96,7 +133,9 @@ export const ttsLandminesRule: LintRule = {
           severity: 'error',
           message: `「${lm.from}」→「${lm.to}」(${lm.reason}) — ${matches.length}회`,
           context: extractContext(narration, lm.from),
-          fix: makeFix(idx, lm.from, lm.to),
+          fix: lm.fixPattern
+            ? makeRegexFix(idx, lm.fixPattern, lm.to)
+            : makeFix(idx, lm.from, lm.to),
           fixDescription: `「${lm.from}」→「${lm.to}」`,
         });
       }
