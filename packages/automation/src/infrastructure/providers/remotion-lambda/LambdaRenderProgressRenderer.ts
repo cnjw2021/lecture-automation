@@ -13,6 +13,7 @@ interface SceneProgressState {
   percent: number;
   chunks: number;
   totalChunks: number | null;
+  chunkStates: ('done' | 'rendering' | 'pending')[];
   elapsedSec: number | null;
   errorMessage: string | null;
 }
@@ -93,6 +94,11 @@ export class LambdaRenderProgressRenderer implements ILambdaRenderProgressRender
     state.percent = clamp(percent, 0, 100);
     state.chunks = chunks;
     state.totalChunks = totalChunks;
+    if (totalChunks !== null) {
+      state.chunkStates = Array.from({ length: totalChunks }, (_, i) =>
+        i < chunks ? 'done' : 'rendering',
+      );
+    }
     this.render();
   }
 
@@ -108,6 +114,9 @@ export class LambdaRenderProgressRenderer implements ILambdaRenderProgressRender
     state.status = 'completed';
     state.percent = 100;
     state.elapsedSec = elapsedSec;
+    if (state.totalChunks !== null && state.totalChunks > 0) {
+      state.chunkStates = Array(state.totalChunks).fill('done');
+    }
     this.render();
   }
 
@@ -165,6 +174,7 @@ export class LambdaRenderProgressRenderer implements ILambdaRenderProgressRender
       percent: 0,
       chunks: 0,
       totalChunks: null,
+      chunkStates: [],
       elapsedSec: null,
       errorMessage: null,
     };
@@ -208,7 +218,24 @@ export class LambdaRenderProgressRenderer implements ILambdaRenderProgressRender
       parts.push(chunks);
     }
     parts.push(status);
-    return parts.join('  ');
+    const mainLine = parts.join('  ');
+
+    const subLines = this.formatChunkSubLines(state);
+    return subLines.length > 0 ? `${mainLine}\n${subLines.join('\n')}` : mainLine;
+  }
+
+  private formatChunkSubLines(state: SceneProgressState): string[] {
+    const { chunkStates, totalChunks } = state;
+    if (chunkStates.length === 0 || totalChunks === null || totalChunks <= 1) {
+      return [];
+    }
+    const idWidth = String(totalChunks - 1).length;
+    return chunkStates.map((chunkStatus, i) => {
+      const label = `  Chunk ${String(i).padStart(idWidth, ' ')}`;
+      const bar = chunkStatus === 'done' ? this.renderBar(100) : this.renderBar(0);
+      const statusLabel = chunkStatus === 'done' ? '✅ 완료' : '렌더링 중';
+      return `${label}  ${bar}  ${statusLabel}`;
+    });
   }
 
   private renderBar(percent: number): string {

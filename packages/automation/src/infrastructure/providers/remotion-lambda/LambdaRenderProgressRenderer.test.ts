@@ -22,9 +22,14 @@ describe('LambdaRenderProgressRenderer', () => {
     renderer.startScene(2);
     renderer.updateProgress(2, 60, 3, 5);
 
-    const snapshot = renderer.renderSnapshot();
+    const lines = renderer.renderSnapshot().split('\n');
 
-    expect(snapshot).toBe('Scene 2  [██████░░░░]   60%  (chunks 3/5)  렌더링 중');
+    expect(lines[0]).toBe('Scene 2  [██████░░░░]   60%  (chunks 3/5)  렌더링 중');
+    expect(lines[1]).toBe('  Chunk 0  [██████████]  ✅ 완료');
+    expect(lines[2]).toBe('  Chunk 1  [██████████]  ✅ 완료');
+    expect(lines[3]).toBe('  Chunk 2  [██████████]  ✅ 완료');
+    expect(lines[4]).toBe('  Chunk 3  [░░░░░░░░░░]  렌더링 중');
+    expect(lines[5]).toBe('  Chunk 4  [░░░░░░░░░░]  렌더링 중');
   });
 
   it('right-pads scene ids based on the widest scene id in the session', () => {
@@ -134,5 +139,74 @@ describe('LambdaRenderProgressRenderer', () => {
     renderer.updateProgress(9, 10, 0, 1);
 
     expect(renderer.renderSnapshot()).toContain('Scene 9');
+  });
+
+  it('omits chunk sub-lines when totalChunks is 1', () => {
+    const renderer = new LambdaRenderProgressRenderer({ barWidth: 20, isTTY: false });
+    renderer.begin([1]);
+    renderer.startScene(1);
+    renderer.updateProgress(1, 50, 0, 1);
+
+    const snapshot = renderer.renderSnapshot();
+
+    expect(snapshot.split('\n').length).toBe(1);
+    expect(snapshot).not.toContain('Chunk');
+  });
+
+  it('omits chunk sub-lines when totalChunks is null', () => {
+    const renderer = new LambdaRenderProgressRenderer({ barWidth: 20, isTTY: false });
+    renderer.begin([1]);
+    renderer.startScene(1);
+    renderer.updateProgress(1, 10, 0, null);
+
+    const snapshot = renderer.renderSnapshot();
+
+    expect(snapshot.split('\n').length).toBe(1);
+    expect(snapshot).not.toContain('Chunk');
+  });
+
+  it('shows chunk sub-lines matching issue target output', () => {
+    const renderer = new LambdaRenderProgressRenderer({ barWidth: 20, isTTY: false });
+    renderer.begin([16]);
+    renderer.startScene(16);
+    renderer.updateProgress(16, 60, 2, 5);
+
+    const lines = renderer.renderSnapshot().split('\n');
+
+    expect(lines[0]).toContain('(chunks 2/5)');
+    expect(lines[1]).toBe('  Chunk 0  [████████████████████]  ✅ 완료');
+    expect(lines[2]).toBe('  Chunk 1  [████████████████████]  ✅ 완료');
+    expect(lines[3]).toBe('  Chunk 2  [░░░░░░░░░░░░░░░░░░░░]  렌더링 중');
+    expect(lines[4]).toBe('  Chunk 3  [░░░░░░░░░░░░░░░░░░░░]  렌더링 중');
+    expect(lines[5]).toBe('  Chunk 4  [░░░░░░░░░░░░░░░░░░░░]  렌더링 중');
+  });
+
+  it('marks all chunks as done after completeScene', () => {
+    const renderer = new LambdaRenderProgressRenderer({ barWidth: 10, isTTY: false });
+    renderer.begin([3]);
+    renderer.startScene(3);
+    renderer.updateProgress(3, 80, 2, 3);
+    renderer.completeScene(3, 55);
+
+    const lines = renderer.renderSnapshot().split('\n');
+
+    expect(lines[0]).toContain('✅ 완료 (55.0초)');
+    expect(lines[1]).toBe('  Chunk 0  [██████████]  ✅ 완료');
+    expect(lines[2]).toBe('  Chunk 1  [██████████]  ✅ 완료');
+    expect(lines[3]).toBe('  Chunk 2  [██████████]  ✅ 완료');
+  });
+
+  it('pads chunk ids when totalChunks exceeds 10', () => {
+    const renderer = new LambdaRenderProgressRenderer({ barWidth: 4, isTTY: false });
+    renderer.begin([1]);
+    renderer.startScene(1);
+    renderer.updateProgress(1, 10, 1, 12);
+
+    const lines = renderer.renderSnapshot().split('\n');
+
+    expect(lines[1]).toContain('Chunk  0');
+    expect(lines[2]).toContain('Chunk  1');
+    expect(lines[10]).toContain('Chunk  9');
+    expect(lines[11]).toContain('Chunk 10');
   });
 });
