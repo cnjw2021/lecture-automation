@@ -131,14 +131,31 @@ const LANDMINES: Landmine[] = [
 ];
 
 /**
+ * Playwright 씬의 syncPoints[*].phrase 도 함께 치환.
+ * narration 만 치환하면 phrase 가 narration 안에서 찾을 수 없게 되어
+ * D-playwright-shape 룰이 "phrase 가 narration 안에 없음" 으로 차단한다.
+ */
+function applyToSyncPoints(scene: any, replacer: (s: string) => string) {
+  const syncPoints = scene?.visual?.syncPoints;
+  if (!Array.isArray(syncPoints)) return;
+  for (const sp of syncPoints) {
+    if (sp && typeof sp.phrase === 'string') {
+      sp.phrase = replacer(sp.phrase);
+    }
+  }
+}
+
+/**
  * 단순 문자열 치환을 적용하는 fix 함수 생성.
- * narration 안의 모든 매치를 한 번에 치환한다.
+ * narration + syncPoints[*].phrase 의 모든 매치를 한 번에 치환한다.
  */
 function makeFix(sceneIdx: number, from: string, to: string) {
   return (lecture: any) => {
     const scene = lecture.sequence[sceneIdx];
     if (!scene || typeof scene.narration !== 'string') return;
-    scene.narration = scene.narration.split(from).join(to);
+    const replacer = (s: string) => s.split(from).join(to);
+    scene.narration = replacer(scene.narration);
+    applyToSyncPoints(scene, replacer);
   };
 }
 
@@ -150,7 +167,9 @@ function makeRegexFix(sceneIdx: number, pattern: RegExp, to: string) {
   return (lecture: any) => {
     const scene = lecture.sequence[sceneIdx];
     if (!scene || typeof scene.narration !== 'string') return;
-    scene.narration = scene.narration.replace(pattern, to);
+    const replacer = (s: string) => s.replace(new RegExp(pattern.source, pattern.flags), to);
+    scene.narration = replacer(scene.narration);
+    applyToSyncPoints(scene, replacer);
   };
 }
 
@@ -164,18 +183,29 @@ export const ttsLandminesRule: LintRule = {
 
     lecture.sequence.forEach((scene: any, idx: number) => {
       const narration: string = typeof scene?.narration === 'string' ? scene.narration : '';
-      if (!narration) return;
+      const syncPoints: any[] = Array.isArray(scene?.visual?.syncPoints) ? scene.visual.syncPoints : [];
+      const phrases: string[] = syncPoints
+        .map((sp) => (sp && typeof sp.phrase === 'string' ? sp.phrase : ''))
+        .filter(Boolean);
 
       for (const lm of LANDMINES) {
-        const matches = narration.match(lm.pattern);
-        if (!matches || matches.length === 0) continue;
+        // narration + syncPoints[*].phrase 양쪽 모두 검사.
+        // fix 함수는 양쪽을 동시에 치환하므로, 어느 쪽이든 매치되면 한 번의 issue 로 모음.
+        const narrMatches = narration ? narration.match(lm.pattern) : null;
+        const phraseMatches = phrases.flatMap((p) => p.match(lm.pattern) || []);
+        const total = (narrMatches?.length ?? 0) + phraseMatches.length;
+        if (total === 0) continue;
+
+        const sourceForContext = narration.includes(lm.from)
+          ? narration
+          : (phrases.find((p) => p.includes(lm.from)) ?? '');
 
         issues.push({
           ruleId: this.id,
           sceneId: scene.scene_id ?? null,
           severity: 'error',
-          message: `「${lm.from}」→「${lm.to}」(${lm.reason}) — ${matches.length}회`,
-          context: extractContext(narration, lm.from),
+          message: `「${lm.from}」→「${lm.to}」(${lm.reason}) — ${total}회`,
+          context: extractContext(sourceForContext, lm.from),
           fix: lm.fixPattern
             ? makeRegexFix(idx, lm.fixPattern, lm.to)
             : makeFix(idx, lm.from, lm.to),
