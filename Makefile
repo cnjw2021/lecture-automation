@@ -137,7 +137,6 @@ render-scene-lambda: build
 
 deploy-lambda: build
 	@echo "☁️  Remotion Lambda 사이트 배포 (번들 업로드)..."
-	@echo "    완료 후 출력된 REMOTION_SERVE_URL 을 .env 에 업데이트하세요."
 	node packages/automation/dist/presentation/cli/deploy-lambda.js
 
 record-webm:
