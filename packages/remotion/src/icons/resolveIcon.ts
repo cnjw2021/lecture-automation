@@ -13,6 +13,7 @@ export type ResolvedIcon =
 
 const brandIcons = new Set(iconsConfig.brandIcons);
 const emojiToLucide: Record<string, string> = iconsConfig.emojiToLucide;
+const emojiToBrandIcon: Record<string, string> = (iconsConfig as any).emojiToBrandIcon ?? {};
 
 // --- Pure helpers ---
 
@@ -47,7 +48,13 @@ export const resolveIcon = (icon: string): ResolvedIcon => {
     return { type: 'brand', name: icon.toLowerCase() };
   }
 
-  // 2. Emoji → Lucide auto-conversion
+  // 2. Emoji → brand icon override (system font에서 렌더링 불가한 이모지용)
+  const brandOverride = emojiToBrandIcon[icon];
+  if (brandOverride && brandIcons.has(brandOverride)) {
+    return { type: 'brand', name: brandOverride };
+  }
+
+  // 3. Emoji → Lucide auto-conversion
   if (isEmoji(icon)) {
     const lucideName = emojiToLucide[icon];
     if (lucideName) {
