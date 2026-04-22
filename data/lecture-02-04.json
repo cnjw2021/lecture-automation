@@ -15,12 +15,14 @@
           "title": "構造を組み立てるタグ",
           "sub": "PART 2 — 講義 2-4"
         },
-        "transition": { "enter": "zoom" }
+        "transition": {
+          "enter": "zoom"
+        }
       }
     },
     {
       "scene_id": 2,
-      "narration": "さて、今日のテーマは「構造を組み立てるタグ」です。ここまでの講義を通じて、皆さんはいくつものタグを学んできました。h1で見出し、pで段落、ulでリスト、aでリンク、imgで画像。一つひとつのタグの使い方はわかるようになりましたよね。",
+      "narration": "さて、今日のテーマは「構造を組み立てるタグ」です。ここまでの講義を通じて、皆さんはいくつものタグを学んできました。エイチワンで見出し、pでだんらく、ulでリスト、aでリンク、imgで画像。一つひとつのタグの使い方はわかるようになりましたよね。",
       "durationSec": 22,
       "visual": {
         "type": "remotion",
@@ -56,12 +58,18 @@
         "props": {
           "left": {
             "title": "人間が読む場合",
-            "points": ["なんとなく推測できる", "「上がタイトルかな」とわかる"],
+            "points": [
+              "なんとなく推測できる",
+              "「上がタイトルかな」とわかる"
+            ],
             "color": "#6366f1"
           },
           "right": {
             "title": "機械が読む場合",
-            "points": ["構造の手がかりがない", "どこがメニューかわからない"],
+            "points": [
+              "構造の手がかりがない",
+              "どこがメニューかわからない"
+            ],
             "color": "#ef4444"
           }
         }
@@ -77,11 +85,31 @@
         "props": {
           "title": "今日やること",
           "items": [
-            { "title": "セマンティックタグとは", "icon": "📖", "duration": "4分" },
-            { "title": "6つのタグを覚える", "icon": "🏷️", "duration": "6分" },
-            { "title": "divタグの使い分け", "icon": "📦", "duration": "2.5分" },
-            { "title": "CodePenでリファクタリング", "icon": "💻", "duration": "8分" },
-            { "title": "前後比較", "icon": "🔄", "duration": "2.5分" }
+            {
+              "title": "セマンティックタグとは",
+              "icon": "📖",
+              "duration": "4分"
+            },
+            {
+              "title": "6つのタグを覚える",
+              "icon": "🏷️",
+              "duration": "6分"
+            },
+            {
+              "title": "divタグの使い分け",
+              "icon": "📦",
+              "duration": "2.5分"
+            },
+            {
+              "title": "CodePenでリファクタリング",
+              "icon": "💻",
+              "duration": "8分"
+            },
+            {
+              "title": "前後比較",
+              "icon": "🔄",
+              "duration": "2.5分"
+            }
           ]
         }
       }
@@ -99,7 +127,9 @@
           "detail": "リビング・キッチン・寝室が明示されていれば、誰でもすぐわかる",
           "color": "#ef4444"
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
@@ -113,12 +143,20 @@
           "title": "ウェブページの構造",
           "before": {
             "label": "今のHTML",
-            "points": ["タグが上から並ぶだけ", "部屋に名前がない", "機械には構造が伝わらない"],
+            "points": [
+              "タグが上から並ぶだけ",
+              "部屋に名前がない",
+              "機械には構造が伝わらない"
+            ],
             "color": "#ef4444"
           },
           "after": {
             "label": "セマンティックタグ導入後",
-            "points": ["各部分に名前がつく", "間取り図ができあがる", "人にも機械にも読みやすい"],
+            "points": [
+              "各部分に名前がつく",
+              "間取り図ができあがる",
+              "人にも機械にも読みやすい"
+            ],
             "color": "#22c55e"
           }
         }
@@ -137,7 +175,9 @@
           "definition": "「意味を持ったタグ」のこと。各部分の役割をHTML上で明示する。",
           "example": "header（上部）、main（本文）、footer（末尾）など"
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
@@ -190,7 +230,9 @@
           "question": "見た目が変わらないなら、使う意味はあるの？",
           "answer": "セマンティックタグが大事な理由は大きく2つあります。"
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
@@ -210,7 +252,7 @@
     },
     {
       "scene_id": 13,
-      "narration": "2つ目は、エーアイとの連携です。この講座のパート2の最後の講義で、エーアイにHTMLを生成してもらう実習をします。そのとき、エーアイが作ったコードを見て「ここにはheaderタグを使うべきだな」「mainタグが抜けているな」と判断できる力が必要になります。セマンティックタグの構造を知っていれば、エーアイの出力を的確にチェックできるようになるんです。",
+      "narration": "2つ目は、エーアイとの連携です。この講座のパートツーの最後の講義で、エーアイにHTMLを生成してもらう実習をします。そのとき、エーアイが作ったコードを見て「ここにはheaderタグを使うべきだな」「mainタグが抜けているな」と判断できる力が必要になります。セマンティックタグの構造を知っていれば、エーアイの出力を的確にチェックできるようになるんです。",
       "durationSec": 40,
       "visual": {
         "type": "remotion",
@@ -247,16 +289,48 @@
         "props": {
           "title": "6つのセマンティックタグ",
           "features": [
-            { "icon": "🏠", "title": "header", "description": "ページの上部・顔", "color": "#ef4444" },
-            { "icon": "🗺️", "title": "nav", "description": "ナビゲーション", "color": "#ef4444" },
-            { "icon": "📄", "title": "main", "description": "メインコンテンツ", "color": "#ef4444" },
-            { "icon": "📑", "title": "section", "description": "内容のまとまり", "color": "#ef4444" },
-            { "icon": "📰", "title": "article", "description": "独立した記事", "color": "#ef4444" },
-            { "icon": "👣", "title": "footer", "description": "ページの末尾", "color": "#ef4444" }
+            {
+              "icon": "🏠",
+              "title": "header",
+              "description": "ページの上部・顔",
+              "color": "#ef4444"
+            },
+            {
+              "icon": "🗺️",
+              "title": "nav",
+              "description": "ナビゲーション",
+              "color": "#ef4444"
+            },
+            {
+              "icon": "📄",
+              "title": "main",
+              "description": "メインコンテンツ",
+              "color": "#ef4444"
+            },
+            {
+              "icon": "📑",
+              "title": "section",
+              "description": "内容のまとまり",
+              "color": "#ef4444"
+            },
+            {
+              "icon": "📰",
+              "title": "article",
+              "description": "独立した記事",
+              "color": "#ef4444"
+            },
+            {
+              "icon": "👣",
+              "title": "footer",
+              "description": "ページの末尾",
+              "color": "#ef4444"
+            }
           ],
           "columns": 3
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
@@ -272,12 +346,14 @@
           "definition": "ページの一番上に来る部分。サイトのタイトル・ロゴ・ナビゲーションを入れる。",
           "example": "お店の入り口に掲げた看板のイメージ"
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
       "scene_id": 17,
-      "narration": "headerの開始タグと閉じタグの間に、h1の見出しを入れています。これだけで、「この見出しはページのヘッダーに属している」という意味が加わるんです。",
+      "narration": "headerの開始タグと閉じタグの間に、エイチワンの見出しを入れています。これだけで、「この見出しはページのヘッダーに属している」という意味が加わるんです。",
       "durationSec": 20,
       "visual": {
         "type": "remotion",
@@ -287,7 +363,9 @@
           "language": "html",
           "title": "headerタグの書き方"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
@@ -303,7 +381,9 @@
           "definition": "ページ内の移動メニューを入れる場所。メニューバーに使う。",
           "example": "ショッピングモールの案内板のイメージ"
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
@@ -318,7 +398,9 @@
           "language": "html",
           "title": "navタグの書き方"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
@@ -334,7 +416,9 @@
           "definition": "ページのメインコンテンツを入れる場所。1ページに1回だけ使える。",
           "example": "お店の売り場、新聞の記事本文にあたる部分"
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
@@ -350,12 +434,14 @@
           "definition": "mainの中身をまとまりごとに区切るタグ。複数使えます。",
           "example": "本の「章」のイメージ。mainという本の中に複数のsection"
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
       "scene_id": 22,
-      "narration": "このように、sectionの中にはh2の見出しを入れるのが一般的です。各章にタイトルがあるのと同じですね。",
+      "narration": "このように、sectionの中にはエイチツーの見出しを入れるのが一般的です。各章にタイトルがあるのと同じですね。",
       "durationSec": 20,
       "visual": {
         "type": "remotion",
@@ -365,7 +451,9 @@
           "language": "html",
           "title": "sectionタグの書き方"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
@@ -381,7 +469,9 @@
           "definition": "それだけで独立したコンテンツに使うタグ。ブログ記事やニュース記事など。",
           "example": "「切り出しても意味が通じる」内容に使う"
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
@@ -397,7 +487,9 @@
           "definition": "ページの一番下に来る部分。著作権表示・連絡先・補足情報を入れる。",
           "example": "お店の出口付近の案内板のイメージ"
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
@@ -412,7 +504,9 @@
           "language": "html",
           "title": "footerタグの書き方"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
@@ -425,15 +519,47 @@
         "props": {
           "title": "6つのタグ まとめ",
           "items": [
-            { "icon": "🏠", "title": "header", "description": "ページの顔・看板", "color": "#ef4444" },
-            { "icon": "🗺️", "title": "nav", "description": "案内板・メニュー", "color": "#ef4444" },
-            { "icon": "📄", "title": "main", "description": "メインの売り場", "color": "#ef4444" },
-            { "icon": "📑", "title": "section", "description": "売り場内の各コーナー", "color": "#ef4444" },
-            { "icon": "📰", "title": "article", "description": "独立した記事", "color": "#ef4444" },
-            { "icon": "👣", "title": "footer", "description": "出口の案内板", "color": "#ef4444" }
+            {
+              "icon": "🏠",
+              "title": "header",
+              "description": "ページの顔・看板",
+              "color": "#ef4444"
+            },
+            {
+              "icon": "🗺️",
+              "title": "nav",
+              "description": "案内板・メニュー",
+              "color": "#ef4444"
+            },
+            {
+              "icon": "📄",
+              "title": "main",
+              "description": "メインの売り場",
+              "color": "#ef4444"
+            },
+            {
+              "icon": "📑",
+              "title": "section",
+              "description": "売り場内の各コーナー",
+              "color": "#ef4444"
+            },
+            {
+              "icon": "📰",
+              "title": "article",
+              "description": "独立した記事",
+              "color": "#ef4444"
+            },
+            {
+              "icon": "👣",
+              "title": "footer",
+              "description": "出口の案内板",
+              "color": "#ef4444"
+            }
           ]
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
@@ -449,12 +575,14 @@
           "definition": "「仕切り・区画」の意味。意味を持たない汎用の箱タグ。",
           "example": "「名前のない仕切り板」のイメージ"
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
       "scene_id": 28,
-      "narration": "ところがdivには、そういった意味がありません。部屋に名札を貼らない。ただ「この範囲をひとまとめにしますよ」という箱でしかないんです。いわば、名前のない仕切り板です。では、何に使うのかというと、たとえばCSSでスタイルを当てたいときです。CSSはパート3で学びますが、複数の要素にまとめて背景色をつけたいとか、横並びにレイアウトしたいとか、そういう「見た目の都合でグループ化したい」場面で使います。意味ではなく、見た目の理由で囲みたいときの道具ですね。",
+      "narration": "ところがdivには、そういった意味がありません。部屋に名札を貼らない。ただ「この範囲をひとまとめにしますよ」という箱でしかないんです。いわば、名前のない仕切り板です。では、何に使うのかというと、たとえばCSSでスタイルを当てたいときです。CSSはパートスリーで学びますが、複数の要素にまとめて背景色をつけたいとか、横並びにレイアウトしたいとか、そういう「見た目の都合でグループ化したい」場面で使います。意味ではなく、見た目の理由で囲みたいときの道具ですね。",
       "durationSec": 50,
       "visual": {
         "type": "remotion",
@@ -462,12 +590,20 @@
         "props": {
           "left": {
             "title": "セマンティックタグ",
-            "points": ["意味を持つ", "「ここが何か」を伝える", "header/main/footerなど"],
+            "points": [
+              "意味を持つ",
+              "「ここが何か」を伝える",
+              "header/main/footerなど"
+            ],
             "color": "#ef4444"
           },
           "right": {
             "title": "divタグ",
-            "points": ["意味を持たない", "見た目の都合でまとめる", "CSSでスタイルを当てるとき"],
+            "points": [
+              "意味を持たない",
+              "見た目の都合でまとめる",
+              "CSSでスタイルを当てるとき"
+            ],
             "color": "#f59e0b"
           }
         }
@@ -489,7 +625,7 @@
     },
     {
       "scene_id": 30,
-      "narration": "さあ、ここからはライブコーディングです。今まで作ってきた自己紹介ページを、セマンティックタグで構造化していきましょう。まず、CodePenを開いてください。前回までに作った自己紹介ページのペンを開きます。皆さんのコードは、名前や内容は違っていても、おおよそこんな構成になっていると思います。h1で名前の見出し、pで自己紹介文、h2でセクションの見出し、ulで趣味のリスト、imgで写真、aでSNSリンク。そしてページの最後にコピーライト表示。上から下にタグが並んでいるだけの状態ですね。",
+      "narration": "さあ、ここからはライブコーディングです。今まで作ってきた自己紹介ページを、セマンティックタグで構造化していきましょう。まず、CodePenを開いてください。前回までに作った自己紹介ページの'ぺ'んを開きます。皆さんのコードは、名前や内容は違っていても、おおよそこんな構成になっていると思います。エイチワンで名前の見出し、pで自己紹介文、エイチツーでセクションの見出し、ulで趣味のリスト、imgで写真、aでSNSリンク。そしてページの最後にコピーライト表示。上から下にタグが並んでいるだけの状態ですね。",
       "durationSec": 52,
       "visual": {
         "type": "remotion",
@@ -500,7 +636,9 @@
           "title": "ライブコーディング開始",
           "body": "既存の自己紹介ページをセマンティックタグで構造化します。コードの中身は変えず、外側から「囲む」だけです。"
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
@@ -520,7 +658,7 @@
     },
     {
       "scene_id": 32,
-      "narration": "では、上から順番にやっていきましょう。まず、ページの一番上です。h1の見出しを、headerタグで囲みましょう。コードの先頭にheaderの開始タグを書いて、h1の下にheaderの閉じタグを書きます。headerの開始タグと閉じタグで、h1をサンドイッチにするイメージですね。h1タグの前に半角スペースを2つ入れて字下げしましょう。字下げをすると、「h1がheaderの中に入っている」ということがコードの見た目でもわかりやすくなります。できましたか？プレビューを見てみてください。見た目は変わっていませんよね。それで正解なんです。セマンティックタグは見た目を変えるためのものではありませんから。",
+      "narration": "では、上から順番にやっていきましょう。まず、ページの一番上です。エイチワンの見出しを、headerタグで囲みましょう。コードの先頭にheaderの開始タグを書いて、エイチワンの下にheaderの閉じタグを書きます。headerの開始タグと閉じタグで、エイチワンをサンドイッチにするイメージですね。エイチワンタグの前に半角スペースを2つ入れて字下げしましょう。字下げをすると、「エイチワンがheaderの中に入っている」ということがコードの見た目でもわかりやすくなります。できましたか？プレビューを見てみてください。見た目は変わっていませんよね。それで正解なんです。セマンティックタグは見た目を変えるためのものではありませんから。",
       "durationSec": 61,
       "visual": {
         "type": "remotion",
@@ -530,12 +668,14 @@
           "language": "html",
           "title": "STEP 1: headerで囲む"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
       "scene_id": 33,
-      "narration": "次に、headerの中にnavタグを追加しましょう。ページ内の各セクションへのナビゲーションリンクを作ります。h1の下、headerの閉じタグの前に、こう書いてください。navタグの中に、aタグでリンクを3つ並べました。リンク先が「#about」のようにシャープ記号で始まっていますね。これは「ページ内リンク」と言って、同じページの中の特定の場所に飛ぶためのリンクです。シャープ記号のあとの名前は、飛び先の目印になります。飛び先の設定はこのあとやりますので、今はリンクだけ先に書いておきましょう。プレビューを見ると、「自己紹介」「趣味」「リンク」というテキストリンクが表示されていると思います。",
+      "narration": "次に、headerの中にnavタグを追加しましょう。ページ内の各セクションへのナビゲーションリンクを作ります。エイチワンの下、headerの閉じタグの前に、こう書いてください。navタグの中に、aタグでリンクを3つ並べました。リンク先が「#about」のようにシャープ記号で始まっていますね。これは「ページ内リンク」と言って、同じページの中の特定の場所に飛ぶためのリンクです。シャープ記号のあとの名前は、飛び先の目印になります。飛び先の設定はこのあとやりますので、今はリンクだけ先に書いておきましょう。プレビューを見ると、「自己紹介」「趣味」「リンク」というテキストリンクが表示されていると思います。",
       "durationSec": 63,
       "visual": {
         "type": "remotion",
@@ -545,7 +685,9 @@
           "language": "html",
           "title": "STEP 2: navを追加"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
@@ -565,7 +707,7 @@
     },
     {
       "scene_id": 35,
-      "narration": "まず、自己紹介のセクションです。h2の「自己紹介」見出しから、関連する段落や画像までをsectionで囲みます。sectionの開始タグに「id=\"about\"」と書きました。このidが、先ほどnavで作った「#about」リンクの飛び先になります。ナビゲーションで「自己紹介」をクリックすると、このsectionまでスクロールしてくれるわけです。これでページ内リンクの仕組みが完成しますね。",
+      "narration": "まず、自己紹介のセクションです。エイチツーの「自己紹介」見出しから、関連するだんらくや画像までをsectionで囲みます。sectionの開始タグに「id=\"about\"」と書きました。このidが、先ほどnavで作った「#about」リンクの飛び先になります。ナビゲーションで「自己紹介」をクリックすると、このsectionまでスクロールしてくれるわけです。これでページ内リンクの仕組みが完成しますね。",
       "durationSec": 42,
       "visual": {
         "type": "remotion",
@@ -575,7 +717,9 @@
           "language": "html",
           "title": "STEP 4a: section id=\"about\""
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
@@ -590,12 +734,14 @@
           "language": "html",
           "title": "STEP 4b: section hobby と links"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
       "scene_id": 37,
-      "narration": "最後に、ページの一番下にfooterを作ります。コピーライト表示やお問い合わせ情報をfooterで囲みましょう。footerはmainの閉じタグの下に書きます。mainの中ではなく、外側ですよ。メインコンテンツとフッターは別のまとまりですからね。お店でいうと、売り場を出てから出口の案内板がある、という配置です。ここで一つお伝えしておきたいことがあります。今、CodePenでは1つのHTMLペインにすべてのコードを書いていますが、実際のウェブサイトでは、このコード全体が「index.html」という1つのファイルの中身になります。パート4でファイルを使った開発環境に進んだとき、今日書いた構造がそのままファイルの中の構造になりますので、この感覚を覚えておいてくださいね。",
+      "narration": "最後に、ページの一番下にfooterを作ります。コピーライト表示やお問い合わせ情報をfooterで囲みましょう。footerはmainの閉じタグの下に書きます。mainの中ではなく、外側ですよ。メインコンテンツとフッターは別のまとまりですからね。お店でいうと、売り場を出てから出口の案内板がある、という配置です。ここで一つお伝えしておきたいことがあります。今、CodePenでは1つのHTMLペインにすべてのコードを書いていますが、実際のウェブサイトでは、このコード全体が「index.html」という1つのファイルの中身になります。パートフォーでファイルを使った開発環境に進んだとき、今日書いた構造がそのままファイルの中の構造になりますので、この感覚を覚えておいてくださいね。",
       "durationSec": 67,
       "visual": {
         "type": "remotion",
@@ -605,12 +751,14 @@
           "language": "html",
           "title": "STEP 5: footerで締める"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
       "scene_id": 38,
-      "narration": "では、ここまでのコード全体を確認しましょう。皆さんのコードもこのような形になっているか、見比べてみてください。名前やリンク先はそれぞれ違うと思いますが、構造は同じになっているはずです。headerの中にh1とnav。mainの中にsectionが3つ。そして最後にfooter。ページの間取り図が完成しましたね。navの中のリンクをクリックしてみてください。ページ内の対応するsectionにスクロールするはずです。もしうまく動かない場合は、navのリンク先の「#about」と、sectionのid「about」が一致しているか確認してみてください。",
+      "narration": "では、ここまでのコード全体を確認しましょう。皆さんのコードもこのような形になっているか、見比べてみてください。名前やリンク先はそれぞれ違うと思いますが、構造は同じになっているはずです。headerの中にエイチワンとnav。mainの中にsectionが3つ。そして最後にfooter。ページの間取り図が完成しましたね。navの中のリンクをクリックしてみてください。ページ内の対応するsectionにスクロールするはずです。もしうまく動かない場合は、navのリンク先の「#about」と、sectionのid「about」が一致しているか確認してみてください。",
       "durationSec": 54,
       "visual": {
         "type": "remotion",
@@ -618,15 +766,24 @@
         "props": {
           "title": "完成コードの全体像",
           "code": "<header>\n  <h1>田中太郎のページ</h1>\n  <nav>\n    <a href=\"#about\">自己紹介</a>\n    <a href=\"#hobby\">趣味</a>\n    <a href=\"#links\">リンク</a>\n  </nav>\n</header>\n\n<main>\n  <section id=\"about\">\n    <h2>自己紹介</h2>\n    <p>ネイルサロン「Bloom」を経営して5年目です。</p>\n  </section>\n  <section id=\"hobby\">\n    <h2>趣味</h2>\n    <ul><li>映画鑑賞</li></ul>\n  </section>\n  <section id=\"links\">\n    <h2>リンク</h2>\n    <a href=\"https://instagram.com/bloom_nail\">Instagram</a>\n  </section>\n</main>\n\n<footer>\n  <p>&copy; 2024 田中太郎</p>\n</footer>",
-          "highlightLines": [1, 9, 10, 17, 21, 25],
+          "highlightLines": [
+            1,
+            9,
+            10,
+            17,
+            21,
+            25
+          ],
           "caption": "header・main（3つのsection）・footerの構造"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
       "scene_id": 39,
-      "narration": "ここで、リファクタリングの前と後を見比べてみましょう。まず、変更前のコードを思い出してください。h1、p、h2、ul、img、aといったタグが、ただ上から順番に並んでいるだけでした。タグとタグの間に区切りがないので、コードを読む機械にとっては「ここからここまでが1つのまとまり」という情報が一切ありません。言ってみれば、仕切りのない倉庫に荷物が並んでいるような状態です。",
+      "narration": "ここで、リファクタリングの前と後を見比べてみましょう。まず、変更前のコードを思い出してください。エイチワン、p、エイチツー、ul、img、aといったタグが、ただ上から順番に並んでいるだけでした。タグとタグの間に区切りがないので、コードを読む機械にとっては「ここからここまでが1つのまとまり」という情報が一切ありません。言ってみれば、仕切りのない倉庫に荷物が並んでいるような状態です。",
       "durationSec": 43,
       "visual": {
         "type": "remotion",
@@ -635,16 +792,26 @@
           "title": "リファクタリング 前後比較",
           "before": {
             "label": "変更前",
-            "points": ["h1/p/h2/ulがただ並ぶ", "まとまりの情報がない", "機械には構造が伝わらない"],
+            "points": [
+              "h1/p/h2/ulがただ並ぶ",
+              "まとまりの情報がない",
+              "機械には構造が伝わらない"
+            ],
             "color": "#ef4444"
           },
           "after": {
             "label": "変更後",
-            "points": ["header・main・footerが明確", "3つのsectionで章立て", "人にも機械にも読みやすい"],
+            "points": [
+              "header・main・footerが明確",
+              "3つのsectionで章立て",
+              "人にも機械にも読みやすい"
+            ],
             "color": "#22c55e"
           }
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
@@ -664,7 +831,7 @@
     },
     {
       "scene_id": 41,
-      "narration": "これは、整理整頓されていない部屋と、きちんと収納された部屋の違いに似ています。どちらも同じ物が置いてあるんですが、片付いた部屋のほうが、どこに何があるかすぐにわかりますよね。来客があったときにも、整理された部屋のほうが好印象です。ウェブページにとっての「来客」が、検索エンジンやエーアイなわけです。実際のところ、世の中のウェブサイトを見てみると、プロが作ったサイトにはほぼ必ずセマンティックタグが使われています。パート2の最後の講義で、エーアイにHTMLを作ってもらう実習をしますが、そのときにエーアイが出力したコードを見て、「ここにheaderタグがないな」「mainの中をsectionで分けたほうが読みやすいな」と自分で判断できるかどうか。今日学んだことが、まさにその力の土台になります。",
+      "narration": "これは、整理整頓されていない部屋と、きちんと収納された部屋の違いに似ています。どちらも同じ物が置いてあるんですが、片付いた部屋のほうが、どこに何があるかすぐにわかりますよね。来客があったときにも、整理された部屋のほうが好印象です。ウェブページにとっての「来客」が、検索エンジンやエーアイなわけです。実際のところ、世の中のウェブサイトを見てみると、プロが作ったサイトにはほぼ必ずセマンティックタグが使われています。パートツーの最後の講義で、エーアイにHTMLを作ってもらう実習をしますが、そのときにエーアイが出力したコードを見て、「ここにheaderタグがないな」「mainの中をsectionで分けたほうが読みやすいな」と自分で判断できるかどうか。今日学んだことが、まさにその力の土台になります。",
       "durationSec": 64,
       "visual": {
         "type": "remotion",
@@ -702,7 +869,9 @@
             "見た目は変わらない。でも機械への伝わり方が変わる"
           ]
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
@@ -717,7 +886,9 @@
           "message": "CodePenを開いて、header・main・section・footerの構造をもう一度確認しておきましょう。",
           "nextPreview": "フォームを作ろう"
         },
-        "transition": { "exit": "zoom" }
+        "transition": {
+          "exit": "zoom"
+        }
       }
     }
   ]

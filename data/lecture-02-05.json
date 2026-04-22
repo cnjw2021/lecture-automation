@@ -15,7 +15,9 @@
           "title": "フォームでユーザー入力を受け取る",
           "sub": "PART 2 — 講義 2-5"
         },
-        "transition": { "enter": "zoom" }
+        "transition": {
+          "enter": "zoom"
+        }
       }
     },
     {
@@ -43,17 +45,27 @@
         "props": {
           "left": {
             "title": "情報を見せる側",
-            "points": ["テキストを表示する", "画像を載せる", "リンクを張る"],
+            "points": [
+              "テキストを表示する",
+              "画像を載せる",
+              "リンクを張る"
+            ],
             "color": "#94a3b8"
           },
           "right": {
             "title": "情報を受け取る側",
-            "points": ["お問い合わせフォーム", "ログイン画面", "検索ボックス"],
+            "points": [
+              "お問い合わせフォーム",
+              "ログイン画面",
+              "検索ボックス"
+            ],
             "color": "#ef4444"
           },
           "vsLabel": "→"
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
@@ -81,13 +93,35 @@
         "props": {
           "title": "フォームの使用例",
           "items": [
-            { "icon": "🏪", "title": "お店の予約", "description": "名前や電話番号を入力", "color": "#ef4444" },
-            { "icon": "🔍", "title": "Google検索", "description": "キーワードを入力してEnter", "color": "#ef4444" },
-            { "icon": "🛒", "title": "ネットショッピング", "description": "住所やカード番号を入力", "color": "#ef4444" },
-            { "icon": "🔐", "title": "ログイン画面", "description": "メールアドレスとパスワード", "color": "#ef4444" }
+            {
+              "icon": "🏪",
+              "title": "お店の予約",
+              "description": "名前や電話番号を入力",
+              "color": "#ef4444"
+            },
+            {
+              "icon": "🔍",
+              "title": "Google検索",
+              "description": "キーワードを入力してEnter",
+              "color": "#ef4444"
+            },
+            {
+              "icon": "🛒",
+              "title": "ネットショッピング",
+              "description": "住所やカード番号を入力",
+              "color": "#ef4444"
+            },
+            {
+              "icon": "🔐",
+              "title": "ログイン画面",
+              "description": "メールアドレスとパスワード",
+              "color": "#ef4444"
+            }
           ]
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
@@ -106,7 +140,7 @@
     },
     {
       "scene_id": 7,
-      "narration": "では、さっそくCodePenを開きましょう。今日は新しいペンを作って始めます。前回まで使っていた自己紹介ページのペンとは別に、新しいペンを作成してください。左上のメニューから新しいペンを作成できますね。HTMLの入力エリアに、こう書いてみましょう。",
+      "narration": "では、さっそくCodePenを開きましょう。今日は新しい'ぺ'んを作って始めます。前回まで使っていた自己紹介ページの'ぺ'んとは別に、新しい'ぺ'んを作成してください。左上のメニューから新しい'ぺ'んを作成できますね。HTMLの入力エリアに、こう書いてみましょう。",
       "durationSec": 25,
       "visual": {
         "type": "remotion",
@@ -116,7 +150,9 @@
           "language": "html",
           "title": "フォームの入れ物"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
@@ -146,7 +182,9 @@
           "language": "html",
           "title": "ラベルとインプット"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
@@ -214,7 +252,9 @@
           "language": "html",
           "title": "type=\"email\"を追加"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
@@ -244,7 +284,9 @@
           "language": "html",
           "title": "type=\"tel\"を追加"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
@@ -274,7 +316,9 @@
           "language": "html",
           "title": "type=\"date\"を追加"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
@@ -287,14 +331,36 @@
         "props": {
           "title": "インプットタグの4つのタイプ",
           "features": [
-            { "icon": "✍️", "title": "type=\"text\"", "description": "一行テキスト入力", "color": "#ef4444" },
-            { "icon": "📧", "title": "type=\"email\"", "description": "メールアドレス・形式チェック", "color": "#ef4444" },
-            { "icon": "📱", "title": "type=\"tel\"", "description": "電話番号・数字キーパッド", "color": "#ef4444" },
-            { "icon": "📅", "title": "type=\"date\"", "description": "日付選択・カレンダーUI", "color": "#ef4444" }
+            {
+              "icon": "✍️",
+              "title": "type=\"text\"",
+              "description": "一行テキスト入力",
+              "color": "#ef4444"
+            },
+            {
+              "icon": "📧",
+              "title": "type=\"email\"",
+              "description": "メールアドレス・形式チェック",
+              "color": "#ef4444"
+            },
+            {
+              "icon": "📱",
+              "title": "type=\"tel\"",
+              "description": "電話番号・数字キーパッド",
+              "color": "#ef4444"
+            },
+            {
+              "icon": "📅",
+              "title": "type=\"date\"",
+              "description": "日付選択・カレンダーUI",
+              "color": "#ef4444"
+            }
           ],
           "columns": 2
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
@@ -309,7 +375,9 @@
           "definition": "複数行のテキスト入力ができる部品。長いメッセージや自由記述欄に使う。",
           "example": "<textarea></textarea>"
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
@@ -324,7 +392,9 @@
           "language": "html",
           "title": "テキストエリアを追加"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
@@ -354,7 +424,9 @@
           "language": "html",
           "title": "セレクトタグを追加"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
@@ -387,7 +459,9 @@
             "<select>タグ — ドロップダウン選択"
           ]
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
@@ -402,7 +476,9 @@
           "language": "html",
           "title": "placeholder属性を追加"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
@@ -432,7 +508,9 @@
           "language": "html",
           "title": "全入力欄にplaceholderを設定"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
@@ -447,7 +525,9 @@
           "language": "html",
           "title": "required属性を追加"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
@@ -476,7 +556,9 @@
           "language": "html",
           "title": "メールアドレスにもrequired"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
@@ -491,7 +573,9 @@
           "language": "html",
           "title": "送信ボタンを追加"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
@@ -535,7 +619,9 @@
           "language": "html",
           "title": "完成したお問い合わせフォーム"
         },
-        "transition": { "enter": "slide-up" }
+        "transition": {
+          "enter": "slide-up"
+        }
       }
     },
     {
@@ -548,7 +634,16 @@
         "props": {
           "title": "完成コードを確認しよう",
           "code": "<form>\n  <label>お名前</label>\n  <input type=\"text\" placeholder=\"山田太郎\" required>\n\n  <label>メールアドレス</label>\n  <input type=\"email\" placeholder=\"example@mail.com\" required>\n\n  <label>電話番号</label>\n  <input type=\"tel\" placeholder=\"09012345678\">\n\n  <label>ご予約日</label>\n  <input type=\"date\">",
-          "highlightLines": [2, 3, 5, 6, 8, 9, 11, 12],
+          "highlightLines": [
+            2,
+            3,
+            5,
+            6,
+            8,
+            9,
+            11,
+            12
+          ],
           "caption": "4つのinputタグ — typeを変えるだけで入力欄の種類が変わる"
         }
       }
@@ -563,17 +658,37 @@
         "props": {
           "title": "各部品の役割",
           "items": [
-            { "icon": "✅", "title": "required属性", "detail": "お名前・メール欄に設定。空のまま送信不可。", "color": "#ef4444" },
-            { "icon": "💡", "title": "placeholder属性", "detail": "各入力欄に見本テキストを表示。", "color": "#ef4444" },
-            { "icon": "📋", "title": "select+option", "detail": "ご予約・ご質問・その他の3択。", "color": "#ef4444" },
-            { "icon": "📝", "title": "textarea", "detail": "メッセージの複数行入力欄。", "color": "#ef4444" }
+            {
+              "icon": "✅",
+              "title": "required属性",
+              "detail": "お名前・メール欄に設定。空のまま送信不可。",
+              "color": "#ef4444"
+            },
+            {
+              "icon": "💡",
+              "title": "placeholder属性",
+              "detail": "各入力欄に見本テキストを表示。",
+              "color": "#ef4444"
+            },
+            {
+              "icon": "📋",
+              "title": "select+option",
+              "detail": "ご予約・ご質問・その他の3択。",
+              "color": "#ef4444"
+            },
+            {
+              "icon": "📝",
+              "title": "textarea",
+              "detail": "メッセージの複数行入力欄。",
+              "color": "#ef4444"
+            }
           ]
         }
       }
     },
     {
       "scene_id": 37,
-      "narration": "今はまだCSSを当てていないので、見た目はかなり素朴ですよね。入力欄がただ並んでいるだけで、あまりきれいとは言えません。でも、フォームとしての「骨組み」はしっかりできています。見た目をきれいに整えるのはCSSの仕事です。パート3以降で、余白を調整したり、色をつけたり、ボタンのデザインを変えたりする方法を学んでいきます。プレビューで実際に操作してみてください。名前を入力して、メールアドレスを入力して、種別をドロップダウンから選んで、メッセージを書いて、送信ボタンを押す。ウェブサイトのお問い合わせページで見かける、あの一連の流れが、自分の手で作れましたね。ここまでよくがんばりました。",
+      "narration": "今はまだCSSを当てていないので、見た目はかなり素朴ですよね。入力欄がただ並んでいるだけで、あまりきれいとは言えません。でも、フォームとしての「骨組み」はしっかりできています。見た目をきれいに整えるのはCSSの仕事です。パートスリー以降で、余白を調整したり、色をつけたり、ボタンのデザインを変えたりする方法を学んでいきます。プレビューで実際に操作してみてください。名前を入力して、メールアドレスを入力して、種別をドロップダウンから選んで、メッセージを書いて、送信ボタンを押す。ウェブサイトのお問い合わせページで見かける、あの一連の流れが、自分の手で作れましたね。ここまでよくがんばりました。",
       "durationSec": 57,
       "visual": {
         "type": "remotion",
@@ -597,7 +712,9 @@
           "question": "送信ボタンを押したのに何も起きないのはなぜ？",
           "answer": "HTMLは入力欄を表示するだけ。データを受け取って処理するのはサーバーの仕事。今のコードにはサーバー処理がない。"
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
@@ -610,20 +727,49 @@
         "props": {
           "title": "フォームとサーバーの関係",
           "nodes": [
-            { "id": "form", "label": "HTMLフォーム\n（申込用紙）", "x": 280, "y": 420, "icon": "📋", "color": "#ef4444" },
-            { "id": "server", "label": "サーバー\n（受付窓口）", "x": 840, "y": 420, "icon": "💻", "color": "#94a3b8" },
-            { "id": "action", "label": "メール送信\nDB保存", "x": 1400, "y": 420, "icon": "📤", "color": "#94a3b8" }
+            {
+              "id": "form",
+              "label": "HTMLフォーム\n（申込用紙）",
+              "x": 280,
+              "y": 420,
+              "icon": "📋",
+              "color": "#ef4444"
+            },
+            {
+              "id": "server",
+              "label": "サーバー\n（受付窓口）",
+              "x": 840,
+              "y": 420,
+              "icon": "💻",
+              "color": "#94a3b8"
+            },
+            {
+              "id": "action",
+              "label": "メール送信\nDB保存",
+              "x": 1400,
+              "y": 420,
+              "icon": "📤",
+              "color": "#94a3b8"
+            }
           ],
           "edges": [
-            { "from": "form", "to": "server", "label": "データを送信" },
-            { "from": "server", "to": "action", "label": "処理する" }
+            {
+              "from": "form",
+              "to": "server",
+              "label": "データを送信"
+            },
+            {
+              "from": "server",
+              "to": "action",
+              "label": "処理する"
+            }
           ]
         }
       }
     },
     {
       "scene_id": 40,
-      "narration": "「えっ、じゃあサーバーの仕組みまで自分で作らないといけないの？」と思った方、心配しないでください。サーバー側の処理はこの講座の範囲外ですが、実際にはそういった仕組みを簡単に用意できるサービスもあります。今日大事なのは、HTMLでフォームの「見た目」と「構造」を作れるようになったことです。これが基礎になります。今は「HTMLで入力欄を並べて、フォームの骨組みを作る。実際にデータを送るにはサーバーが必要。でも今はHTMLで見た目を作る練習をしている」と、ざっくり把握しておけば大丈夫です。焦る必要はまったくありません。一歩一歩進んでいきましょう。",
+      "narration": "「えっ、じゃあサーバーの仕組みまで自分で作らないといけないの？」と思った方、心配しないでください。サーバー側の処理はこの講座の範囲外ですが、実際にはそういった仕組みを簡単に用意できるサービスもあります。今日大事なのは、HTMLでフォームの「見た目」と「構造」を作れるようになったことです。これが基礎になります。今は「HTMLで入力欄を並べて、フォームの骨組みを作る。実際にデータを送るにはサーバーが必要。でも今はHTMLで見た目を作る練習をしている」と、ざっくり把握しておけば大丈夫です。あせる必要はまったくありません。一歩一歩進んでいきましょう。",
       "durationSec": 56,
       "visual": {
         "type": "remotion",
@@ -650,7 +796,9 @@
             "placeholder属性でヒント、required属性で必須チェック"
           ]
         },
-        "transition": { "enter": "slide-left" }
+        "transition": {
+          "enter": "slide-left"
+        }
       }
     },
     {
@@ -679,7 +827,9 @@
           "title": "お疲れ様でした",
           "nextPreview": "テーブルで表組みを作る"
         },
-        "transition": { "exit": "zoom" }
+        "transition": {
+          "exit": "zoom"
+        }
       }
     }
   ]
