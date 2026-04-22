@@ -18,7 +18,7 @@ export class FfmpegConcatProvider implements IConcatProvider {
     const listContent = clipPaths.map(p => `file '${p}'`).join('\n');
     await fs.writeFile(listPath, listContent, 'utf8');
 
-    const command = `ffmpeg -y -f concat -safe 0 -i "${listPath}" -c copy -fflags +genpts "${outputPath}"`;
+    const command = `ffmpeg -y -f concat -safe 0 -i "${listPath}" -c copy -video_track_timescale 15360 "${outputPath}"`;
 
     return new Promise((resolve, reject) => {
       exec(command, { maxBuffer: 1024 * 1024 * 50 }, (error, _stdout, stderr) => {
