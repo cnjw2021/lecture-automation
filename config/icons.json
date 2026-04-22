@@ -2,8 +2,12 @@
   "brandIcons": [
     "claude", "chatgpt", "cursor", "v0",
     "github", "netlify", "figma", "stackblitz", "chrome", "html5",
-    "codepen", "css3", "vscode", "canva"
+    "codepen", "css3", "vscode", "canva",
+    "matryoshka"
   ],
+  "emojiToBrandIcon": {
+    "🪆": "matryoshka"
+  },
   "allowedEmojiFallbacks": [
     "⚪", "⚫", "🇯🇵", "🐸", "💆", "🧘",
     "🔴", "🔵", "🟠", "🟡", "🟢", "🟫"
@@ -46,7 +50,7 @@
     "🖼": "Image", "🖼️": "Image",
 
     "📄": "FileText", "📃": "FileText", "📋": "ClipboardList", "📑": "PanelsTopLeft", "📰": "Newspaper",
-    "📁": "Folder", "📂": "FolderOpen", "🗂️": "FolderTree", "🪆": "SquareStack",
+    "📁": "Folder", "📂": "FolderOpen", "🗂️": "FolderTree",
     "📖": "BookOpen", "📚": "Library", "📕": "Book", "📗": "Book", "📘": "Book", "🃏": "LayoutGrid",
 
     "✅": "CheckCircle", "❌": "XCircle", "⭕": "Circle",

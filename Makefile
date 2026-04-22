@@ -1,7 +1,7 @@
 # Lecture Automation Makefile
 
 .PHONY: help install build run run-lambda run-force run-force-lambda regen-scene regen-visual run-tts-only run-render-only run-render-only-lambda render-scene render-scene-lambda record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
-        sync-playwright save-auth validate-schema lint lint-fix audit
+        sync-playwright save-auth validate-schema lint lint-fix audit deploy-lambda
 
 # 기본 변수 설정
 LECTURE ?= lecture-01-01.json
@@ -40,6 +40,7 @@ help:
 	@echo "make render-scene LECTURE=xxx SCENE=5      - 특정 씬 클립만 렌더링"
 	@echo "make render-scene LECTURE=xxx SCENE='5 12' - 여러 씬 클립 렌더링"
 	@echo "make render-scene-lambda LECTURE=xxx SCENE='5 12' - Remotion Lambda로 씬 클립 병렬 렌더링"
+	@echo "make deploy-lambda           - Remotion 사이트 번들 빌드 & S3 업로드 (public/ 변경 후 실행)"
 	@echo "make record-webm LECTURE=xxx SCENE=17      - 특정 Playwright 씬 webm 재생성"
 	@echo "make record-webm LECTURE=xxx SCENE='17 18' - 여러 Playwright 씬 webm 재생성"
 	@echo "make concat-scenes LECTURE=xxx             - 씬 클립 이어붙여 최종 MP4 생성"
@@ -133,6 +134,10 @@ render-scene:
 render-scene-lambda: build
 	@echo "☁️  Remotion Lambda 씬 클립 렌더링: $(LECTURE) / Scene $(SCENE)"
 	env REMOTION_RENDER_MODE=lambda node $(ENGINE_RENDER_SCENE) $(LECTURE) $(SCENE)
+
+deploy-lambda: build
+	@echo "☁️  Remotion Lambda 사이트 배포 (번들 업로드)..."
+	node packages/automation/dist/presentation/cli/deploy-lambda.js
 
 record-webm:
 	@echo "🎥 Playwright 씬 webm 녹화: $(LECTURE) / Scene $(SCENE)"
