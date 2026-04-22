@@ -76,7 +76,10 @@ const LANDMINES: Landmine[] = [
     fixPattern: /(?<![一-龯])行の/g,
   },
 
-  // A-6: ペイン → 店員 (P→T 자소 오독 계열, Hinata 보이스)
+  // A-6: セットアップ → 이상 발음 (ップ 끝 P→T 자소 오독 계열, Hinata 보이스)
+  { pattern: /セットアップ/g, from: 'セットアップ', to: 'せっとあっぷ', reason: 'セットアップ → 語尾プ がP→T오독 (Hinata 보이스). 히라가나로 회피' },
+
+  // A-7: ペイン → 店員 (P→T 자소 오독 계열, Hinata 보이스)
   // スペイン・ペイント・ペインティング 등 복합어는 제외.
   {
     pattern: /(?<![ァ-ヴーA-Za-z])ペイン(?![ァ-ヴーA-Za-z])/g,
@@ -113,7 +116,7 @@ function makeRegexFix(sceneIdx: number, pattern: RegExp, to: string) {
 
 export const ttsLandminesRule: LintRule = {
   id: 'A-tts-landmines',
-  description: 'TTS 오독 패턴 검출 및 자동 수정 (パート1, 上半分, gap, px, http://, 行の, ペイン 등)',
+  description: 'TTS 오독 패턴 검출 및 자동 수정 (パート1, 上半分, gap, px, http://, 行の, セットアップ, ペイン 등)',
 
   run(lecture: any): LintIssue[] {
     const issues: LintIssue[] = [];
