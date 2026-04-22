@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install build run run-lambda run-force run-force-lambda regen-scene regen-visual run-tts-only run-render-only run-render-only-lambda render-scene render-scene-lambda record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
+.PHONY: help install build run run-lambda run-force run-force-lambda regen-scene regen-scene-lambda regen-visual run-tts-only run-render-only run-render-only-lambda render-scene render-scene-lambda record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
         sync-playwright save-auth validate-schema lint lint-fix audit deploy-lambda
 
 # 기본 변수 설정
@@ -33,6 +33,7 @@ help:
 	@echo "make tts-sample TTS=gemini_cloud_tts RATE=0.7 - 프로바이더/속도 지정"
 	@echo "make regen-scene LECTURE=xxx SCENE=5       - 특정 씬만 빠르게 재생성 (TTS·webm·클립 모두)"
 	@echo "make regen-scene LECTURE=xxx SCENE='5 12'  - 여러 씬 동시 재생성"
+	@echo "make regen-scene-lambda LECTURE=xxx SCENE='5 12' - regen-scene + Remotion Lambda로 클립 병렬 렌더링"
 	@echo "make regen-visual LECTURE=xxx SCENE='6 14' - 씬 visual만 재생성 (webm + 클립, TTS 유지)"
 	@echo "make run-tts-only LECTURE=xxx SCENE='1 2 3' - 지정 씬 TTS만 재생성 + 미리 듣기 파일 생성"
 	@echo "make run-render-only LECTURE=xxx      - TTS/캡처 제외하고 전체 씬 렌더링 & 클립 병합만 재실행"
@@ -91,6 +92,21 @@ regen-scene: build
 		find packages/remotion/public/state-captures/$$LECTURE_ID -type d -name "scene-$$scene" -exec rm -rf {} + 2>/dev/null || true; \
 	done
 	env TARGET_SCENES="$(SCENE)" node $(ENGINE_PATH) $(LECTURE)
+
+regen-scene-lambda: build
+	@echo "🔄 특정 Scene 재생성 (Lambda): $(LECTURE) / Scene $(SCENE)"
+	@LECTURE_ID=$$(node -e "const d=require('./data/$(LECTURE)'); console.log(d.lecture_id)"); \
+	for scene in $(SCENE); do \
+		echo "  🗑️  scene-$$scene.wav 삭제 중..."; \
+		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene.wav; \
+		echo "  🗑️  scene-$$scene.mp4 클립 삭제 중..."; \
+		rm -f $(OUTPUT_DIR)/clips/$$LECTURE_ID/scene-$$scene.mp4; \
+		echo "  🗑️  scene-$$scene.webm 캡처 삭제 중..."; \
+		rm -f packages/remotion/public/captures/$$LECTURE_ID/scene-$$scene.webm; \
+		echo "  🗑️  session 캡처 디렉토리 삭제 중 (shared 씬)..."; \
+		find packages/remotion/public/state-captures/$$LECTURE_ID -type d -name "scene-$$scene" -exec rm -rf {} + 2>/dev/null || true; \
+	done
+	env TARGET_SCENES="$(SCENE)" REMOTION_RENDER_MODE=lambda node $(ENGINE_PATH) $(LECTURE)
 
 regen-visual: build
 	@echo "🎞️  Visual 씬만 재생성 (TTS 유지): $(LECTURE) / Scene $(SCENE)"
