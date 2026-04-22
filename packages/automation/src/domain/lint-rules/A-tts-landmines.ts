@@ -42,6 +42,8 @@ const LANDMINES: Landmine[] = [
   // A-2: 漢字 발음 흔들림
   { pattern: /上半分/g, from: '上半分', to: '上のエリア', reason: '上半分 발음 흔들림 (じょうはんぶん/うえはんぶん)' },
   { pattern: /下半分/g, from: '下半分', to: '下のエリア', reason: '下半分 발음 흔들림' },
+  // 段落: "だんらく" 가 "단다쿠" (だんだく 계열) 로 오독. ひらがな 로 회피.
+  { pattern: /段落/g, from: '段落', to: 'だんらく', reason: '段落 → "단다쿠" 오독. ひらがな 변환' },
 
   // A-3: 英語 약어 오독
   // gap, px 는 단어 경계에서만 (URL/혼합어 안의 우연 일치 회피)
@@ -88,6 +90,25 @@ const LANDMINES: Landmine[] = [
     reason: 'ペイン → "店員" 오독 (P→T 자소 오독 계열). スペイン・ペイント等の複合語は除外',
     fixPattern: /(?<![ァ-ヴーA-Za-z])ペイン(?![ァ-ヴーA-Za-z])/g,
   },
+
+  // A-8: ペン / Pen → テン 오독 (CodePen의 "Pen" 을 "Ten" 으로 오독)
+  // 'ぺ'ん 형식(ASCII 아포스트로피로 문자 분리) 로 우회. 단독 ペン/Pen 만 대상.
+  // ペンダント・ペンギン・ペンチ・スペイン 등 複合 カタカナ語 は 除外.
+  // CodePen 같은 英단어 내 Pen 도 단어 경계로 除外.
+  {
+    pattern: /(?<![ァ-ヴー])ペン(?![ァ-ヴー])/g,
+    from: 'ペン',
+    to: "'ぺ'ん",
+    reason: 'ペン → "テン" 오독 회피. 単独 ペン 만 대상, 複合 カタカナ語 除外',
+    fixPattern: /(?<![ァ-ヴー])ペン(?![ァ-ヴー])/g,
+  },
+  {
+    pattern: /(?<![A-Za-z])Pen(?![A-Za-z])/g,
+    from: 'Pen',
+    to: "'ぺ'ん",
+    reason: 'Pen → "Ten" 오독 회피. CodePen 등 英단어 내 Pen 은 단어 경계로 除外',
+    fixPattern: /(?<![A-Za-z])Pen(?![A-Za-z])/g,
+  },
 ];
 
 /**
@@ -116,7 +137,7 @@ function makeRegexFix(sceneIdx: number, pattern: RegExp, to: string) {
 
 export const ttsLandminesRule: LintRule = {
   id: 'A-tts-landmines',
-  description: 'TTS 오독 패턴 검출 및 자동 수정 (パート1, 上半分, gap, px, http://, 行の, セットアップ, ペイン 등)',
+  description: 'TTS 오독 패턴 검출 및 자동 수정 (パート1, 上半分, 段落, gap, px, http://, 行の, セットアップ, ペイン, ペン, Pen 등)',
 
   run(lecture: any): LintIssue[] {
     const issues: LintIssue[] = [];
