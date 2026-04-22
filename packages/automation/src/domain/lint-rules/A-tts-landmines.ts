@@ -109,6 +109,24 @@ const LANDMINES: Landmine[] = [
     reason: 'Pen → "Ten" 오독 회피. CodePen 등 英단어 내 Pen 은 단어 경계로 除外',
     fixPattern: /(?<![A-Za-z])Pen(?![A-Za-z])/g,
   },
+
+  // A-9: 改行 → "きゃいぎょう" 오독 (かいぎょう 여야 함). ひらがな 변환으로 회피
+  // lecture-02-01 14:35 실측
+  { pattern: /改行/g, from: '改行', to: 'かいぎょう', reason: '改行 → "きゃいぎょう" 오독. ひらがな 변환' },
+
+  // A-10: ペア → "てあ" 오독 (P→T 자소 오독 계열, ペン 과 동일 패턴)
+  // lecture-02-01 19:06 실측. 단독 ペア 만 대상, ペアレント・ペアリング 등 복합어 제외
+  {
+    pattern: /(?<![ァ-ヴー])ペア(?![ァ-ヴー])/g,
+    from: 'ペア',
+    to: "'ぺ'あ",
+    reason: 'ペア → "てあ" 오독 (P→T 자소 오독 계열). 複合 カタカナ語 除外',
+    fixPattern: /(?<![ァ-ヴー])ペア(?![ァ-ヴー])/g,
+  },
+
+  // A-11: タグ → "だぐ" 오독 (T→D 자소 오독). ひらがな 변환으로 회피
+  // lecture-02-01 19:33 실측. HTML タグ 설명 전반에 등장
+  { pattern: /タグ/g, from: 'タグ', to: 'たぐ', reason: 'タグ → "だぐ" 오독 (T→D 자소 오독). ひらがな 변환' },
 ];
 
 /**
@@ -137,7 +155,7 @@ function makeRegexFix(sceneIdx: number, pattern: RegExp, to: string) {
 
 export const ttsLandminesRule: LintRule = {
   id: 'A-tts-landmines',
-  description: 'TTS 오독 패턴 검출 및 자동 수정 (パート1, 上半分, 段落, gap, px, http://, 行の, セットアップ, ペイン, ペン, Pen 등)',
+  description: 'TTS 오독 패턴 검출 및 자동 수정 (パート1, 上半分, 段落, gap, px, http://, 行の, セットアップ, ペイン, ペン, Pen, 改行, ペア, タグ 등)',
 
   run(lecture: any): LintIssue[] {
     const issues: LintIssue[] = [];
