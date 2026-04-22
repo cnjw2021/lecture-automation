@@ -1,4 +1,5 @@
 import { exec } from 'child_process';
+import { promisify } from 'util';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { Lecture } from '../../domain/entities/Lecture';
@@ -6,6 +7,8 @@ import { ISceneClipRenderProvider } from '../../domain/interfaces/ISceneClipRend
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
 import { config } from '../config';
 import { SharedSessionManifestLoader } from '../services/SharedSessionManifestLoader';
+
+const execAsync = promisify(exec);
 
 export class RemotionSceneClipRenderProvider implements ISceneClipRenderProvider {
   private readonly sharedSessionManifestLoader: SharedSessionManifestLoader;
@@ -44,8 +47,22 @@ export class RemotionSceneClipRenderProvider implements ISceneClipRenderProvider
           console.error(`    ❌ Scene ${sceneId} 렌더링 실패 (${elapsed}초): ${error.message}`);
           return reject(error);
         }
-        console.log(`    ✅ Scene ${sceneId} 완료 (${elapsed}초)`);
-        resolve();
+
+        // Lambda 출력(1/15360)과 타임베이스를 통일 — -c copy라 재인코딩 없음
+        const tmpPath = `${outPath}.tmp.mp4`;
+        fs.moveSync(outPath, tmpPath);
+        execAsync(`ffmpeg -y -i "${tmpPath}" -c copy -video_track_timescale 15360 "${outPath}"`)
+          .then(() => {
+            fs.removeSync(tmpPath);
+            console.log(`    ✅ Scene ${sceneId} 완료 (${elapsed}초)`);
+            resolve();
+          })
+          .catch(tbError => {
+            fs.moveSync(tmpPath, outPath, { overwrite: true });
+            console.warn(`    ⚠️  Scene ${sceneId} 타임베이스 변환 실패, 원본 유지: ${tbError.message}`);
+            console.log(`    ✅ Scene ${sceneId} 완료 (${elapsed}초)`);
+            resolve();
+          });
       });
 
       if (child.stdout) {
