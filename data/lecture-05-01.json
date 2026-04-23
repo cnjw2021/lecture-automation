@@ -62,9 +62,24 @@
         "props": {
           "title": "PART 5でやること",
           "items": [
-            { "icon": "📄", "title": "ファイルに変換", "description": "CodePen → StackBlitz", "color": "#f59e0b" },
-            { "icon": "🌐", "title": "インターネットに公開", "description": "Netlifyでデプロイ", "color": "#f59e0b" },
-            { "icon": "🔗", "title": "URLを取得", "description": "世界中からアクセス可能に", "color": "#f59e0b" }
+            {
+              "icon": "📄",
+              "title": "ファイルに変換",
+              "description": "CodePen → StackBlitz",
+              "color": "#f59e0b"
+            },
+            {
+              "icon": "🌐",
+              "title": "インターネットに公開",
+              "description": "Netlifyでデプロイ",
+              "color": "#f59e0b"
+            },
+            {
+              "icon": "🔗",
+              "title": "URLを取得",
+              "description": "世界中からアクセス可能に",
+              "color": "#f59e0b"
+            }
           ]
         }
       }
@@ -79,10 +94,26 @@
         "props": {
           "title": "今日の流れ",
           "items": [
-            { "icon": "❓", "title": "なぜ変換が必要か", "duration": "2分" },
-            { "icon": "💻", "title": "StackBlitzにログイン", "duration": "2分" },
-            { "icon": "📂", "title": "コードをファイルに移す", "duration": "8分" },
-            { "icon": "📦", "title": "zipでダウンロード", "duration": "2分" }
+            {
+              "icon": "❓",
+              "title": "なぜ変換が必要か",
+              "duration": "2分"
+            },
+            {
+              "icon": "💻",
+              "title": "StackBlitzにログイン",
+              "duration": "2分"
+            },
+            {
+              "icon": "📂",
+              "title": "コードをファイルに移す",
+              "duration": "8分"
+            },
+            {
+              "icon": "📦",
+              "title": "zipでダウンロード",
+              "duration": "2分"
+            }
           ]
         },
         "transition": {
@@ -100,12 +131,20 @@
         "props": {
           "left": {
             "title": "CodePen",
-            "points": ["学習に最適なツール", "HTML/CSSペインで編集", "公開URLなし"],
+            "points": [
+              "学習に最適なツール",
+              "HTML/CSSペインで編集",
+              "公開URLなし"
+            ],
             "color": "#6366f1"
           },
           "right": {
             "title": "本物のファイル",
-            "points": ["公開に必要な形式", "index.htmlとstyle.css", "インターネット公開可能"],
+            "points": [
+              "公開に必要な形式",
+              "index.htmlとstyle.css",
+              "インターネット公開可能"
+            ],
             "color": "#f59e0b"
           },
           "vsLabel": "→"
@@ -125,9 +164,21 @@
         "props": {
           "title": "ファイルの例",
           "items": [
-            { "icon": "📄", "title": "Word文書", "description": ".docxファイル" },
-            { "icon": "🖼️", "title": "写真", "description": ".jpgファイル" },
-            { "icon": "🌐", "title": "Webサイト", "description": ".htmlと.cssファイル" }
+            {
+              "icon": "📄",
+              "title": "Word文書",
+              "description": ".docxファイル"
+            },
+            {
+              "icon": "🖼️",
+              "title": "写真",
+              "description": ".jpgファイル"
+            },
+            {
+              "icon": "🌐",
+              "title": "Webサイト",
+              "description": ".htmlと.cssファイル"
+            }
           ]
         }
       }
@@ -142,9 +193,18 @@
         "props": {
           "title": "CodePenが自動でやってくれていた3つのこと",
           "items": [
-            { "title": "HTMLとCSSの接続", "description": "linkタグでつなぐ" },
-            { "title": "Google Fontsの読み込み", "description": "fontのlinkタグを追加" },
-            { "title": "ビューポートの設定", "description": "metaタグを追加" }
+            {
+              "title": "HTMLとCSSの接続",
+              "description": "linkタグでつなぐ"
+            },
+            {
+              "title": "Google Fontsの読み込み",
+              "description": "fontのlinkタグを追加"
+            },
+            {
+              "title": "ビューポートの設定",
+              "description": "metaタグを追加"
+            }
           ]
         }
       }
@@ -212,7 +272,7 @@
     },
     {
       "scene_id": 12,
-      "narration": "では、いよいよコードを移していきます。まずHTMLからです。別のタブでCodePenを開いてください。PART 4で完成させたサロンサイトのペンを開きます。CodePenのHTMLペインに書いてあるコード、これを全部選択してコピーします。Windowsの方はコントロールプラスエーで全選択してからコントロールプラスシーでコピー、Macの方はコマンドプラスエーで全選択してコマンドプラスシーでコピーです。",
+      "narration": "では、いよいよコードを移していきます。まずHTMLからです。別のタブでCodePenを開いてください。PART 4で完成させたサロンサイトの'ぺ'んを開きます。CodePenのHTMLペインに書いてあるコード、これを全部選択してコピーします。Windowsの方はコントロールプラスエーで全選択してからコントロールプラスシーでコピー、Macの方はコマンドプラスエーで全選択してコマンドプラスシーでコピーです。",
       "durationSec": 38,
       "visual": {
         "type": "remotion",
@@ -220,9 +280,17 @@
         "props": {
           "title": "HTMLコードを移す手順",
           "items": [
-            { "title": "CodePenを別タブで開く", "description": "PART 4のサロンサイトのペン" },
-            { "title": "HTMLペインを全選択してコピー", "description": "Ctrl+A / Cmd+A → Ctrl+C / Cmd+C" },
-            { "title": "StackBlitzのindex.htmlに貼り付け" }
+            {
+              "title": "CodePenを別タブで開く",
+              "description": "PART 4のサロンサイトのペン"
+            },
+            {
+              "title": "HTMLペインを全選択してコピー",
+              "description": "Ctrl+A / Cmd+A → Ctrl+C / Cmd+C"
+            },
+            {
+              "title": "StackBlitzのindex.htmlに貼り付け"
+            }
           ]
         },
         "transition": {
@@ -307,8 +375,14 @@
         "props": {
           "title": "headタグに追加する残り2つ",
           "items": [
-            { "title": "Google Fontsの読み込み", "description": "CodePen SettingsのURLをlinkタグで追加" },
-            { "title": "ビューポートの設定", "description": "スマートフォン表示用のmetaタグを追加" }
+            {
+              "title": "Google Fontsの読み込み",
+              "description": "CodePen SettingsのURLをlinkタグで追加"
+            },
+            {
+              "title": "ビューポートの設定",
+              "description": "スマートフォン表示用のmetaタグを追加"
+            }
           ]
         },
         "transition": {

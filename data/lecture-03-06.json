@@ -43,9 +43,15 @@
         "props": {
           "title": "今日のゴール",
           "items": [
-            { "title": "パソコン: 3列" },
-            { "title": "タブレット: 2列" },
-            { "title": "スマートフォン: 1列" }
+            {
+              "title": "パソコン: 3列"
+            },
+            {
+              "title": "タブレット: 2列"
+            },
+            {
+              "title": "スマートフォン: 1列"
+            }
           ]
         }
       }
@@ -79,9 +85,21 @@
         "props": {
           "title": "スマートフォンで検索されるビジネス",
           "items": [
-            { "icon": "✂️", "title": "美容室・ネイルサロン", "description": "電車の中から「近くの美容室」と検索" },
-            { "icon": "🏥", "title": "整体院・医院", "description": "症状や場所で検索して予約" },
-            { "icon": "📚", "title": "英会話・習い事教室", "description": "口コミと一緒に検索して判断" }
+            {
+              "icon": "✂️",
+              "title": "美容室・ネイルサロン",
+              "description": "電車の中から「近くの美容室」と検索"
+            },
+            {
+              "icon": "🏥",
+              "title": "整体院・医院",
+              "description": "症状や場所で検索して予約"
+            },
+            {
+              "icon": "📚",
+              "title": "英会話・習い事教室",
+              "description": "口コミと一緒に検索して判断"
+            }
           ]
         }
       }
@@ -146,9 +164,21 @@
         "props": {
           "title": "よく使うブレイクポイントの目安",
           "bars": [
-            { "label": "スマートフォン", "value": 480, "color": "#ef4444" },
-            { "label": "タブレット", "value": 768, "color": "#f59e0b" },
-            { "label": "パソコン", "value": 1024, "color": "#3b82f6" }
+            {
+              "label": "スマートフォン",
+              "value": 480,
+              "color": "#ef4444"
+            },
+            {
+              "label": "タブレット",
+              "value": 768,
+              "color": "#f59e0b"
+            },
+            {
+              "label": "パソコン",
+              "value": 1024,
+              "color": "#3b82f6"
+            }
           ],
           "unit": "px"
         }
@@ -171,7 +201,7 @@
     },
     {
       "scene_id": 11,
-      "narration": "では、CodePen を開いて実際に書いてみましょう。前回の Flexbox の講義で作ったカード3枚のペンを使います。開いてください。今、カード3枚が横に並んでいる状態ですよね。HTML にはカードコンテナの中にカードが3つ、CSS にはカードコンテナにディスプレイフレックスやギャップが指定されている状態です。",
+      "narration": "では、CodePen を開いて実際に書いてみましょう。前回の Flexbox の講義で作ったカード3枚の'ぺ'んを使います。開いてください。今、カード3枚が横に並んでいる状態ですよね。HTML にはカードコンテナの中にカードが3つ、CSS にはカードコンテナにディスプレイフレックスやギャップが指定されている状態です。",
       "durationSec": 35,
       "visual": {
         "type": "remotion",
@@ -215,7 +245,11 @@
         "props": {
           "title": "@media の構造を読む",
           "code": "@media (max-width: 768px) {\n  .card-container {\n    flex-direction: column;\n  }\n}",
-          "highlightLines": [1, 2, 3],
+          "highlightLines": [
+            1,
+            2,
+            3
+          ],
           "caption": "@media → 条件 → { 普通のCSS } の3層構造"
         },
         "transition": {
@@ -311,7 +345,9 @@
         "props": {
           "title": "calc() でパーセント計算",
           "code": ".card {\n  flex: 1 1 calc(33.333% - 20px);\n}",
-          "highlightLines": [2],
+          "highlightLines": [
+            2
+          ],
           "caption": "calc() = 異なる単位を混在して計算できる関数。ギャップの分を引いてピッタリ3等分"
         },
         "transition": {
@@ -346,7 +382,14 @@
         "props": {
           "title": "2つのメディアクエリを読む",
           "code": "@media (max-width: 768px) {\n  .card {\n    flex: 1 1 calc(50% - 10px);\n  }\n}\n\n@media (max-width: 480px) {\n  .card {\n    flex: 1 1 100%;\n  }\n}",
-          "highlightLines": [1, 2, 3, 7, 8, 9],
+          "highlightLines": [
+            1,
+            2,
+            3,
+            7,
+            8,
+            9
+          ],
           "caption": "768px以下 → 50%（2列） / 480px以下 → 100%（1列）"
         },
         "transition": {
@@ -364,9 +407,18 @@
         "props": {
           "title": "3段階で切り替わる",
           "items": [
-            { "title": "広い画面", "description": "3列（デフォルト）" },
-            { "title": "768px以下", "description": "2列に変わる" },
-            { "title": "480px以下", "description": "1列に変わる" }
+            {
+              "title": "広い画面",
+              "description": "3列（デフォルト）"
+            },
+            {
+              "title": "768px以下",
+              "description": "2列に変わる"
+            },
+            {
+              "title": "480px以下",
+              "description": "1列に変わる"
+            }
           ]
         }
       }
@@ -387,7 +439,7 @@
     },
     {
       "scene_id": 24,
-      "narration": "ここまで、CodePen のプレビューエリアの幅を変えて確認してきましたが、実際の Web 制作では「開発者ツール」を使ってモバイル表示を確認します。パート3の最初のほうでチラッと触れた、Chrome の開発者ツールですね。ここではその中の「デバイスモード」という機能を紹介します。Chrome で Web ページを開いた状態で、キーボードのエフ12キーを押すと、開発者ツールが開きます。マックをお使いの方は、コマンドキーとオプションキーとアイキーを同時に押しても同じです。",
+      "narration": "ここまで、CodePen のプレビューエリアの幅を変えて確認してきましたが、実際の Web 制作では「開発者ツール」を使ってモバイル表示を確認します。パートスリーの最初のほうでチラッと触れた、Chrome の開発者ツールですね。ここではその中の「デバイスモード」という機能を紹介します。Chrome で Web ページを開いた状態で、キーボードのエフ12キーを押すと、開発者ツールが開きます。マックをお使いの方は、コマンドキーとオプションキーとアイキーを同時に押しても同じです。",
       "durationSec": 44,
       "visual": {
         "type": "remotion",
@@ -395,9 +447,18 @@
         "props": {
           "title": "Chrome 開発者ツールを開く",
           "items": [
-            { "title": "F12 キーを押す", "description": "Windows / Linux" },
-            { "title": "Cmd + Option + I", "description": "Mac" },
-            { "title": "デバイスモードアイコンをクリック", "description": "スマホ・タブレットが重なったアイコン" }
+            {
+              "title": "F12 キーを押す",
+              "description": "Windows / Linux"
+            },
+            {
+              "title": "Cmd + Option + I",
+              "description": "Mac"
+            },
+            {
+              "title": "デバイスモードアイコンをクリック",
+              "description": "スマホ・タブレットが重なったアイコン"
+            }
           ]
         },
         "transition": {
@@ -415,15 +476,23 @@
         "props": {
           "title": "デバイスモードで確認",
           "items": [
-            { "icon": "📱", "title": "iPhone 14 を選択", "detail": "横幅 390px → 480px 以下 → 1列表示" },
-            { "icon": "📟", "title": "iPad Air を選択", "detail": "横幅 820px → 768px より大 → 3列表示" }
+            {
+              "icon": "📱",
+              "title": "iPhone 14 を選択",
+              "detail": "横幅 390px → 480px 以下 → 1列表示"
+            },
+            {
+              "icon": "📟",
+              "title": "iPad Air を選択",
+              "detail": "横幅 820px → 768px より大 → 3列表示"
+            }
           ]
         }
       }
     },
     {
       "scene_id": 26,
-      "narration": "「レスポンシブ」というモードを選ぶと、幅の数字を直接入力することもできます。768と入力してみてください。2列になりましたね。480にすると1列。こうやって、自分で書いたブレイクポイントの前後で表示がどう変わるかを、ピンポイントで確認できるんです。この開発者ツールのデバイスモードは、レスポンシブデザインを作るときの必須ツールです。今日は見方だけ覚えておけば大丈夫です。この後の実習でも使いますし、パート4以降でもっと活用していきますので。",
+      "narration": "「レスポンシブ」というモードを選ぶと、幅の数字を直接入力することもできます。768と入力してみてください。2列になりましたね。480にすると1列。こうやって、自分で書いたブレイクポイントの前後で表示がどう変わるかを、ピンポイントで確認できるんです。この開発者ツールのデバイスモードは、レスポンシブデザインを作るときの必須ツールです。今日は見方だけ覚えておけば大丈夫です。この後の実習でも使いますし、パートフォー以降でもっと活用していきますので。",
       "durationSec": 40,
       "visual": {
         "type": "remotion",
@@ -492,17 +561,25 @@
         "props": {
           "title": "CodePen でのviewport設定手順",
           "items": [
-            { "title": "右上「Settings」をクリック" },
-            { "title": "左メニュー「HTML」を選択" },
-            { "title": "「Stuff for <head>」にメタタグを貼り付け" },
-            { "title": "「Save & Close」で完了" }
+            {
+              "title": "右上「Settings」をクリック"
+            },
+            {
+              "title": "左メニュー「HTML」を選択"
+            },
+            {
+              "title": "「Stuff for <head>」にメタタグを貼り付け"
+            },
+            {
+              "title": "「Save & Close」で完了"
+            }
           ]
         }
       }
     },
     {
       "scene_id": 31,
-      "narration": "これで、CodePen のプレビューでもviewportメタタグが有効になります。少し面倒に感じるかもしれませんが、この一行のためだけの設定です。パート5で公開用のファイルに変換するときには、HTMLファイルに直接書けるようになりますので、ここだけ我慢してくださいね。ちなみに、エーアイにHTMLを生成してもらうと、ほぼ必ずこのviewportメタタグが含まれています。エーアイもこの一行が大事だと知っているわけです。だから覚える必要はありません。「レスポンシブにはviewportメタタグが必要。なかったら追加する」。これだけ覚えておけば大丈夫です。",
+      "narration": "これで、CodePen のプレビューでもviewportメタタグが有効になります。少し面倒に感じるかもしれませんが、この一行のためだけの設定です。パートファイブで公開用のファイルに変換するときには、HTMLファイルに直接書けるようになりますので、ここだけ我慢してくださいね。ちなみに、エーアイにHTMLを生成してもらうと、ほぼ必ずこのviewportメタタグが含まれています。エーアイもこの一行が大事だと知っているわけです。だから覚える必要はありません。「レスポンシブにはviewportメタタグが必要。なかったら追加する」。これだけ覚えておけば大丈夫です。",
       "durationSec": 49,
       "visual": {
         "type": "remotion",
@@ -516,7 +593,7 @@
     },
     {
       "scene_id": 32,
-      "narration": "さて、ここからは実習の時間です。これまでの講義で作ってきた自己紹介ページのペンを開いてください。前回の Flexbox の講義でカードを並べたりしたペンですね。今から、この自己紹介ページをレスポンシブ対応にアップグレードしていきましょう。やることは3つです。",
+      "narration": "さて、ここからは実習の時間です。これまでの講義で作ってきた自己紹介ページの'ぺ'んを開いてください。前回の Flexbox の講義でカードを並べたりした'ぺ'んですね。今から、この自己紹介ページをレスポンシブ対応にアップグレードしていきましょう。やることは3つです。",
       "durationSec": 30,
       "visual": {
         "type": "remotion",
@@ -524,9 +601,15 @@
         "props": {
           "title": "実習: 自己紹介ページをレスポンシブに",
           "items": [
-            { "title": "viewportメタタグを追加" },
-            { "title": "メディアクエリを追加" },
-            { "title": "開発者ツールで確認" }
+            {
+              "title": "viewportメタタグを追加"
+            },
+            {
+              "title": "メディアクエリを追加"
+            },
+            {
+              "title": "開発者ツールで確認"
+            }
           ]
         },
         "transition": {
@@ -577,7 +660,15 @@
         "props": {
           "title": "3つの調整を読む",
           "code": "@media (max-width: 768px) {\n  .card-container {\n    flex-direction: column;\n  }\n\n  h1 {\n    font-size: 24px;\n  }\n\n  body {\n    padding: 10px;\n  }\n}",
-          "highlightLines": [1, 2, 3, 6, 7, 10, 11],
+          "highlightLines": [
+            1,
+            2,
+            3,
+            6,
+            7,
+            10,
+            11
+          ],
           "caption": "レイアウト・文字サイズ・余白の3つをまとめて調整"
         },
         "transition": {
@@ -595,8 +686,16 @@
         "props": {
           "title": "スマートフォンでの余白設計",
           "items": [
-            { "icon": "📏", "title": "padding: 30px → コンテンツ幅 330px", "detail": "横390pxの画面では窮屈すぎる" },
-            { "icon": "✅", "title": "padding: 10px → コンテンツ幅 370px", "detail": "40px広がり、格段に読みやすくなる" }
+            {
+              "icon": "📏",
+              "title": "padding: 30px → コンテンツ幅 330px",
+              "detail": "横390pxの画面では窮屈すぎる"
+            },
+            {
+              "icon": "✅",
+              "title": "padding: 10px → コンテンツ幅 370px",
+              "detail": "40px広がり、格段に読みやすくなる"
+            }
           ]
         }
       }
@@ -627,10 +726,19 @@
         "props": {
           "title": "Debug mode で開発者ツール確認",
           "items": [
-            { "title": "「Change View」→「Debug mode」", "description": "プレビューが新しいタブで開く" },
-            { "title": "F12 キーで開発者ツールを起動" },
-            { "title": "デバイスモードアイコンをクリック" },
-            { "title": "ドロップダウンから iPhone を選択" }
+            {
+              "title": "「Change View」→「Debug mode」",
+              "description": "プレビューが新しいタブで開く"
+            },
+            {
+              "title": "F12 キーで開発者ツールを起動"
+            },
+            {
+              "title": "デバイスモードアイコンをクリック"
+            },
+            {
+              "title": "ドロップダウンから iPhone を選択"
+            }
           ]
         },
         "transition": {
@@ -648,8 +756,16 @@
         "props": {
           "title": "デバイスを切り替えて確認",
           "items": [
-            { "icon": "📱", "title": "iPhone 14: 390 × 844", "detail": "768px 以下 → メディアクエリ発動 → 1列表示" },
-            { "icon": "📟", "title": "iPad Air: 820px", "detail": "768px より大 → メディアクエリ未発動 → 通常レイアウト" }
+            {
+              "icon": "📱",
+              "title": "iPhone 14: 390 × 844",
+              "detail": "768px 以下 → メディアクエリ発動 → 1列表示"
+            },
+            {
+              "icon": "📟",
+              "title": "iPad Air: 820px",
+              "detail": "768px より大 → メディアクエリ未発動 → 通常レイアウト"
+            }
           ]
         }
       }
@@ -679,10 +795,26 @@
         "props": {
           "title": "メディアクエリで変えられるもの",
           "items": [
-            { "icon": "📐", "title": "レイアウト", "description": "flex-direction, flex-wrap など" },
-            { "icon": "🔤", "title": "文字サイズ", "description": "font-size, line-height など" },
-            { "icon": "📦", "title": "余白", "description": "padding, margin など" },
-            { "icon": "🖼️", "title": "画像・表示/非表示", "description": "width, display など" }
+            {
+              "icon": "📐",
+              "title": "レイアウト",
+              "description": "flex-direction, flex-wrap など"
+            },
+            {
+              "icon": "🔤",
+              "title": "文字サイズ",
+              "description": "font-size, line-height など"
+            },
+            {
+              "icon": "📦",
+              "title": "余白",
+              "description": "padding, margin など"
+            },
+            {
+              "icon": "🖼️",
+              "title": "画像・表示/非表示",
+              "description": "width, display など"
+            }
           ]
         },
         "transition": {
