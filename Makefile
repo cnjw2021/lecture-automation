@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install build run run-lambda run-force run-force-lambda regen-scene regen-scene-lambda regen-visual run-tts-only run-tts-chunk apply-tts apply-tts-lambda apply-tts-chunk apply-tts-chunk-lambda run-render-only run-render-only-lambda render-scene render-scene-lambda record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
+.PHONY: help install build run run-lambda run-force run-force-lambda regen-scene regen-scene-lambda regen-visual run-tts-only run-tts-chunk apply-tts apply-tts-lambda apply-tts-chunk apply-tts-chunk-lambda list-chunks find-chunk run-render-only run-render-only-lambda render-scene render-scene-lambda record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
         sync-playwright save-auth validate-schema lint lint-fix audit deploy-lambda
 
 # 기본 변수 설정
@@ -41,6 +41,8 @@ help:
 	@echo "make apply-tts-chunk LECTURE=xxx SCENE=16 CHUNK='0 5 7' - 특정 씬의 특정 청크만 재생성 + 씬 wav concat + 클립 재렌더 (이슈 #113)"
 	@echo "make apply-tts-chunk-lambda LECTURE=xxx SCENE=16 CHUNK='0 5 7' - apply-tts-chunk + Lambda"
 	@echo "make run-tts-chunk LECTURE=xxx SCENE=16 CHUNK='0 5 7' - 특정 씬의 특정 청크만 재생성 + 씬 wav concat + 미리 듣기 (렌더 생략)"
+	@echo "make list-chunks LECTURE=xxx SCENE=16  - 씬의 청크 목록(인덱스·글자 범위·미리보기) 출력"
+	@echo "make find-chunk LECTURE=xxx SCENE=16 TEXT='...' - 특정 문구가 어느 청크에 속하는지 검색 + 재생성 명령 제안"
 	@echo "make run-render-only LECTURE=xxx      - TTS/캡처 제외하고 전체 씬 렌더링 & 클립 병합만 재실행"
 	@echo "make run-render-only-lambda LECTURE=xxx - run-render-only + Remotion Lambda 사용"
 	@echo "make render-scene LECTURE=xxx SCENE=5      - 특정 씬 클립만 렌더링"
@@ -215,6 +217,27 @@ run-tts-chunk:
 	@TARGET_CHUNKS_ARG="$$(node -e "const s='$(SCENE)'.trim().split(/\s+/); const c='$(CHUNK)'.trim().split(/\s+/).join(','); console.log(s.map(id => id + ':' + c).join(' '))")"; \
 	echo "  TARGET_CHUNKS=$$TARGET_CHUNKS_ARG"; \
 	env TTS_ONLY=1 TARGET_SCENES="$(SCENE)" TARGET_CHUNKS="$$TARGET_CHUNKS_ARG" $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
+
+# ---------------------------------------------------------------------------
+# list-chunks / find-chunk (이슈 #113 보조)
+#
+# 어느 청크를 재생성해야 하는지 확인하는 도우미. TTS 파이프라인과 동일한
+# SyncPointNarrationChunker 를 사용해 실제 캐시 단위와 정확히 일치한다.
+# ---------------------------------------------------------------------------
+list-chunks:
+	@if [ -z "$(SCENE)" ]; then \
+		echo "❌ SCENE 값을 지정해 주세요. 예: make list-chunks LECTURE=lecture-02-01.json SCENE=16"; \
+		exit 1; \
+	fi
+	@npx tsx packages/automation/src/presentation/cli/list-chunks.ts $(LECTURE) $(SCENE) $(if $(PREVIEW),--preview $(PREVIEW),)
+
+find-chunk:
+	@if [ -z "$(SCENE)" ] || [ -z "$(TEXT)" ]; then \
+		echo "❌ SCENE 과 TEXT 를 모두 지정해 주세요."; \
+		echo "   예: make find-chunk LECTURE=lecture-02-01.json SCENE=16 TEXT='予期しない空白'"; \
+		exit 1; \
+	fi
+	@npx tsx packages/automation/src/presentation/cli/list-chunks.ts $(LECTURE) $(SCENE) --find "$(TEXT)"
 
 run-render-only:
 	@echo "🎞️ 사전 준비(TTS, 캡처) 건너뛰고 렌더링 & 병합 시퀀스 실행: $(LECTURE)"
