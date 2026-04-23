@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install build run run-lambda run-force run-force-lambda regen-scene regen-scene-lambda regen-visual run-tts-only apply-tts apply-tts-lambda run-render-only run-render-only-lambda render-scene render-scene-lambda record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
+.PHONY: help install build run run-lambda run-force run-force-lambda regen-scene regen-scene-lambda regen-visual run-tts-only run-tts-chunk apply-tts apply-tts-lambda apply-tts-chunk apply-tts-chunk-lambda run-render-only run-render-only-lambda render-scene render-scene-lambda record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
         sync-playwright save-auth validate-schema lint lint-fix audit deploy-lambda
 
 # 기본 변수 설정
@@ -38,6 +38,9 @@ help:
 	@echo "make run-tts-only LECTURE=xxx SCENE='1 2 3' - 지정 씬 TTS만 재생성 + 미리 듣기 파일 생성"
 	@echo "make apply-tts LECTURE=xxx SCENE='1 2 3' - 기존 wav/webm 유지, 지정 씬 클립만 삭제 후 렌더 & 병합"
 	@echo "make apply-tts-lambda LECTURE=xxx SCENE='1 2 3' - apply-tts + Remotion Lambda로 씬 클립 병렬 렌더링"
+	@echo "make apply-tts-chunk LECTURE=xxx SCENE=16 CHUNK='0 5 7' - 특정 씬의 특정 청크만 재생성 + 씬 wav concat + 클립 재렌더 (이슈 #113)"
+	@echo "make apply-tts-chunk-lambda LECTURE=xxx SCENE=16 CHUNK='0 5 7' - apply-tts-chunk + Lambda"
+	@echo "make run-tts-chunk LECTURE=xxx SCENE=16 CHUNK='0 5 7' - 특정 씬의 특정 청크만 재생성 + 씬 wav concat + 미리 듣기 (렌더 생략)"
 	@echo "make run-render-only LECTURE=xxx      - TTS/캡처 제외하고 전체 씬 렌더링 & 클립 병합만 재실행"
 	@echo "make run-render-only-lambda LECTURE=xxx - run-render-only + Remotion Lambda 사용"
 	@echo "make render-scene LECTURE=xxx SCENE=5      - 특정 씬 클립만 렌더링"
@@ -162,6 +165,56 @@ apply-tts-lambda: build
 		rm -f $(OUTPUT_DIR)/clips/$$LECTURE_ID/scene-$$scene.mp4; \
 	done
 	env RENDER_ONLY=1 TARGET_SCENES="$(SCENE)" REMOTION_RENDER_MODE=lambda $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
+
+# ---------------------------------------------------------------------------
+# apply-tts-chunk (이슈 #113)
+#
+# 특정 씬의 특정 청크(scene-N-chunk-M.wav) 만 삭제·재생성한 뒤 나머지 청크는
+# 기존 파일을 재사용해 scene-N.wav 를 concat. 클립(scene-N.mp4) 도 재렌더하여
+# 병합까지 수행한다. 전체 씬 TTS 재생성의 1/N 비용으로 오독 1개를 고칠 수 있다.
+# ---------------------------------------------------------------------------
+apply-tts-chunk:
+	@echo "🧩 청크 단위 재생성 + 씬 concat + 클립 재렌더: $(LECTURE) / Scene $(SCENE) / Chunk $(CHUNK)"
+	@if [ -z "$(SCENE)" ] || [ -z "$(CHUNK)" ]; then \
+		echo "❌ SCENE 과 CHUNK 를 모두 지정해 주세요."; \
+		echo "   예: make apply-tts-chunk LECTURE=lecture-02-01.json SCENE=16 CHUNK='0 5 7'"; \
+		exit 1; \
+	fi
+	@LECTURE_ID=$$(node -e "const d=require('./data/$(LECTURE)'); console.log(d.lecture_id)"); \
+	for scene in $(SCENE); do \
+		echo "  🗑️  scene-$$scene.mp4 클립 삭제 중..."; \
+		rm -f $(OUTPUT_DIR)/clips/$$LECTURE_ID/scene-$$scene.mp4; \
+	done
+	@TARGET_CHUNKS_ARG="$$(node -e "const s='$(SCENE)'.trim().split(/\s+/); const c='$(CHUNK)'.trim().split(/\s+/).join(','); console.log(s.map(id => id + ':' + c).join(' '))")"; \
+	echo "  TARGET_CHUNKS=$$TARGET_CHUNKS_ARG"; \
+	env TARGET_SCENES="$(SCENE)" TARGET_CHUNKS="$$TARGET_CHUNKS_ARG" $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
+
+apply-tts-chunk-lambda: build
+	@echo "☁️🧩 청크 단위 재생성 + 씬 concat + Lambda 클립 재렌더: $(LECTURE) / Scene $(SCENE) / Chunk $(CHUNK)"
+	@if [ -z "$(SCENE)" ] || [ -z "$(CHUNK)" ]; then \
+		echo "❌ SCENE 과 CHUNK 를 모두 지정해 주세요."; \
+		echo "   예: make apply-tts-chunk-lambda LECTURE=lecture-02-01.json SCENE=16 CHUNK='0 5 7'"; \
+		exit 1; \
+	fi
+	@LECTURE_ID=$$(node -e "const d=require('./data/$(LECTURE)'); console.log(d.lecture_id)"); \
+	for scene in $(SCENE); do \
+		echo "  🗑️  scene-$$scene.mp4 클립 삭제 중..."; \
+		rm -f $(OUTPUT_DIR)/clips/$$LECTURE_ID/scene-$$scene.mp4; \
+	done
+	@TARGET_CHUNKS_ARG="$$(node -e "const s='$(SCENE)'.trim().split(/\s+/); const c='$(CHUNK)'.trim().split(/\s+/).join(','); console.log(s.map(id => id + ':' + c).join(' '))")"; \
+	echo "  TARGET_CHUNKS=$$TARGET_CHUNKS_ARG"; \
+	env TARGET_SCENES="$(SCENE)" TARGET_CHUNKS="$$TARGET_CHUNKS_ARG" REMOTION_RENDER_MODE=lambda $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
+
+run-tts-chunk:
+	@echo "🧩 청크 단위 재생성 + 씬 concat + 미리 듣기 (렌더 생략): $(LECTURE) / Scene $(SCENE) / Chunk $(CHUNK)"
+	@if [ -z "$(SCENE)" ] || [ -z "$(CHUNK)" ]; then \
+		echo "❌ SCENE 과 CHUNK 를 모두 지정해 주세요."; \
+		echo "   예: make run-tts-chunk LECTURE=lecture-02-01.json SCENE=16 CHUNK='0 5 7'"; \
+		exit 1; \
+	fi
+	@TARGET_CHUNKS_ARG="$$(node -e "const s='$(SCENE)'.trim().split(/\s+/); const c='$(CHUNK)'.trim().split(/\s+/).join(','); console.log(s.map(id => id + ':' + c).join(' '))")"; \
+	echo "  TARGET_CHUNKS=$$TARGET_CHUNKS_ARG"; \
+	env TTS_ONLY=1 TARGET_SCENES="$(SCENE)" TARGET_CHUNKS="$$TARGET_CHUNKS_ARG" $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
 run-render-only:
 	@echo "🎞️ 사전 준비(TTS, 캡처) 건너뛰고 렌더링 & 병합 시퀀스 실행: $(LECTURE)"
