@@ -137,7 +137,7 @@ run-tts-only:
 	env TTS_ONLY=1 TARGET_SCENES="$(SCENE)" $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
 apply-tts:
-	@echo "🔁 기존 wav/webm 유지, 지정 씬 클립 삭제 후 렌더 & 병합: $(LECTURE) / Scene $(SCENE)"
+	@echo "🔁 기존 wav/webm 유지, 지정 씬 클립만 재렌더 & 병합: $(LECTURE) / Scene $(SCENE)"
 	@if [ -z "$(SCENE)" ]; then \
 		echo "❌ SCENE 값을 지정해 주세요. 예: make apply-tts LECTURE=lecture-02-01.json SCENE='10 12'"; \
 		exit 1; \
@@ -147,7 +147,7 @@ apply-tts:
 		echo "  🗑️  scene-$$scene.mp4 클립 삭제 중..."; \
 		rm -f $(OUTPUT_DIR)/clips/$$LECTURE_ID/scene-$$scene.mp4; \
 	done
-	env RENDER_ONLY=1 $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
+	env RENDER_ONLY=1 TARGET_SCENES="$(SCENE)" $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
 run-render-only:
 	@echo "🎞️ 사전 준비(TTS, 캡처) 건너뛰고 렌더링 & 병합 시퀀스 실행: $(LECTURE)"
