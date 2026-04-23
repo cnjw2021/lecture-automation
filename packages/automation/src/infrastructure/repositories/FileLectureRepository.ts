@@ -100,4 +100,64 @@ export class FileLectureRepository implements ILectureRepository {
   getSessionSceneCaptureDir(lectureId: string, sessionId: string, sceneId: number): string {
     return path.join(this.getSessionCaptureDir(lectureId, sessionId), `scene-${sceneId}`);
   }
+
+  // ---------------------------------------------------------------------------
+  // 씬 내부 TTS 청크 (이슈 #113)
+  // ---------------------------------------------------------------------------
+
+  getAudioChunkPath(lectureId: string, sceneId: number, chunkIndex: number): string {
+    return path.join(this.audioBaseDir, lectureId, `scene-${sceneId}-chunk-${chunkIndex}.wav`);
+  }
+
+  private getAudioChunkAlignmentPath(lectureId: string, sceneId: number, chunkIndex: number): string {
+    return path.join(this.audioBaseDir, lectureId, `scene-${sceneId}-chunk-${chunkIndex}.alignment.json`);
+  }
+
+  async saveAudioChunk(lectureId: string, sceneId: number, chunkIndex: number, audioBuffer: Buffer): Promise<void> {
+    const dir = path.join(this.audioBaseDir, lectureId);
+    await fs.ensureDir(dir);
+    await fs.writeFile(this.getAudioChunkPath(lectureId, sceneId, chunkIndex), audioBuffer);
+  }
+
+  async existsAudioChunk(lectureId: string, sceneId: number, chunkIndex: number): Promise<boolean> {
+    return await fs.pathExists(this.getAudioChunkPath(lectureId, sceneId, chunkIndex));
+  }
+
+  async deleteAudioChunk(lectureId: string, sceneId: number, chunkIndex: number): Promise<void> {
+    await fs.remove(this.getAudioChunkPath(lectureId, sceneId, chunkIndex));
+    await fs.remove(this.getAudioChunkAlignmentPath(lectureId, sceneId, chunkIndex));
+  }
+
+  async loadAudioChunk(lectureId: string, sceneId: number, chunkIndex: number): Promise<Buffer | null> {
+    const filePath = this.getAudioChunkPath(lectureId, sceneId, chunkIndex);
+    if (!await fs.pathExists(filePath)) return null;
+    return await fs.readFile(filePath);
+  }
+
+  async saveAudioChunkAlignment(lectureId: string, sceneId: number, chunkIndex: number, alignment: AudioAlignment): Promise<void> {
+    const dir = path.join(this.audioBaseDir, lectureId);
+    await fs.ensureDir(dir);
+    await fs.writeJson(this.getAudioChunkAlignmentPath(lectureId, sceneId, chunkIndex), alignment, { spaces: 2 });
+  }
+
+  async getAudioChunkAlignment(lectureId: string, sceneId: number, chunkIndex: number): Promise<AudioAlignment | null> {
+    const filePath = this.getAudioChunkAlignmentPath(lectureId, sceneId, chunkIndex);
+    if (await fs.pathExists(filePath)) {
+      return await fs.readJson(filePath);
+    }
+    return null;
+  }
+
+  async listAudioChunkIndices(lectureId: string, sceneId: number): Promise<number[]> {
+    const dir = path.join(this.audioBaseDir, lectureId);
+    if (!await fs.pathExists(dir)) return [];
+    const entries = await fs.readdir(dir);
+    const pattern = new RegExp(`^scene-${sceneId}-chunk-(\\d+)\\.wav$`);
+    const indices: number[] = [];
+    for (const name of entries) {
+      const m = pattern.exec(name);
+      if (m) indices.push(Number.parseInt(m[1], 10));
+    }
+    return indices.sort((a, b) => a - b);
+  }
 }
