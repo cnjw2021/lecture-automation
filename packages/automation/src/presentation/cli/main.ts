@@ -24,6 +24,7 @@ async function runAutomation(jsonFileName: string) {
   const ttsOnly = process.env.TTS_ONLY === '1';
   const renderOnly = process.env.RENDER_ONLY === '1';
   const targetSceneIds = parseTargetSceneIds(process.env.TARGET_SCENES);
+  const targetChunks = parseTargetChunks(process.env.TARGET_CHUNKS);
 
   if (forceRegenerate) {
     console.log('🔄 강제 재생성 모드 활성화 - 기존 에셋을 무시합니다.');
@@ -39,6 +40,12 @@ async function runAutomation(jsonFileName: string) {
   }
   if (targetSceneIds.length > 0) {
     console.log(`🎯 대상 씬 제한 모드 활성화 - Scene ${targetSceneIds.join(', ')}`);
+  }
+  if (Object.keys(targetChunks).length > 0) {
+    const summary = Object.entries(targetChunks)
+      .map(([sceneId, chunks]) => `Scene ${sceneId} chunk ${chunks.join(',')}`)
+      .join(' / ');
+    console.log(`🧩 청크 단위 재생성 모드 활성화 - ${summary}`);
   }
 
   console.log('🚀 강의 자동화 파이프라인 가동 (Full-Cycle, Clean Architecture)...');
@@ -56,6 +63,7 @@ async function runAutomation(jsonFileName: string) {
       ttsOnly,
       renderOnly,
       targetSceneIds: targetSceneIds.length > 0 ? targetSceneIds : undefined,
+      targetChunks: Object.keys(targetChunks).length > 0 ? targetChunks : undefined,
       persistLecture: async updatedLecture => {
         await fs.writeJson(lecturePath, updatedLecture, { spaces: 2 });
       },
@@ -79,6 +87,42 @@ function parseTargetSceneIds(raw?: string): number[] {
     .filter(Boolean)
     .map(value => Number.parseFloat(value))
     .filter(value => Number.isFinite(value) && value > 0);
+}
+
+/**
+ * TARGET_CHUNKS env 파싱. 형식:
+ *   "16:0,3,5"              — scene 16 의 청크 0·3·5
+ *   "16:0,3,5 17:1"         — 여러 씬 동시 지정 (공백 구분)
+ *   "16:0-2"                — range 표기 (0,1,2)
+ */
+function parseTargetChunks(raw?: string): Record<number, number[]> {
+  if (!raw) return {};
+  const result: Record<number, number[]> = {};
+  for (const token of raw.split(/\s+/).map(t => t.trim()).filter(Boolean)) {
+    const [sceneIdRaw, chunkSpec] = token.split(':');
+    const sceneId = Number.parseInt(sceneIdRaw, 10);
+    if (!Number.isFinite(sceneId) || sceneId <= 0 || !chunkSpec) {
+      throw new Error(`TARGET_CHUNKS 파싱 실패: '${token}' (예: '16:0,3,5')`);
+    }
+    const chunkIndices = new Set<number>();
+    for (const spec of chunkSpec.split(',').map(s => s.trim()).filter(Boolean)) {
+      const range = spec.match(/^(\d+)-(\d+)$/);
+      if (range) {
+        const [, fromStr, toStr] = range;
+        const from = Number.parseInt(fromStr, 10);
+        const to = Number.parseInt(toStr, 10);
+        for (let i = from; i <= to; i++) chunkIndices.add(i);
+      } else {
+        const n = Number.parseInt(spec, 10);
+        if (!Number.isFinite(n) || n < 0) {
+          throw new Error(`TARGET_CHUNKS 청크 인덱스 파싱 실패: '${spec}'`);
+        }
+        chunkIndices.add(n);
+      }
+    }
+    result[sceneId] = Array.from(chunkIndices).sort((a, b) => a - b);
+  }
+  return result;
 }
 
 if (require.main === module) {

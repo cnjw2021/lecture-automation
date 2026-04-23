@@ -7,11 +7,14 @@ import {
   NarrationAudioPreparationParams,
   NarrationAudioPreparationResult,
 } from '../../domain/interfaces/INarrationAudioPreparationService';
+import { INarrationChunker } from '../../domain/services/NarrationChunker';
+import { config } from '../config';
 
 export class ConfiguredNarrationAudioPreparationService implements INarrationAudioPreparationService {
   constructor(
     private readonly lectureRepository: ILectureRepository,
     private readonly audioProviderFactory: IAudioProviderFactory,
+    private readonly narrationChunker: INarrationChunker,
   ) {}
 
   async prepare(params: NarrationAudioPreparationParams): Promise<NarrationAudioPreparationResult> {
@@ -31,8 +34,25 @@ export class ConfiguredNarrationAudioPreparationService implements INarrationAud
       console.log(`🎯 수정 모드: 지정 씬만 오디오 재생성 (${targetSceneIds.join(', ')})`);
     }
 
-    const generateAudioUseCase = new GenerateAudioUseCase(provider, this.lectureRepository);
-    await generateAudioUseCase.execute(targetLecture, { force: params.forceRegenerate });
+    const videoConfig = config.getVideoConfig();
+    const ttsConfig = config.getTtsConfig();
+    const audioConfig = {
+      sampleRate: videoConfig.audio.sampleRate,
+      channels: videoConfig.audio.channels,
+      bitDepth: videoConfig.audio.bitDepth,
+      speechRate: ttsConfig.speechRate || 0.85,
+    };
+
+    const generateAudioUseCase = new GenerateAudioUseCase(
+      provider,
+      this.lectureRepository,
+      this.narrationChunker,
+      audioConfig,
+    );
+    await generateAudioUseCase.execute(targetLecture, {
+      force: params.forceRegenerate,
+      targetChunks: params.targetChunks,
+    });
 
     return { source: 'tts', providerName };
   }

@@ -24,6 +24,8 @@ export interface RunAutomationPipelineOptions {
   ttsOnly: boolean;
   renderOnly?: boolean;
   targetSceneIds?: number[];
+  /** scene_id → chunkIndex[] 매핑. 지정 시 해당 청크만 삭제·재생성(이슈 #113). */
+  targetChunks?: Record<number, number[]>;
   persistLecture?: (lecture: Lecture) => Promise<void>;
 }
 
@@ -65,6 +67,7 @@ export class RunAutomationPipelineUseCase {
         lecturePath: options.lecturePath,
         forceRegenerate: options.forceRegenerate,
         targetSceneIds,
+        targetChunks: options.targetChunks,
       });
 
       console.log('\n--- 1.5단계: 전체 오디오 미리 듣기 머지 ---');
