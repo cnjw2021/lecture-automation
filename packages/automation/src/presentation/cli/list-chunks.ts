@@ -26,7 +26,7 @@ interface CliArgs {
 function parseArgs(argv: string[]): CliArgs {
   const positional: string[] = [];
   let findText: string | undefined;
-  let previewChars = 60;
+  let previewChars = 15;
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
