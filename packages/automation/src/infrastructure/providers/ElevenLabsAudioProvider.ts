@@ -28,7 +28,9 @@ export class ElevenLabsAudioProvider implements IAudioProvider {
    * alignment 타임스탬프의 onset 지연 오차를 우회하기 위한 방법.
    *
    * searchFromSec: alignment 기반 나레이션 시작 추정치 (탐색 기준점)
-   * 반환값: 나레이션 onset 바로 직전(20ms 앞)의 초 단위 trim 지점
+   * 반환값: 나레이션 onset 바로 직전(80ms 앞)의 초 단위 trim 지점.
+   *   - 일본어 파열음 자음(d/t/p/k) burst 는 40~60ms 지속이라 20ms 로는 burst 초반이 잘릴 수 있다.
+   *     첫 글자의 consonant attack 이 통째로 확보되도록 80ms 로 공격적 pre-buffer 확보.
    */
   private findNarrationOnsetFromPcm(
     pcmBuffer: Buffer,
@@ -73,17 +75,17 @@ export class ElevenLabsAudioProvider implements IAudioProvider {
       } else {
         if (foundSilence) {
           // 무음 이후 첫 speech 프레임 = narration onset
-          // 20ms 앞당겨 pre-phoneme onset까지 포함
+          // 80ms 앞당겨 pre-phoneme onset + consonant burst 전체 포함
           const onsetSec = byteOffset / bytesPerSec;
-          return Math.max(0, onsetSec - 0.020);
+          return Math.max(0, onsetSec - 0.080);
         }
         silenceRun = 0;
       }
     }
 
     // warmup과 narration 사이 silence gap 미검출 → alignment 기반 fallback
-    console.warn('  ⚠️ RMS 스캔으로 나레이션 onset 미검출 — alignment 기반 fallback (50ms pre-buffer) 사용');
-    return Math.max(0, searchFromSec - 0.050);
+    console.warn('  ⚠️ RMS 스캔으로 나레이션 onset 미검출 — alignment 기반 fallback (80ms pre-buffer) 사용');
+    return Math.max(0, searchFromSec - 0.080);
   }
 
   constructor(
