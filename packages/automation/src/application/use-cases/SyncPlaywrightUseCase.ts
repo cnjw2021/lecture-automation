@@ -162,7 +162,65 @@ export class SyncPlaywrightUseCase {
 interface PhraseTimingResult {
   totalMs: number;
   phraseStartMs: Map<number, number>;  // actionIndex → startMs
-  method: 'wav-analysis' | 'char-count';
+  method: 'alignment' | 'wav-analysis' | 'char-count';
+}
+
+/**
+ * scene-N.alignment.json 의 글자 단위 타임스탬프로 phrase 시각을 직접 조회.
+ * - assembler 가 삽입한 경계 gap 이 있어도 alignment 는 gap 을 반영해 shift 된 상태
+ * - 각 phrase 의 첫 글자 위치를 alignment.characters 에서 찾아 그 start 시각을 반환
+ * - phrase 미발견 / 파일 누락 / 포맷 불일치 시 null → 상위 경로가 WAV 분석으로 fallback
+ */
+async function resolveFromAlignment(
+  alignmentPath: string,
+  syncPoints: PlaywrightSyncPoint[],
+): Promise<PhraseTimingResult | null> {
+  if (!(await fs.pathExists(alignmentPath))) return null;
+
+  let alignment: {
+    characters?: string[];
+    character_start_times_seconds?: number[];
+    character_end_times_seconds?: number[];
+  };
+  try {
+    alignment = await fs.readJson(alignmentPath);
+  } catch (err) {
+    console.warn(`  ⚠️ alignment.json 로드 실패 (${alignmentPath}) — WAV 분석으로 fallback: ${err}`);
+    return null;
+  }
+
+  const chars = alignment.characters;
+  const startTimes = alignment.character_start_times_seconds;
+  const endTimes = alignment.character_end_times_seconds;
+  if (
+    !Array.isArray(chars) ||
+    !Array.isArray(startTimes) ||
+    !Array.isArray(endTimes) ||
+    chars.length === 0 ||
+    chars.length !== startTimes.length ||
+    chars.length !== endTimes.length
+  ) {
+    console.warn(`  ⚠️ alignment.json 포맷 불일치 — WAV 분석으로 fallback`);
+    return null;
+  }
+
+  const concatChars = chars.join('');
+  const totalMs = Math.max(0, Math.round(endTimes[endTimes.length - 1] * 1000));
+
+  const phraseStartMs = new Map<number, number>();
+  for (const sp of syncPoints) {
+    const pos = concatChars.indexOf(sp.phrase);
+    if (pos < 0) {
+      console.warn(`  ⚠️ alignment 에서 phrase "${sp.phrase.slice(0, 20)}" 못 찾음 — WAV 분석으로 fallback`);
+      return null;
+    }
+    const sec = Math.max(0, startTimes[pos]);
+    const ms = Math.round(sec * 1000);
+    phraseStartMs.set(sp.actionIndex, ms);
+    console.log(`  [ALIGN] action[${sp.actionIndex}] "${sp.phrase.slice(0, 16)}..." → ${ms}ms`);
+  }
+
+  return { totalMs, phraseStartMs, method: 'alignment' };
 }
 
 async function resolvePhraseTimings(
@@ -170,7 +228,12 @@ async function resolvePhraseTimings(
   syncPoints: PlaywrightSyncPoint[],
   wavPath: string,
 ): Promise<PhraseTimingResult> {
-  // WAV 파일이 있으면 분석 우선
+  // 1순위: alignment.json 기반 (글자 단위 타임스탬프). gap 삽입·무음 분포와 무관하게 정확.
+  const alignmentPath = wavPath.replace(/\.wav$/, '.alignment.json');
+  const fromAlignment = await resolveFromAlignment(alignmentPath, syncPoints);
+  if (fromAlignment) return fromAlignment;
+
+  // 2순위: WAV 파일 RMS 묵음 분석
   if (await fs.pathExists(wavPath)) {
     const wavBuffer = await fs.readFile(wavPath);
     const totalMs = getWavDurationMs(wavBuffer);
