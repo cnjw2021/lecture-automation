@@ -20,7 +20,7 @@ import { buildWav } from './WavAnalysisUtils';
 
 const WAV_HEADER_SIZE = 44;
 export const DEFAULT_CROSSFADE_MS = 0;
-export const DEFAULT_BOUNDARY_GAP_MS = 220;
+export const DEFAULT_BOUNDARY_GAP_MS = 660;
 export const DEFAULT_SILENCE_THRESHOLD_INT16 = 512; // 약 -36 dBFS
 
 export interface WavChunkInput {
@@ -47,7 +47,7 @@ export interface AssembleSceneAudioOptions {
   /**
    * 청크 경계에 삽입할 무음 길이 (ms). 문장 사이 자연스러운 들숨 간격을 복원한다.
    * trim 으로 각 청크의 꼬리/머리 무음이 제거되므로 이 gap 이 호흡 역할을 한다.
-   * 기본 220. 0 이면 경계 gap 없음 (crossfadeMs 만 적용).
+   * 기본 660. 0 이면 경계 gap 없음 (crossfadeMs 만 적용).
    */
   boundaryGapMs?: number;
 }
