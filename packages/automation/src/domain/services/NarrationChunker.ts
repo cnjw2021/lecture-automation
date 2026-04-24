@@ -17,12 +17,19 @@ export interface NarrationChunk {
 /**
  * 나레이션을 청크 단위로 분할하는 전략(domain service).
  *
- * 청크 분할 규칙은 이슈 #113 의 "청크 경계 제안" 을 따른다:
- *   - syncPoints.phrase 의 나레이션 내 출현 위치를 경계로 잡아 `phrase` 를 다음 청크의 시작부로 붙인다.
- *   - syncPoints 가 비어있으면 청크 1개(=씬 단위 TTS 와 동치) 를 반환한다.
+ * 청크 경계는 syncPoints 의 "부분집합" 이다. syncPoints 는 씬 전체 wav 의
+ * character alignment 로 싱크에 사용되므로 청크 경계와 독립적이며, 청크는
+ * TTS 호출 단위로서 자연스러운 프로소디 길이를 유지하는 것이 목적이다.
  *
- * 구현이 domain 에 있는 이유: 외부 의존성 없이 씬의 나레이션 + syncPoints 만으로 결정되는
- *  순수한 비즈니스 규칙이기 때문.
+ * 경계 선택 규칙:
+ *   1) syncPoints.phrase 의 나레이션 내 출현 위치를 후보로 수집 (pos>0 만)
+ *   2) 문장 경계(`。/！/？/\n` 직후 또는 줄바꿈) 에 있는 후보만 남김.
+ *      문장 경계 후보가 하나도 없으면 safety 로 전체 후보를 그대로 사용.
+ *   3) 글자수 greedy 병합: 인접 경계 사이 또는 경계-끝 거리가 `minChunkChars`
+ *      미만이면 해당 경계를 버려 인접 청크와 병합.
+ *
+ * 구현이 domain 에 있는 이유: 외부 의존성 없이 씬의 나레이션 + syncPoints 만으로
+ * 결정되는 순수한 비즈니스 규칙이기 때문.
  */
 export interface INarrationChunker {
   chunk(narration: string, syncPoints?: PlaywrightSyncPoint[]): NarrationChunk[];
@@ -30,10 +37,9 @@ export interface INarrationChunker {
 
 /**
  * 청크 경계가 일본어 문장 시작(바로 앞 문자가 '。' 또는 줄바꿈이거나 position=0) 에
- * 정렬되는지 확인한다. forward sync(SyncPlaywrightUseCase) 의 무음 기반 문장 경계 감지가
- * 청크 경계와 정합하려면 phrase 가 문장 시작점에 찍혀 있어야 한다.
+ * 정렬되는지 확인한다.
  *
- * export: 진단·테스트 용도. 프로덕션 경로에서는 warn 만 남기고 분할은 그대로 진행.
+ * export: 진단·테스트 용도.
  */
 export function isSentenceBoundary(narration: string, pos: number): boolean {
   if (pos <= 0) return true;
@@ -41,60 +47,98 @@ export function isSentenceBoundary(narration: string, pos: number): boolean {
   return prev === '。' || prev === '\n' || prev === '！' || prev === '？';
 }
 
+export interface SyncPointNarrationChunkerOptions {
+  /**
+   * 청크 최소 글자수. 인접 경계 사이 거리 또는 마지막 경계-끝 거리가
+   * 이 값 미만이면 해당 경계를 버려 인접 청크와 병합한다. 기본 150.
+   * 0 이면 모든 syncPoint 경계를 그대로 사용 (원시 분할).
+   */
+  minChunkChars?: number;
+}
+
 export class SyncPointNarrationChunker implements INarrationChunker {
+  private readonly minChunkChars: number;
+
+  constructor(options: SyncPointNarrationChunkerOptions = {}) {
+    this.minChunkChars = options.minChunkChars ?? 150;
+  }
+
   chunk(narration: string, syncPoints?: PlaywrightSyncPoint[]): NarrationChunk[] {
-    const trimmed = narration;
     if (!syncPoints || syncPoints.length === 0) {
-      return [{ index: 0, text: trimmed }];
+      return [{ index: 0, text: narration }];
     }
 
-    // phrase 의 나레이션 내 출현 위치(0-base) 를 수집. 중복·미발견 phrase 는 건너뜀.
-    const boundaries: { pos: number; phrase: string }[] = [];
+    // 1) phrase 출현 위치 수집 (pos>0, 중복 제거)
+    interface RawBoundary {
+      pos: number;
+      phrase: string;
+      isSentenceStart: boolean;
+    }
+    const rawBoundaries: RawBoundary[] = [];
     const seen = new Set<number>();
     for (const sp of syncPoints) {
       const pos = narration.indexOf(sp.phrase);
-      if (pos <= 0) continue; // 0 이거나 미발견이면 경계로 쓸 수 없음
+      if (pos <= 0) continue;
       if (seen.has(pos)) continue;
       seen.add(pos);
-      if (!isSentenceBoundary(narration, pos)) {
-        // 문장 중간 분할은 prosody 끊김 + 무음 기반 싱크 교란 가능.
-        // 분할은 진행하되 경고해 작성자가 phrase 위치를 재검토할 수 있게 한다.
+      const sentenceStart = isSentenceBoundary(narration, pos);
+      if (!sentenceStart) {
         console.warn(
           `  ⚠️ NarrationChunker: phrase "${sp.phrase.slice(0, 20)}..." 위치(${pos}) 가 ` +
           `문장 시작점이 아님 (앞 문자='${narration[pos - 1]}'). 싱크 오차 가능성.`
         );
       }
-      boundaries.push({ pos, phrase: sp.phrase });
+      rawBoundaries.push({ pos, phrase: sp.phrase, isSentenceStart: sentenceStart });
     }
 
-    if (boundaries.length === 0) {
-      return [{ index: 0, text: trimmed }];
+    if (rawBoundaries.length === 0) {
+      return [{ index: 0, text: narration }];
     }
 
-    boundaries.sort((a, b) => a.pos - b.pos);
+    rawBoundaries.sort((a, b) => a.pos - b.pos);
 
-    const chunks: NarrationChunk[] = [];
+    // 2) 문장 경계 우선 필터. 문장 경계가 하나라도 있으면 그것만 사용.
+    const sentenceBoundaries = rawBoundaries.filter(b => b.isSentenceStart);
+    const poolBoundaries = sentenceBoundaries.length > 0 ? sentenceBoundaries : rawBoundaries;
+
+    // 3) 글자수 greedy 병합
+    const filteredBoundaries: { pos: number; phrase: string }[] = [];
     let cursor = 0;
-    for (let i = 0; i < boundaries.length; i++) {
-      const { pos, phrase } = boundaries[i];
-      if (pos <= cursor) continue; // 동일 위치 중복 방어
-      const text = narration.slice(cursor, pos);
+    for (const b of poolBoundaries) {
+      const prevLen = b.pos - cursor;
+      const remainingLen = narration.length - b.pos;
+      if (prevLen < this.minChunkChars) continue;
+      if (remainingLen < this.minChunkChars) continue;
+      filteredBoundaries.push({ pos: b.pos, phrase: b.phrase });
+      cursor = b.pos;
+    }
+
+    if (filteredBoundaries.length === 0) {
+      return [{ index: 0, text: narration }];
+    }
+
+    // 4) 청크 생성
+    const chunks: NarrationChunk[] = [];
+    let chunkCursor = 0;
+    for (let i = 0; i < filteredBoundaries.length; i++) {
+      const { pos } = filteredBoundaries[i];
+      if (pos <= chunkCursor) continue;
+      const text = narration.slice(chunkCursor, pos);
       if (text.length > 0) {
         chunks.push({
           index: chunks.length,
           text,
-          phrase: chunks.length === 0 ? undefined : boundaries[i - 1]?.phrase,
+          phrase: chunks.length === 0 ? undefined : filteredBoundaries[i - 1]?.phrase,
         });
       }
-      cursor = pos;
-      // 마지막 phrase 의 phrase 필드는 현재 경계의 phrase 로 세팅해 다음 청크에 연결
+      chunkCursor = pos;
     }
-    const tail = narration.slice(cursor);
+    const tail = narration.slice(chunkCursor);
     if (tail.length > 0) {
       chunks.push({
         index: chunks.length,
         text: tail,
-        phrase: boundaries[boundaries.length - 1]?.phrase,
+        phrase: filteredBoundaries[filteredBoundaries.length - 1]?.phrase,
       });
     }
 

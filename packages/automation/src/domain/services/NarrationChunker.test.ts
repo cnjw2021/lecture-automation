@@ -1,7 +1,8 @@
 import { SyncPointNarrationChunker, isSentenceBoundary } from './NarrationChunker';
 
 describe('SyncPointNarrationChunker', () => {
-  const chunker = new SyncPointNarrationChunker();
+  // 원시 분할 계약 검증 — minChunkChars 병합을 끈 상태.
+  const chunker = new SyncPointNarrationChunker({ minChunkChars: 0 });
   let warnSpy: jest.SpyInstance;
 
   beforeEach(() => {
@@ -93,6 +94,103 @@ describe('SyncPointNarrationChunker', () => {
     ];
     chunker.chunk(narration, syncPoints);
     expect(warnSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe('SyncPointNarrationChunker — minChunkChars 병합', () => {
+  let warnSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+  afterEach(() => {
+    warnSpy.mockRestore();
+  });
+
+  // 4 문장 × 100자 = 총 400자 구성의 narration
+  const sent = (n: number, ch: string) => ch.repeat(n) + '。';
+  const narration = sent(99, 'あ') + sent(99, 'い') + sent(99, 'う') + sent(99, 'え');
+  // 경계 위치:
+  //   - 'い' 시작 = 100
+  //   - 'う' 시작 = 200
+  //   - 'え' 시작 = 300
+  const syncPointsAll = [
+    { actionIndex: 1, phrase: 'い'.repeat(99) },
+    { actionIndex: 2, phrase: 'う'.repeat(99) },
+    { actionIndex: 3, phrase: 'え'.repeat(99) },
+  ];
+
+  it('minChunkChars=150 이면 100자 간격 경계 중 일부가 병합되어 청크 수가 줄어든다', () => {
+    const chunker = new SyncPointNarrationChunker({ minChunkChars: 150 });
+    const result = chunker.chunk(narration, syncPointsAll);
+    // 경계 pos=100 은 prevLen=100<150 → 버림
+    // 경계 pos=200 은 cursor=0, prevLen=200>=150, remaining=200>=150 → 채택 (cursor=200)
+    // 경계 pos=300 은 cursor=200, prevLen=100<150 → 버림
+    // → 청크 2개 (0..200, 200..400)
+    expect(result).toHaveLength(2);
+    expect(result[0].text.length).toBe(200);
+    expect(result[1].text.length).toBe(200);
+    expect(result.map(c => c.text).join('')).toBe(narration);
+  });
+
+  it('minChunkChars=0 이면 모든 경계를 그대로 사용한다', () => {
+    const chunker = new SyncPointNarrationChunker({ minChunkChars: 0 });
+    const result = chunker.chunk(narration, syncPointsAll);
+    expect(result).toHaveLength(4);
+  });
+
+  it('기본값은 150 자 (옵션 없이 생성)', () => {
+    const chunker = new SyncPointNarrationChunker();
+    const result = chunker.chunk(narration, syncPointsAll);
+    expect(result).toHaveLength(2);
+  });
+
+  it('남은 꼬리가 minChunkChars 미만이면 마지막 경계를 버린다', () => {
+    // 200 + 200 + 30 = 430자
+    const short = 'あ'.repeat(199) + '。' + 'い'.repeat(199) + '。' + 'う'.repeat(29) + '。';
+    const sps = [
+      { actionIndex: 1, phrase: 'い'.repeat(199) }, // pos=200 채택 (prev=200, remaining=230)
+      { actionIndex: 2, phrase: 'う'.repeat(29) },  // pos=400, remaining=30<150 → 버림
+    ];
+    const chunker = new SyncPointNarrationChunker({ minChunkChars: 150 });
+    const result = chunker.chunk(short, sps);
+    expect(result).toHaveLength(2);
+    expect(result[0].text.length).toBe(200);
+    expect(result[1].text.length).toBe(230);
+  });
+
+  it('문장 경계인 후보만 우선 사용 — 비문장 경계는 버린다', () => {
+    // narration: 'あ..。い..、う..。え..。' (4문장, 단 'う' 앞은 、로 비문장 경계)
+    const n =
+      'あ'.repeat(99) + '。' +        // pos 0..99 문장1, 'い' 시작=100 (문장 경계)
+      'い'.repeat(99) + '、' +        // pos 100..199 문장2 조각, 'う' 시작=200 (비문장 경계)
+      'う'.repeat(99) + '。' +        // 'え' 시작=300 (문장 경계)
+      'え'.repeat(99) + '。';
+    const sps = [
+      { actionIndex: 1, phrase: 'い'.repeat(99) }, // pos=100, 앞='。' 문장 경계
+      { actionIndex: 2, phrase: 'う'.repeat(99) }, // pos=200, 앞='、' 비문장 경계
+      { actionIndex: 3, phrase: 'え'.repeat(99) }, // pos=300, 앞='。' 문장 경계
+    ];
+    const chunker = new SyncPointNarrationChunker({ minChunkChars: 150 });
+    const result = chunker.chunk(n, sps);
+    // pool = [pos 100, pos 300]  (pos 200 버림)
+    // pos=100 prev=100<150 → 버림
+    // pos=300 prev=300-0=300>=150, remaining=100<150 → 버림
+    // → 청크 1개
+    expect(result).toHaveLength(1);
+    expect(warnSpy.mock.calls.some(c => String(c[0]).includes('문장 시작점이 아님'))).toBe(true);
+  });
+
+  it('문장 경계 후보가 하나도 없으면 fallback 으로 비문장 경계도 사용', () => {
+    // 모든 syncPoint 가 비문장 경계인 경우
+    const n = 'A' + 'い'.repeat(200) + '、' + 'う'.repeat(200);
+    const sps = [
+      { actionIndex: 1, phrase: 'う'.repeat(200) }, // 앞='、' 비문장 경계
+    ];
+    const chunker = new SyncPointNarrationChunker({ minChunkChars: 150 });
+    const result = chunker.chunk(n, sps);
+    // fallback 으로 비문장 경계 사용 → prev=202, remaining=200 → 채택
+    expect(result).toHaveLength(2);
   });
 });
 
