@@ -1,7 +1,7 @@
 import {
   assembleSceneAudio,
   AssembleSceneAudioOptions,
-  DEFAULT_CROSSFADE_MS,
+  DEFAULT_BOUNDARY_GAP_MS,
 } from './WavChunkAssembler';
 import { AudioConfig, AudioAlignment } from '../interfaces/IAudioProvider';
 
@@ -13,7 +13,11 @@ const audioConfig: AudioConfig = {
 };
 
 /** 옵션 off — 단순 concat 계약 검증용. */
-const RAW_OPTIONS: AssembleSceneAudioOptions = { crossfadeMs: 0, trimSilence: false };
+const RAW_OPTIONS: AssembleSceneAudioOptions = {
+  crossfadeMs: 0,
+  trimSilence: false,
+  boundaryGapMs: 0,
+};
 
 /** 지정 amplitude 로 채워진 PCM WAV 버퍼 생성 (44B 헤더 + int16 PCM). */
 function makeWav(durationSec: number, amplitude = 0, cfg = audioConfig): Buffer {
@@ -165,6 +169,7 @@ describe('assembleSceneAudio — 무음 trim', () => {
     const result = assembleSceneAudio([{ buffer: chunk }], audioConfig, {
       crossfadeMs: 0,
       trimSilence: true,
+      boundaryGapMs: 0,
     });
     expect(result.durationSec).toBeCloseTo(0.3, 2);
   });
@@ -174,6 +179,7 @@ describe('assembleSceneAudio — 무음 trim', () => {
     const result = assembleSceneAudio([{ buffer: chunk }], audioConfig, {
       crossfadeMs: 0,
       trimSilence: true,
+      boundaryGapMs: 0,
     });
     expect(result.durationSec).toBeCloseTo(0.5, 2);
   });
@@ -183,6 +189,7 @@ describe('assembleSceneAudio — 무음 trim', () => {
     const result = assembleSceneAudio([{ buffer: chunk }], audioConfig, {
       crossfadeMs: 0,
       trimSilence: true,
+      boundaryGapMs: 0,
     });
     // 전부 무음으로 간주 → trim 스킵 → 원본 길이 유지
     expect(result.durationSec).toBeCloseTo(0.6, 2);
@@ -198,6 +205,7 @@ describe('assembleSceneAudio — 무음 trim', () => {
     const result = assembleSceneAudio([{ buffer: chunk, alignment: align }], audioConfig, {
       crossfadeMs: 0,
       trimSilence: true,
+      boundaryGapMs: 0,
     });
     expect(result.alignment!.character_start_times_seconds[0]).toBeCloseTo(0.05, 2);
     expect(result.alignment!.character_end_times_seconds[0]).toBeCloseTo(0.15, 2);
@@ -211,6 +219,7 @@ describe('assembleSceneAudio — 경계 crossfade', () => {
     const result = assembleSceneAudio([{ buffer: chunkA }, { buffer: chunkB }], audioConfig, {
       crossfadeMs: 30,
       trimSilence: false,
+      boundaryGapMs: 0,
     });
     const expected = 1.0 - 30 / 1000;
     expect(result.durationSec).toBeCloseTo(expected, 3);
@@ -224,6 +233,7 @@ describe('assembleSceneAudio — 경계 crossfade', () => {
     const result = assembleSceneAudio([{ buffer: chunkA }, { buffer: chunkB }], audioConfig, {
       crossfadeMs: 30,
       trimSilence: false,
+      boundaryGapMs: 0,
     });
 
     const cfFrames = Math.floor((30 / 1000) * audioConfig.sampleRate);
@@ -259,7 +269,7 @@ describe('assembleSceneAudio — 경계 crossfade', () => {
         { buffer: chunkB, alignment: alignB },
       ],
       audioConfig,
-      { crossfadeMs: 30, trimSilence: true },
+      { crossfadeMs: 30, trimSilence: true, boundaryGapMs: 0 },
     );
 
     // trim 후 총 길이 = 0.3 + 0.4 - 0.03 = 0.67
@@ -272,23 +282,95 @@ describe('assembleSceneAudio — 경계 crossfade', () => {
     expect(result.alignment!.character_start_times_seconds[1]).toBeCloseTo(0.32, 2);
   });
 
-  it('기본 옵션은 crossfade 30ms + trim on', () => {
-    const chunkA = makeWav(0.5, 8000);
-    const chunkB = makeWav(0.5, 8000);
-    const result = assembleSceneAudio([{ buffer: chunkA }, { buffer: chunkB }], audioConfig);
-    const expected = 1.0 - DEFAULT_CROSSFADE_MS / 1000;
-    expect(result.durationSec).toBeCloseTo(expected, 3);
-  });
-
   it('청크가 매우 짧아도 crossfade 가 청크 절반을 넘지 않게 제한된다', () => {
     // 10ms 청크 × 2, crossfade 30ms 요청 → 실제 cf = 5ms (절반)
     const tinyChunk = makeWav(0.01, 8000);
     const result = assembleSceneAudio(
       [{ buffer: tinyChunk }, { buffer: tinyChunk }],
       audioConfig,
-      { crossfadeMs: 30, trimSilence: false },
+      { crossfadeMs: 30, trimSilence: false, boundaryGapMs: 0 },
     );
     // 10ms * 2 - 5ms = 15ms
     expect(result.durationSec).toBeCloseTo(0.015, 3);
+  });
+});
+
+describe('assembleSceneAudio — 경계 gap (호흡 삽입)', () => {
+  it('boundaryGapMs 만큼 경계에 무음이 삽입되어 총 duration 이 늘어난다', () => {
+    const chunkA = makeWav(0.5, 8000);
+    const chunkB = makeWav(0.5, 8000);
+    const result = assembleSceneAudio([{ buffer: chunkA }, { buffer: chunkB }], audioConfig, {
+      crossfadeMs: 0,
+      trimSilence: false,
+      boundaryGapMs: 200,
+    });
+    // 청크 0.5 + gap 0.2 + 청크 0.5 = 1.2
+    expect(result.durationSec).toBeCloseTo(1.2, 3);
+  });
+
+  it('gap 구간은 완전 무음이다', () => {
+    const chunkA = makeWav(0.5, 8000);
+    const chunkB = makeWav(0.5, 8000);
+    const result = assembleSceneAudio([{ buffer: chunkA }, { buffer: chunkB }], audioConfig, {
+      crossfadeMs: 0,
+      trimSilence: false,
+      boundaryGapMs: 200,
+    });
+    const pcm = result.buffer.subarray(44);
+    const chunkAFrames = Math.floor(0.5 * audioConfig.sampleRate);
+    const gapFrames = Math.floor(0.2 * audioConfig.sampleRate);
+    // gap 구간 중앙 샘플 확인
+    const centerFrame = chunkAFrames + Math.floor(gapFrames / 2);
+    expect(pcm.readInt16LE(centerFrame * 2)).toBe(0);
+  });
+
+  it('boundaryGapMs > 0 이면 crossfadeMs 는 자동 무시된다', () => {
+    const chunkA = makeWav(0.5, 8000);
+    const chunkB = makeWav(0.5, 8000);
+    const result = assembleSceneAudio([{ buffer: chunkA }, { buffer: chunkB }], audioConfig, {
+      crossfadeMs: 30, // gap 과 함께 지정되면 무시되어야 함
+      trimSilence: false,
+      boundaryGapMs: 200,
+    });
+    // crossfade 가 적용되지 않았다면 duration = 1.0 + gap 0.2 = 1.2
+    expect(result.durationSec).toBeCloseTo(1.2, 3);
+  });
+
+  it('기본 옵션은 gap 220ms + trim on + crossfade off', () => {
+    const chunkA = makeWav(0.5, 8000);
+    const chunkB = makeWav(0.5, 8000);
+    const result = assembleSceneAudio([{ buffer: chunkA }, { buffer: chunkB }], audioConfig);
+    // loud constant 청크라 trim 없음, gap 기본 220ms 삽입
+    expect(result.durationSec).toBeCloseTo(1.0 + DEFAULT_BOUNDARY_GAP_MS / 1000, 3);
+  });
+
+  it('trim + gap 조합: alignment 는 trim + gap 반영해 offset', () => {
+    const chunkA = makeWavWithSilence(0.1, 0.3, 0.2, 8000); // trim → 0.3s
+    const chunkB = makeWavWithSilence(0.05, 0.4, 0.15, 8000); // trim → 0.4s
+    const alignA: AudioAlignment = {
+      characters: ['あ'],
+      character_start_times_seconds: [0.15],
+      character_end_times_seconds: [0.25],
+    };
+    const alignB: AudioAlignment = {
+      characters: ['い'],
+      character_start_times_seconds: [0.1],
+      character_end_times_seconds: [0.3],
+    };
+    const result = assembleSceneAudio(
+      [
+        { buffer: chunkA, alignment: alignA },
+        { buffer: chunkB, alignment: alignB },
+      ],
+      audioConfig,
+      { crossfadeMs: 0, trimSilence: true, boundaryGapMs: 200 },
+    );
+    // 총 길이 = 0.3 + 0.2(gap) + 0.4 = 0.9
+    expect(result.durationSec).toBeCloseTo(0.9, 2);
+    // 'あ' : 원래 0.15 - head trim 0.1 = 0.05
+    expect(result.alignment!.character_start_times_seconds[0]).toBeCloseTo(0.05, 2);
+    // 'い' : 원래 0.1 - head trim 0.05 + chunkB 시작 offset (0.3 + 0.2 = 0.5)
+    // = 0.1 - 0.05 + 0.5 = 0.55
+    expect(result.alignment!.character_start_times_seconds[1]).toBeCloseTo(0.55, 2);
   });
 });

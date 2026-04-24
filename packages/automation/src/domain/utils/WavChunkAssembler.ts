@@ -19,7 +19,8 @@ import { buildWav } from './WavAnalysisUtils';
  */
 
 const WAV_HEADER_SIZE = 44;
-export const DEFAULT_CROSSFADE_MS = 30;
+export const DEFAULT_CROSSFADE_MS = 0;
+export const DEFAULT_BOUNDARY_GAP_MS = 220;
 export const DEFAULT_SILENCE_THRESHOLD_INT16 = 512; // 약 -36 dBFS
 
 export interface WavChunkInput {
@@ -34,12 +35,21 @@ export interface AssembledSceneAudio {
 }
 
 export interface AssembleSceneAudioOptions {
-  /** 청크 경계에 적용할 선형 crossfade 길이 (ms). 0 이면 단순 concat. 기본 30. */
+  /**
+   * 청크 경계에 선형 crossfade 를 적용할 길이 (ms). gap > 0 이면 자동 무시 (의미 없음).
+   * gap 없이 sound 를 직접 이어붙일 때 클릭 방지용. 기본 0.
+   */
   crossfadeMs?: number;
   /** 각 청크의 head/tail 무음 trim 활성화. 기본 true. 전부 무음인 청크는 안전장치로 trim 스킵. */
   trimSilence?: boolean;
   /** 무음으로 간주할 int16 절대값 임계. 기본 512 (약 -36 dBFS). */
   silenceThresholdInt16?: number;
+  /**
+   * 청크 경계에 삽입할 무음 길이 (ms). 문장 사이 자연스러운 들숨 간격을 복원한다.
+   * trim 으로 각 청크의 꼬리/머리 무음이 제거되므로 이 gap 이 호흡 역할을 한다.
+   * 기본 220. 0 이면 경계 gap 없음 (crossfadeMs 만 적용).
+   */
+  boundaryGapMs?: number;
 }
 
 export function assembleSceneAudio(
@@ -55,6 +65,7 @@ export function assembleSceneAudio(
     crossfadeMs = DEFAULT_CROSSFADE_MS,
     trimSilence = true,
     silenceThresholdInt16 = DEFAULT_SILENCE_THRESHOLD_INT16,
+    boundaryGapMs = DEFAULT_BOUNDARY_GAP_MS,
   } = options;
 
   const { sampleRate, channels, bitDepth } = audioConfig;
@@ -64,7 +75,10 @@ export function assembleSceneAudio(
 
   const sampleWidth = bitDepth / 8;
   const bytesPerFrame = channels * sampleWidth;
-  const crossfadeFrames = Math.max(0, Math.floor((crossfadeMs / 1000) * sampleRate));
+  // gap 이 있으면 경계가 이미 silence 로 분리되므로 crossfade 는 무의미.
+  const effectiveCrossfadeMs = boundaryGapMs > 0 ? 0 : crossfadeMs;
+  const crossfadeFrames = Math.max(0, Math.floor((effectiveCrossfadeMs / 1000) * sampleRate));
+  const gapFrames = Math.max(0, Math.floor((boundaryGapMs / 1000) * sampleRate));
 
   // 1) 청크별 PCM 추출 + trim
   interface Processed {
@@ -101,13 +115,17 @@ export function assembleSceneAudio(
   }
 
   // 3) 각 청크의 씬 기준 시작 frame 및 총 길이 계산
+  //    경계에서 crossfade 는 겹침(-), gap 은 삽입(+) 으로 작용. 보통 둘 중 하나만 활성.
   const chunkStartFrames: number[] = [];
   let cursor = 0;
   for (let i = 0; i < processed.length; i++) {
     chunkStartFrames.push(cursor);
     const frames = processed[i].pcm.length / bytesPerFrame;
     cursor += frames;
-    if (i < processed.length - 1) cursor -= cfFrames[i];
+    if (i < processed.length - 1) {
+      cursor -= cfFrames[i];
+      cursor += gapFrames;
+    }
   }
   const totalFrames = cursor;
   const totalBytes = totalFrames * bytesPerFrame;
