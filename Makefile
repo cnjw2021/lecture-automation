@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install build run run-lambda run-force run-force-lambda regen-scene regen-scene-lambda regen-visual run-tts-only apply-tts apply-tts-lambda run-render-only run-render-only-lambda render-scene render-scene-lambda record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
+.PHONY: help install build run run-lambda run-force run-force-lambda regen-scene regen-scene-lambda regen-visual run-tts-only run-tts-chunk apply-tts apply-tts-lambda apply-tts-chunk apply-tts-chunk-lambda list-chunks find-chunk run-render-only run-render-only-lambda render-scene render-scene-lambda record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
         sync-playwright save-auth validate-schema lint lint-fix audit deploy-lambda
 
 # 기본 변수 설정
@@ -15,46 +15,92 @@ RUN_ENV_VARS = $(if $(strip $(MODEL)),MODEL="$(MODEL)")
 
 help:
 	@echo "🎓 Lecture Automation CLI"
+	@echo ""
 	@echo "--------------------------------------------------"
-	@echo "make install         - 모든 패키지 의존성 설치"
-	@echo "make install-align-deps - 마스터 오디오 정렬용 Python 가상환경 생성"
-	@echo "make run             - 전 공정 실행 (기본: lecture-01-01.json)"
-	@echo "make run LECTURE=xxx - 특정 강의 JSON 파일로 실행"
-	@echo "                       config/tts.json의 activeProvider로 씬별 TTS 생성"
-	@echo "make run-lambda LECTURE=xxx - 전 공정 실행 + 씬 클립은 Remotion Lambda로 병렬 렌더링"
-	@echo "make run-force       - 기존 에셋 무시하고 전체 재생성"
-	@echo "make run-force-lambda LECTURE=xxx - Lambda 모드 + 강제 재생성"
-	@echo "make clean           - 생성된 모든 에셋 및 결과물 삭제"
-	@echo "make preview SCENE=6 - 특정 씬의 프리뷰 이미지 생성 (PNG)"
-	@echo "make preview-motion LECTURE=lecture-01-03.json SCENE=6 - 특정 씬의 no-audio 모션 프리뷰 생성"
-	@echo "make preview-motion LECTURE=lecture-01-03.json SCENE=6 DURATION=150 - 프리뷰 길이 지정"
-	@echo "make icon-coverage   - lecture JSON의 icon 매핑 누락/오타 검사"
-	@echo "make tts-sample      - 현재 프로바이더로 TTS 샘플 생성"
-	@echo "make tts-sample TTS=gemini_cloud_tts RATE=0.7 - 프로바이더/속도 지정"
-	@echo "make regen-scene LECTURE=xxx SCENE=5       - 특정 씬만 빠르게 재생성 (TTS·webm·클립 모두)"
-	@echo "make regen-scene LECTURE=xxx SCENE='5 12'  - 여러 씬 동시 재생성"
-	@echo "make regen-scene-lambda LECTURE=xxx SCENE='5 12' - regen-scene + Remotion Lambda로 클립 병렬 렌더링"
-	@echo "make regen-visual LECTURE=xxx SCENE='6 14' - 씬 visual만 재생성 (webm + 클립, TTS 유지)"
-	@echo "make run-tts-only LECTURE=xxx SCENE='1 2 3' - 지정 씬 TTS만 재생성 + 미리 듣기 파일 생성"
-	@echo "make apply-tts LECTURE=xxx SCENE='1 2 3' - 기존 wav/webm 유지, 지정 씬 클립만 삭제 후 렌더 & 병합"
-	@echo "make apply-tts-lambda LECTURE=xxx SCENE='1 2 3' - apply-tts + Remotion Lambda로 씬 클립 병렬 렌더링"
-	@echo "make run-render-only LECTURE=xxx      - TTS/캡처 제외하고 전체 씬 렌더링 & 클립 병합만 재실행"
-	@echo "make run-render-only-lambda LECTURE=xxx - run-render-only + Remotion Lambda 사용"
-	@echo "make render-scene LECTURE=xxx SCENE=5      - 특정 씬 클립만 렌더링"
-	@echo "make render-scene LECTURE=xxx SCENE='5 12' - 여러 씬 클립 렌더링"
-	@echo "make render-scene-lambda LECTURE=xxx SCENE='5 12' - Remotion Lambda로 씬 클립 병렬 렌더링"
-	@echo "make deploy-lambda           - Remotion 사이트 번들 빌드 & S3 업로드 (public/ 변경 후 실행)"
-	@echo "make record-webm LECTURE=xxx SCENE=17      - 특정 Playwright 씬 webm 재생성"
-	@echo "make record-webm LECTURE=xxx SCENE='17 18' - 여러 Playwright 씬 webm 재생성"
-	@echo "make concat-scenes LECTURE=xxx             - 씬 클립 이어붙여 최종 MP4 생성"
-	@echo "make sync-playwright LECTURE=xxx           - Playwright 씬 narration-action 싱크 자동 조정"
-	@echo "make sync-playwright LECTURE=xxx SCENE=17  - 특정 씬만 싱크 조정"
-	@echo "make save-auth SERVICE=claude             - 브라우저 인증 상태 저장 (Claude/ChatGPT 등)"
-	@echo "make lint LECTURE=xxx                     - 강의 JSON lint 검사 (TTS 지뢰, 기호 위반 등)"
-	@echo "make lint-fix LECTURE=xxx                 - lint + 자동 수정 가능 항목 적용"
-	@echo "make audit LECTURE=xxx                    - TTS 오독 자동 감사 (Gemini 2.5 Flash STT 대조)"
-	@echo "make audit LECTURE=xxx SCENE='5 31'       - 특정 씬만 감사"
+	@echo "📦 설치 / 빌드"
 	@echo "--------------------------------------------------"
+	@echo "make install                          - 모든 패키지 의존성 설치"
+	@echo "make install-align-deps               - 마스터 오디오 정렬용 Python 가상환경 생성"
+	@echo ""
+	@echo "--------------------------------------------------"
+	@echo "🎬 전체 파이프라인"
+	@echo "--------------------------------------------------"
+	@echo "make run                              - 전 공정 실행 (기본: lecture-01-01.json)"
+	@echo "make run LECTURE=xxx                  - 특정 강의 JSON 으로 실행 (activeProvider TTS)"
+	@echo "make run-lambda LECTURE=xxx           - run + 씬 클립을 Remotion Lambda 로 병렬 렌더링"
+	@echo "make run-force                        - 기존 에셋 무시하고 전체 재생성"
+	@echo "make run-force-lambda LECTURE=xxx     - Lambda + 강제 재생성"
+	@echo ""
+	@echo "--------------------------------------------------"
+	@echo "🔄 씬 단위 재생성 (TTS + 캡처 + 클립 모두)"
+	@echo "--------------------------------------------------"
+	@echo "make regen-scene LECTURE=xxx SCENE=5          - 특정 씬 빠르게 재생성 (TTS·webm·클립)"
+	@echo "make regen-scene LECTURE=xxx SCENE='5 12'     - 여러 씬 동시 재생성"
+	@echo "make regen-scene-lambda LECTURE=xxx SCENE='5 12' - regen-scene + Lambda"
+	@echo "make regen-visual LECTURE=xxx SCENE='6 14'    - 씬 visual 만 재생성 (webm + 클립, TTS 유지)"
+	@echo ""
+	@echo "--------------------------------------------------"
+	@echo "🔊 TTS 재생성 (씬 단위)"
+	@echo "--------------------------------------------------"
+	@echo "make run-tts-only LECTURE=xxx SCENE='1 2 3'   - 지정 씬 TTS 만 재생성 + 미리 듣기 파일 생성"
+	@echo "make apply-tts LECTURE=xxx SCENE='1 2 3'      - 기존 wav/webm 유지, 지정 씬 클립만 재렌더 & 병합"
+	@echo "make apply-tts-lambda LECTURE=xxx SCENE='1 2 3' - apply-tts + Lambda"
+	@echo ""
+	@echo "--------------------------------------------------"
+	@echo "🧩 TTS 재생성 (청크 단위, 이슈 #113)"
+	@echo "--------------------------------------------------"
+	@echo "make apply-tts-chunk LECTURE=xxx SCENE=16 CHUNK='0 5 7'        - 특정 청크만 재생성 + 클립 재렌더"
+	@echo "make apply-tts-chunk-lambda LECTURE=xxx SCENE=16 CHUNK='0 5 7' - apply-tts-chunk + Lambda"
+	@echo "make run-tts-chunk LECTURE=xxx SCENE=16 CHUNK='0 5 7'          - 청크 재생성 + concat + 미리 듣기 (렌더 생략)"
+	@echo ""
+	@echo "--------------------------------------------------"
+	@echo "🔎 청크 탐색 도우미"
+	@echo "--------------------------------------------------"
+	@echo "make list-chunks LECTURE=xxx SCENE=16              - 씬 청크 목록 (인덱스·글자 범위·미리보기)"
+	@echo "make find-chunk LECTURE=xxx SCENE=16 TEXT='...'    - 특정 문구가 속한 청크 검색 + 재생성 명령 제안"
+	@echo ""
+	@echo "--------------------------------------------------"
+	@echo "🎞️  렌더링 / 클립 조작"
+	@echo "--------------------------------------------------"
+	@echo "make run-render-only LECTURE=xxx              - TTS/캡처 생략, 전체 씬 렌더링 & 병합 재실행"
+	@echo "make run-render-only-lambda LECTURE=xxx       - run-render-only + Lambda"
+	@echo "make render-scene LECTURE=xxx SCENE=5         - 특정 씬 클립만 렌더링"
+	@echo "make render-scene LECTURE=xxx SCENE='5 12'    - 여러 씬 클립 렌더링"
+	@echo "make render-scene-lambda LECTURE=xxx SCENE='5 12' - Lambda 로 씬 클립 병렬 렌더링"
+	@echo "make record-webm LECTURE=xxx SCENE=17         - 특정 Playwright 씬 webm 재생성"
+	@echo "make record-webm LECTURE=xxx SCENE='17 18'    - 여러 Playwright 씬 webm 재생성"
+	@echo "make concat-scenes LECTURE=xxx                - 씬 클립 이어붙여 최종 MP4 생성"
+	@echo "make deploy-lambda                            - Remotion 사이트 번들 빌드 & S3 업로드 (public/ 변경 후)"
+	@echo ""
+	@echo "--------------------------------------------------"
+	@echo "🎨 프리뷰 / 샘플"
+	@echo "--------------------------------------------------"
+	@echo "make preview SCENE=6                             - 특정 씬 프리뷰 이미지 생성 (PNG)"
+	@echo "make preview-motion LECTURE=xxx SCENE=6          - 특정 씬의 no-audio 모션 프리뷰 생성"
+	@echo "make preview-motion LECTURE=xxx SCENE=6 DURATION=150 - 프리뷰 길이 지정"
+	@echo "make tts-sample                                  - 현재 프로바이더로 TTS 샘플 생성"
+	@echo "make tts-sample TTS=gemini_cloud_tts RATE=0.7    - 프로바이더/속도 지정"
+	@echo "make icon-coverage                               - lecture JSON 의 icon 매핑 누락/오타 검사"
+	@echo ""
+	@echo "--------------------------------------------------"
+	@echo "🔗 싱크 / 인증"
+	@echo "--------------------------------------------------"
+	@echo "make sync-playwright LECTURE=xxx              - Playwright 씬 narration-action 싱크 자동 조정"
+	@echo "make sync-playwright LECTURE=xxx SCENE=17     - 특정 씬만 싱크 조정"
+	@echo "make save-auth SERVICE=claude                 - 브라우저 인증 상태 저장 (Claude/ChatGPT 등)"
+	@echo ""
+	@echo "--------------------------------------------------"
+	@echo "🧹 검증 / Lint / Audit"
+	@echo "--------------------------------------------------"
+	@echo "make lint LECTURE=xxx                         - 강의 JSON lint 검사 (TTS 지뢰, 기호 위반 등)"
+	@echo "make lint-fix LECTURE=xxx                     - lint + 자동 수정 가능 항목 적용"
+	@echo "make audit LECTURE=xxx                        - TTS 오독 자동 감사 (Gemini 2.5 Flash STT 대조)"
+	@echo "make audit LECTURE=xxx SCENE='5 31'           - 특정 씬만 감사"
+	@echo ""
+	@echo "--------------------------------------------------"
+	@echo "🗑️  정리"
+	@echo "--------------------------------------------------"
+	@echo "make clean                                    - 생성된 모든 에셋 및 결과물 삭제"
 
 install:
 	@echo "📦 의존성 설치 중..."
@@ -64,7 +110,7 @@ build:
 	@echo "🔨 automation 패키지 빌드 중..."
 	npm run build -w packages/automation
 
-run: lint
+run: lint build
 	@echo "🚀 강의 자동화 파이프라인 시작: $(LECTURE)"
 	env $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
@@ -72,7 +118,7 @@ run-lambda: lint build
 	@echo "☁️  Remotion Lambda 모드로 파이프라인 시작: $(LECTURE)"
 	env REMOTION_RENDER_MODE=lambda $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
-run-force: lint
+run-force: lint build
 	@echo "🔄 강제 재생성 모드로 파이프라인 시작: $(LECTURE)"
 	env FORCE=1 $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
@@ -127,7 +173,7 @@ regen-visual: build
 	done
 	env TARGET_SCENES="$(SCENE)" node $(ENGINE_PATH) $(LECTURE)
 
-run-tts-only:
+run-tts-only: build
 	@echo "🔊 TTS만 생성: $(LECTURE) / Scene $(SCENE)"
 	@LECTURE_ID=$$(node -e "const d=require('./data/$(LECTURE)'); console.log(d.lecture_id)"); \
 	for scene in $(SCENE); do \
@@ -137,7 +183,7 @@ run-tts-only:
 	done
 	env TTS_ONLY=1 TARGET_SCENES="$(SCENE)" $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
-apply-tts:
+apply-tts: build
 	@echo "🔁 기존 wav/webm 유지, 지정 씬 클립만 재렌더 & 병합: $(LECTURE) / Scene $(SCENE)"
 	@if [ -z "$(SCENE)" ]; then \
 		echo "❌ SCENE 값을 지정해 주세요. 예: make apply-tts LECTURE=lecture-02-01.json SCENE='10 12'"; \
@@ -163,7 +209,78 @@ apply-tts-lambda: build
 	done
 	env RENDER_ONLY=1 TARGET_SCENES="$(SCENE)" REMOTION_RENDER_MODE=lambda $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
-run-render-only:
+# ---------------------------------------------------------------------------
+# apply-tts-chunk (이슈 #113)
+#
+# 특정 씬의 특정 청크(scene-N-chunk-M.wav) 만 삭제·재생성한 뒤 나머지 청크는
+# 기존 파일을 재사용해 scene-N.wav 를 concat. 클립(scene-N.mp4) 도 재렌더하여
+# 병합까지 수행한다. 전체 씬 TTS 재생성의 1/N 비용으로 오독 1개를 고칠 수 있다.
+# ---------------------------------------------------------------------------
+apply-tts-chunk: build
+	@echo "🧩 청크 단위 재생성 + 씬 concat + 클립 재렌더: $(LECTURE) / Scene $(SCENE) / Chunk $(CHUNK)"
+	@if [ -z "$(SCENE)" ] || [ -z "$(CHUNK)" ]; then \
+		echo "❌ SCENE 과 CHUNK 를 모두 지정해 주세요."; \
+		echo "   예: make apply-tts-chunk LECTURE=lecture-02-01.json SCENE=16 CHUNK='0 5 7'"; \
+		exit 1; \
+	fi
+	@LECTURE_ID=$$(node -e "const d=require('./data/$(LECTURE)'); console.log(d.lecture_id)"); \
+	for scene in $(SCENE); do \
+		echo "  🗑️  scene-$$scene.mp4 클립 삭제 중..."; \
+		rm -f $(OUTPUT_DIR)/clips/$$LECTURE_ID/scene-$$scene.mp4; \
+	done
+	@TARGET_CHUNKS_ARG="$$(node -e "const s='$(SCENE)'.trim().split(/\s+/); const c='$(CHUNK)'.trim().split(/\s+/).join(','); console.log(s.map(id => id + ':' + c).join(' '))")"; \
+	echo "  TARGET_CHUNKS=$$TARGET_CHUNKS_ARG"; \
+	env TARGET_SCENES="$(SCENE)" TARGET_CHUNKS="$$TARGET_CHUNKS_ARG" $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
+
+apply-tts-chunk-lambda: build
+	@echo "☁️🧩 청크 단위 재생성 + 씬 concat + Lambda 클립 재렌더: $(LECTURE) / Scene $(SCENE) / Chunk $(CHUNK)"
+	@if [ -z "$(SCENE)" ] || [ -z "$(CHUNK)" ]; then \
+		echo "❌ SCENE 과 CHUNK 를 모두 지정해 주세요."; \
+		echo "   예: make apply-tts-chunk-lambda LECTURE=lecture-02-01.json SCENE=16 CHUNK='0 5 7'"; \
+		exit 1; \
+	fi
+	@LECTURE_ID=$$(node -e "const d=require('./data/$(LECTURE)'); console.log(d.lecture_id)"); \
+	for scene in $(SCENE); do \
+		echo "  🗑️  scene-$$scene.mp4 클립 삭제 중..."; \
+		rm -f $(OUTPUT_DIR)/clips/$$LECTURE_ID/scene-$$scene.mp4; \
+	done
+	@TARGET_CHUNKS_ARG="$$(node -e "const s='$(SCENE)'.trim().split(/\s+/); const c='$(CHUNK)'.trim().split(/\s+/).join(','); console.log(s.map(id => id + ':' + c).join(' '))")"; \
+	echo "  TARGET_CHUNKS=$$TARGET_CHUNKS_ARG"; \
+	env TARGET_SCENES="$(SCENE)" TARGET_CHUNKS="$$TARGET_CHUNKS_ARG" REMOTION_RENDER_MODE=lambda $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
+
+run-tts-chunk: build
+	@echo "🧩 청크 단위 재생성 + 씬 concat + 미리 듣기 (렌더 생략): $(LECTURE) / Scene $(SCENE) / Chunk $(CHUNK)"
+	@if [ -z "$(SCENE)" ] || [ -z "$(CHUNK)" ]; then \
+		echo "❌ SCENE 과 CHUNK 를 모두 지정해 주세요."; \
+		echo "   예: make run-tts-chunk LECTURE=lecture-02-01.json SCENE=16 CHUNK='0 5 7'"; \
+		exit 1; \
+	fi
+	@TARGET_CHUNKS_ARG="$$(node -e "const s='$(SCENE)'.trim().split(/\s+/); const c='$(CHUNK)'.trim().split(/\s+/).join(','); console.log(s.map(id => id + ':' + c).join(' '))")"; \
+	echo "  TARGET_CHUNKS=$$TARGET_CHUNKS_ARG"; \
+	env TTS_ONLY=1 TARGET_SCENES="$(SCENE)" TARGET_CHUNKS="$$TARGET_CHUNKS_ARG" $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
+
+# ---------------------------------------------------------------------------
+# list-chunks / find-chunk (이슈 #113 보조)
+#
+# 어느 청크를 재생성해야 하는지 확인하는 도우미. TTS 파이프라인과 동일한
+# SyncPointNarrationChunker 를 사용해 실제 캐시 단위와 정확히 일치한다.
+# ---------------------------------------------------------------------------
+list-chunks:
+	@if [ -z "$(SCENE)" ]; then \
+		echo "❌ SCENE 값을 지정해 주세요. 예: make list-chunks LECTURE=lecture-02-01.json SCENE=16"; \
+		exit 1; \
+	fi
+	@npx tsx packages/automation/src/presentation/cli/list-chunks.ts $(LECTURE) $(SCENE) $(if $(PREVIEW),--preview $(PREVIEW),)
+
+find-chunk:
+	@if [ -z "$(SCENE)" ] || [ -z "$(TEXT)" ]; then \
+		echo "❌ SCENE 과 TEXT 를 모두 지정해 주세요."; \
+		echo "   예: make find-chunk LECTURE=lecture-02-01.json SCENE=16 TEXT='予期しない空白'"; \
+		exit 1; \
+	fi
+	@npx tsx packages/automation/src/presentation/cli/list-chunks.ts $(LECTURE) $(SCENE) --find "$(TEXT)"
+
+run-render-only: build
 	@echo "🎞️ 사전 준비(TTS, 캡처) 건너뛰고 렌더링 & 병합 시퀀스 실행: $(LECTURE)"
 	env RENDER_ONLY=1 $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
@@ -171,7 +288,7 @@ run-render-only-lambda: build
 	@echo "☁️🎞️  Remotion Lambda 로 렌더링 & 병합 시퀀스 실행: $(LECTURE)"
 	env RENDER_ONLY=1 REMOTION_RENDER_MODE=lambda $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
-render-scene:
+render-scene: build
 	@echo "🎞️  씬 클립 렌더링: $(LECTURE) / Scene $(SCENE)"
 	node $(ENGINE_RENDER_SCENE) $(LECTURE) $(SCENE)
 
@@ -183,17 +300,15 @@ deploy-lambda: build
 	@echo "☁️  Remotion Lambda 사이트 배포 (번들 업로드)..."
 	node packages/automation/dist/presentation/cli/deploy-lambda.js
 
-record-webm:
+record-webm: build
 	@echo "🎥 Playwright 씬 webm 녹화: $(LECTURE) / Scene $(SCENE)"
 	@if [ -z "$(SCENE)" ]; then \
 		echo "❌ SCENE 값을 지정해 주세요. 예: make record-webm LECTURE=lecture-03.json SCENE='17 18'"; \
 		exit 1; \
 	fi
-	@echo "🔨 automation 패키지 빌드 중..."
-	npm run build -w packages/automation
 	node $(ENGINE_RECORD_WEBM) $(LECTURE) $(SCENE)
 
-concat-scenes:
+concat-scenes: build
 	@echo "🔗 씬 클립 이어붙이기: $(LECTURE)"
 	node $(ENGINE_CONCAT_SCENES) $(LECTURE)
 

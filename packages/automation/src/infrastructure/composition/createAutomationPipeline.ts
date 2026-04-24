@@ -8,6 +8,7 @@ import { RenderSceneClipsUseCase } from '../../application/use-cases/RenderScene
 import { ReverseSyncPlaywrightUseCase } from '../../application/use-cases/ReverseSyncPlaywrightUseCase';
 import { SyncPlaywrightUseCase } from '../../application/use-cases/SyncPlaywrightUseCase';
 import { ValidateLectureUseCase } from '../../application/use-cases/ValidateLectureUseCase';
+import { SyncPointNarrationChunker } from '../../domain/services/NarrationChunker';
 import { ConfiguredAudioProviderFactory } from '../factories/ConfiguredAudioProviderFactory';
 import { ElevenLabsConfiguredAudioProviderBuilder } from '../factories/ElevenLabsConfiguredAudioProviderBuilder';
 import { GeminiCloudTtsConfiguredAudioProviderBuilder } from '../factories/GeminiCloudTtsConfiguredAudioProviderBuilder';
@@ -33,9 +34,11 @@ export function createAutomationPipeline(): RunAutomationPipelineUseCase {
     new GeminiCloudTtsConfiguredAudioProviderBuilder(),
     new ElevenLabsConfiguredAudioProviderBuilder(),
   ]);
+  const narrationChunker = new SyncPointNarrationChunker();
   const narrationAudioPreparationService = new ConfiguredNarrationAudioPreparationService(
     lectureRepository,
     audioProviderFactory,
+    narrationChunker,
   );
 
   const validateLectureUseCase = new ValidateLectureUseCase();
