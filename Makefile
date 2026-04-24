@@ -69,7 +69,7 @@ build:
 	@echo "🔨 automation 패키지 빌드 중..."
 	npm run build -w packages/automation
 
-run: lint
+run: lint build
 	@echo "🚀 강의 자동화 파이프라인 시작: $(LECTURE)"
 	env $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
@@ -77,7 +77,7 @@ run-lambda: lint build
 	@echo "☁️  Remotion Lambda 모드로 파이프라인 시작: $(LECTURE)"
 	env REMOTION_RENDER_MODE=lambda $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
-run-force: lint
+run-force: lint build
 	@echo "🔄 강제 재생성 모드로 파이프라인 시작: $(LECTURE)"
 	env FORCE=1 $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
@@ -132,7 +132,7 @@ regen-visual: build
 	done
 	env TARGET_SCENES="$(SCENE)" node $(ENGINE_PATH) $(LECTURE)
 
-run-tts-only:
+run-tts-only: build
 	@echo "🔊 TTS만 생성: $(LECTURE) / Scene $(SCENE)"
 	@LECTURE_ID=$$(node -e "const d=require('./data/$(LECTURE)'); console.log(d.lecture_id)"); \
 	for scene in $(SCENE); do \
@@ -142,7 +142,7 @@ run-tts-only:
 	done
 	env TTS_ONLY=1 TARGET_SCENES="$(SCENE)" $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
-apply-tts:
+apply-tts: build
 	@echo "🔁 기존 wav/webm 유지, 지정 씬 클립만 재렌더 & 병합: $(LECTURE) / Scene $(SCENE)"
 	@if [ -z "$(SCENE)" ]; then \
 		echo "❌ SCENE 값을 지정해 주세요. 예: make apply-tts LECTURE=lecture-02-01.json SCENE='10 12'"; \
@@ -175,7 +175,7 @@ apply-tts-lambda: build
 # 기존 파일을 재사용해 scene-N.wav 를 concat. 클립(scene-N.mp4) 도 재렌더하여
 # 병합까지 수행한다. 전체 씬 TTS 재생성의 1/N 비용으로 오독 1개를 고칠 수 있다.
 # ---------------------------------------------------------------------------
-apply-tts-chunk:
+apply-tts-chunk: build
 	@echo "🧩 청크 단위 재생성 + 씬 concat + 클립 재렌더: $(LECTURE) / Scene $(SCENE) / Chunk $(CHUNK)"
 	@if [ -z "$(SCENE)" ] || [ -z "$(CHUNK)" ]; then \
 		echo "❌ SCENE 과 CHUNK 를 모두 지정해 주세요."; \
@@ -207,7 +207,7 @@ apply-tts-chunk-lambda: build
 	echo "  TARGET_CHUNKS=$$TARGET_CHUNKS_ARG"; \
 	env TARGET_SCENES="$(SCENE)" TARGET_CHUNKS="$$TARGET_CHUNKS_ARG" REMOTION_RENDER_MODE=lambda $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
-run-tts-chunk:
+run-tts-chunk: build
 	@echo "🧩 청크 단위 재생성 + 씬 concat + 미리 듣기 (렌더 생략): $(LECTURE) / Scene $(SCENE) / Chunk $(CHUNK)"
 	@if [ -z "$(SCENE)" ] || [ -z "$(CHUNK)" ]; then \
 		echo "❌ SCENE 과 CHUNK 를 모두 지정해 주세요."; \
@@ -239,7 +239,7 @@ find-chunk:
 	fi
 	@npx tsx packages/automation/src/presentation/cli/list-chunks.ts $(LECTURE) $(SCENE) --find "$(TEXT)"
 
-run-render-only:
+run-render-only: build
 	@echo "🎞️ 사전 준비(TTS, 캡처) 건너뛰고 렌더링 & 병합 시퀀스 실행: $(LECTURE)"
 	env RENDER_ONLY=1 $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
@@ -247,7 +247,7 @@ run-render-only-lambda: build
 	@echo "☁️🎞️  Remotion Lambda 로 렌더링 & 병합 시퀀스 실행: $(LECTURE)"
 	env RENDER_ONLY=1 REMOTION_RENDER_MODE=lambda $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
-render-scene:
+render-scene: build
 	@echo "🎞️  씬 클립 렌더링: $(LECTURE) / Scene $(SCENE)"
 	node $(ENGINE_RENDER_SCENE) $(LECTURE) $(SCENE)
 
@@ -259,17 +259,15 @@ deploy-lambda: build
 	@echo "☁️  Remotion Lambda 사이트 배포 (번들 업로드)..."
 	node packages/automation/dist/presentation/cli/deploy-lambda.js
 
-record-webm:
+record-webm: build
 	@echo "🎥 Playwright 씬 webm 녹화: $(LECTURE) / Scene $(SCENE)"
 	@if [ -z "$(SCENE)" ]; then \
 		echo "❌ SCENE 값을 지정해 주세요. 예: make record-webm LECTURE=lecture-03.json SCENE='17 18'"; \
 		exit 1; \
 	fi
-	@echo "🔨 automation 패키지 빌드 중..."
-	npm run build -w packages/automation
 	node $(ENGINE_RECORD_WEBM) $(LECTURE) $(SCENE)
 
-concat-scenes:
+concat-scenes: build
 	@echo "🔗 씬 클립 이어붙이기: $(LECTURE)"
 	node $(ENGINE_CONCAT_SCENES) $(LECTURE)
 
