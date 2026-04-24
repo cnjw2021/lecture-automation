@@ -2,12 +2,12 @@
   "lecture_id": "02-02",
   "title": "テキストを扱うタグ",
   "part": 2,
-  "totalDurationSec": 1500,
+  "totalDurationSec": 1550,
   "sequence": [
     {
       "scene_id": 1,
-      "narration": "皆さん、こんにちは。前回の講義では、HTMLの基本ルールを学びましたね。タグは開くタグと閉じタグのペアで書くこと、そしてタグの中にタグを入れる入れ子構造、マトリョーシカ人形の関係でしたね。",
-      "durationSec": 28,
+      "narration": "皆さん、こんにちは。前回の講義では、HTMLの基本ルールを学びましたね。'たぐ'は開く'たぐ'と閉じ'たぐ'の'ぺ'あで書くこと、そして'たぐ'の中に'たぐ'を入れる入れ子構造、マトリョーシカ人形の関係でしたね。",
+      "durationSec": 22,
       "visual": {
         "type": "remotion",
         "component": "TitleScreen",
@@ -22,7 +22,7 @@
     },
     {
       "scene_id": 2,
-      "narration": "今日はその基本ルールを土台にして、テキストを扱うタグを一つずつ学んでいきます。見出し、だんらく、リスト、強調、改行、区切り線。こう聞くと種類が多そうに感じるかもしれませんが、一つひとつはとてもシンプルです。そして今日の最後には、これらのタグを組み合わせて、CodePenで自己紹介ページを作ります。前回はタグの書き方のルールを確認しましたが、今日はいよいよ使えるタグの種類を増やしていく回です。では、CodePenを開いて、一緒に進めていきましょう。",
+      "narration": "今日はその基本ルールを土台にして、テキストを扱う'たぐ'を一つずつ学んでいきます。見出し、だんらく、リスト、強調、かいぎょう、区切り線。こう聞くと種類が多そうに感じるかもしれませんが、一つひとつはとてもシンプルです。そして今日の最後には、これらの'たぐ'を組み合わせて、CodePenで自己紹介ページを作ります。前回は'たぐ'の書き方のルールを確認しましたが、今日はいよいよ使える'たぐ'の種類を増やしていく回です。では、CodePenを開いて、一緒に進めていきましょう。",
       "durationSec": 56,
       "visual": {
         "type": "remotion",
@@ -64,7 +64,7 @@
     },
     {
       "scene_id": 3,
-      "narration": "では、まず見出しタグから始めましょう。前回の講義でエイチワンタグを使いましたよね。エイチワンは、いちばん大きな見出しでした。実はHTMLには、見出しタグがエイチワンだけではなく、エイチワンからエイチシックスまで、6段階も用意されています。数字が小さいほど重要度が高い見出しです。CodePenで新しい'ぺ'んを作成して、実際に6つ全部書いてみましょう。HTMLのパネルに入力していきますね。",
+      "narration": "では、まず見出し'たぐ'から始めましょう。前回の講義でエイチワン'たぐ'を使いましたよね。エイチワンは、いちばん大きな見出しでした。実はHTMLには、見出し'たぐ'がエイチワンだけではなく、エイチワンからエイチシックスまで、6段階も用意されています。数字が小さいほど重要度が高い見出しです。CodePenで新しい'ぺ'んを作成して、実際に6つ全部書いてみましょう。HTMLのパネルに入力していきますね。",
       "durationSec": 45,
       "visual": {
         "type": "remotion",
@@ -84,18 +84,146 @@
     {
       "scene_id": 4,
       "narration": "いちばん大きな見出し、2番目の見出し、3番目の見出し、4番目の見出し、5番目の見出し、いちばん小さな見出し。",
-      "durationSec": 20,
+      "durationSec": 26,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "language": "html",
-          "title": "見出しタグ h1〜h6",
-          "code": "<h1>いちばん大きな見出し</h1>\n<h2>2番目の見出し</h2>\n<h3>3番目の見出し</h3>\n<h4>4番目の見出し</h4>\n<h5>5番目の見出し</h5>\n<h6>いちばん小さな見出し</h6>"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 5,
+            "phrase": "いちばん大きな見出し"
+          },
+          {
+            "actionIndex": 8,
+            "phrase": "2番目の見出し"
+          },
+          {
+            "actionIndex": 11,
+            "phrase": "3番目の見出し"
+          },
+          {
+            "actionIndex": 14,
+            "phrase": "4番目の見出し"
+          },
+          {
+            "actionIndex": 17,
+            "phrase": "5番目の見出し"
+          },
+          {
+            "actionIndex": 20,
+            "phrase": "いちばん小さな見出し"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h1>いちばん大きな見出し</h1>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>2番目の見出し</h2>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h3>3番目の見出し</h3>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h4>4番目の見出し</h4>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h5>5番目の見出し</h5>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h6>いちばん小さな見出し</h6>"
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
@@ -138,7 +266,7 @@
     },
     {
       "scene_id": 6,
-      "narration": "ここで大事なポイントがあります。見出しタグは文字を大きくするためのタグではありません。この文章の構造において、ここが一番重要な見出しですよ、ここはその下のセクション見出しですよと、文章の階層構造を伝えるためのタグなんです。なぜこの区別が大事かというと、ブラウザや検索エンジンも見出しタグでページの構造を把握しているからです。",
+      "narration": "ここで大事なポイントがあります。見出し'たぐ'は文字を大きくするための'たぐ'ではありません。この文章の構造において、ここが一番重要な見出しですよ、ここはその下のセクション見出しですよと、文章の階層構造を伝えるための'たぐ'なんです。なぜこの区別が大事かというと、ブラウザや検索エンジンも見出し'たぐ'でページの構造を把握しているからです。",
       "durationSec": 42,
       "visual": {
         "type": "remotion",
@@ -153,7 +281,7 @@
     },
     {
       "scene_id": 7,
-      "narration": "実際に使うときのルールとしては、エイチワンはページに1つだけにするのが基本です。そしてエイチツー、エイチスリーと順番に使っていく。エイチワンの次にいきなりエイチフォーを使うのは、新聞で大見出しの次にいきなり小さなコラム見出しが来るようなもので、構造としてわかりにくくなります。ただ、これも暗記する必要はありません。エーアイにページを作ってもらうと、だいたい正しい見出し構造で出力してくれます。皆さんはそれを見てエイチワンがメインで、エイチツーがセクションで、エイチスリーがその中の小見出しなんだなと読めればオーケーです。ちなみに、実際のウェブサイトではエイチワンからエイチスリーくらいまでがよく使われます。今の段階では、見出しは6段階あるけど、よく使うのはエイチワン、エイチツー、エイチスリーの3つ、と覚えておけば十分です。では、いったんこのコードは消して、次のタグに進みましょう。",
+      "narration": "実際に使うときのルールとしては、エイチワンはページに1つだけにするのが基本です。そしてエイチツー、エイチスリーと順番に使っていく。エイチワンの次にいきなりエイチフォーを使うのは、新聞で大見出しの次にいきなり小さなコラム見出しが来るようなもので、構造としてわかりにくくなります。ただ、これも暗記する必要はありません。エーアイにページを作ってもらうと、だいたい正しい見出し構造で出力してくれます。皆さんはそれを見てエイチワンがメインで、エイチツーがセクションで、エイチスリーがその中の小見出しなんだなと読めればオーケーです。ちなみに、実際のウェブサイトではエイチワンからエイチスリーくらいまでがよく使われます。今の段階では、見出しは6段階あるけど、よく使うのはエイチワン、エイチツー、エイチスリーの3つ、と覚えておけば十分です。では、いったんこのコードは消して、次の'たぐ'に進みましょう。",
       "durationSec": 80,
       "visual": {
         "type": "remotion",
@@ -188,7 +316,7 @@
     },
     {
       "scene_id": 8,
-      "narration": "次は、だんらくタグのpタグです。これも前回少し使いましたね。pはパラグラフ、つまりだんらくという意味です。本文の文章を書くときに使うタグで、ウェブページの中でいちばんたくさん使うタグの一つです。CodePenのHTMLペインを空にして、新しく書いていきましょう。",
+      "narration": "次は、だんらく'たぐ'のp'たぐ'です。これも前回少し使いましたね。pはパラグラフ、つまりだんらくという意味です。本文の文章を書くときに使う'たぐ'で、ウェブページの中でいちばんたくさん使う'たぐ'の一つです。CodePenのHTMLペインを空にして、新しく書いていきましょう。",
       "durationSec": 32,
       "visual": {
         "type": "remotion",
@@ -207,41 +335,167 @@
     },
     {
       "scene_id": 9,
-      "narration": "私はカレーライスが好きです。週に一度は食べています。特にスパイスから作るカレーが好きで、休日によく作ります。",
-      "durationSec": 18,
+      "narration": "私はカレーライスが好きです。週に一度は食べています。特にスパイスから作るカレーが好きで、休日によく作ります。プレビューを見てください。2つのp'たぐ'の間に、自然にスペースが入っていますよね。これがp'たぐ'の特徴です。ブラウザが、ここはだんらくの区切りだなと判断して、適度な余白を自動的に入れてくれるんです。さて、ここでもう1つ大事なことをお見せします。今のコードの中で、1つ目のp'たぐ'の文章を途中でかいぎょうしてみますね。HTMLのコード上では2行に分かれていますが、プレビューを見てみてください。かいぎょうされていませんよね。1行につながって表示されています。",
+      "durationSec": 75,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "language": "html",
-          "title": "段落タグ p",
-          "code": "<h1>私の好きな食べ物</h1>\n<p>私はカレーライスが好きです。週に一度は食べています。</p>\n<p>特にスパイスから作るカレーが好きで、休日によく作ります。</p>"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 5,
+            "phrase": "私はカレーライスが好きです"
+          },
+          {
+            "actionIndex": 11,
+            "phrase": "プレビューを見てください"
+          },
+          {
+            "actionIndex": 13,
+            "phrase": "今のコードの中で、1つ目のp'たぐ'の文章を途中でかいぎょうしてみますね"
+          },
+          {
+            "actionIndex": 25,
+            "phrase": "プレビューを見てみてください"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h1>私の好きな食べ物</h1>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>私はカレーライスが好きです。週に一度は食べています。</p>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>特にスパイスから作るカレーが好きで、休日によく作ります。</p>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+a"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h1>私の好きな食べ物</h1>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>私はカレーライスが好きです。"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "週に一度は食べています。</p>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>特にスパイスから作るカレーが好きで、休日によく作ります。</p>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
       "scene_id": 10,
-      "narration": "プレビューを見てください。2つのpタグの間に、自然にスペースが入っていますよね。これがpタグの特徴です。ブラウザが、ここはだんらくの区切りだなと判断して、適度な余白を自動的に入れてくれるんです。さて、ここでもう1つ大事なことをお見せします。今のコードの中で、1つ目のpタグの文章を途中で改行してみますね。HTMLのコード上では2行に分かれていますが、プレビューを見てみてください。改行されていませんよね。1行につながって表示されています。",
-      "durationSec": 52,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "language": "html",
-          "title": "コード上の改行はブラウザに無視される",
-          "code": "<h1>私の好きな食べ物</h1>\n<p>私はカレーライスが好きです。\n週に一度は食べています。</p>\n<p>特にスパイスから作るカレーが好きで、休日によく作ります。</p>"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 11,
-      "narration": "これ、最初は「あれ？」と思うポイントです。ワードやメモ帳なら、Enterを押せば改行されますよね。でもHTMLでは、コード上でEnterキーを押して改行しても、ブラウザは改行として表示しません。HTMLにとって、コード上の改行はただの空白スペース1つ分として扱われるんです。これはHTMLの仕様です。HTMLはタグで意味を伝える言語なので、改行したいなら改行専用のタグを使う必要があるんですね。今は、HTMLではEnterキーだけでは改行されないということを覚えておいてください。これ、実際にウェブページを作るときに必ず出てくるポイントなので、しっかり押さえておきましょう。",
+      "narration": "これ、最初は「あれ？」と思うポイントです。ワードやメモ帳なら、Enterを押せばかいぎょうされますよね。でもHTMLでは、コード上でEnterキーを押してかいぎょうしても、ブラウザはかいぎょうとして表示しません。HTMLにとって、コード上のかいぎょうはただの空白スペース1つ分として扱われるんです。これはHTMLの仕様です。HTMLは'たぐ'で意味を伝える言語なので、かいぎょうしたいならかいぎょう専用の'たぐ'を使う必要があるんですね。今は、HTMLではEnterキーだけではかいぎょうされないということを覚えておいてください。これ、実際にウェブページを作るときに必ず出てくるポイントなので、しっかり押さえておきましょう。",
       "durationSec": 65,
       "visual": {
         "type": "remotion",
@@ -254,25 +508,94 @@
       }
     },
     {
-      "scene_id": 12,
-      "narration": "では次に、テキストを強調するタグを見てみましょう。文章の中で特に目立たせたい部分を強調するために、2つのタグがあります。プレビューを見てください。strongタグで囲んだカレーライスが太字になっていますね。そしてemタグで囲んだスパイスから作るカレーがイタリック、つまり斜体になっています。",
-      "durationSec": 40,
+      "scene_id": 11,
+      "narration": "では次に、テキストを強調する'たぐ'を見てみましょう。文章の中で特に目立たせたい部分を強調するために、2つの'たぐ'があります。プレビューを見てください。strong'たぐ'で囲んだカレーライスが太字になっていますね。そしてem'たぐ'で囲んだスパイスから作るカレーがイタリック、つまり斜体になっています。",
+      "durationSec": 45,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "language": "html",
-          "title": "テキスト装飾タグ strong / em",
-          "code": "<h1>私の好きな食べ物</h1>\n<p><strong>カレーライス</strong>が私のいちばんの好物です。</p>\n<p>特に<em>スパイスから作るカレー</em>がおすすめです。</p>"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 5,
+            "phrase": "では次に、テキストを強調する'たぐ'を見てみましょう"
+          },
+          {
+            "actionIndex": 11,
+            "phrase": "プレビューを見てください"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h1>私の好きな食べ物</h1>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p><strong>カレーライス</strong>が私のいちばんの好物です。</p>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>特に<em>スパイスから作るカレー</em>がおすすめです。</p>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
-      "scene_id": 13,
-      "narration": "strongはストロング、強い強調という意味です。見た目としては太字で表示されます。emはエンファシス、強調という意味です。こちらはここにニュアンスがありますよという柔らかい強調で、見た目としては斜体で表示されます。ここで注目してほしいのは、strongタグとemタグがpタグの中に入っているということです。前回学んだ入れ子構造ですね。pというだんらくの中に、strongやemで一部のテキストだけを囲んで強調している。タグの入れ子は、こういうふうに実際の場面で使われるんです。ちなみに、strongとemのどちらを使えばいいか迷ったら、基本的にはstrongを使えば大丈夫です。emはどちらかというとここに注意してねくらいのニュアンスで、使用頻度はstrongより少ないです。",
+      "scene_id": 12,
+      "narration": "strongはストロング、強い強調という意味です。見た目としては太字で表示されます。emはエンファシス、強調という意味です。こちらはここにニュアンスがありますよという柔らかい強調で、見た目としては斜体で表示されます。ここで注目してほしいのは、strong'たぐ'とem'たぐ'がp'たぐ'の中に入っているということです。前回学んだ入れ子構造ですね。pというだんらくの中に、strongやemで一部のテキストだけを囲んで強調している。'たぐ'の入れ子は、こういうふうに実際の場面で使われるんです。ちなみに、strongとemのどちらを使えばいいか迷ったら、基本的にはstrongを使えば大丈夫です。emはどちらかというとここに注意してねくらいのニュアンスで、使用頻度はstrongより少ないです。",
       "durationSec": 72,
       "visual": {
         "type": "remotion",
@@ -301,8 +624,8 @@
       }
     },
     {
-      "scene_id": 14,
-      "narration": "さて、ここからは今日のハイライト、リストタグです。ウェブページで箇条書きを作るためのタグですね。リストには2種類あります。順序なしリストと順序ありリストです。まず、順序なしリストから見てみましょう。CodePenのHTMLペインを空にして、新しく書いていきます。",
+      "scene_id": 13,
+      "narration": "さて、ここからは今日のハイライト、リスト'たぐ'です。ウェブページで箇条書きを作るための'たぐ'ですね。リストには2種類あります。順序なしリストと順序ありリストです。まず、順序なしリストから見てみましょう。CodePenのHTMLペインを空にして、新しく書いていきます。",
       "durationSec": 36,
       "visual": {
         "type": "remotion",
@@ -328,25 +651,117 @@
       }
     },
     {
-      "scene_id": 15,
+      "scene_id": 14,
       "narration": "好きな食べ物リスト。カレーライス、ラーメン、お寿司。",
-      "durationSec": 14,
+      "durationSec": 24,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "language": "html",
-          "title": "順序なしリスト ul / li",
-          "code": "<h2>好きな食べ物リスト</h2>\n<ul>\n  <li>カレーライス</li>\n  <li>ラーメン</li>\n  <li>お寿司</li>\n</ul>"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 5,
+            "phrase": "好きな食べ物リスト"
+          },
+          {
+            "actionIndex": 11,
+            "phrase": "カレーライス、ラーメン、お寿司"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>好きな食べ物リスト</h2>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<ul>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "  <li>カレーライス</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "  <li>ラーメン</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "  <li>お寿司</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</ul>"
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
-      "scene_id": 16,
-      "narration": "プレビューを見てください。黒い丸のマーカーが付いた箇条書きになっていますね。ワードやメモアプリでよく見る箇条書きが、HTMLでも作れるんです。ここで2つの新しいタグが出てきました。ulとliです。ulはアンオーダードリスト、つまり順序のないリストという意味です。そしてliはリストアイテム、リストの各項目という意味です。構造を整理しましょう。ulタグが外側の箱で、その中にliタグが並んでいます。前回のマトリョーシカの関係ですね。ulが親で、liが子。大事なポイントは、liタグは必ずulタグの中に入れるということです。liだけをポンと書いても、ブラウザはリストとして正しく表示してくれません。ulというリストの箱の中にliを入れる。これがルールです。",
+      "scene_id": 15,
+      "narration": "プレビューを見てください。黒い丸のマーカーが付いた箇条書きになっていますね。ワードやメモアプリでよく見る箇条書きが、HTMLでも作れるんです。ここで2つの新しい'たぐ'が出てきました。ulとliです。ulはアンオーダードリスト、つまり順序のないリストという意味です。そしてliはリストアイテム、リストの各項目という意味です。構造を整理しましょう。ul'たぐ'が外側の箱で、その中にli'たぐ'が並んでいます。前回のマトリョーシカの関係ですね。ulが親で、liが子。大事なポイントは、li'たぐ'は必ずul'たぐ'の中に入れるということです。liだけをポンと書いても、ブラウザはリストとして正しく表示してくれません。ulというリストの箱の中にliを入れる。これがルールです。",
       "durationSec": 80,
       "visual": {
         "type": "remotion",
@@ -366,24 +781,141 @@
       }
     },
     {
-      "scene_id": 17,
+      "scene_id": 16,
       "narration": "では次に、順序ありリストを見てみましょう。カレーの作り方。野菜を切る、肉を炒める、水を入れて煮込む、ルーを入れる。",
-      "durationSec": 22,
+      "durationSec": 30,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "language": "html",
-          "title": "順序ありリスト ol / li",
-          "code": "<h2>カレーの作り方</h2>\n<ol>\n  <li>野菜を切る</li>\n  <li>肉を炒める</li>\n  <li>水を入れて煮込む</li>\n  <li>ルーを入れる</li>\n</ol>"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 5,
+            "phrase": "では次に、順序ありリストを見てみましょう"
+          },
+          {
+            "actionIndex": 7,
+            "phrase": "カレーの作り方"
+          },
+          {
+            "actionIndex": 11,
+            "phrase": "野菜を切る"
+          },
+          {
+            "actionIndex": 13,
+            "phrase": "肉を炒める"
+          },
+          {
+            "actionIndex": 15,
+            "phrase": "水を入れて煮込む"
+          },
+          {
+            "actionIndex": 17,
+            "phrase": "ルーを入れる"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>カレーの作り方</h2>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<ol>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "  <li>野菜を切る</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "  <li>肉を炒める</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "  <li>水を入れて煮込む</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "  <li>ルーを入れる</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</ol>"
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
-      "scene_id": 18,
+      "scene_id": 17,
       "narration": "プレビューを見てください。今度は数字が付いた箇条書きになっていますね。1、2、3、4と自動的に番号が振られています。olはオーダードリスト、順序のあるリストです。ulとの違いは、黒い丸の代わりに番号が付くこと。そして何より、項目の順番に意味があるということです。カレーの作り方は順番が大事ですよね。使い分けの基準はシンプルです。順番に意味があるならol、順番はどうでもいいならul。迷ったらulを使えば大丈夫です。実際のウェブサイトでは、ulの方が圧倒的に多く使われます。",
       "durationSec": 56,
       "visual": {
@@ -396,24 +928,217 @@
       }
     },
     {
-      "scene_id": 19,
+      "scene_id": 18,
       "narration": "では、もう1つ面白いことをお見せしましょう。リストの中にリストを入れてみます。今日の予定。午前の中にメールチェックと会議、午後の中に資料作成と勉強。",
-      "durationSec": 24,
+      "durationSec": 36,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "language": "html",
-          "title": "リストの入れ子構造",
-          "code": "<h2>今日の予定</h2>\n<ul>\n  <li>午前\n    <ul>\n      <li>メールチェック</li>\n      <li>会議</li>\n    </ul>\n  </li>\n  <li>午後\n    <ul>\n      <li>資料作成</li>\n      <li>勉強</li>\n    </ul>\n  </li>\n</ul>"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 5,
+            "phrase": "では、もう1つ面白いことをお見せしましょう"
+          },
+          {
+            "actionIndex": 7,
+            "phrase": "リストの中にリストを入れてみます"
+          },
+          {
+            "actionIndex": 9,
+            "phrase": "今日の予定"
+          },
+          {
+            "actionIndex": 15,
+            "phrase": "午前の中にメールチェックと会議"
+          },
+          {
+            "actionIndex": 27,
+            "phrase": "午後の中に資料作成と勉強"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>今日の予定</h2>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<ul>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "  <li>午前"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "    <ul>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "      <li>メールチェック</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "      <li>会議</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "    </ul>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "  </li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "  <li>午後"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "    <ul>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "      <li>資料作成</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "      <li>勉強</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "    </ul>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "  </li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</ul>"
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
-      "scene_id": 20,
+      "scene_id": 19,
       "narration": "プレビューを見てください。リストが階層構造になっていますね。午前の下にサブ項目としてメールチェックと会議、午後の下に資料作成と勉強。これもまた入れ子構造です。liの中にulが入って、その中にさらにliが入っている。インデントをよく見てください。構造が深くなるほど、右にずれています。前回学んだインデントの効果が、ここではっきりわかりますよね。インデントがなかったら、どのliがどのulに属しているか、とてもわかりにくくなります。ちなみに、この入れ子のリストはナビゲーションメニューやサイドバーなど、実際のウェブページでもよく使われる構造ですよ。",
       "durationSec": 72,
       "visual": {
@@ -434,25 +1159,80 @@
       }
     },
     {
-      "scene_id": 21,
-      "narration": "さて、セクションツーでHTMLではEnterキーだけでは改行されないというお話をしましたよね。ではどうやって改行するのか。ここで登場するのが、brタグです。東京都渋谷区、まるまるビル3階、電話。プレビューを見てください。住所と階数と電話番号が、それぞれ別の行に表示されていますね。brはブレイク、つまり改行という意味です。",
-      "durationSec": 42,
+      "scene_id": 20,
+      "narration": "さて、セクションツーでHTMLではEnterキーだけではかいぎょうされないというお話をしましたよね。ではどうやってかいぎょうするのか。ここで登場するのが、br'たぐ'です。東京都渋谷区、まるまるビル3階、電話。プレビューを見てください。住所と階数と電話番号が、それぞれ別の行に表示されていますね。brはブレイク、つまりかいぎょうという意味です。",
+      "durationSec": 48,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "language": "html",
-          "title": "改行タグ br",
-          "code": "<p>東京都渋谷区<br>〇〇ビル3階<br>電話: 03-XXXX-XXXX</p>"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 5,
+            "phrase": "さて、セクションツーでHTMLではEnterキーだけではかいぎょうされない"
+          },
+          {
+            "actionIndex": 7,
+            "phrase": "東京都渋谷区、まるまるビル3階、電話"
+          },
+          {
+            "actionIndex": 9,
+            "phrase": "プレビューを見てください"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>東京都渋谷区<br>〇〇ビル3階<br>電話: 03-XXXX-XXXX</p>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
-      "scene_id": 22,
-      "narration": "ここで気づきましたか？ brタグには閉じタグがありません。前回の講義で一部のタグには閉じタグがないとお話ししましたよね。brタグはまさにそれです。中にコンテンツを入れるタグではなく、ここで改行してねという指示だけのタグなので、閉じタグは不要です。これが空要素、セルフクロージングタグでしたね。ただし、brタグを連続して何個も使って大きなスペースを作る、というのはおすすめしません。余白の調整はCSSで行うのが正しいやり方です。brは住所のようにここで行を変えたいという場面で使います。これについてはパートスリーのCSSで詳しくやりますので、今はbrは改行のタグとだけ覚えておいてください。",
+      "scene_id": 21,
+      "narration": "ここで気づきましたか？ br'たぐ'には閉じ'たぐ'がありません。前回の講義で一部の'たぐ'には閉じ'たぐ'がないとお話ししましたよね。br'たぐ'はまさにそれです。中にコンテンツを入れる'たぐ'ではなく、ここでかいぎょうしてねという指示だけの'たぐ'なので、閉じ'たぐ'は不要です。これが空要素、セルフクロージング'たぐ'でしたね。ただし、br'たぐ'を連続して何個も使って大きなスペースを作る、というのはおすすめしません。余白の調整はCSSで行うのが正しいやり方です。brは住所のようにここで行を変えたいという場面で使います。これについてはパートスリーのCSSで詳しくやりますので、今はbrはかいぎょうの'たぐ'とだけ覚えておいてください。",
       "durationSec": 68,
       "visual": {
         "type": "remotion",
@@ -465,25 +1245,147 @@
       }
     },
     {
-      "scene_id": 23,
-      "narration": "次に、水平線のhrタグです。自己紹介。趣味や好きなことについて書いています。水平線。趣味。映画鑑賞が好きです。水平線。好きな食べ物。カレーライスが好きです。プレビューを見てください。セクションとセクションの間に、横一本の線が入っていますね。hrはホリゾンタルルール、水平線という意味です。コンテンツの区切りを視覚的に示すのに使います。hrタグもbrタグと同じく、閉じタグがない空要素です。",
-      "durationSec": 52,
+      "scene_id": 22,
+      "narration": "次に、水平線のhr'たぐ'です。自己紹介。趣味や好きなことについて書いています。水平線。趣味。映画鑑賞が好きです。水平線。好きな食べ物。カレーライスが好きです。プレビューを見てください。セクションとセクションの間に、横一本の線が入っていますね。hrはホリゾンタルルール、水平線という意味です。コンテンツの区切りを視覚的に示すのに使います。hr'たぐ'もbr'たぐ'と同じく、閉じ'たぐ'がない空要素です。",
+      "durationSec": 58,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "language": "html",
-          "title": "水平線タグ hr",
-          "code": "<h1>自己紹介</h1>\n<p>趣味や好きなことについて書いています。</p>\n<hr>\n<h2>趣味</h2>\n<p>映画鑑賞が好きです。</p>\n<hr>\n<h2>好きな食べ物</h2>\n<p>カレーライスが好きです。</p>"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 5,
+            "phrase": "次に、水平線のhr'たぐ'です"
+          },
+          {
+            "actionIndex": 7,
+            "phrase": "自己紹介"
+          },
+          {
+            "actionIndex": 11,
+            "phrase": "趣味や好きなことについて書いています"
+          },
+          {
+            "actionIndex": 21,
+            "phrase": "プレビューを見てください"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h1>自己紹介</h1>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>趣味や好きなことについて書いています。</p>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<hr>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>趣味</h2>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>映画鑑賞が好きです。</p>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<hr>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>好きな食べ物</h2>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>カレーライスが好きです。</p>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
-      "scene_id": 24,
-      "narration": "今日学んだタグの中で、閉じタグがないのはbrとhrの2つだけです。それ以外のタグ、エイチワン、p、strong、em、ul、ol、liには、すべて閉じタグが必要です。ここを整理しておくと、この先コードを読むときに迷わなくなりますよ。",
+      "scene_id": 23,
+      "narration": "今日学んだ'たぐ'の中で、閉じ'たぐ'がないのはbrとhrの2つだけです。それ以外の'たぐ'、エイチワン、p、strong、em、ul、ol、liには、すべて閉じ'たぐ'が必要です。ここを整理しておくと、この先コードを読むときに迷わなくなりますよ。",
       "durationSec": 28,
       "visual": {
         "type": "remotion",
@@ -506,76 +1408,363 @@
       }
     },
     {
+      "scene_id": 24,
+      "narration": "それでは、いよいよ実習です。今日学んだ'たぐ'を全部使って、自己紹介ページを作ってみましょう。これまでのセクションでバラバラに試してきた'たぐ'を、1つのページにまとめていきます。CodePenで新しい'ぺ'んを作成してください。いったんHTMLのパネルを空にして、最初から一緒に書いていきましょう。まず、ページの大見出しから始めます。名前の部分は、皆さんの好きな名前に変えてくださいね。プレビューに大きな見出しが表示されました。では次に、簡単な紹介文をだんらくで書きましょう。エイチワンの下にp'たぐ'を追加します。次に、趣味のセクションを追加します。見出しはエイチツーを使いましょう。ページの中のセクション見出しなので、エイチワンより一段下のエイチツーが適切ですね。趣味は順番に意味がないので、ulを使いました。そしてliで各項目を並べています。プレビューを見てみましょう。見出しの下に紹介文があって、その下に趣味のリストが黒い丸で並んでいます。だんだんページらしくなってきましたね。では、もう少し情報を足してみましょう。せっかくolも学んだので、好きな映画のランキングを順序ありリストで作ってみましょう。映画のランキングは順番に意味があるので、olを使いました。自動的に1、2、3と番号が振られていますね。いい感じですね。では最後に、strong'たぐ'とem'たぐ'で強調を入れて、hr'たぐ'で区切り線を加えて、連絡先セクションも追加して、ページを仕上げましょう。",
+      "durationSec": 160,
+      "visual": {
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 5,
+            "phrase": "まず、ページの大見出しから始めます"
+          },
+          {
+            "actionIndex": 7,
+            "phrase": "プレビューに大きな見出しが表示されました"
+          },
+          {
+            "actionIndex": 9,
+            "phrase": "では次に、簡単な紹介文をだんらくで書きましょう"
+          },
+          {
+            "actionIndex": 15,
+            "phrase": "次に、趣味のセクションを追加します"
+          },
+          {
+            "actionIndex": 29,
+            "phrase": "プレビューを見てみましょう"
+          },
+          {
+            "actionIndex": 31,
+            "phrase": "では、もう少し情報を足してみましょう"
+          },
+          {
+            "actionIndex": 47,
+            "phrase": "自動的に1、2、3と番号が振られていますね"
+          },
+          {
+            "actionIndex": 49,
+            "phrase": "では最後に、strong'たぐ'とem'たぐ'で強調を入れて"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h1>山田太郎の自己紹介</h1>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>はじめまして、山田太郎です。東京で<strong>美容師</strong>をしています。</p>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>趣味</h2>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<ul>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "  <li>映画鑑賞</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "  <li>料理</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "  <li>ランニング</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</ul>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+End"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>好きな映画ベスト3</h2>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<ol>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "  <li>千と千尋の神隠し</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "  <li>ショーシャンクの空に</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "  <li>バック・トゥ・ザ・フューチャー</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</ol>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+End"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<hr>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>連絡先</h2>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>メール: yamada@example.com<br>電話: 03-XXXX-XXXX</p>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p><em>お気軽にご連絡ください。</em></p>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
+      }
+    },
+    {
       "scene_id": 25,
-      "narration": "それでは、いよいよ実習です。今日学んだタグを全部使って、自己紹介ページを作ってみましょう。これまでのセクションでバラバラに試してきたタグを、1つのページにまとめていきます。CodePenで新しい'ぺ'んを作成してください。いったんHTMLのパネルを空にして、最初から一緒に書いていきましょう。まず、ページの大見出しから始めます。名前の部分は、皆さんの好きな名前に変えてくださいね。プレビューに大きな見出しが表示されました。",
-      "durationSec": 48,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "language": "html",
-          "title": "実習: 自己紹介ページ — STEP 1",
-          "code": "<h1>山田太郎の自己紹介</h1>"
-        },
-        "transition": {
-          "enter": "slide-left"
-        }
-      }
-    },
-    {
-      "scene_id": 26,
-      "narration": "では次に、簡単な紹介文をだんらくで書きましょう。エイチワンの下にpタグを追加します。次に、趣味のセクションを追加します。見出しはエイチツーを使いましょう。ページの中のセクション見出しなので、エイチワンより一段下のエイチツーが適切ですね。趣味は順番に意味がないので、ulを使いました。そしてliで各項目を並べています。プレビューを見てみましょう。見出しの下に紹介文があって、その下に趣味のリストが黒い丸で並んでいます。だんだんページらしくなってきましたね。",
-      "durationSec": 56,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "language": "html",
-          "title": "実習: 自己紹介ページ — STEP 2",
-          "code": "<h1>山田太郎の自己紹介</h1>\n<p>はじめまして、山田太郎です。東京で美容師をしています。</p>\n\n<h2>趣味</h2>\n<ul>\n  <li>映画鑑賞</li>\n  <li>料理</li>\n  <li>ランニング</li>\n</ul>"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 27,
-      "narration": "では、もう少し情報を足してみましょう。せっかくolも学んだので、好きな映画のランキングを順序ありリストで作ってみましょう。映画のランキングは順番に意味があるので、olを使いました。自動的に1、2、3と番号が振られていますね。",
-      "durationSec": 32,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "language": "html",
-          "title": "実習: 自己紹介ページ — STEP 3",
-          "code": "<h2>好きな映画ベスト3</h2>\n<ol>\n  <li>千と千尋の神隠し</li>\n  <li>ショーシャンクの空に</li>\n  <li>バック・トゥ・ザ・フューチャー</li>\n</ol>"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 28,
-      "narration": "いい感じですね。では最後に、strongタグとemタグで強調を入れて、hrタグで区切り線を加えて、連絡先セクションも追加して、ページを仕上げましょう。",
-      "durationSec": 20,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "language": "html",
-          "title": "実習: 自己紹介ページ — 完成",
-          "code": "<h1>山田太郎の自己紹介</h1>\n<p>はじめまして、山田太郎です。東京で<strong>美容師</strong>をしています。</p>\n\n<h2>趣味</h2>\n<ul>\n  <li>映画鑑賞</li>\n  <li>料理</li>\n  <li>ランニング</li>\n</ul>\n\n<h2>好きな映画ベスト3</h2>\n<ol>\n  <li>千と千尋の神隠し</li>\n  <li>ショーシャンクの空に</li>\n  <li>バック・トゥ・ザ・フューチャー</li>\n</ol>\n\n<hr>\n\n<h2>連絡先</h2>\n<p>メール: yamada@example.com<br>電話: 03-XXXX-XXXX</p>\n<p><em>お気軽にご連絡ください。</em></p>"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 29,
-      "narration": "プレビューを見てみましょう。美容師が太字になって、連絡先のメールと電話番号がbrタグで改行されて、セクションの間にhrタグの区切り線が入っています。そして最後の一文がemタグで斜体になっています。見出し、だんらく、箇条書きリスト、番号付きリスト、水平線、改行、太字、斜体。今日学んだすべてのタグが入った自己紹介ページが完成しました。まだ色も付いていませんし、レイアウトも調整していませんが、文章としてちゃんと構造がありますよね。見出しでセクションが分かれていて、リストで情報が整理されていて、区切り線でコンテンツが区分されている。これがHTMLの役割なんです。見た目を整えるのはこの後パートスリーで学ぶCSSの仕事です。ここまでで使ったタグを数えてみると、エイチワン、エイチツー、p、strong、em、ul、ol、li、hr、br。全部で10種類のタグを使っています。たった10種類のタグだけで、これだけ構造のあるページが作れるんですね。皆さんも、名前や趣味、好きなものを自分のものに書き換えて、ぜひオリジナルの自己紹介ページを作ってみてください。",
+      "narration": "プレビューを見てみましょう。美容師が太字になって、連絡先のメールと電話番号がbr'たぐ'でかいぎょうされて、セクションの間にhr'たぐ'の区切り線が入っています。そして最後の一文がem'たぐ'で斜体になっています。見出し、だんらく、箇条書きリスト、番号付きリスト、水平線、かいぎょう、太字、斜体。今日学んだすべての'たぐ'が入った自己紹介ページが完成しました。まだ色も付いていませんし、レイアウトも調整していませんが、文章としてちゃんと構造がありますよね。見出しでセクションが分かれていて、リストで情報が整理されていて、区切り線でコンテンツが区分されている。これがHTMLの役割なんです。見た目を整えるのはこの後パートスリーで学ぶCSSの仕事です。ここまでで使った'たぐ'を数えてみると、エイチワン、エイチツー、p、strong、em、ul、ol、li、hr、br。全部で10種類の'たぐ'を使っています。たった10種類の'たぐ'だけで、これだけ構造のあるページが作れるんですね。皆さんも、名前や趣味、好きなものを自分のものに書き換えて、ぜひオリジナルの自己紹介ページを作ってみてください。",
       "durationSec": 102,
       "visual": {
         "type": "remotion",
@@ -589,8 +1778,8 @@
       }
     },
     {
-      "scene_id": 30,
-      "narration": "それでは、今日のポイントをまとめます。1つ目。見出しタグは、エイチワンからエイチシックスまで6段階あります。エイチワンがページの大見出し、エイチツーがセクション見出し、エイチスリーがその中の小見出し。順番に使って、文章の階層構造を表します。2つ目。リストタグは2種類。ulが順序なしリスト、olが順序ありリスト。どちらもliタグで項目を並べます。順番に意味があるかどうかで使い分けます。3つ目。strongタグは太字で強い強調、emタグは斜体で柔らかい強調。brタグは改行、hrタグは水平線。これらは画面上の表示を変えるだけでなく、文章の意味や構造を伝える役割があります。",
+      "scene_id": 26,
+      "narration": "それでは、今日のポイントをまとめます。1つ目。見出し'たぐ'は、エイチワンからエイチシックスまで6段階あります。エイチワンがページの大見出し、エイチツーがセクション見出し、エイチスリーがその中の小見出し。順番に使って、文章の階層構造を表します。2つ目。リスト'たぐ'は2種類。ulが順序なしリスト、olが順序ありリスト。どちらもli'たぐ'で項目を並べます。順番に意味があるかどうかで使い分けます。3つ目。strong'たぐ'は太字で強い強調、em'たぐ'は斜体で柔らかい強調。br'たぐ'はかいぎょう、hr'たぐ'は水平線。これらは画面上の表示を変えるだけでなく、文章の意味や構造を伝える役割があります。",
       "durationSec": 72,
       "visual": {
         "type": "remotion",
@@ -599,7 +1788,7 @@
           "title": "今日のポイント",
           "points": [
             "見出しタグ h1〜h6 は6段階。h1→h2→h3と順番に使う",
-            "リストは ul（順序なし）と ol（順序あり）の2種類。項目は li で書く",
+            "リストは ul(順序なし)と ol(順序あり)の2種類。項目は li で書く",
             "strong は太字、em は斜体、br は改行、hr は水平線"
           ]
         },
@@ -609,8 +1798,8 @@
       }
     },
     {
-      "scene_id": 31,
-      "narration": "そして覚えておいてほしいのは、これらのタグを全部暗記する必要はないということです。暗記する必要はありません。何を検索すべきかを知ればいいんです。箇条書きを作りたいなと思ったら、HTML リスト タグで検索すればulとliが出てきます。大事なのはこういうタグがあるんだなと知っておくことです。次の講義では、リンクと画像のタグを学びます。aタグでページとページをつなぐリンクを作り、imgタグで画像を表示する。ウェブの核心とも言える機能です。今日作った自己紹介ページに、写真やリンクが加わると、ぐっと本格的なウェブページに近づきますよ。それでは、次の講義でお会いしましょう。お疲れ様でした。",
+      "scene_id": 27,
+      "narration": "そして覚えておいてほしいのは、これらの'たぐ'を全部暗記する必要はないということです。暗記する必要はありません。何を検索すべきかを知ればいいんです。箇条書きを作りたいなと思ったら、HTML リスト 'たぐ'で検索すればulとliが出てきます。大事なのはこういう'たぐ'があるんだなと知っておくことです。次の講義では、リンクと画像の'たぐ'を学びます。a'たぐ'でページとページをつなぐリンクを作り、img'たぐ'で画像を表示する。ウェブの核心とも言える機能です。今日作った自己紹介ページに、写真やリンクが加わると、ぐっと本格的なウェブページに近づきますよ。それでは、次の講義でお会いしましょう。お疲れ様でした。",
       "durationSec": 64,
       "visual": {
         "type": "remotion",
