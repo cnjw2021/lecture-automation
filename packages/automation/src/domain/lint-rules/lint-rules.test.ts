@@ -235,6 +235,24 @@ describe('D-playwright-shape', () => {
     const lec = makeLecture(['普通のナレーション']);
     expect(playwrightShapeRule.run(lec)).toHaveLength(0);
   });
+
+  it('rejects non-integer actionIndex (e.g., 1.5)', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '入力します。',
+      action: [
+        { cmd: 'goto', url: 'https://example.com' },
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: '#x', key: 'Hi' },
+      ],
+      syncPoints: [{ actionIndex: 1.5, phrase: '入力します' }],
+    }]);
+    const issues = playwrightShapeRule.run(lec);
+    expect(issues.some(i =>
+      i.severity === 'error' &&
+      i.message.includes('actionIndex=1.5') &&
+      i.message.includes('정수')
+    )).toBe(true);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -423,6 +441,22 @@ describe('F-playwright-timing', () => {
       i.message.includes('offscreen') &&
       i.message.includes('세그먼트 피벗')
     )).toBe(true);
+  });
+
+  it('skips non-integer actionIndex defensively (D-rule reports the error)', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '入力します。',
+      durationSec: 10,
+      action: [
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: '#x', key: 'Hi' },
+      ],
+      syncPoints: [{ actionIndex: 1.5, phrase: '入力します' }],
+    }]);
+    // F-rule defensively skips (no segment validation), so it must not crash
+    // and must not produce false positives based on a non-integer index.
+    const issues = playwrightTimingRule.run(lec);
+    expect(issues).toHaveLength(0);
   });
 
   it('rejects duplicate actionIndex in syncPoints', () => {

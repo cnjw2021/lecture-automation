@@ -52,8 +52,16 @@ export const playwrightTimingRule: LintRule = {
       const syncPoints: PlaywrightSyncPoint[] = Array.isArray(scene.visual?.syncPoints) ? scene.visual.syncPoints : [];
       if (actions.length === 0 || syncPoints.length === 0 || narration.length === 0) continue;
 
+      // actionIndex 는 정수만 허용 (D-playwright-shape 와 동일 정책).
+      // 비정수가 들어오면 slice/segment 분할에서 암묵적 변환이 발생해 budget 계산이 깨진다.
+      // 검증은 D-rule 에서 별도 error 로 보고하고, F-rule 은 방어적으로 스킵.
       const sortedSyncPoints = [...syncPoints]
-        .filter(sp => typeof sp.actionIndex === 'number' && sp.actionIndex >= 0 && sp.actionIndex < actions.length)
+        .filter(sp =>
+          typeof sp.actionIndex === 'number' &&
+          Number.isInteger(sp.actionIndex) &&
+          sp.actionIndex >= 0 &&
+          sp.actionIndex < actions.length
+        )
         .sort((a, b) => a.actionIndex - b.actionIndex);
       if (sortedSyncPoints.length === 0) continue;
 
