@@ -3,6 +3,51 @@
 ## 役割
 확정된 강의 스크립트(마크다운)를 Remotion 동영상 생성 앱의 입력 JSON으로 변환한다. 스크립트 내용은 수정하지 않는다.
 
+## AI 변환 필수 프로토콜
+
+JSON 변환 에이전트는 상세 규칙을 읽기 전에 반드시 아래 순서로 작업한다. 이 섹션은 실행 순서이며, 아래 본문은 판단 근거와 예시다.
+
+1. **스크립트 보존**
+   - 나레이션은 확정 스크립트를 그대로 사용한다. 요약·의역·추가 설명·삭제를 하지 않는다.
+   - 스크립트와 JSON 구조가 충돌하면 임의로 고치지 말고 변환 불가 사유를 남긴다.
+
+2. **씬 경계 결정**
+   - `【スライド】`, 코드블록, `【AIデモ】`, 의미 전환점을 기준으로 씬을 나눈다.
+   - 같은 CodePen·브라우저 실습이 이어지면 분할보다 통합을 먼저 검토한다. 분할하면 브라우저 상태가 리셋된다.
+
+3. **visual 타입 결정**
+   - 일반 설명은 Remotion 컴포넌트 표에서 고른다.
+   - 실제 브라우저 조작·AI 도구 조작은 `type: "playwright"` 로 작성한다.
+
+4. **Playwright 씬이면 먼저 planning table 을 만든다**
+   - 실제 JSON 작성 전, 내부적으로 아래 항목을 점검한다. 최종 JSON에는 표를 넣지 않는다.
+   - `sync mode`: 일반 순방향 / isolated 역방향 / shared session
+   - `setup actions`: `goto`, 첫 `mouse_move`, 첫 `click`, 포커스 준비
+   - `pre-fill actions`: 이전 상태 복원용 조용한 `type`
+   - `teaching actions`: 나레이션이 설명하는 새 조작
+   - `first sync phrase`: 첫 teaching phrase 가 setup floor 이후인지
+   - `segment budget`: 각 syncPoint 구간의 fixed action ms, narration budget ms, wait 존재 여부
+
+5. **Playwright syncPoint 배치**
+   - 일반 순방향 syncPoint 는 `type`, `press`, `mouse_move`, `highlight`, 설명 대상인 `click` 같은 teaching action 에만 둔다.
+   - 일반 순방향 syncPoint 를 `goto`, `wait`, `wait_for`, `wait_for_claude_ready` 에 두지 않는다.
+   - isolated 역방향 싱크에서 대기 완료 시점에 맞출 때만 `wait` / `wait_for` / `wait_for_claude_ready` + `target: "end"` 를 검토한다.
+
+6. **세그먼트 예산 검증**
+   - 각 syncPoint 사이에서 `narration budget >= wait 제외 fixed action 시간 + 1초 여유`를 만족해야 한다.
+   - 조정 대상 구간에는 최소 1개의 `wait` 가 있어야 한다.
+   - 만족하지 않으면 JSON wait 로 해결하지 않는다. 액션을 줄이거나, syncPoint 를 더 잘게 나누거나, pre-fill 을 단축하거나, 변환 불가 사유로 보고한다.
+
+7. **나레이션-화면 정합성 검증**
+   - 나레이션 문장마다 실제로 보이는 액션과 1:1로 대조한다.
+   - 화면에서는 전체 삭제·재타이핑을 하는데 나레이션은 "한 줄만 추가"라고 말하는 식의 축소 서술을 금지한다.
+   - AI 출력 화면을 설명하는 경우, 프롬프트에서 고정한 요소만 나레이션에서 단언한다.
+
+8. **저장 후 자동 검증**
+   - JSON 저장 후 `make lint LECTURE=lecture-XX.json STRICT=1` 를 실행한다.
+   - Playwright 씬이 있으면 `make sync-playwright LECTURE=lecture-XX.json` 로 wait 를 재계산한다.
+   - 최종 webm 또는 렌더에서 시작부 공백, 후반 무음 타이핑, 화면과 다른 서술이 없는지 확인한다.
+
 ## 参照ドキュメント
 
 Playwright 씬(`"type": "playwright"`) 을 작성·수정할 때는 반드시 아래 두 문서를 함께 참조한다. 본 파일에는 변환·씬 구성 규칙이 있고, 각 액션의 정확한 파라미터·주의사항은 액션 명세서와 라이브 데모 이력 문서에 있다.
@@ -275,7 +320,7 @@ Playwright 씬을 만들 때는 아래 순서대로 작성한다. 이 순서를 
 
 4. **불가능하면 JSON wait 로 해결하려 하지 않는다**
    - 고정 액션 시간이 narration budget 보다 길면 음수 wait 가 필요하므로 자동 보정 불가다.
-   - 이 경우 나레이션을 늘리거나, 타이핑을 더 작은 syncPoint 구간으로 나누거나, 보이는 동작을 줄인다.
+   - 변환 단계에서는 나레이션을 임의 수정하지 않는다. 이 경우 타이핑을 더 작은 syncPoint 구간으로 나누거나, 보이는 동작을 줄이거나, 변환 불가 사유로 보고한다.
 
 5. **나레이션과 보이는 동작을 일치시킨다**
    - 전체 삭제·재타이핑을 보이면 그렇게 말한다.

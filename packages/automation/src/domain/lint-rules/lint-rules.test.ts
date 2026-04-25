@@ -168,6 +168,7 @@ function makePlaywrightLecture(scenes: any[]) {
       visual: {
         type: 'playwright',
         action: s.action ?? [],
+        ...(s.session ? { session: s.session } : {}),
         ...(s.syncPoints ? { syncPoints: s.syncPoints } : {}),
       },
     })),
@@ -333,6 +334,22 @@ describe('F-playwright-timing', () => {
     }]);
     const issues = playwrightTimingRule.run(lec);
     expect(issues.some(i => i.severity === 'error' && i.message.includes('fixed action'))).toBe(true);
+  });
+
+  it('rejects wait_for_claude_ready as a forward syncPoint target', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '準備してから結果を確認します。',
+      durationSec: 10,
+      session: { mode: 'shared', id: 'claude-demo' },
+      action: [
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'wait_for_claude_ready', timeout: 180000 },
+        { cmd: 'wait', ms: 0 },
+      ],
+      syncPoints: [{ actionIndex: 1, phrase: '結果を確認します' }],
+    }]);
+    const issues = playwrightTimingRule.run(lec);
+    expect(issues.some(i => i.severity === 'error' && i.message.includes('wait_for_claude_ready'))).toBe(true);
   });
 
   it('passes a budgeted playwright segment with slack and wait', () => {

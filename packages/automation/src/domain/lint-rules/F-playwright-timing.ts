@@ -16,6 +16,7 @@ import {
 import { LintIssue, LintRule } from './types';
 
 const CHARS_PER_SEC = 5.5;
+const FORWARD_SYNC_FORBIDDEN_CMDS = new Set<string>(['goto', 'wait', 'wait_for', 'wait_for_claude_ready']);
 
 export const playwrightTimingRule: LintRule = {
   id: 'F-playwright-timing',
@@ -42,7 +43,7 @@ export const playwrightTimingRule: LintRule = {
       for (const sp of sortedSyncPoints) {
         const action = actions[sp.actionIndex];
         if (!action) continue;
-        if (action.cmd === 'goto' || action.cmd === 'wait' || action.cmd === 'wait_for') {
+        if (FORWARD_SYNC_FORBIDDEN_CMDS.has(action.cmd)) {
           issues.push({
             ruleId: this.id,
             sceneId,
