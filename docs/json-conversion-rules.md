@@ -157,8 +157,7 @@ cd packages/automation && npx tsx src/presentation/cli/lint-lecture.ts lecture-X
 - 영어 약어 오독 (`gap` → `ギャップ`, `px` → `ピクセル`, `h1` → `エイチワン`)
 - UI 라벨 오독 (`Authorize` → `オーソライズ`)
 
-검출 기준 SSoT: `packages/automation/src/domain/lint-rules/A-tts-landmines.ts`.
-변환 단계에서는 이 파일을 수정하지 않는다. lint 결과를 JSON에 반영하는 것까지만 수행한다.
+변환 단계에서는 lint 결과를 JSON에 반영하는 것까지만 수행한다.
 
 ### 英語表記ルール
 
