@@ -37,7 +37,7 @@ const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDura
   const getSceneStartFrame = (index: number): number => {
     let startFrame = 0;
     for (let i = 0; i < index; i++) {
-      startFrame += calcSceneDurationFrames(lectureData.sequence[i].scene_id, audioDurations, FPS, scenePaddingSec);
+      startFrame += calcSceneDurationFrames(lectureData.sequence[i], audioDurations, FPS, scenePaddingSec);
     }
     return startFrame;
   };
@@ -46,7 +46,7 @@ const FullLectureComposition: React.FC<LectureProps> = ({ lectureData, audioDura
     <AbsoluteFill>
       {lectureData.sequence.map((scene, index) => {
         const audioUrl = staticFile(`audio/${lectureData.lecture_id}/scene-${scene.scene_id}.wav`);
-        const sceneDuration = calcSceneDurationFrames(scene.scene_id, audioDurations, FPS, scenePaddingSec);
+        const sceneDuration = calcSceneDurationFrames(scene, audioDurations, FPS, scenePaddingSec);
         const sceneStart = getSceneStartFrame(index);
 
         const transition = scene.visual.transition || {};
@@ -83,7 +83,7 @@ const SingleSceneComposition: React.FC<SingleSceneProps> = ({ lectureData, audio
     return <DefaultScreen componentName={`Scene ${sceneId} Not Found`} />;
   }
 
-  const durationInFrames = calcSceneDurationFrames(sceneId, audioDurations, FPS, scenePaddingSec);
+  const durationInFrames = calcSceneDurationFrames(scene, audioDurations, FPS, scenePaddingSec);
   const audioUrl = staticFile(`audio/${lectureData.lecture_id}/scene-${sceneId}.wav`);
 
   const transition = scene.visual.transition || {};
@@ -127,7 +127,7 @@ export const RemotionRoot: React.FC = () => {
           if (!lectureData?.sequence?.length) return { durationInFrames: 300 };
 
           const totalDurationFrames = lectureData.sequence.reduce(
-            (acc, scene) => acc + calcSceneDurationFrames(scene.scene_id, audioDurations, FPS, scenePaddingSec),
+            (acc, scene) => acc + calcSceneDurationFrames(scene, audioDurations, FPS, scenePaddingSec),
             0
           );
           return { durationInFrames: totalDurationFrames };
@@ -147,11 +147,14 @@ export const RemotionRoot: React.FC = () => {
           sceneId: 1,
         } as SingleSceneProps}
         calculateMetadata={async ({ props }) => {
-          const { audioDurations, sceneId } = props as SingleSceneProps;
+          const { lectureData, audioDurations, sceneId } = props as SingleSceneProps;
           if (!audioDurations || !sceneId) return { durationInFrames: 300 };
 
+          const scene = lectureData?.sequence?.find(s => s.scene_id === sceneId);
+          if (!scene) return { durationInFrames: 300 };
+
           return {
-            durationInFrames: calcSceneDurationFrames(sceneId, audioDurations, FPS, scenePaddingSec),
+            durationInFrames: calcSceneDurationFrames(scene, audioDurations, FPS, scenePaddingSec),
           };
         }}
       />

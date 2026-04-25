@@ -113,12 +113,16 @@ export interface SceneVisualProps {
 }
 
 export const calcSceneDurationFrames = (
-  sceneId: number,
+  scene: SceneData,
   audioDurations: Record<string, number>,
   fps: number,
   scenePaddingSec: number
 ): number => {
-  const durationSec = audioDurations[sceneId.toString()] || 10;
+  const audioDur = audioDurations[scene.scene_id.toString()] ?? 10;
+  const declared = scene.durationSec ?? 0;
+  // Playwright 씬 등 action 시간이 TTS 길이보다 긴 경우를 위해 max 취함.
+  // 선언값이 없으면 오디오 길이만 사용 (하위 호환).
+  const durationSec = Math.max(audioDur, declared);
   return Math.ceil((durationSec + scenePaddingSec) * fps);
 };
 
