@@ -122,6 +122,22 @@ export const playwrightTimingRule: LintRule = {
       const targetFirings = buildTargetFirings(narration, sortedSyncPoints, totalMs);
       if (!targetFirings) continue;
 
+      // narration 안의 phrase 순서가 actionIndex 순서와 일치해야 segment 매핑이 의미를 가진다.
+      // 어긋나면 segEndMs < segStartMs 가 되어 silent skip 으로 실제 sync 깨짐을 놓치게 됨.
+      let hasMonotonicViolation = false;
+      for (let i = 1; i < targetFirings.length; i++) {
+        if (targetFirings[i].targetMs <= targetFirings[i - 1].targetMs) {
+          hasMonotonicViolation = true;
+          issues.push({
+            ruleId: this.id,
+            sceneId,
+            severity: 'error',
+            message: `syncPoints actionIndex 순서와 narration phrase 순서가 일치하지 않음 (action[${targetFirings[i - 1].actionIndex}] phrase 시점 ${formatSec(targetFirings[i - 1].targetMs)} >= action[${targetFirings[i].actionIndex}] phrase 시점 ${formatSec(targetFirings[i].targetMs)}) — phrase 를 narration 진행 순서에 맞게 재배치하거나 actionIndex 를 조정해야 함`,
+          });
+        }
+      }
+      if (hasMonotonicViolation) continue;
+
       const firstSync = sortedSyncPoints[0];
       const setupActions = actions.slice(0, firstSync.actionIndex);
       const setupFixedMs = estimateActionsDurationMs(setupActions);
@@ -136,10 +152,16 @@ export const playwrightTimingRule: LintRule = {
         });
       }
 
+      // segments.length 는 항상 sortedSyncPoints.length + 1 로 고정 (빈 segment 포함).
+      // 빈 segment 는 loop 내에서 스킵해 segments[i] ↔ targetFirings 매핑을 항상 일관되게 유지.
+      // si=0      → pre-first-sync (sp[0].actionIndex=0 이면 빈 segment)
+      // si=k≥1    → between sync[k-1] 과 sync[k]
+      // si=N      → post-last-sync (where N=sortedSyncPoints.length)
       const segments = buildSegments(sortedSyncPoints, actions.length);
       for (let si = 0; si < segments.length; si++) {
         const { from, to } = segments[si];
-        const segStartMs = si === 0 ? 0 : targetFirings[si - 1]?.targetMs ?? 0;
+        if (from === to) continue;  // 빈 segment 스킵 (sp[0].actionIndex=0 케이스)
+        const segStartMs = si === 0 ? 0 : targetFirings[si - 1].targetMs;
         const segEndMs = si < targetFirings.length ? targetFirings[si].targetMs : totalMs;
         const targetSegMs = segEndMs - segStartMs;
         if (targetSegMs <= 0) continue;
@@ -202,17 +224,19 @@ function buildTargetFirings(
   return result;
 }
 
+/**
+ * sortedSyncPoints 를 피벗으로 actions 를 항상 (N+1) 개의 segment 로 분할.
+ * 빈 segment(from === to) 도 그대로 포함해 segments[i] ↔ targetFirings 매핑을 일관되게 유지.
+ * 빈 segment 스킵은 loop 내부에서 처리.
+ */
 function buildSegments(sortedSyncPoints: PlaywrightSyncPoint[], totalActions: number): { from: number; to: number }[] {
-  const pivots = sortedSyncPoints.map(sp => sp.actionIndex);
-  pivots.push(totalActions);
-
   const segments: { from: number; to: number }[] = [];
   let from = 0;
-  for (const pivot of pivots) {
-    if (pivot > from) segments.push({ from, to: pivot });
-    from = Math.max(from, pivot);
+  for (const sp of sortedSyncPoints) {
+    segments.push({ from, to: sp.actionIndex });
+    from = sp.actionIndex;
   }
-  if (from < totalActions) segments.push({ from, to: totalActions });
+  segments.push({ from, to: totalActions });
   return segments;
 }
 

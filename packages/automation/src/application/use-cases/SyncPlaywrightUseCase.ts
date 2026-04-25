@@ -97,11 +97,13 @@ export class SyncPlaywrightUseCase {
     const targetFirings = buildTargetFirings(scene.narration, sortedSyncPoints, timings);
 
     // 4. 세그먼트 분할 후 wait 재계산
+    // segments.length 는 항상 sortedSyncPoints.length + 1 (빈 segment 포함). 빈 segment 는 loop 에서 스킵.
     const segments = buildSegments(sortedSyncPoints, actions.length);
     const updatedActions = [...actions];
 
     for (let si = 0; si < segments.length; si++) {
       const { from, to } = segments[si];
+      if (from === to) continue;  // 빈 segment 스킵 (sp[0].actionIndex=0 케이스)
       const segStartMs = si === 0 ? 0 : targetFirings[si - 1].targetMs;
       const segEndMs   = si < targetFirings.length ? targetFirings[si].targetMs : totalMs;
       const targetSegDurationMs = segEndMs - segStartMs;
@@ -497,22 +499,20 @@ function buildTargetFirings(
 
 /**
  * syncPoints의 actionIndex를 경계로 actions를 세그먼트로 분할.
- * 결과: [{from, to}] — each segment = actions[from..to)
+ * 결과: 항상 (sortedSyncPoints.length + 1) 개의 segment. 빈 segment(from === to) 도 그대로 포함해
+ * segments[i] ↔ targetFirings 매핑을 일관되게 유지. 빈 segment 스킵은 호출부 loop 에서 처리.
+ *
+ * - si=0     : pre-first-sync (sp[0].actionIndex=0 이면 빈 segment)
+ * - si=k≥1   : between sync[k-1] 과 sync[k]
+ * - si=N     : post-last-sync (where N=sortedSyncPoints.length)
  */
 function buildSegments(sortedSyncPoints: PlaywrightSyncPoint[], totalActions: number): { from: number; to: number }[] {
-  const pivots = sortedSyncPoints.map(sp => sp.actionIndex);
-  pivots.push(totalActions);
-
   const segments: { from: number; to: number }[] = [];
   let from = 0;
-  for (const pivot of pivots) {
-    if (pivot > from) {
-      segments.push({ from, to: pivot });
-    }
-    from = Math.max(from, pivot);
+  for (const sp of sortedSyncPoints) {
+    segments.push({ from, to: sp.actionIndex });
+    from = sp.actionIndex;
   }
-  if (from < totalActions) {
-    segments.push({ from, to: totalActions });
-  }
+  segments.push({ from, to: totalActions });
   return segments;
 }
