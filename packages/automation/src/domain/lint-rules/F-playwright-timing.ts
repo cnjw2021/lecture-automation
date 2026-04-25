@@ -4,6 +4,12 @@
  * TTS·녹화 전에 syncPoints 세그먼트별 narration budget 이 visible action
  * budget 을 덮을 수 있는지 검사한다. sync-playwright 는 wait 만 재분배할 수
  * 있으므로, fixed action 이 세그먼트 narration 보다 길면 구조적으로 sync 불가.
+ *
+ * 주의: 이 룰은 pre-TTS 구조 검증이다. phrase 시점은 narration 문자 위치 비율로
+ * 선형 보간한 추산값이므로, 실제 TTS 발화 분포(초반 빠름/문장 끝 늘어짐 등)와는
+ * 다를 수 있어 borderline 케이스에서 false positive 가 날 수 있다. 최종 sync 는
+ * 1.7b 단계에서 alignment.json (글자 단위 타임스탬프) 기반으로 다시 수행되므로,
+ * 본 룰은 명백한 구조적 sync 불가 케이스를 작성 단계에서 사전 차단하는 것이 목적.
  */
 
 import { PlaywrightAction, PlaywrightSyncPoint } from '../entities/Lecture';
@@ -82,7 +88,7 @@ export const playwrightTimingRule: LintRule = {
         const segmentActions = actions.slice(from, to).filter(action => !action.offscreen);
         const fixedMs = estimateActionsDurationMs(segmentActions);
         const waitCount = segmentActions.filter(action => action.cmd === 'wait').length;
-        const requiredMs = fixedMs + PLAYWRIGHT_TIMING.setupFloorSlackMs;
+        const requiredMs = fixedMs + PLAYWRIGHT_TIMING.segmentSlackMs;
 
         if (fixedMs > targetSegMs) {
           issues.push({

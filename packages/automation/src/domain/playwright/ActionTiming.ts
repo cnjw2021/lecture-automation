@@ -17,6 +17,7 @@ export const PLAYWRIGHT_TIMING = {
   yahooGotoMs: 7000,
   heavyGotoMs: 6000,
   setupFloorSlackMs: 1000,
+  segmentSlackMs: 1000,
 } as const;
 
 export interface ActionDurationEstimate {
@@ -106,7 +107,8 @@ function estimateGotoDurationMs(action: PlaywrightAction): ActionDurationEstimat
   if (
     lower.includes('claude.ai') ||
     lower.includes('chatgpt.com') ||
-    lower.includes('openai.com')
+    lower.includes('openai.com') ||
+    lower.includes('apple.com')
   ) {
     return { ms: PLAYWRIGHT_TIMING.heavyGotoMs, basis: 'heavy app load budget' };
   }

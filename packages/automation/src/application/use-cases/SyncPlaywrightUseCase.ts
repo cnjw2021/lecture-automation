@@ -268,7 +268,7 @@ async function resolvePhraseTimings(
 
   // WAV 없음 → JSON의 durationSec 사용 (TTS 미생성 상태)
   console.warn(`  ⚠️ WAV 없음 (${wavPath}), 문자수 비례 추산으로 폴백`);
-  const durationMs = (narration.length / 5) * 1000;  // 1초 ≒ 5자 기준
+  const durationMs = (narration.length / 5.5) * 1000;  // 1초 ≒ 5.5자 (docs SSoT)
   return charCountFallback(narration, syncPoints, durationMs);
 }
 
