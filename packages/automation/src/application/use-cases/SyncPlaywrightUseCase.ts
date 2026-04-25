@@ -141,8 +141,8 @@ export class SyncPlaywrightUseCase {
         continue;
       }
 
-      // 기존 wait 합계 대비 비례 분배
-      const currentWaitTotal = waitIndices.reduce((sum, idx) => sum + (actions[idx].ms ?? 0), 0);
+      // 기존 wait 합계 대비 비례 분배. 입력 JSON 에 음수/NaN wait 가 있어도 결과 JSON 으로 전파하지 않는다.
+      const currentWaitTotal = waitIndices.reduce((sum, idx) => sum + getNonNegativeWaitMs(actions[idx]), 0);
       const availableMs = Math.max(0, targetSegDurationMs - fixedMs);
       const deficitMs = fixedMs - targetSegDurationMs;
 
@@ -155,9 +155,9 @@ export class SyncPlaywrightUseCase {
       }
 
       for (const idx of waitIndices) {
-        const original = actions[idx].ms ?? 0;
+        const original = getNonNegativeWaitMs(actions[idx]);
         const ratio = currentWaitTotal > 0 ? original / currentWaitTotal : 1 / waitIndices.length;
-        updatedActions[idx] = { ...actions[idx], ms: Math.round(availableMs * ratio) };
+        updatedActions[idx] = { ...actions[idx], ms: Math.max(0, Math.round(availableMs * ratio)) };
       }
 
       const newWaitTotal = waitIndices.reduce((sum, idx) => sum + (updatedActions[idx].ms ?? 0), 0);
@@ -319,6 +319,11 @@ function charCountEstimate(phrase: string, narration: string, totalMs: number): 
   const pos = narration.indexOf(phrase);
   if (pos === -1) return 0;
   return Math.round((pos / narration.length) * totalMs);
+}
+
+function getNonNegativeWaitMs(action: PlaywrightAction): number {
+  const ms = action.ms ?? 0;
+  return Number.isFinite(ms) && ms > 0 ? ms : 0;
 }
 
 // ---------------------------------------------------------------------------
