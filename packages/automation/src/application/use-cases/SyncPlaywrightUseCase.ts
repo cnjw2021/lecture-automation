@@ -17,6 +17,17 @@ import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
 import { isForwardSyncTarget, isIsolatedLiveDemoScene } from '../../domain/policies/LiveDemoScenePolicy';
 import { estimateFixedActionDurationMs } from '../../domain/playwright/ActionTiming';
 
+/**
+ * forward sync 단계에서 visible 로 두면 budget 추정이 깨지는 cmd.
+ * F-playwright-timing lint 와 동일한 정책. SyncPlaywrightUseCase 에서는 방어적으로
+ * 경고만 출력하고 sync 자체는 진행 (lint 가 사전 차단을 담당).
+ */
+const FORWARD_SYNC_VISIBLE_FORBIDDEN_CMDS = new Set<string>([
+  'wait_for',
+  'wait_for_claude_ready',
+  'render_code_block',
+]);
+
 // ---------------------------------------------------------------------------
 // Use Case
 // ---------------------------------------------------------------------------
@@ -76,7 +87,7 @@ export class SyncPlaywrightUseCase {
 
     // 1. WAV 파일로 타이밍 취득
     const wavPath = this.lectureRepository.getAudioPath(lectureId, scene.scene_id);
-    const timings = await resolvePhraseTimings(scene.narration, syncPoints, wavPath);
+    const timings = await resolvePhraseTimings(scene.narration, syncPoints, wavPath, scene.durationSec);
     const totalMs = timings.totalMs;
 
     // 2. syncPoints를 actionIndex 오름차순 정렬
@@ -109,6 +120,16 @@ export class SyncPlaywrightUseCase {
         if (actions[j].cmd === 'wait') {
           waitIndices.push(j);
         } else {
+          // 비결정적 / 가변 대기 cmd 가 visible 로 들어오면 ActionTiming 이 0ms 로 추정해
+          // wait 재분배가 크게 틀어진다. F-playwright-timing lint 가 작성 단계에서 차단하지만
+          // sync 단계에서도 방어적으로 경고 + 가이드 출력.
+          if (FORWARD_SYNC_VISIBLE_FORBIDDEN_CMDS.has(actions[j].cmd)) {
+            console.warn(
+              `  ⚠️ 세그먼트 ${si} (actions ${from}~${to - 1}): action[${j}] cmd=${actions[j].cmd} 가 visible — ` +
+              `0ms 로 추정되어 wait 재분배가 크게 틀어집니다. offscreen: true 로 옮기거나 ` +
+              `isolated 역방향 싱크 씬으로 분리해야 함. 'make lint LECTURE=... STRICT=1' 로 사전 검증 권장`
+            );
+          }
           fixedMs += estimateFixedActionDurationMs(actions[j]).ms;
         }
       }
@@ -220,6 +241,7 @@ async function resolvePhraseTimings(
   narration: string,
   syncPoints: PlaywrightSyncPoint[],
   wavPath: string,
+  durationSec?: number,
 ): Promise<PhraseTimingResult> {
   // 1순위: alignment.json 기반 (글자 단위 타임스탬프). gap 삽입·무음 분포와 무관하게 정확.
   const alignmentPath = wavPath.replace(/\.wav$/, '.alignment.json');
@@ -266,9 +288,14 @@ async function resolvePhraseTimings(
     return charCountFallback(narration, syncPoints, totalMs);
   }
 
-  // WAV 없음 → JSON의 durationSec 사용 (TTS 미생성 상태)
-  console.warn(`  ⚠️ WAV 없음 (${wavPath}), 문자수 비례 추산으로 폴백`);
-  const durationMs = (narration.length / 5.5) * 1000;  // 1초 ≒ 5.5자 (docs SSoT)
+  // WAV 없음 (TTS 미생성 상태) → 1순위 scene.durationSec, 폴백 문자수 추산
+  // 문자수 추산은 docs SSoT(1초 ≒ 5.5자) 와 F-rule 의 estimateNarrationDurationMs 와 동일하게 ceil 적용
+  if (typeof durationSec === 'number' && durationSec > 0) {
+    console.warn(`  ⚠️ WAV 없음 (${wavPath}), scene.durationSec=${durationSec}s 사용`);
+    return charCountFallback(narration, syncPoints, durationSec * 1000);
+  }
+  console.warn(`  ⚠️ WAV 없음 (${wavPath}), durationSec 미지정 → 문자수 비례 추산으로 폴백`);
+  const durationMs = Math.ceil(narration.length / 5.5) * 1000;  // 1초 ≒ 5.5자 (docs SSoT)
   return charCountFallback(narration, syncPoints, durationMs);
 }
 

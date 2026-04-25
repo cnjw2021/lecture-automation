@@ -57,6 +57,24 @@ export const playwrightTimingRule: LintRule = {
         .sort((a, b) => a.actionIndex - b.actionIndex);
       if (sortedSyncPoints.length === 0) continue;
 
+      // actionIndex 중복 검사 — 중복이면 buildSegments 가 피벗을 흡수해 segment 와 targetFirings 매핑이
+      // 어긋나고 마지막 구간이 누락된다. 검출 시 error 보고 후 segment 검증은 건너뛴다.
+      const seenActionIndices = new Set<number>();
+      let hasDuplicateActionIndex = false;
+      for (const sp of sortedSyncPoints) {
+        if (seenActionIndices.has(sp.actionIndex)) {
+          hasDuplicateActionIndex = true;
+          issues.push({
+            ruleId: this.id,
+            sceneId,
+            severity: 'error',
+            message: `syncPoints 에 동일한 actionIndex=${sp.actionIndex} 가 중복 — segment 분할 시 마지막 구간이 누락된다. 각 syncPoint 는 서로 다른 visible teaching action 을 가리켜야 함`,
+          });
+        }
+        seenActionIndices.add(sp.actionIndex);
+      }
+      if (hasDuplicateActionIndex) continue;
+
       // visible 로 두면 budget 이 깨지는 비결정적 / 가변 대기 cmd 검사
       for (let i = 0; i < actions.length; i++) {
         const action = actions[i];

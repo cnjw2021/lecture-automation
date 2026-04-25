@@ -127,6 +127,8 @@ export interface Scene {
   timestamp?: string;
   title?: string;
   narration: string;
+  /** 씬의 선언된 길이(초). docs SSoT 기준 1초 ≒ 5.5자(일본어). */
+  durationSec?: number;
   visual: VisualConfig;
 }
 

@@ -425,6 +425,28 @@ describe('F-playwright-timing', () => {
     )).toBe(true);
   });
 
+  it('rejects duplicate actionIndex in syncPoints', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '入力します。次に確認します。',
+      durationSec: 10,
+      action: [
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: '#box-html .CodeMirror', key: 'Hello' },
+        { cmd: 'wait', ms: 0 },
+      ],
+      syncPoints: [
+        { actionIndex: 1, phrase: '入力します' },
+        { actionIndex: 1, phrase: '次に確認します' },
+      ],
+    }]);
+    const issues = playwrightTimingRule.run(lec);
+    expect(issues.some(i =>
+      i.severity === 'error' &&
+      i.message.includes('중복') &&
+      i.message.includes('actionIndex=1')
+    )).toBe(true);
+  });
+
   it('rejects visible render_code_block in forward sync scene', () => {
     const lec = makePlaywrightLecture([{
       narration: '入力します。コードを取り込みます。',
