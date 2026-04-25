@@ -92,12 +92,15 @@ export const playwrightShapeRule: LintRule = {
         if (!sp || typeof sp !== 'object') return;
 
         const idx = sp.actionIndex;
-        if (typeof idx !== 'number' || idx < 0 || idx >= actions.length) {
+        if (typeof idx !== 'number' || !Number.isInteger(idx) || idx < 0 || idx >= actions.length) {
+          const reason = typeof idx === 'number' && !Number.isInteger(idx)
+            ? '정수가 아님'
+            : `action 배열 범위 밖 (총 ${actions.length}개)`;
           issues.push({
             ruleId: this.id,
             sceneId,
             severity: 'error',
-            message: `syncPoints[${i}].actionIndex=${idx} 가 action 배열 범위 밖 (총 ${actions.length}개)`,
+            message: `syncPoints[${i}].actionIndex=${idx} ${reason}`,
           });
           return;
         }

@@ -19,6 +19,9 @@ import { config } from '../../infrastructure/config';
 import { FileLectureRepository } from '../../infrastructure/repositories/FileLectureRepository';
 import { SyncPlaywrightUseCase } from '../../application/use-cases/SyncPlaywrightUseCase';
 import { Lecture, PlaywrightVisual } from '../../domain/entities/Lecture';
+import { playwrightShapeRule } from '../../domain/lint-rules/D-playwright-shape';
+import { playwrightTimingRule } from '../../domain/lint-rules/F-playwright-timing';
+import { LintIssue } from '../../domain/lint-rules';
 
 dotenv.config();
 
@@ -62,6 +65,8 @@ async function main() {
   const filteredLecture = targetSceneId !== undefined
     ? maskOtherScenes(rawLecture, targetSceneId)
     : rawLecture;
+
+  assertPlaywrightSyncLintPasses(filteredLecture, targetSceneId);
 
   const sceneLabel = targetSceneId !== undefined
     ? `씬 ${targetSceneId}`
@@ -111,6 +116,45 @@ function maskOtherScenes(lecture: Lecture, targetSceneId: number): Lecture {
     return { ...s, visual: { ...s.visual, syncPoints: undefined } };
   });
   return { ...lecture, sequence };
+}
+
+function assertPlaywrightSyncLintPasses(lecture: Lecture, targetSceneId?: number): void {
+  const lintLecture = targetSceneId === undefined
+    ? lecture
+    : { ...lecture, sequence: lecture.sequence.filter(scene => scene.scene_id === targetSceneId) };
+  const issues = runPlaywrightSyncRules(lintLecture);
+  const errors = issues.filter(issue => issue.severity === 'error');
+  const warnings = issues.filter(issue => issue.severity === 'warning');
+
+  if (issues.length === 0) {
+    console.log('\n✅ sync-playwright 사전 lint 통과');
+    return;
+  }
+
+  console.log(`\n🔍 sync-playwright 사전 lint: error ${errors.length}건 / warning ${warnings.length}건`);
+  for (const issue of issues) {
+    const icon = issue.severity === 'error' ? '❌' : '⚠️';
+    const sceneLabel = issue.sceneId !== null ? `scene ${issue.sceneId}` : 'lecture';
+    console.log(`  ${icon} [${issue.ruleId}] ${sceneLabel}: ${issue.message}`);
+  }
+
+  if (errors.length > 0) {
+    console.error('\n⛔ Playwright sync 구조 오류가 있어 wait 자동 보정을 중단합니다. JSON을 수정한 뒤 다시 실행해 주세요.');
+    process.exit(1);
+  }
+}
+
+function runPlaywrightSyncRules(lecture: Lecture): LintIssue[] {
+  const issues: LintIssue[] = [
+    ...playwrightShapeRule.run(lecture),
+    ...playwrightTimingRule.run(lecture),
+  ];
+  return issues.sort((a, b) => {
+    const aId = a.sceneId ?? -1;
+    const bId = b.sceneId ?? -1;
+    if (aId !== bId) return aId - bId;
+    return a.ruleId.localeCompare(b.ruleId);
+  });
 }
 
 function printWaitDiff(sceneId: number, originalVisual: any, updatedVisual: any) {

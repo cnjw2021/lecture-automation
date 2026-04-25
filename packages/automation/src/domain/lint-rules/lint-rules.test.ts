@@ -2,6 +2,7 @@ import { ttsLandminesRule } from './A-tts-landmines';
 import { symbolViolationsRule } from './B-symbol-violations';
 import { playwrightShapeRule } from './D-playwright-shape';
 import { narrationLengthRule } from './E-narration-length';
+import { playwrightTimingRule } from './F-playwright-timing';
 import { allRules } from './index';
 
 function makeLecture(narrations: string[]) {
@@ -90,6 +91,7 @@ describe('A-tts-landmines', () => {
       '「h2」→「エイチツー」',
       '「h3」→「エイチスリー」',
       '「h6」→「エイチシックス」',
+      "「タグ」→「'たぐ'」",
     ]);
   });
 
@@ -162,9 +164,11 @@ function makePlaywrightLecture(scenes: any[]) {
     sequence: scenes.map((s, i) => ({
       scene_id: i + 1,
       narration: s.narration ?? 'テスト',
+      ...(typeof s.durationSec === 'number' ? { durationSec: s.durationSec } : {}),
       visual: {
         type: 'playwright',
         action: s.action ?? [],
+        ...(s.session ? { session: s.session } : {}),
         ...(s.syncPoints ? { syncPoints: s.syncPoints } : {}),
       },
     })),
@@ -231,6 +235,24 @@ describe('D-playwright-shape', () => {
     const lec = makeLecture(['普通のナレーション']);
     expect(playwrightShapeRule.run(lec)).toHaveLength(0);
   });
+
+  it('rejects non-integer actionIndex (e.g., 1.5)', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '入力します。',
+      action: [
+        { cmd: 'goto', url: 'https://example.com' },
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: '#x', key: 'Hi' },
+      ],
+      syncPoints: [{ actionIndex: 1.5, phrase: '入力します' }],
+    }]);
+    const issues = playwrightShapeRule.run(lec);
+    expect(issues.some(i =>
+      i.severity === 'error' &&
+      i.message.includes('actionIndex=1.5') &&
+      i.message.includes('정수')
+    )).toBe(true);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -292,6 +314,259 @@ describe('E-narration-length', () => {
     const lec = { sequence: [{ scene_id: 1, narration: 'テスト', visual: { type: 'remotion', component: 'KeyPointScreen', props: {} } }] };
     expect(() => narrationLengthRule.run(lec)).not.toThrow();
     expect(narrationLengthRule.run(lec)).toHaveLength(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// F — Playwright timing
+// ---------------------------------------------------------------------------
+
+describe('F-playwright-timing', () => {
+  it('detects first syncPoint before setup floor', () => {
+    const lec = makePlaywrightLecture([{
+      narration: 'すぐ入力します。準備ができたら説明します。',
+      durationSec: 10,
+      action: [
+        { cmd: 'goto', url: 'https://codepen.io/pen/' },
+        { cmd: 'mouse_move', to: [100, 100] },
+        { cmd: 'click', selector: '#box-html .CodeMirror' },
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: '#box-html .CodeMirror', key: 'Hello' },
+      ],
+      syncPoints: [{ actionIndex: 4, phrase: 'すぐ入力します' }],
+    }]);
+    const issues = playwrightTimingRule.run(lec);
+    expect(issues.some(i => i.severity === 'error' && i.message.includes('setup floor'))).toBe(true);
+  });
+
+  it('detects segment fixed action budget over narration budget', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '短く話してから入力します。',
+      durationSec: 2,
+      action: [
+        { cmd: 'type', selector: '#box-html .CodeMirror', key: 'x'.repeat(50) },
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'mouse_move', to: [100, 100] },
+      ],
+      syncPoints: [{ actionIndex: 2, phrase: '入力します' }],
+    }]);
+    const issues = playwrightTimingRule.run(lec);
+    expect(issues.some(i => i.severity === 'error' && i.message.includes('fixed action'))).toBe(true);
+  });
+
+  it('rejects wait_for_claude_ready as a forward syncPoint target', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '準備してから結果を確認します。',
+      durationSec: 10,
+      session: { mode: 'shared', id: 'claude-demo' },
+      action: [
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'wait_for_claude_ready', timeout: 180000 },
+        { cmd: 'wait', ms: 0 },
+      ],
+      syncPoints: [{ actionIndex: 1, phrase: '結果を確認します' }],
+    }]);
+    const issues = playwrightTimingRule.run(lec);
+    expect(issues.some(i => i.severity === 'error' && i.message.includes('wait_for_claude_ready'))).toBe(true);
+  });
+
+  it('passes a budgeted playwright segment with slack and wait', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '入力します。結果を確認します。',
+      durationSec: 8,
+      action: [
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: '#box-html .CodeMirror', key: 'Hello' },
+        { cmd: 'wait', ms: 0 },
+      ],
+      syncPoints: [{ actionIndex: 1, phrase: '入力します' }],
+    }]);
+    expect(playwrightTimingRule.run(lec)).toHaveLength(0);
+  });
+
+  it('rejects visible wait_for_claude_ready in shared session forward sync', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '結果を確認します。続けて入力します。',
+      durationSec: 10,
+      session: { mode: 'shared', id: 'claude-demo' },
+      action: [
+        { cmd: 'wait_for_claude_ready', timeout: 180000 },
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: 'div.ProseMirror', key: 'next' },
+      ],
+      syncPoints: [{ actionIndex: 2, phrase: '続けて入力します' }],
+    }]);
+    const issues = playwrightTimingRule.run(lec);
+    expect(issues.some(i =>
+      i.severity === 'error' &&
+      i.message.includes('wait_for_claude_ready') &&
+      i.message.includes('visible')
+    )).toBe(true);
+  });
+
+  it('accepts offscreen wait_for_claude_ready in shared session forward sync', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '結果を確認します。続けて入力します。',
+      durationSec: 10,
+      session: { mode: 'shared', id: 'claude-demo' },
+      action: [
+        { cmd: 'wait_for_claude_ready', timeout: 180000, offscreen: true },
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: 'div.ProseMirror', key: 'next' },
+      ],
+      syncPoints: [{ actionIndex: 2, phrase: '続けて入力します' }],
+    }]);
+    const issues = playwrightTimingRule.run(lec);
+    expect(issues.some(i =>
+      i.severity === 'error' && i.message.includes('wait_for_claude_ready')
+    )).toBe(false);
+  });
+
+  it('rejects syncPoint pointing to offscreen action', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '入力します。結果を確認します。',
+      durationSec: 10,
+      session: { mode: 'shared', id: 'claude-demo' },
+      action: [
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'wait_for_claude_ready', timeout: 180000, offscreen: true },
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: 'div.ProseMirror', key: 'next' },
+      ],
+      syncPoints: [{ actionIndex: 1, phrase: '結果を確認します' }],
+    }]);
+    const issues = playwrightTimingRule.run(lec);
+    expect(issues.some(i =>
+      i.severity === 'error' &&
+      i.message.includes('offscreen') &&
+      i.message.includes('세그먼트 피벗')
+    )).toBe(true);
+  });
+
+  it('skips non-integer actionIndex defensively (D-rule reports the error)', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '入力します。',
+      durationSec: 10,
+      action: [
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: '#x', key: 'Hi' },
+      ],
+      syncPoints: [{ actionIndex: 1.5, phrase: '入力します' }],
+    }]);
+    // F-rule defensively skips (no segment validation), so it must not crash
+    // and must not produce false positives based on a non-integer index.
+    const issues = playwrightTimingRule.run(lec);
+    expect(issues).toHaveLength(0);
+  });
+
+  it('rejects syncPoints whose phrase order is reversed against actionIndex order', () => {
+    // sortedSyncPoints 는 actionIndex 순으로 [1, 3] 이지만 phrase 위치는 narration 에서 [50자, 0자]
+    // = phrase 가 역순. silent skip 으로 누락되는 것을 막아야 함.
+    const lec = makePlaywrightLecture([{
+      narration: '後半に出る言葉。前半に出る言葉。最後の言葉。',  // "前半..." 가 더 늦은 actionIndex
+      durationSec: 12,
+      action: [
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: '#x', key: 'A' },
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: '#x', key: 'B' },
+        { cmd: 'wait', ms: 0 },
+      ],
+      syncPoints: [
+        { actionIndex: 1, phrase: '後半に出る言葉' },     // pos 0
+        { actionIndex: 3, phrase: '前半に出る言葉' },     // pos 8
+      ],
+    }]);
+    // 위 케이스는 실제로는 정순 (phrase 텍스트만 보면). 역순 테스트로 다시 작성:
+    const reverseLec = makePlaywrightLecture([{
+      narration: '前半の言葉。後半の言葉。',  // 前半=pos0, 後半=pos5
+      durationSec: 10,
+      action: [
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: '#x', key: 'A' },
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: '#x', key: 'B' },
+        { cmd: 'wait', ms: 0 },
+      ],
+      syncPoints: [
+        { actionIndex: 1, phrase: '後半の言葉' },  // 더 뒤에 있는 phrase 가 더 작은 actionIndex
+        { actionIndex: 3, phrase: '前半の言葉' },  // 더 앞에 있는 phrase 가 더 큰 actionIndex
+      ],
+    }]);
+    const issues = playwrightTimingRule.run(reverseLec);
+    expect(issues.some(i =>
+      i.severity === 'error' &&
+      i.message.includes('순서가 일치하지 않음')
+    )).toBe(true);
+    // unused lec to avoid lint complaint
+    void lec;
+  });
+
+  it('handles syncPoints[0].actionIndex=0 with proper segment-target mapping', () => {
+    // actionIndex=0 syncPoint 일 때 buildSegments 가 빈 pre-segment 를 포함해도
+    // segments[i] ↔ targetFirings 매핑이 일관됨을 검증. 매핑이 어긋나면 false positive 발생.
+    // 정상 케이스: 첫 phrase 는 narration 시작에, action[0]=mouse_move(teaching) 부터 시작.
+    const lec = makePlaywrightLecture([{
+      narration: '今ここをクリックします。次に確認します。',
+      durationSec: 10,
+      action: [
+        { cmd: 'mouse_move', to: [400, 250] },                  // teaching, syncPoint 0
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: '#box-html .CodeMirror', key: 'X' },
+        { cmd: 'wait', ms: 0 },
+      ],
+      syncPoints: [
+        { actionIndex: 0, phrase: '今ここをクリックします' },
+        { actionIndex: 2, phrase: '次に確認します' },
+      ],
+    }]);
+    const issues = playwrightTimingRule.run(lec);
+    // 매핑이 어긋났을 때 발생하던 false positive(전체 액션이 잘못된 budget 비교) 가 없어야 함.
+    const segmentBudgetErrors = issues.filter(i =>
+      i.severity === 'error' && i.message.includes('fixed action') && i.message.includes('narration budget')
+    );
+    expect(segmentBudgetErrors).toHaveLength(0);
+  });
+
+  it('rejects duplicate actionIndex in syncPoints', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '入力します。次に確認します。',
+      durationSec: 10,
+      action: [
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: '#box-html .CodeMirror', key: 'Hello' },
+        { cmd: 'wait', ms: 0 },
+      ],
+      syncPoints: [
+        { actionIndex: 1, phrase: '入力します' },
+        { actionIndex: 1, phrase: '次に確認します' },
+      ],
+    }]);
+    const issues = playwrightTimingRule.run(lec);
+    expect(issues.some(i =>
+      i.severity === 'error' &&
+      i.message.includes('중복') &&
+      i.message.includes('actionIndex=1')
+    )).toBe(true);
+  });
+
+  it('rejects visible render_code_block in forward sync scene', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '入力します。コードを取り込みます。',
+      durationSec: 10,
+      session: { mode: 'shared', id: 'claude-demo' },
+      action: [
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: 'div.ProseMirror', key: 'hi' },
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'render_code_block' },
+      ],
+      syncPoints: [{ actionIndex: 1, phrase: '入力します' }],
+    }]);
+    const issues = playwrightTimingRule.run(lec);
+    expect(issues.some(i =>
+      i.severity === 'error' && i.message.includes('render_code_block')
+    )).toBe(true);
   });
 });
 

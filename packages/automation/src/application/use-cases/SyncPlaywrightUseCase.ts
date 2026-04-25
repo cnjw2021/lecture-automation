@@ -15,23 +15,18 @@ import * as fs from 'fs-extra';
 import { Lecture, Scene, PlaywrightVisual, PlaywrightAction, PlaywrightSyncPoint } from '../../domain/entities/Lecture';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
 import { isForwardSyncTarget, isIsolatedLiveDemoScene } from '../../domain/policies/LiveDemoScenePolicy';
-import { EDU_DEVTOOLS_ACTION_DURATION_MS } from '../../domain/constants/EduDevtoolsActionDurations';
+import { estimateFixedActionDurationMs } from '../../domain/playwright/ActionTiming';
 
-// 각 action cmd의 고정 소요시간 추정치 (ms).  wait는 조정 대상이므로 여기서 제외.
-const FIXED_DURATION_MS: Partial<Record<string, number>> = {
-  goto:         7000,  // Yahoo Japan 등 무거운 사이트 기준 보수적 추정
-  mouse_move:   0,
-  click:        500,
-  type:         0,
-  press:        100,
-  focus:        100,
-  mouse_drag:   1000,
-  highlight:    1500,  // 자동 해제까지 1.5초
-  ...EDU_DEVTOOLS_ACTION_DURATION_MS,
-  disable_css:  0,
-  enable_css:   0,
-  scroll:       500,  // page.mouse.wheel + waitForTimeout(300) → durationMs 500
-};
+/**
+ * forward sync 단계에서 visible 로 두면 budget 추정이 깨지는 cmd.
+ * F-playwright-timing lint 와 동일한 정책. SyncPlaywrightUseCase 에서는 방어적으로
+ * 경고만 출력하고 sync 자체는 진행 (lint 가 사전 차단을 담당).
+ */
+const FORWARD_SYNC_VISIBLE_FORBIDDEN_CMDS = new Set<string>([
+  'wait_for',
+  'wait_for_claude_ready',
+  'render_code_block',
+]);
 
 // ---------------------------------------------------------------------------
 // Use Case
@@ -92,7 +87,7 @@ export class SyncPlaywrightUseCase {
 
     // 1. WAV 파일로 타이밍 취득
     const wavPath = this.lectureRepository.getAudioPath(lectureId, scene.scene_id);
-    const timings = await resolvePhraseTimings(scene.narration, syncPoints, wavPath);
+    const timings = await resolvePhraseTimings(scene.narration, syncPoints, wavPath, scene.durationSec);
     const totalMs = timings.totalMs;
 
     // 2. syncPoints를 actionIndex 오름차순 정렬
@@ -102,11 +97,13 @@ export class SyncPlaywrightUseCase {
     const targetFirings = buildTargetFirings(scene.narration, sortedSyncPoints, timings);
 
     // 4. 세그먼트 분할 후 wait 재계산
+    // segments.length 는 항상 sortedSyncPoints.length + 1 (빈 segment 포함). 빈 segment 는 loop 에서 스킵.
     const segments = buildSegments(sortedSyncPoints, actions.length);
     const updatedActions = [...actions];
 
     for (let si = 0; si < segments.length; si++) {
       const { from, to } = segments[si];
+      if (from === to) continue;  // 빈 segment 스킵 (sp[0].actionIndex=0 케이스)
       const segStartMs = si === 0 ? 0 : targetFirings[si - 1].targetMs;
       const segEndMs   = si < targetFirings.length ? targetFirings[si].targetMs : totalMs;
       const targetSegDurationMs = segEndMs - segStartMs;
@@ -125,7 +122,17 @@ export class SyncPlaywrightUseCase {
         if (actions[j].cmd === 'wait') {
           waitIndices.push(j);
         } else {
-          fixedMs += FIXED_DURATION_MS[actions[j].cmd] ?? 0;
+          // 비결정적 / 가변 대기 cmd 가 visible 로 들어오면 ActionTiming 이 0ms 로 추정해
+          // wait 재분배가 크게 틀어진다. F-playwright-timing lint 가 작성 단계에서 차단하지만
+          // sync 단계에서도 방어적으로 경고 + 가이드 출력.
+          if (FORWARD_SYNC_VISIBLE_FORBIDDEN_CMDS.has(actions[j].cmd)) {
+            console.warn(
+              `  ⚠️ 세그먼트 ${si} (actions ${from}~${to - 1}): action[${j}] cmd=${actions[j].cmd} 가 visible — ` +
+              `0ms 로 추정되어 wait 재분배가 크게 틀어집니다. offscreen: true 로 옮기거나 ` +
+              `isolated 역방향 싱크 씬으로 분리해야 함. 'make lint LECTURE=... STRICT=1' 로 사전 검증 권장`
+            );
+          }
+          fixedMs += estimateFixedActionDurationMs(actions[j]).ms;
         }
       }
 
@@ -134,14 +141,23 @@ export class SyncPlaywrightUseCase {
         continue;
       }
 
-      // 기존 wait 합계 대비 비례 분배
-      const currentWaitTotal = waitIndices.reduce((sum, idx) => sum + (actions[idx].ms ?? 0), 0);
+      // 기존 wait 합계 대비 비례 분배. 입력 JSON 에 음수/NaN wait 가 있어도 결과 JSON 으로 전파하지 않는다.
+      const currentWaitTotal = waitIndices.reduce((sum, idx) => sum + getNonNegativeWaitMs(actions[idx]), 0);
       const availableMs = Math.max(0, targetSegDurationMs - fixedMs);
+      const deficitMs = fixedMs - targetSegDurationMs;
+
+      if (deficitMs > 0) {
+        console.warn(
+          `  ⚠️ 세그먼트 ${si} (actions ${from}~${to - 1}): ` +
+          `고정 액션 ${fixedMs}ms가 목표 ${targetSegDurationMs}ms를 ${deficitMs}ms 초과 — ` +
+          `wait=0으로 줄여도 액션이 나레이션보다 늦습니다. narration/syncPoint/action 분할 조정 필요`
+        );
+      }
 
       for (const idx of waitIndices) {
-        const original = actions[idx].ms ?? 0;
+        const original = getNonNegativeWaitMs(actions[idx]);
         const ratio = currentWaitTotal > 0 ? original / currentWaitTotal : 1 / waitIndices.length;
-        updatedActions[idx] = { ...actions[idx], ms: Math.round(availableMs * ratio) };
+        updatedActions[idx] = { ...actions[idx], ms: Math.max(0, Math.round(availableMs * ratio)) };
       }
 
       const newWaitTotal = waitIndices.reduce((sum, idx) => sum + (updatedActions[idx].ms ?? 0), 0);
@@ -227,6 +243,7 @@ async function resolvePhraseTimings(
   narration: string,
   syncPoints: PlaywrightSyncPoint[],
   wavPath: string,
+  durationSec?: number,
 ): Promise<PhraseTimingResult> {
   // 1순위: alignment.json 기반 (글자 단위 타임스탬프). gap 삽입·무음 분포와 무관하게 정확.
   const alignmentPath = wavPath.replace(/\.wav$/, '.alignment.json');
@@ -273,9 +290,14 @@ async function resolvePhraseTimings(
     return charCountFallback(narration, syncPoints, totalMs);
   }
 
-  // WAV 없음 → JSON의 durationSec 사용 (TTS 미생성 상태)
-  console.warn(`  ⚠️ WAV 없음 (${wavPath}), 문자수 비례 추산으로 폴백`);
-  const durationMs = (narration.length / 5) * 1000;  // 1초 ≒ 5자 기준
+  // WAV 없음 (TTS 미생성 상태) → 1순위 scene.durationSec, 폴백 문자수 추산
+  // 문자수 추산은 docs SSoT(1초 ≒ 5.5자) 와 F-rule 의 estimateNarrationDurationMs 와 동일하게 ceil 적용
+  if (typeof durationSec === 'number' && durationSec > 0) {
+    console.warn(`  ⚠️ WAV 없음 (${wavPath}), scene.durationSec=${durationSec}s 사용`);
+    return charCountFallback(narration, syncPoints, durationSec * 1000);
+  }
+  console.warn(`  ⚠️ WAV 없음 (${wavPath}), durationSec 미지정 → 문자수 비례 추산으로 폴백`);
+  const durationMs = Math.ceil(narration.length / 5.5) * 1000;  // 1초 ≒ 5.5자 (docs SSoT)
   return charCountFallback(narration, syncPoints, durationMs);
 }
 
@@ -297,6 +319,11 @@ function charCountEstimate(phrase: string, narration: string, totalMs: number): 
   const pos = narration.indexOf(phrase);
   if (pos === -1) return 0;
   return Math.round((pos / narration.length) * totalMs);
+}
+
+function getNonNegativeWaitMs(action: PlaywrightAction): number {
+  const ms = action.ms ?? 0;
+  return Number.isFinite(ms) && ms > 0 ? ms : 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -477,22 +504,20 @@ function buildTargetFirings(
 
 /**
  * syncPoints의 actionIndex를 경계로 actions를 세그먼트로 분할.
- * 결과: [{from, to}] — each segment = actions[from..to)
+ * 결과: 항상 (sortedSyncPoints.length + 1) 개의 segment. 빈 segment(from === to) 도 그대로 포함해
+ * segments[i] ↔ targetFirings 매핑을 일관되게 유지. 빈 segment 스킵은 호출부 loop 에서 처리.
+ *
+ * - si=0     : pre-first-sync (sp[0].actionIndex=0 이면 빈 segment)
+ * - si=k≥1   : between sync[k-1] 과 sync[k]
+ * - si=N     : post-last-sync (where N=sortedSyncPoints.length)
  */
 function buildSegments(sortedSyncPoints: PlaywrightSyncPoint[], totalActions: number): { from: number; to: number }[] {
-  const pivots = sortedSyncPoints.map(sp => sp.actionIndex);
-  pivots.push(totalActions);
-
   const segments: { from: number; to: number }[] = [];
   let from = 0;
-  for (const pivot of pivots) {
-    if (pivot > from) {
-      segments.push({ from, to: pivot });
-    }
-    from = Math.max(from, pivot);
+  for (const sp of sortedSyncPoints) {
+    segments.push({ from, to: sp.actionIndex });
+    from = sp.actionIndex;
   }
-  if (from < totalActions) {
-    segments.push({ from, to: totalActions });
-  }
+  segments.push({ from, to: totalActions });
   return segments;
 }
