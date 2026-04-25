@@ -404,6 +404,27 @@ describe('F-playwright-timing', () => {
     )).toBe(false);
   });
 
+  it('rejects syncPoint pointing to offscreen action', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '入力します。結果を確認します。',
+      durationSec: 10,
+      session: { mode: 'shared', id: 'claude-demo' },
+      action: [
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'wait_for_claude_ready', timeout: 180000, offscreen: true },
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: 'div.ProseMirror', key: 'next' },
+      ],
+      syncPoints: [{ actionIndex: 1, phrase: '結果を確認します' }],
+    }]);
+    const issues = playwrightTimingRule.run(lec);
+    expect(issues.some(i =>
+      i.severity === 'error' &&
+      i.message.includes('offscreen') &&
+      i.message.includes('세그먼트 피벗')
+    )).toBe(true);
+  });
+
   it('rejects visible render_code_block in forward sync scene', () => {
     const lec = makePlaywrightLecture([{
       narration: '入力します。コードを取り込みます。',

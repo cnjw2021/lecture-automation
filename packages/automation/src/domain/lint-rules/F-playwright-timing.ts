@@ -73,6 +73,15 @@ export const playwrightTimingRule: LintRule = {
       for (const sp of sortedSyncPoints) {
         const action = actions[sp.actionIndex];
         if (!action) continue;
+        if (action.offscreen) {
+          issues.push({
+            ruleId: this.id,
+            sceneId,
+            severity: 'error',
+            message: `syncPoint action[${sp.actionIndex}] 가 offscreen — offscreen action 은 클립 타임라인 밖에서 실행되어 step/manifest 타임스탬프가 없으므로 forward sync 의 세그먼트 피벗으로 사용 불가. visible teaching action 으로 옮겨야 함`,
+          });
+          continue;
+        }
         if (FORWARD_SYNC_FORBIDDEN_CMDS.has(action.cmd)) {
           issues.push({
             ruleId: this.id,
