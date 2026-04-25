@@ -365,6 +365,63 @@ describe('F-playwright-timing', () => {
     }]);
     expect(playwrightTimingRule.run(lec)).toHaveLength(0);
   });
+
+  it('rejects visible wait_for_claude_ready in shared session forward sync', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '結果を確認します。続けて入力します。',
+      durationSec: 10,
+      session: { mode: 'shared', id: 'claude-demo' },
+      action: [
+        { cmd: 'wait_for_claude_ready', timeout: 180000 },
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: 'div.ProseMirror', key: 'next' },
+      ],
+      syncPoints: [{ actionIndex: 2, phrase: '続けて入力します' }],
+    }]);
+    const issues = playwrightTimingRule.run(lec);
+    expect(issues.some(i =>
+      i.severity === 'error' &&
+      i.message.includes('wait_for_claude_ready') &&
+      i.message.includes('visible')
+    )).toBe(true);
+  });
+
+  it('accepts offscreen wait_for_claude_ready in shared session forward sync', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '結果を確認します。続けて入力します。',
+      durationSec: 10,
+      session: { mode: 'shared', id: 'claude-demo' },
+      action: [
+        { cmd: 'wait_for_claude_ready', timeout: 180000, offscreen: true },
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: 'div.ProseMirror', key: 'next' },
+      ],
+      syncPoints: [{ actionIndex: 2, phrase: '続けて入力します' }],
+    }]);
+    const issues = playwrightTimingRule.run(lec);
+    expect(issues.some(i =>
+      i.severity === 'error' && i.message.includes('wait_for_claude_ready')
+    )).toBe(false);
+  });
+
+  it('rejects visible render_code_block in forward sync scene', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '入力します。コードを取り込みます。',
+      durationSec: 10,
+      session: { mode: 'shared', id: 'claude-demo' },
+      action: [
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: 'div.ProseMirror', key: 'hi' },
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'render_code_block' },
+      ],
+      syncPoints: [{ actionIndex: 1, phrase: '入力します' }],
+    }]);
+    const issues = playwrightTimingRule.run(lec);
+    expect(issues.some(i =>
+      i.severity === 'error' && i.message.includes('render_code_block')
+    )).toBe(true);
+  });
 });
 
 // ---------------------------------------------------------------------------

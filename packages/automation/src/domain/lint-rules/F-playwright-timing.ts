@@ -23,6 +23,17 @@ import { LintIssue, LintRule } from './types';
 
 const CHARS_PER_SEC = 5.5;
 const FORWARD_SYNC_FORBIDDEN_CMDS = new Set<string>(['goto', 'wait', 'wait_for', 'wait_for_claude_ready']);
+/**
+ * forward sync 씬에서 visible(offscreen 아님) 로 두면 budget 추정이 깨지는 cmd.
+ * - wait_for / wait_for_claude_ready: 비결정적 대기. ActionTiming 에서 0ms 로 처리되므로
+ *   visible 로 두면 실제 수 초~수 분 지연이 budget 에서 빠짐. shared session 은 offscreen 으로 밀어야 함.
+ * - render_code_block: Artifact iframe 폴링으로 최대 30s. visible budget 에 포함시킬 수 없음.
+ */
+const FORWARD_SYNC_VISIBLE_FORBIDDEN_CMDS = new Set<string>([
+  'wait_for',
+  'wait_for_claude_ready',
+  'render_code_block',
+]);
 
 export const playwrightTimingRule: LintRule = {
   id: 'F-playwright-timing',
@@ -45,6 +56,19 @@ export const playwrightTimingRule: LintRule = {
         .filter(sp => typeof sp.actionIndex === 'number' && sp.actionIndex >= 0 && sp.actionIndex < actions.length)
         .sort((a, b) => a.actionIndex - b.actionIndex);
       if (sortedSyncPoints.length === 0) continue;
+
+      // visible 로 두면 budget 이 깨지는 비결정적 / 가변 대기 cmd 검사
+      for (let i = 0; i < actions.length; i++) {
+        const action = actions[i];
+        if (!FORWARD_SYNC_VISIBLE_FORBIDDEN_CMDS.has(action.cmd)) continue;
+        if (action.offscreen) continue;
+        issues.push({
+          ruleId: this.id,
+          sceneId,
+          severity: 'error',
+          message: `action[${i}] cmd=${action.cmd} 가 visible(offscreen 아님) — 비결정적/가변 대기는 budget 추정이 불가하므로 offscreen: true 로 씬 타임라인 밖으로 밀거나, isolated 역방향 싱크 씬으로 분리해야 함`,
+        });
+      }
 
       for (const sp of sortedSyncPoints) {
         const action = actions[sp.actionIndex];

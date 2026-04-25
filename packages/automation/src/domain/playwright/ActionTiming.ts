@@ -1,6 +1,21 @@
 import { PlaywrightAction } from '../entities/Lecture';
 import { EDU_DEVTOOLS_ACTION_DURATION_MS } from '../constants/EduDevtoolsActionDurations';
 
+/**
+ * Playwright forward-sync budget SSoT.
+ *
+ * 값 산출 기준: PlaywrightVisualProvider 의 직접적인 waitForTimeout 만이 아니라
+ * 실제 녹화 manifest 의 액션 완료 timestamp 를 반영한 실측 budget.
+ *
+ * 예: mouseMoveMs=800
+ *   - PlaywrightVisualProvider:439-440 코드만 보면 `mouse.move({steps:30}) + waitForTimeout(200)` 이라
+ *     단순 합산으로는 ~200ms 처럼 보이지만, headed 모드에서 30 step CDP 디스패치 + 커서 div
+ *     렌더링/애니메이션 + 브라우저 paint 까지 포함한 실측 평균이 ~800ms.
+ *   - 보수적 budget 으로 두면 syncPoint 가 narration 보다 빨리 발화되는 케이스가 줄어든다.
+ *   - 값을 줄이면 wait 가 과다 분배되어 마지막 segment 에 무음 꼬리가 남기 쉬움.
+ *
+ * 다른 액션도 같은 원칙: provider 의 명시적 waitForTimeout 이 아니라 실제 녹화 길이에 맞춤.
+ */
 export const PLAYWRIGHT_TIMING = {
   typeDelayMsPerChar: 100,
   mouseMoveMs: 800,
@@ -45,7 +60,10 @@ export function estimatePlaywrightActionDurationMs(action: PlaywrightAction): Ac
       };
     }
     case 'mouse_move':
-      return { ms: PLAYWRIGHT_TIMING.mouseMoveMs, basis: 'steps 30 + cursor settle' };
+      return {
+        ms: PLAYWRIGHT_TIMING.mouseMoveMs,
+        basis: 'manifest empirical: steps 30 CDP dispatch + cursor div animation + paint',
+      };
     case 'click':
       return { ms: PLAYWRIGHT_TIMING.clickMs, basis: 'locator click' };
     case 'press':
