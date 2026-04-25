@@ -252,6 +252,36 @@ props 상세는 `docs/component-props-reference.md` 참조.
 
 Playwright 씬(`"type": "playwright"`)을 작성할 때 반드시 준수해야 하는 규칙.
 
+### Playwright 씬 필수 작성 순서
+
+Playwright 씬을 만들 때는 아래 순서대로 작성한다. 이 순서를 지키면 구조적으로 sync 불가능한 JSON을 대부분 사전에 피할 수 있다.
+
+1. **동작을 3종으로 분류**
+   - `setup`: `goto`, 첫 `mouse_move`, 첫 `click`
+   - `pre-fill`: 이전 상태 복원용 조용한 `type`
+   - `teaching action`: 나레이션이 설명하는 새 `type`, `press`, `mouse_move`, `highlight`
+
+2. **syncPoint 는 teaching action 에만 둔다**
+   - `wait`, `goto`, `wait_for` 에 syncPoint 를 두지 않는다.
+   - 첫 syncPoint 는 setup floor 이후에 온다. CodePen 기본 setup floor 는 약 **6.5초**다.
+
+3. **각 세그먼트 예산을 먼저 계산한다**
+   - 세그먼트 = 이전 syncPoint 부터 다음 syncPoint 까지의 action 구간.
+   - `type` 은 `key.length × 0.1초`, `mouse_move` 는 `0.8초`, `click` 은 `0.5초`, `press` 는 `0.1초/회`로 잡는다.
+   - 각 세그먼트는 `narration budget >= wait 제외 고정 액션 시간 + 1초 여유`를 만족해야 한다.
+
+4. **불가능하면 JSON wait 로 해결하려 하지 않는다**
+   - 고정 액션 시간이 narration budget 보다 길면 음수 wait 가 필요하므로 자동 보정 불가다.
+   - 이 경우 나레이션을 늘리거나, 타이핑을 더 작은 syncPoint 구간으로 나누거나, 보이는 동작을 줄인다.
+
+5. **나레이션과 보이는 동작을 일치시킨다**
+   - 전체 삭제·재타이핑을 보이면 그렇게 말한다.
+   - "중간에 Enter 한 번"이라고 말하려면 실제 화면에서도 그 동작만 보여야 한다.
+
+6. **저장 후 lint 와 sync 를 실행한다**
+   - `make lint LECTURE=lecture-XX.json STRICT=1`
+   - `make sync-playwright LECTURE=lecture-XX.json`
+
 ### 연속 실습 씬 통합 원칙 (라이브 몰입감)
 
 수강생이 같은 실습 화면(CodePen·VS Code·브라우저) 을 계속 보며 작업하는 구간은 **하나의 Playwright 씬으로 통합**한다. 씬을 잘게 쪼개면 매 씬마다 새 브라우저 컨텍스트가 열려 페이지가 재로딩되고, 라이브 강의 몰입감이 깨진다.
