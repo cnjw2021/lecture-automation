@@ -2,6 +2,7 @@ import { ttsLandminesRule } from './A-tts-landmines';
 import { symbolViolationsRule } from './B-symbol-violations';
 import { playwrightShapeRule } from './D-playwright-shape';
 import { narrationLengthRule } from './E-narration-length';
+import { playwrightTimingRule } from './F-playwright-timing';
 import { allRules } from './index';
 
 function makeLecture(narrations: string[]) {
@@ -90,6 +91,7 @@ describe('A-tts-landmines', () => {
       '「h2」→「エイチツー」',
       '「h3」→「エイチスリー」',
       '「h6」→「エイチシックス」',
+      "「タグ」→「'たぐ'」",
     ]);
   });
 
@@ -162,6 +164,7 @@ function makePlaywrightLecture(scenes: any[]) {
     sequence: scenes.map((s, i) => ({
       scene_id: i + 1,
       narration: s.narration ?? 'テスト',
+      ...(typeof s.durationSec === 'number' ? { durationSec: s.durationSec } : {}),
       visual: {
         type: 'playwright',
         action: s.action ?? [],
@@ -292,6 +295,58 @@ describe('E-narration-length', () => {
     const lec = { sequence: [{ scene_id: 1, narration: 'テスト', visual: { type: 'remotion', component: 'KeyPointScreen', props: {} } }] };
     expect(() => narrationLengthRule.run(lec)).not.toThrow();
     expect(narrationLengthRule.run(lec)).toHaveLength(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// F — Playwright timing
+// ---------------------------------------------------------------------------
+
+describe('F-playwright-timing', () => {
+  it('detects first syncPoint before setup floor', () => {
+    const lec = makePlaywrightLecture([{
+      narration: 'すぐ入力します。準備ができたら説明します。',
+      durationSec: 10,
+      action: [
+        { cmd: 'goto', url: 'https://codepen.io/pen/' },
+        { cmd: 'mouse_move', to: [100, 100] },
+        { cmd: 'click', selector: '#box-html .CodeMirror' },
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: '#box-html .CodeMirror', key: 'Hello' },
+      ],
+      syncPoints: [{ actionIndex: 4, phrase: 'すぐ入力します' }],
+    }]);
+    const issues = playwrightTimingRule.run(lec);
+    expect(issues.some(i => i.severity === 'error' && i.message.includes('setup floor'))).toBe(true);
+  });
+
+  it('detects segment fixed action budget over narration budget', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '短く話してから入力します。',
+      durationSec: 2,
+      action: [
+        { cmd: 'type', selector: '#box-html .CodeMirror', key: 'x'.repeat(50) },
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'mouse_move', to: [100, 100] },
+      ],
+      syncPoints: [{ actionIndex: 2, phrase: '入力します' }],
+    }]);
+    const issues = playwrightTimingRule.run(lec);
+    expect(issues.some(i => i.severity === 'error' && i.message.includes('fixed action'))).toBe(true);
+  });
+
+  it('passes a budgeted playwright segment with slack and wait', () => {
+    const lec = makePlaywrightLecture([{
+      narration: '入力します。結果を確認します。',
+      durationSec: 8,
+      action: [
+        { cmd: 'wait', ms: 0 },
+        { cmd: 'type', selector: '#box-html .CodeMirror', key: 'Hello' },
+        { cmd: 'wait', ms: 0 },
+      ],
+      syncPoints: [{ actionIndex: 1, phrase: '入力します' }],
+    }]);
+    expect(playwrightTimingRule.run(lec)).toHaveLength(0);
   });
 });
 

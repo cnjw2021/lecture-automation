@@ -15,23 +15,7 @@ import * as fs from 'fs-extra';
 import { Lecture, Scene, PlaywrightVisual, PlaywrightAction, PlaywrightSyncPoint } from '../../domain/entities/Lecture';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
 import { isForwardSyncTarget, isIsolatedLiveDemoScene } from '../../domain/policies/LiveDemoScenePolicy';
-import { EDU_DEVTOOLS_ACTION_DURATION_MS } from '../../domain/constants/EduDevtoolsActionDurations';
-
-// 각 action cmd의 고정 소요시간 추정치 (ms).  wait는 조정 대상이므로 여기서 제외.
-const FIXED_DURATION_MS: Partial<Record<string, number>> = {
-  goto:         7000,  // Yahoo Japan 등 무거운 사이트 기준 보수적 추정
-  mouse_move:   0,
-  click:        500,
-  type:         0,
-  press:        100,
-  focus:        100,
-  mouse_drag:   1000,
-  highlight:    1500,  // 자동 해제까지 1.5초
-  ...EDU_DEVTOOLS_ACTION_DURATION_MS,
-  disable_css:  0,
-  enable_css:   0,
-  scroll:       500,  // page.mouse.wheel + waitForTimeout(300) → durationMs 500
-};
+import { estimateFixedActionDurationMs } from '../../domain/playwright/ActionTiming';
 
 // ---------------------------------------------------------------------------
 // Use Case
@@ -125,7 +109,7 @@ export class SyncPlaywrightUseCase {
         if (actions[j].cmd === 'wait') {
           waitIndices.push(j);
         } else {
-          fixedMs += FIXED_DURATION_MS[actions[j].cmd] ?? 0;
+          fixedMs += estimateFixedActionDurationMs(actions[j]).ms;
         }
       }
 
@@ -137,6 +121,15 @@ export class SyncPlaywrightUseCase {
       // 기존 wait 합계 대비 비례 분배
       const currentWaitTotal = waitIndices.reduce((sum, idx) => sum + (actions[idx].ms ?? 0), 0);
       const availableMs = Math.max(0, targetSegDurationMs - fixedMs);
+      const deficitMs = fixedMs - targetSegDurationMs;
+
+      if (deficitMs > 0) {
+        console.warn(
+          `  ⚠️ 세그먼트 ${si} (actions ${from}~${to - 1}): ` +
+          `고정 액션 ${fixedMs}ms가 목표 ${targetSegDurationMs}ms를 ${deficitMs}ms 초과 — ` +
+          `wait=0으로 줄여도 액션이 나레이션보다 늦습니다. narration/syncPoint/action 분할 조정 필요`
+        );
+      }
 
       for (const idx of waitIndices) {
         const original = actions[idx].ms ?? 0;
