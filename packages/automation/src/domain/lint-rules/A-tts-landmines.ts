@@ -135,6 +135,24 @@ const LANDMINES: Landmine[] = [
   // lecture-02-01 19:33 실측. HTML タグ 설명 전반에 등장
   // ひらがな "たぐ" 만으로 부족해 토큰 경계를 강제 (ペン → 'ぺ'ん 과 동일 기법)
   { pattern: /タグ/g, from: 'タグ', to: "'たぐ'", reason: 'タグ → "だぐ" 오독 (T→D 자소 오독). ひらがな + ASCII 따옴표 분리' },
+
+  // A-12: 'p' 단독 → "ピ"(단음) 오독. IT 표준 발음은 장음 "ピー"
+  // 'ぴー' 히라가나로 회피 (Hinata 보이스 ピ→ティ 자소 오독 계열 회피)
+  // 단어 경계에서만 (혼합어/URL 안의 우연 일치 회피, h1~h6 패턴과 동일 기법)
+  // lecture-02-02 씬 9 실측: 'pたぐ' → '피타그' (단음 오독)
+  {
+    pattern: /(?<![A-Za-z0-9])p(?![A-Za-z0-9])/g,
+    from: 'p',
+    to: 'ぴー',
+    reason: "'p' 단독 → \"ピ\"(단음) 오독. IT 표준은 장음 \"ピー\". ひらがな ぴー 로 회피 (Hinata 보이스 P→T 자소 오독 계열 회피)",
+    fixPattern: /(?<![A-Za-z0-9])p(?![A-Za-z0-9])/g,
+  },
+
+  // A-13: てみ 連接 오독 ("見てみましょう" → "미떼이마쇼", 사이에 "い" 가 끼어듦)
+  // てみ 를 제거해 의미를 거의 보존하면서 회피 (見てみましょう → 見ましょう 등)
+  // lecture-02-02 씬 16 실측. メモリ TTS Landmines 카테고리 B-2 의 "してみましょう" 패턴 일반화
+  { pattern: /てみま/g, from: 'てみま', to: 'ま', reason: 'てみ 連接 → "てい" 오독 (見てみましょう/してみました/やってみます 등). てみ 제거로 회피' },
+  { pattern: /てみて/g, from: 'てみて', to: 'て', reason: 'てみ 連接 → "てい" 오독 (見てみてください/話してみて 등). てみ 제거로 회피' },
 ];
 
 /**
@@ -182,7 +200,7 @@ function makeRegexFix(sceneIdx: number, pattern: RegExp, to: string) {
 
 export const ttsLandminesRule: LintRule = {
   id: 'A-tts-landmines',
-  description: 'TTS 오독 패턴 검출 및 자동 수정 (パート1, 上半分, 段落, gap, px, http://, 行の, セットアップ, ペイン, ペン, Pen, 改行, ペア, タグ, タグ名 등)',
+  description: 'TTS 오독 패턴 검출 및 자동 수정 (パート1, 上半分, 段落, gap, px, http://, 行の, セットアップ, ペイン, ペン, Pen, 改行, ペア, タグ, タグ名, p 단독, てみ 連接 등)',
 
   run(lecture: any): LintIssue[] {
     const issues: LintIssue[] = [];
