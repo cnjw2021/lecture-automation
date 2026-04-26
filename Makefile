@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install build run run-lambda run-force run-force-lambda regen-scene regen-scene-lambda regen-visual run-tts-only run-tts-chunk apply-tts apply-tts-lambda apply-tts-chunk apply-tts-chunk-lambda list-chunks find-chunk run-render-only run-render-only-lambda render-scene render-scene-lambda record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
+.PHONY: help install build run run-lambda run-force run-force-lambda regen-scene regen-scene-lambda regen-visual regen-visual-lambda run-tts-only run-tts-chunk apply-tts apply-tts-lambda apply-tts-chunk apply-tts-chunk-lambda list-chunks find-chunk run-render-only run-render-only-lambda render-scene render-scene-lambda record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
         sync-playwright save-auth validate-schema lint lint-fix audit deploy-lambda
 
 # 기본 변수 설정
@@ -38,6 +38,7 @@ help:
 	@echo "make regen-scene LECTURE=xxx SCENE='5 12'     - 여러 씬 동시 재생성"
 	@echo "make regen-scene-lambda LECTURE=xxx SCENE='5 12' - regen-scene + Lambda"
 	@echo "make regen-visual LECTURE=xxx SCENE='6 14'    - 씬 visual 만 재생성 (webm + 클립, TTS 유지)"
+	@echo "make regen-visual-lambda LECTURE=xxx SCENE='6 14' - regen-visual + Lambda"
 	@echo ""
 	@echo "--------------------------------------------------"
 	@echo "🔊 TTS 재생성 (씬 단위)"
@@ -180,6 +181,23 @@ regen-visual: build
 		find packages/remotion/public/state-captures/$$LECTURE_ID -type d -name "scene-$$scene" -exec rm -rf {} + 2>/dev/null || true; \
 	done
 	env TARGET_SCENES="$(SCENE)" node $(ENGINE_PATH) $(LECTURE)
+
+regen-visual-lambda: build
+	@echo "🎞️☁️  Visual 씬만 재생성 (TTS 유지, Lambda): $(LECTURE) / Scene $(SCENE)"
+	@if [ -z "$(SCENE)" ]; then \
+		echo "❌ SCENE 값을 지정해 주세요. 예: make regen-visual-lambda LECTURE=lecture-01-04.json SCENE='6 14'"; \
+		exit 1; \
+	fi
+	@LECTURE_ID=$$(node -e "const d=require('./data/$(LECTURE)'); console.log(d.lecture_id)"); \
+	for scene in $(SCENE); do \
+		echo "  🗑️  scene-$$scene.mp4 클립 삭제 중..."; \
+		rm -f $(OUTPUT_DIR)/clips/$$LECTURE_ID/scene-$$scene.mp4; \
+		echo "  🗑️  scene-$$scene.webm 캡처 삭제 중..."; \
+		rm -f packages/remotion/public/captures/$$LECTURE_ID/scene-$$scene.webm; \
+		echo "  🗑️  session 캡처 디렉토리 삭제 중 (shared 씬)..."; \
+		find packages/remotion/public/state-captures/$$LECTURE_ID -type d -name "scene-$$scene" -exec rm -rf {} + 2>/dev/null || true; \
+	done
+	env TARGET_SCENES="$(SCENE)" REMOTION_RENDER_MODE=lambda node $(ENGINE_PATH) $(LECTURE)
 
 run-tts-only: build
 	@echo "🔊 TTS만 생성: $(LECTURE) / Scene $(SCENE)"
