@@ -132,6 +132,10 @@ regen-scene: build
 	for scene in $(SCENE); do \
 		echo "  🗑️  scene-$$scene.wav 삭제 중..."; \
 		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene.wav; \
+		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene.alignment.json; \
+		echo "  🗑️  scene-$$scene chunk 캐시 삭제 중..."; \
+		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene-chunk-*.wav; \
+		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene-chunk-*.alignment.json; \
 		echo "  🗑️  scene-$$scene.mp4 클립 삭제 중..."; \
 		rm -f $(OUTPUT_DIR)/clips/$$LECTURE_ID/scene-$$scene.mp4; \
 		echo "  🗑️  scene-$$scene.webm 캡처 삭제 중..."; \
@@ -147,6 +151,10 @@ regen-scene-lambda: build
 	for scene in $(SCENE); do \
 		echo "  🗑️  scene-$$scene.wav 삭제 중..."; \
 		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene.wav; \
+		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene.alignment.json; \
+		echo "  🗑️  scene-$$scene chunk 캐시 삭제 중..."; \
+		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene-chunk-*.wav; \
+		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene-chunk-*.alignment.json; \
 		echo "  🗑️  scene-$$scene.mp4 클립 삭제 중..."; \
 		rm -f $(OUTPUT_DIR)/clips/$$LECTURE_ID/scene-$$scene.mp4; \
 		echo "  🗑️  scene-$$scene.webm 캡처 삭제 중..."; \
