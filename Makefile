@@ -1,6 +1,6 @@
 # Lecture Automation Makefile
 
-.PHONY: help install build run run-lambda run-force run-force-lambda regen-scene regen-scene-lambda regen-visual regen-visual-lambda run-tts-only run-tts-chunk apply-tts apply-tts-lambda apply-tts-chunk apply-tts-chunk-lambda list-chunks find-chunk run-render-only run-render-only-lambda render-scene render-scene-lambda record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
+.PHONY: help install build run run-lambda run-force run-force-lambda regen-scene regen-scene-lambda regen-visual regen-visual-lambda regen-missing regen-missing-lambda run-tts-only run-tts-chunk apply-tts apply-tts-lambda apply-tts-chunk apply-tts-chunk-lambda list-chunks find-chunk run-render-only run-render-only-lambda render-scene render-scene-lambda record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
         sync-playwright save-auth validate-schema lint lint-fix audit deploy-lambda
 
 # 기본 변수 설정
@@ -39,6 +39,8 @@ help:
 	@echo "make regen-scene-lambda LECTURE=xxx SCENE='5 12' - regen-scene + Lambda"
 	@echo "make regen-visual LECTURE=xxx SCENE='6 14'    - 씬 visual 만 재생성 (webm + 클립, TTS 유지)"
 	@echo "make regen-visual-lambda LECTURE=xxx SCENE='6 14' - regen-visual + Lambda"
+	@echo "make regen-missing LECTURE=xxx               - mp4 누락 씬만 자동 탐지하여 regen-visual 위임 (TTS 유지)"
+	@echo "make regen-missing-lambda LECTURE=xxx        - regen-missing + Lambda"
 	@echo ""
 	@echo "--------------------------------------------------"
 	@echo "🔊 TTS 재생성 (씬 단위)"
@@ -198,6 +200,26 @@ regen-visual-lambda: build
 		find packages/remotion/public/state-captures/$$LECTURE_ID -type d -name "scene-$$scene" -exec rm -rf {} + 2>/dev/null || true; \
 	done
 	env TARGET_SCENES="$(SCENE)" REMOTION_RENDER_MODE=lambda node $(ENGINE_PATH) $(LECTURE)
+
+regen-missing: build
+	@echo "🔍 누락된 mp4 씬 자동 탐지: $(LECTURE)"
+	@MISSING=$$(node -e "const fs=require('fs');const d=require('./data/$(LECTURE)');console.log(d.sequence.map(s=>s.scene_id).filter(id=>!fs.existsSync('$(OUTPUT_DIR)/clips/'+d.lecture_id+'/scene-'+id+'.mp4')).join(' '))"); \
+	if [ -z "$$MISSING" ]; then \
+		echo "✅ 모든 씬 클립 존재 — 재생성 대상 없음"; \
+		exit 0; \
+	fi; \
+	echo "🎯 누락 씬: $$MISSING"; \
+	$(MAKE) regen-visual LECTURE=$(LECTURE) SCENE="$$MISSING"
+
+regen-missing-lambda: build
+	@echo "🔍☁️  누락된 mp4 씬 자동 탐지 (Lambda): $(LECTURE)"
+	@MISSING=$$(node -e "const fs=require('fs');const d=require('./data/$(LECTURE)');console.log(d.sequence.map(s=>s.scene_id).filter(id=>!fs.existsSync('$(OUTPUT_DIR)/clips/'+d.lecture_id+'/scene-'+id+'.mp4')).join(' '))"); \
+	if [ -z "$$MISSING" ]; then \
+		echo "✅ 모든 씬 클립 존재 — 재생성 대상 없음"; \
+		exit 0; \
+	fi; \
+	echo "🎯 누락 씬: $$MISSING"; \
+	$(MAKE) regen-visual-lambda LECTURE=$(LECTURE) SCENE="$$MISSING"
 
 run-tts-only: build
 	@echo "🔊 TTS만 생성: $(LECTURE) / Scene $(SCENE)"
