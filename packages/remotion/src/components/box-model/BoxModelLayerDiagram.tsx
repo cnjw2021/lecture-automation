@@ -124,14 +124,14 @@ export const BoxModelLayerDiagram: React.FC<BoxModelLayerDiagramProps> = ({
       style={{
         position: 'absolute',
         left: 280,
-        top: 248,
+        top: 266,
         width: 272,
         textAlign: 'center',
         color: theme.color.textPrimary,
       }}
     >
-      <div style={{ fontSize: 34, fontWeight: 900, lineHeight: 1.2 }}>{contentLabel}</div>
-      <div style={{ marginTop: 7, fontSize: 20, color: theme.color.textSecondary }}>{contentDetail}</div>
+      <div style={{ fontSize: 31, fontWeight: 900, lineHeight: 1.15 }}>{contentLabel}</div>
+      <div style={{ marginTop: 6, fontSize: 19, color: theme.color.textSecondary }}>{contentDetail}</div>
     </div>
   </div>
 );

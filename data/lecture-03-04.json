@@ -73,7 +73,7 @@
         "type": "remotion",
         "component": "BoxModelDiagramScreen",
         "props": {
-          "eyebrow": "BOX MODEL",
+          "eyebrow": "ボックスモデル",
           "title": "内側から見るボックスモデル",
           "subtitle": "コンテントの外側にパディングが重なると、箱の中にゆとりが生まれる",
           "highlightLayer": "padding",
@@ -125,8 +125,7 @@
               "detail": "「中身」と「内側の余白」は同じ箱の内部にある",
               "color": "#64748b"
             }
-          ],
-          "caption": "Scene 5: content + padding"
+          ]
         },
         "transition": {
           "enter": "slide-left"
@@ -141,7 +140,7 @@
         "type": "remotion",
         "component": "BoxModelDiagramScreen",
         "props": {
-          "eyebrow": "BOX MODEL",
+          "eyebrow": "ボックスモデル",
           "title": "外側まで広げる4層構造",
           "subtitle": "ボーダーが箱の境界、マージンが他の箱との距離を作る",
           "highlightLayer": "margin",
@@ -193,8 +192,7 @@
               "detail": "内側から コンテント → パディング → ボーダー → マージン",
               "color": "#64748b"
             }
-          ],
-          "caption": "Scene 6: border + margin"
+          ]
         }
       }
     },
@@ -353,7 +351,7 @@
         "type": "remotion",
         "component": "BoxModelDiagramScreen",
         "props": {
-          "eyebrow": "RECAP",
+          "eyebrow": "復習",
           "title": "ボックスモデル4層の役割",
           "subtitle": "一覧ではなく、含まれる位置で覚える",
           "layers": [
@@ -409,8 +407,7 @@
               "detail": "外側の余白。常に透明",
               "color": "#ef4444"
             }
-          ],
-          "footnote": "音声なしでも4層の位置関係が残る要約"
+          ]
         }
       }
     },
@@ -494,7 +491,7 @@
         "type": "remotion",
         "component": "BoxModelDiagramScreen",
         "props": {
-          "eyebrow": "DEVTOOLS",
+          "eyebrow": "開発者ツール",
           "title": "開発者ツールのボックスモデル図",
           "subtitle": "色を見るだけで、余白の原因が内側か外側か分かる",
           "layers": [
@@ -550,8 +547,7 @@
               "detail": "外側の透明な距離。隣の要素との隙間",
               "color": "#ef4444"
             }
-          ],
-          "caption": "Scene 20: DevTools color map"
+          ]
         }
       }
     },
@@ -639,7 +635,7 @@
         "type": "remotion",
         "component": "BoxModelDiagramScreen",
         "props": {
-          "eyebrow": "SIZE CALCULATION",
+          "eyebrow": "サイズ計算",
           "title": "width: 300px の箱は実際に 344px",
           "subtitle": "content-box では padding と border が外側に足される",
           "highlightLayer": "content",
@@ -752,7 +748,7 @@
         "type": "remotion",
         "component": "BoxModelDiagramScreen",
         "props": {
-          "eyebrow": "BOX-SIZING",
+          "eyebrow": "box-sizing",
           "title": "border-box は「全体で300px」にする",
           "subtitle": "指定した width の内側に padding と border を収める",
           "highlightLayer": "border",
@@ -956,7 +952,7 @@
         "type": "remotion",
         "component": "BoxModelDiagramScreen",
         "props": {
-          "eyebrow": "CARD LAYOUT",
+          "eyebrow": "カードレイアウト",
           "title": "カード型レイアウトで使う4層",
           "subtitle": "カードの見た目は、ボックスモデルの部品を組み合わせて作る",
           "layers": [

@@ -2,7 +2,7 @@
 
 스크립트 내용을 Remotion 컴포넌트로 매핑할 때 사용하는 선택 기준이다. props 상세는 `docs/component-props-reference.md`를 따른다.
 
-## コンポーネント選択（30種）
+## コンポーネント選択（31種）
 
 씬마다 아래 테이블에서 스크립트 내용에 맞는 컴포넌트를 선택한다. **동일 컴포넌트 3씬 이상 연속 금지. 연속된 씬은 내용뿐 아니라 레이아웃·컴포넌트 종류도 달라야 한다.**
 
@@ -55,6 +55,7 @@ props 상세는 `docs/component-props-reference.md` 참조.
 | 시간순 흐름 | `TimelineScreen` | 연대기, 단계별 흐름 |
 | 기능/도구 일람 | `FeatureGridScreen` | 4~6개 그리드 표시 |
 | 계층/분류 구조 | `HierarchyScreen` | 트리 구조 |
+| CSS 박스 모델·중첩 레이어 | `BoxModelDiagramScreen` | content/padding/border/margin처럼 포함 관계, DevTools 색상, width 계산을 한 화면에 남겨야 할 때 |
 
 ### 강조
 | 스크립트 내용 | 컴포넌트 | 판단 기준 |
@@ -85,5 +86,5 @@ props 상세는 `docs/component-props-reference.md` 참조.
 - 비교: 대립 → `ComparisonScreen` / 시간 전후 → `BeforeAfterScreen` / 병렬 → `TwoColumnScreen`
 - 코드: 첫 등장 → `MyCodeScene` / 행별 설명 → `CodeWalkthroughScreen`
 - 단계: 절차 → `NumberedListScreen` / 시간축 → `TimelineScreen` / 현재 위치 → `ProgressScreen`
+- CSS 박스 모델: 4층 위치 관계나 width 계산이 핵심 → `BoxModelDiagramScreen` / 단순 용어 나열 → `BulletDetailScreen`
 - 브라우저 UI: 이미지 없음 → `BrowserMockScreen` / 실제 캡처 이미지 있음 → `ImageScreen`
-
