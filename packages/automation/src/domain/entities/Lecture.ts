@@ -1,3 +1,5 @@
+import { VisualStylePreset } from '../visual-style/VisualStylePreset';
+
 export interface Metadata {
   title: string;
   target_duration: string;
@@ -72,6 +74,8 @@ export interface RemotionVisual {
   type: 'remotion';
   component: string;
   props: Record<string, any>;
+  /** Optional #128 style preset. Missing values use the configured default preset policy. */
+  stylePreset?: VisualStylePreset;
   transition?: TransitionConfig;
 }
 
@@ -96,6 +100,8 @@ export interface PlaywrightSyncPoint {
 export interface PlaywrightVisual {
   type: 'playwright';
   action: PlaywrightAction[];
+  /** Optional #128 style preset. Missing values use the configured default preset policy. */
+  stylePreset?: VisualStylePreset;
   /** 정의된 경우 sync-playwright 커맨드로 wait ms를 자동 재계산한다. */
   syncPoints?: PlaywrightSyncPoint[];
   transition?: TransitionConfig;
@@ -115,6 +121,8 @@ export interface ScreenshotVisual {
   title?: string;
   description?: string;
   layout?: 'left' | 'right' | 'full';
+  /** Optional #128 style preset. Missing values use the configured default preset policy. */
+  stylePreset?: VisualStylePreset;
   waitMs?: number;
   animation?: Record<string, any>;
   transition?: TransitionConfig;

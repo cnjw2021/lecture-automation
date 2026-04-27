@@ -6,6 +6,14 @@ Remotion 동영상 생성에 사용하는 각 컴포넌트의 props 명세서입
 
 주의: 이 문서의 본문에 있는 31종만 현재 lecture JSON에서 사용할 수 있습니다. `CodeRenderMappingScreen`, `StructureToRenderScreen`, `FlexLayoutDiagramScreen`, `SelectorMatchScreen`은 후보 명세이며 아직 사용 가능한 component 값이 아닙니다.
 
+## 공통 visual 필드
+
+아래 필드는 `visual.props`가 아니라 `visual` 바로 아래에 둔다.
+
+- `stylePreset`: 선택. 강의 맥락별 visual style preset. 허용 값과 선택 기준은 `docs/remotion-visual-style-presets.md` 참조
+- 생략 시 기존 JSON 호환을 위해 `config/video.json`의 `visualStylePresets.defaultPreset` 정책을 따른다. 허용 값 목록은 `visualStylePresets.supportedPresets`와 일치해야 한다
+- 현재는 preset 이름 검증과 변환 정책 정의가 목적이며, 모든 컴포넌트가 scene-level preset을 픽셀 출력에 반영하는 것은 아니다
+
 ---
 
 ## 기본/전환

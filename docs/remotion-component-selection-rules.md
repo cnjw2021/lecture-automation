@@ -2,6 +2,7 @@
 
 스크립트 내용을 Remotion 컴포넌트로 매핑할 때 사용하는 선택 기준이다. props 상세는 `docs/component-props-reference.md`를 따른다.
 도메인 특화 시각 패턴의 신규/보류 판단은 `docs/remotion-domain-visual-patterns.md`를 함께 따른다.
+컴포넌트 선택 후 강의 맥락별 시각 톤은 `docs/remotion-visual-style-presets.md`의 `visual.stylePreset` 정책을 따른다.
 
 ## コンポーネント選択（31種）
 
@@ -107,6 +108,19 @@ props 상세는 `docs/component-props-reference.md` 참조.
 - Flexbox 축/분포: 현재 활성 컴포넌트 없음. 후보는 `FlexLayoutDiagramScreen`; 단순 정의면 `DefinitionScreen`, 코드 중심이면 `CodeWalkthroughScreen`
 - selector-DOM 매칭: 현재 활성 컴포넌트 없음. 후보는 `SelectorMatchScreen`; 단순 종류 나열이면 `BulletDetailScreen`
 - 브라우저 UI: 이미지 없음 → `BrowserMockScreen` / 실제 캡처 이미지 있음 → `ImageScreen`
+
+### Style preset 선택
+
+`stylePreset`은 컴포넌트 선택을 대신하지 않는다. 먼저 위 기준으로 정보 구조에 맞는 컴포넌트를 고른 뒤, 장면의 인지 부담에 맞춰 `visual.stylePreset`을 선택한다.
+
+| 선택한 장면 성격 | 기본 stylePreset |
+|---|---|
+| 새 개념을 조용히 받아들이는 설명 | `concept-calm` |
+| 코드 문자를 정확히 읽어야 하는 장면 | `code-focus` |
+| 실제 브라우저, AI 도구, 캡처 화면을 봐야 하는 장면 | `demo-native` |
+| 좌우/전후 대비가 핵심인 장면 | `compare-contrast` |
+| 순서와 현재 위치가 핵심인 장면 | `process-flow` |
+| 요약, 회고, 다음 강의 연결 | `recap-synthesis` |
 
 ## Playwright / Remotion 경계
 

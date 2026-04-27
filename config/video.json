@@ -11,6 +11,17 @@
   },
   "scenePaddingSec": 1.5,
   "activeTemplate": "warm-cream",
+  "visualStylePresets": {
+    "defaultPreset": "concept-calm",
+    "supportedPresets": [
+      "concept-calm",
+      "code-focus",
+      "demo-native",
+      "compare-contrast",
+      "process-flow",
+      "recap-synthesis"
+    ]
+  },
   "templates": {
     "warm-cream": {
       "theme": {
