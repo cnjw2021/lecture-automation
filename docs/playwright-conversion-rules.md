@@ -171,6 +171,28 @@ syncPoints 가 있는 일반 Playwright 씬에서는 1.7b단계 순방향 싱크
 - ❌ `goto + mouse_move + click` 이전인 0~3초 phrase 에 첫 `type` 을 맞추려 함
 - ✅ `"では、CodePen を開いて準備します。左上のHTML入力欄をクリックしたら、見出しを入力します"` 처럼 setup 설명 후 첫 teaching action phrase 를 둠
 
+**syncPoint 밀도 — narration 이 type 을 직접 호명하는 경우**
+
+narration 이 type 액션을 직접 호명하는 구조(예: type 6개 `<h1>...</h1>` ~ `<h6>...</h6>` 와 narration 안 `"いちばん大きな見出し、2番目の見出し、…、いちばん小さな見出し"` 가 일렬 매칭) 에서는 **syncPoint 를 그 수만큼 추가**한다. syncPoint 1개로 두면 sync-playwright 가 첫 phrase 만 매칭하고 나머지는 wait 균등 분산만 하므로, narration 흐름이 type 흐름보다 빨리 흘러가 청각적으로 어색하다.
+
+실측: `lecture-02-02` 씬 4 에서 syncPoint 1개로 두었을 때 narration 11초 vs type/visual 25초 → 약 14초 차이로 narration 이 빠르게 들림. syncPoint 6개로 확장 후 정밀 매칭.
+
+**판단 기준**
+
+| narration 안 phrase ↔ type 매칭 | syncPoint 수 |
+|---|---|
+| 일렬 1:1 매칭 (type 6개 ↔ phrase 6개) | type 수만큼 |
+| 부분 매칭 또는 type 결과만 묘사 | 1~2개 |
+| narration 이 type 동작을 호명하지 않음 | 1개 (마지막 또는 결과 묘사 시점) |
+
+**budget 검증 필수**
+
+syncPoint 수를 늘리면 syncPoint 사이 narration budget 이 작아진다. 각 segment 의 fixed action 시간 (`type 1.6s + press 0.1s` 등) 보다 narration budget 이 짧으면 sync 불가.
+
+- segment 부족분 발생 시 narration 안 phrase 사이에 connector(`つぎに`, `つづいて`, `それから`, `さらに`, `最後に` 등) 를 추가해 자수 확보
+- 각 segment 여유 ≥ 1초 권장 (lint 워닝 회피). 1초 미만이면 워닝, 0초 미만이면 error
+- error 발생 시 narration 보강 또는 syncPoint 일부 삭제
+
 **작성 예시: 순방향 싱크 (일반 Playwright 씬)**
 ```json
 {
