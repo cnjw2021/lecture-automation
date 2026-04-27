@@ -14,6 +14,8 @@ const ROOT = join(__dirname, '..');
 const DATA_DIR = join(ROOT, 'data');
 const ICONS_DIR = join(ROOT, 'packages', 'remotion', 'public', 'icons');
 const allowedEmojiFallbacks = new Set(iconsConfig.allowedEmojiFallbacks ?? []);
+const emojiToBrandIcon = iconsConfig.emojiToBrandIcon ?? {};
+const brandIcons = new Set(iconsConfig.brandIcons ?? []);
 
 const isKeycapEmoji = (value) => /^(?:[#*0-9]\uFE0F?\u20E3)$/u.test(value);
 const isFlagEmoji = (value) => /^(?:\p{Regional_Indicator}{2})$/u.test(value);
@@ -67,11 +69,18 @@ lectureFiles.forEach((file) => {
 
 const usedIcons = [...iconUsage.keys()].sort();
 const emojiIcons = usedIcons.filter(isEmoji);
-const unmappedEmoji = emojiIcons.filter((icon) => !iconsConfig.emojiToLucide[icon] && !allowedEmojiFallbacks.has(icon));
+const unmappedEmoji = emojiIcons.filter((icon) =>
+  !iconsConfig.emojiToLucide[icon] &&
+  !emojiToBrandIcon[icon] &&
+  !allowedEmojiFallbacks.has(icon)
+);
 const preservedEmojiFallbacks = emojiIcons.filter((icon) => allowedEmojiFallbacks.has(icon));
 const invalidLucideMappings = Object.entries(iconsConfig.emojiToLucide)
   .filter(([, lucideName]) => !hasLucideIcon(lucideName))
   .map(([emoji, lucideName]) => ({ emoji, lucideName }));
+const invalidBrandOverrides = Object.entries(emojiToBrandIcon)
+  .filter(([, brand]) => !brandIcons.has(brand) || !existsSync(join(ICONS_DIR, `${brand}.svg`)))
+  .map(([emoji, brand]) => ({ emoji, brand }));
 const missingBrandAssets = iconsConfig.brandIcons
   .filter((brand) => !existsSync(join(ICONS_DIR, `${brand}.svg`)));
 
@@ -104,6 +113,13 @@ if (missingBrandAssets.length > 0) {
   });
 }
 
+if (invalidBrandOverrides.length > 0) {
+  console.error('\nInvalid emojiToBrandIcon mappings:');
+  invalidBrandOverrides.forEach(({ emoji, brand }) => {
+    console.error(`- ${emoji} -> ${brand}`);
+  });
+}
+
 if (unmappedEmoji.length > 0) {
   console.error('\nUnmapped emoji icons:');
   unmappedEmoji.forEach((icon) => {
@@ -113,7 +129,7 @@ if (unmappedEmoji.length > 0) {
   });
 }
 
-if (invalidLucideMappings.length > 0 || missingBrandAssets.length > 0 || unmappedEmoji.length > 0) {
+if (invalidLucideMappings.length > 0 || missingBrandAssets.length > 0 || invalidBrandOverrides.length > 0 || unmappedEmoji.length > 0) {
   process.exit(1);
 }
 

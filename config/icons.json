@@ -14,7 +14,7 @@
   ],
   "emojiToLucide": {
     "#️⃣": "ListOrdered", "1️⃣": "ListOrdered", "2️⃣": "ListOrdered", "3️⃣": "ListOrdered", "4️⃣": "ListOrdered", "5️⃣": "ListOrdered",
-    "⏳": "Hourglass", "⬜": "Square",
+    "⏳": "Hourglass", "⬜": "Square", "🔢": "Binary",
     "↔️": "ArrowLeftRight", "↕️": "ArrowUpDown", "↩️": "Reply", "↪️": "CornerDownRight",
     "👤": "User", "👥": "Users", "🧑": "User", "👨": "User", "👩": "User",
     "🧑‍💻": "UserCog", "👨‍💻": "UserCog", "👩‍💻": "UserCog",
@@ -43,6 +43,7 @@
     "🧩": "Puzzle", "🔐": "Lock", "🔑": "Key", "🔒": "Lock", "🔓": "Unlock",
     "🐛": "Bug", "🧪": "TestTube", "🔬": "Microscope", "🧠": "Brain", "🧭": "Compass",
     "📦": "Package", "📎": "Paperclip", "📬": "Mailbox",
+    "🌳": "TreePine", "🧱": "BrickWall",
     "🔀": "Shuffle", "🔁": "Repeat", "🔘": "CircleDot", "🔝": "ArrowUpToLine",
     "🔡": "CaseLower", "🔤": "CaseUpper",
     "🔲": "Square", "🔳": "SquareDashed",
