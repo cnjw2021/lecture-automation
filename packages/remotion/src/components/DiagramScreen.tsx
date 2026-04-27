@@ -244,11 +244,11 @@ export const DiagramScreen: React.FC<DiagramScreenProps> = ({
                   d={pathD}
                   fill="none"
                   stroke={theme.infographic.connector}
-                  strokeWidth={2.5}
+                  strokeWidth={4}
                   strokeLinecap="round"
                   strokeDasharray={approxLen}
                   strokeDashoffset={dashOffset}
-                  opacity={0.75}
+                  opacity={0.92}
                   markerEnd={`url(#arrowhead-${arrowId})`}
                 />
 

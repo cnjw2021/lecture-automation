@@ -90,7 +90,7 @@ export const TwoColumnScreen: React.FC<TwoColumnScreenProps> = ({
           variant="strong"
           borderAccent={colColor}
           borderPosition="top"
-          style={{ padding: '36px 40px', height: '100%' }}
+          style={{ padding: '36px 40px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
         >
           {col.icon && (
             <div style={{ marginBottom: 20 }}>
