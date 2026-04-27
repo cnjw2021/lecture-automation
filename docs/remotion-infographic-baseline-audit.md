@@ -21,6 +21,7 @@ Inputs checked:
 ## #69 implementation status
 
 Status labels: `계승`, `보완 필요`, `미구현`, `폐기 권장`.
+All audited design areas are at least partially reflected in the current implementation, so this pass found no `미구현` or `폐기 권장` items.
 
 | Design area from #69 | Status | Evidence | Next action |
 |---|---|---|---|
@@ -103,6 +104,7 @@ Interpretation:
 ## Reference slide comparison sheet
 
 Reference images are not copied into this repository. Use the source links and captions below as the reference side of the comparison, and render the project stills from the listed lecture/scene ids when doing visual review.
+This comparison is a planning-level gap map: actual reference-vs-project still review should be performed in #126 while rendering the vertical slice stills, and the audio dependency percentages below should be re-measured from those rendered stills.
 
 Quality criteria from #122:
 
@@ -174,6 +176,7 @@ Reason:
 - Gap size: the core concept is spatial, but the current baseline is mostly text cards and code snippets.
 - Reference match: MDN's box model material gives a clear benchmark for nested layers and DevTools-style color semantics.
 - #126 fit: the vertical slice can improve high-usage explanation components first while exposing a concrete #127 candidate for a dedicated box-model pattern.
+- Dependency note: #126 may include a small box-model visual prototype if needed for the vertical slice, but the reusable `BoxModelDiagramScreen` decision and final pattern ownership should remain in #127.
 
 Secondary recommendation: `lecture-03-05.json` (Flexbox).
 
