@@ -141,7 +141,7 @@ Remotion 동영상 생성에 사용하는 각 컴포넌트의 props 명세서입
 ### DiagramScreen
 - `title`: タイトル。なければ省略
 - `eyebrow`: 上部の短い分類ラベル。なければ省略
-- `subtitle`: 図の読み取り軸。なければ省略
+- `subtitle`: 図の読み取り軸、または一行のtake-away。なければ省略。`caption` と意味を重複させない
 - `caption`: 下部の補足または判断基準。なければ省略。ノード・エッジと同じ意味を繰り返さない
 - `nodes`: 3〜6個。各 `id`, `label`, `x`, `y`, `icon`(絵文字), `color`(選択)
 - `edges`: 矢印。`from`/`to`(node id), `label`(10字以内)

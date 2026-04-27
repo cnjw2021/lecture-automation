@@ -99,8 +99,12 @@ Until those components are active, lecture JSON must continue to use existing co
 Still reproduction commands:
 
 ```bash
+mkdir -p /tmp/review/issue-123-info-density
+git show 0b9da9c:data/lecture-02-02.json > /tmp/review/issue-123-info-density/lecture-02-02-before.json
 jq -n --slurpfile lecture /tmp/review/issue-123-info-density/lecture-02-02-before.json '{lectureData:$lecture[0],sceneId:6,durationInFrames:120}' > /tmp/review/issue-123-info-density/before-scene-6-props.json
 npx remotion still src/PreviewRoot.tsx PreviewScene /tmp/review/issue-123-info-density/before-scene-6.png --frame=60 --props=/tmp/review/issue-123-info-density/before-scene-6-props.json
 ```
 
-Use the same pattern with `sceneId` 10 and 17 for before stills, and `data/lecture-02-02.json` for after stills. The committed PNGs in `docs/assets/issue-123/` are the canonical comparison artifacts for this PR.
+`0b9da9c` is the PR base commit used for the before JSON. Use the same pattern with `sceneId` 10 and 17 for before stills, and `data/lecture-02-02.json` for after stills. The committed PNGs in `docs/assets/issue-123/` are the canonical comparison artifacts for this PR.
+
+Committed stills were downscaled to 960x540 and compressed with `pngquant --quality=70-90` to keep comparison assets small enough for git history.
