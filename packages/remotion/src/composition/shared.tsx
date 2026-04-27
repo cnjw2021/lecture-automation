@@ -4,6 +4,7 @@ import {
   AgendaScreen,
   BarChartScreen,
   BeforeAfterScreen,
+  BoxModelDiagramScreen,
   BrowserMockScreen,
   BulletDetailScreen,
   CalloutScreen,
@@ -72,6 +73,7 @@ export const COMPONENT_MAP: Record<string, React.FC<any>> = {
   HierarchyScreen,
   BrowserMockScreen,
   ImageScreen,
+  BoxModelDiagramScreen,
 };
 
 export interface TransitionConfig {

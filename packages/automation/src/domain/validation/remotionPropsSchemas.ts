@@ -277,6 +277,32 @@ export const HierarchyScreenSchema = z.object({
   ...commonOptional,
 }).passthrough();
 
+export const BoxModelDiagramScreenSchema = z.object({
+  title: z.string().optional(),
+  contentLabel: z.string().optional(),
+  contentDetail: z.string().optional(),
+  highlightLayer: z.enum(['margin', 'border', 'padding', 'content']).optional(),
+  layers: z.array(z.object({
+    key: z.enum(['margin', 'border', 'padding', 'content']),
+    label: z.string().optional(),
+    value: z.string().optional(),
+    description: z.string().optional(),
+    color: z.string().optional(),
+  })).optional(),
+  callouts: z.array(z.object({
+    title: z.string(),
+    detail: z.string(),
+    color: z.string().optional(),
+  })).optional(),
+  formula: z.array(z.object({
+    label: z.string(),
+    value: z.string(),
+    color: z.string().optional(),
+  })).optional(),
+  totalLabel: z.string().optional(),
+  ...commonOptional,
+}).passthrough();
+
 // ─── 강조 ────────────────────────────────────────────────────────────────────
 
 export const CalloutScreenSchema = z.object({
@@ -357,6 +383,7 @@ export const REMOTION_PROPS_SCHEMAS: Record<string, z.ZodTypeAny> = {
   TimelineScreen: TimelineScreenSchema,
   FeatureGridScreen: FeatureGridScreenSchema,
   HierarchyScreen: HierarchyScreenSchema,
+  BoxModelDiagramScreen: BoxModelDiagramScreenSchema,
   CalloutScreen: CalloutScreenSchema,
   ImagePlaceholderScreen: ImagePlaceholderScreenSchema,
   BrowserMockScreen: BrowserMockScreenSchema,
