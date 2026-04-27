@@ -258,12 +258,64 @@
       "durationSec": 53,
       "visual": {
         "type": "remotion",
-        "component": "KeyPointScreen",
+        "component": "DiagramScreen",
+        "stylePreset": "concept-calm",
         "props": {
-          "icon": "⚠️",
-          "headline": "見出しタグの本来の役割",
-          "detail": "文字を大きくするためではなく、文章の階層構造を伝えるためのタグ。ブラウザや検索エンジンがページ構造を把握するために使う。",
-          "color": "#ef4444"
+          "eyebrow": "見出しタグの本来の役割",
+          "title": "大きく見せるタグではなく、構造を伝えるタグ",
+          "subtitle": "h1 / h2 / h3でページの階層を示す",
+          "nodes": [
+            {
+              "id": "heading",
+              "label": "h1 / h2 / h3",
+              "x": 230,
+              "y": 330,
+              "icon": "🏷️",
+              "color": "#ef4444"
+            },
+            {
+              "id": "structure",
+              "label": "文章の階層構造",
+              "x": 640,
+              "y": 330,
+              "icon": "🧱",
+              "color": "#f97316"
+            },
+            {
+              "id": "browser",
+              "label": "ブラウザが理解",
+              "x": 1060,
+              "y": 220,
+              "icon": "🌐",
+              "color": "#0ea5e9"
+            },
+            {
+              "id": "search",
+              "label": "検索エンジンが判断",
+              "x": 1060,
+              "y": 440,
+              "icon": "🔎",
+              "color": "#22c55e"
+            }
+          ],
+          "edges": [
+            {
+              "from": "heading",
+              "to": "structure",
+              "label": "表す"
+            },
+            {
+              "from": "structure",
+              "to": "browser",
+              "label": "把握"
+            },
+            {
+              "from": "structure",
+              "to": "search",
+              "label": "拾う"
+            }
+          ],
+          "caption": "判断基準: 見た目の大きさではなく、ページ内でどの階層の見出しかで選ぶ。"
         }
       }
     },
@@ -487,11 +539,30 @@
       "durationSec": 65,
       "visual": {
         "type": "remotion",
-        "component": "CalloutScreen",
+        "component": "ComparisonScreen",
+        "stylePreset": "compare-contrast",
         "props": {
-          "type": "warning",
-          "title": "HTMLの改行はEnterキーではできない",
-          "body": "コード上でEnterを押しても、ブラウザは改行として表示しない。HTMLはコード上の改行をスペース1つ分として扱う。改行したいときは専用のタグを使う。"
+          "eyebrow": "HTMLの空白ルール",
+          "subtitle": "コードを読みやすくする改行と、画面に出る改行は別のもの",
+          "left": {
+            "title": "コード上",
+            "points": [
+              "Enter / スペース / タブで自由に整える",
+              "人間が読みやすい形にしてよい",
+              "ブラウザには空白1つ分として扱われる"
+            ],
+            "color": "#f97316"
+          },
+          "right": {
+            "title": "ブラウザ表示",
+            "points": [
+              "Enterだけでは改行されない",
+              "HTMLはタグで意味を伝える",
+              "画面上の改行はbrタグで指定する"
+            ],
+            "color": "#0ea5e9"
+          },
+          "vsLabel": "≠"
         }
       }
     },
@@ -920,10 +991,30 @@
       "durationSec": 58,
       "visual": {
         "type": "remotion",
-        "component": "QnAScreen",
+        "component": "ComparisonScreen",
+        "stylePreset": "compare-contrast",
         "props": {
-          "question": "ul と ol、どちらを使えばいい？",
-          "answer": "順番に意味があるならol、順番はどうでもいいならul。迷ったらulを選べば大丈夫。実際のウェブサイトではulの方が圧倒的に多く使われる。"
+          "eyebrow": "リストタグの判断基準",
+          "subtitle": "違いは見た目のマーカーではなく、項目の順番に意味があるか",
+          "left": {
+            "title": "ul",
+            "points": [
+              "順番に意味がないリスト",
+              "好きな食べ物、メニュー一覧、機能リスト",
+              "迷ったらまずulを選ぶ"
+            ],
+            "color": "#ef4444"
+          },
+          "right": {
+            "title": "ol",
+            "points": [
+              "順番そのものが情報になるリスト",
+              "手順、ランキング、レシピ",
+              "番号はブラウザが自動で付ける"
+            ],
+            "color": "#f97316"
+          },
+          "vsLabel": "vs"
         }
       }
     },
