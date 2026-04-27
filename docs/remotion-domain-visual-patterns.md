@@ -22,7 +22,7 @@ Important boundary:
 | HTML tree plus page result side by side | `lecture-02-02.json` scene 5, `lecture-02-07.json` scene 11 | New top-level candidate | `StructureToRenderScreen` | `HierarchyScreen` shows structure and `BrowserMockScreen` shows output, but neither can link tree nodes to rendered regions. A generic diagram would hide the HTML-to-page relation. |
 | CSS box model nested layers | `lecture-03-04.json` scenes 5, 6, 15, 20, 25, 28, 36 | Implemented, keep CSS-specific | `BoxModelDiagramScreen` | The #126 pilot proved that the four CSS layers, DevTools colors, and width arithmetic are recurring enough to justify a dedicated CSS component. Do not generalize this to an abstract layered-region component yet; generic names would make converter choice less precise. |
 | Flexbox axis and item distribution | `lecture-03-05.json` scenes 7, 9, 14, 20, 21, 24, 27 | New top-level candidate | `FlexLayoutDiagramScreen` | Axis direction, wrapping, gap, justify/align behavior, and before/after distribution need stable layout semantics. Extending `DiagramScreen` would force brittle coordinates and miss container/item state. |
-| Selector-to-DOM matching map | `lecture-03-02.json` scenes 15, 19, 23, 27-31 | New top-level candidate | `SelectorMatchScreen` | Simple selector lists fit `BulletDetailScreen`, but descendant/combinator matching needs tokens connected to DOM nodes and matched/unmatched states. |
+| Selector-to-DOM matching map | `lecture-03-02.json` scenes 30, 34, 38-39 | New top-level candidate | `SelectorMatchScreen` | Simple selector lists fit `BulletDetailScreen`, but descendant/combinator matching needs tokens connected to DOM nodes and matched/unmatched states. |
 | Browser/editor/file/search mock with annotations | Cross-cutting web production scenes | Existing component plus variant guidance | `BrowserMockScreen`, `ImageScreen`, future annotated image variant | Use an actual Playwright scene for live operation. Use Remotion only when a static browser/editor state plus labels is enough. A new component is not justified until repeated captures need region-level annotations. |
 | AI tool prompt and generated result pairing | `lecture-01-03` tool workflow scenes and later AI workflow lessons | Existing component for now | `ComparisonScreen`, `BeforeAfterScreen`, `CodeRenderMappingScreen` when result is rendered UI | If the relation is prompt constraints vs output quality, use comparison/before-after. If the generated result is code producing visible output, use the code/result mapping candidate. |
 
@@ -103,6 +103,16 @@ Do not use when:
 
 Proposed props:
 
+| Prop | Required | Meaning |
+|---|---|---|
+| `code` | Required | Source code shown on the left side. |
+| `language` | Required | Syntax family such as `html`, `css`, or `javascript`. |
+| `result` | Required | Rendered output source. Provide one of `html` or `imageSrc`; `url` is optional browser chrome context. |
+| `mappings` | Required | Line-range to rendered-target relations. At least one mapping is required because this component exists to preserve correspondence. |
+| `title` | Optional | Scene-level title. |
+| `highlightLines` | Optional | Code line numbers emphasized in addition to mapping connectors. |
+| `caption` | Optional | Short bottom explanation or review phrase. |
+
 ```json
 {
   "title": "h1 の行が見出しとして表示される",
@@ -143,6 +153,14 @@ Do not use when:
 - the structure is a process flow; use `DiagramScreen` or `TimelineScreen`
 
 Proposed props:
+
+| Prop | Required | Meaning |
+|---|---|---|
+| `tree` | Required | Document or HTML structure. Nodes that connect to rendered regions should have stable `id` values. |
+| `rendered` | Required | Page result model with regions linked by `id`. |
+| `title` | Optional | Scene-level title. |
+| `activeId` | Optional | Currently emphasized tree node and rendered region. |
+| `caption` | Optional | Short bottom explanation or review phrase. |
 
 ```json
 {
@@ -185,6 +203,17 @@ Do not use when:
 
 Proposed props:
 
+| Prop | Required | Meaning |
+|---|---|---|
+| `items` | Required | Flex items shown inside the container. |
+| `direction` | Required | Main-axis direction: `row`, `row-reverse`, `column`, or `column-reverse`. |
+| `title` | Optional | Scene-level title. |
+| `containerLabel` | Optional | Label such as `display: flex`. |
+| `mainAxisLabel` / `crossAxisLabel` | Optional | Axis labels. Defaults can be generated from direction. |
+| `properties` | Optional | CSS properties being demonstrated, such as `justify-content`, `align-items`, `gap`, or `flex-wrap`. |
+| `displayMode` | Optional | Visual comparison mode: `single` or `beforeAfter`. |
+| `wrap` | Optional | Flex wrap behavior: `nowrap` or `wrap`. This is separate from `displayMode`. |
+
 ```json
 {
   "title": "主軸に沿ってアイテムが並ぶ",
@@ -201,7 +230,8 @@ Proposed props:
     { "name": "justify-content", "value": "center" },
     { "name": "gap", "value": "16px" }
   ],
-  "mode": "single"
+  "displayMode": "single",
+  "wrap": "nowrap"
 }
 ```
 
@@ -224,6 +254,15 @@ Do not use when:
 - the selector effect must be shown on a real page; use `CodeRenderMappingScreen` after implementation
 
 Proposed props:
+
+| Prop | Required | Meaning |
+|---|---|---|
+| `selector` | Required | Selector expression being explained. |
+| `dom` | Required | DOM tree with stable node ids and matched state. |
+| `tokens` | Required | Selector tokens such as `.card`, `p`, `>`, `:hover`, with semantic roles. |
+| `title` | Optional | Scene-level title. |
+| `activeNodeIds` | Optional | DOM nodes currently emphasized. |
+| `explanation` | Optional | Short rule or exclusion reason. |
 
 ```json
 {
@@ -260,7 +299,7 @@ Reference comparison target: MDN CSS selector materials where selector syntax an
 | `CodeRenderMappingScreen` | `lecture-02-01.json` scene 18, `lecture-02-03.json` scene 13 | Progate HTML/CSS code/result lesson layout | Candidate only. Render still is blocked until the component is implemented. | A still should show code, rendered result, at least one line-to-result connector, and a concise caption. |
 | `StructureToRenderScreen` | `lecture-02-02.json` scene 5, `lecture-02-07.json` scene 11 | MDN headings and paragraphs / document structure examples | Candidate only. Render still is blocked until the component is implemented. | A still should preserve both tree hierarchy and visible page regions with linked highlights. |
 | `FlexLayoutDiagramScreen` | `lecture-03-05.json` scenes 7, 9, 14, 20, 21, 24, 27 | MDN Flexbox axis and distribution examples | Candidate only. Render still is blocked until the component is implemented. | A still should make main/cross axis, item order, and alignment state reconstructable without narration. |
-| `SelectorMatchScreen` | `lecture-03-02.json` scenes 15, 19, 23, 27-31 | MDN CSS selectors examples | Candidate only. Render still is blocked until the component is implemented. | A still should show selector tokens, DOM nodes, matched state, and the reason non-matches are excluded. |
+| `SelectorMatchScreen` | `lecture-03-02.json` scenes 30, 34, 38-39 | MDN CSS selectors examples | Candidate only. Render still is blocked until the component is implemented. | A still should show selector tokens, DOM nodes, matched state, and the reason non-matches are excluded. |
 | Annotated capture/image variant | Playwright capture follow-ups across browser/editor scenes | Browser/editor screenshots with callouts | Explicitly deferred. Current `ImageScreen` and `BrowserMockScreen` remain active choices. | Add only if repeated static captures need region annotations; otherwise use existing components. |
 
 ## Playwright / Remotion Boundary

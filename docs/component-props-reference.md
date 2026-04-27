@@ -224,28 +224,33 @@ Remotion 동영상 생성에 사용하는 각 컴포넌트의 props 명세서입
 
 ### CodeRenderMappingScreen（후보）
 - 책임: 코드와 렌더링 결과를 동시에 보여주고, 코드 line range를 결과 영역에 연결
-- 후보 props: `title`, `language`, `code`, `highlightLines`, `result`, `mappings`, `caption`
-- `result`: `{ url?, html?, imageSrc? }`
-- `mappings`: 각 `{ lineRange: [start, end], target, label, color? }`
+- 필수 props: `code`, `language`, `result`, `mappings`
+- 선택 props: `title`, `highlightLines`, `caption`
+- `result`: `{ url?, html?, imageSrc? }`. `html` 또는 `imageSrc` 중 하나는 필요
+- `mappings`: 각 `{ lineRange: [start, end], target, label, color? }`. 최소 1개 필요
 - 선택 근거: `CodeWalkthroughScreen`은 코드만, `BrowserMockScreen`은 결과만 보여주므로 line-to-result 대응을 보존할 수 없음
 
 ### StructureToRenderScreen（후보）
 - 책임: HTML/문서 트리와 렌더링 결과를 좌우로 보여주고 같은 id를 하이라이트
-- 후보 props: `title`, `tree`, `rendered`, `activeId`, `caption`
+- 필수 props: `tree`, `rendered`
+- 선택 props: `title`, `activeId`, `caption`
 - `tree`: `HierarchyScreen.root`와 유사하지만 각 node에 선택적 `id` 허용
 - `rendered.regions`: 각 `{ id, label, description?, bounds? }`
 - 선택 근거: `HierarchyScreen`과 `BrowserMockScreen`을 분리하면 구조와 결과의 대응이 사라짐
 
 ### FlexLayoutDiagramScreen（후보）
 - 책임: flex container, items, main/cross axis, 정렬/분포 상태를 표시
-- 후보 props: `title`, `containerLabel`, `direction`, `mainAxisLabel`, `crossAxisLabel`, `items`, `properties`, `mode`
+- 필수 props: `items`, `direction`
+- 선택 props: `title`, `containerLabel`, `mainAxisLabel`, `crossAxisLabel`, `properties`, `displayMode`, `wrap`
 - `direction`: `"row"` | `"row-reverse"` | `"column"` | `"column-reverse"`
-- `mode`: `"single"` | `"beforeAfter"` | `"wrap"`
+- `displayMode`: `"single"` | `"beforeAfter"`
+- `wrap`: `"nowrap"` | `"wrap"`. 표시 모드와 별도인 flex-wrap 축
 - 선택 근거: `DiagramScreen` 좌표로는 axis 전환, gap, wrap, justify/align 차이를 안정적으로 표현하기 어려움
 
 ### SelectorMatchScreen（후보）
 - 책임: selector token, DOM tree, matched/unmatched node 상태를 한 화면에 표시
-- 후보 props: `title`, `selector`, `tokens`, `dom`, `activeNodeIds`, `explanation`
+- 필수 props: `selector`, `tokens`, `dom`
+- 선택 props: `title`, `activeNodeIds`, `explanation`
 - `tokens`: 각 `{ text, role, color? }`
 - `dom`: tree node에 `{ id?, label, matched?, children? }`
 - 선택 근거: selector 종류 나열은 `BulletDetailScreen`으로 충분하지만, descendant/combinator matching은 DOM 연결이 필요함
