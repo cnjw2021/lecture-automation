@@ -210,9 +210,11 @@ Proposed props:
 | `title` | Optional | Scene-level title. |
 | `containerLabel` | Optional | Label such as `display: flex`. |
 | `mainAxisLabel` / `crossAxisLabel` | Optional | Axis labels. Defaults can be generated from direction. |
-| `properties` | Optional | CSS properties being demonstrated, such as `justify-content`, `align-items`, `gap`, or `flex-wrap`. |
+| `properties` | Optional | CSS labels displayed on screen, such as `justify-content`, `align-items`, `gap`, or `flex-wrap`. These labels explain the lesson focus; they do not determine layout state by themselves. |
 | `displayMode` | Optional | Visual comparison mode: `single` or `beforeAfter`. |
-| `wrap` | Optional | Flex wrap behavior: `nowrap` or `wrap`. This is separate from `displayMode`. |
+| `wrap` | Optional | Flex wrap behavior actually demonstrated in the layout: `nowrap` or `wrap`. This is separate from `displayMode`. |
+
+Implementation note: if `displayMode: "beforeAfter"` is used to compare wrap behavior, the implementation should introduce state-specific props such as `beforeWrap` / `afterWrap`, or a structured `beforeAfter` object. A single `wrap` value is enough only for one-state demonstrations.
 
 ```json
 {

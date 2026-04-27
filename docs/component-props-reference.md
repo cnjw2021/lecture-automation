@@ -244,7 +244,9 @@ Remotion 동영상 생성에 사용하는 각 컴포넌트의 props 명세서입
 - 선택 props: `title`, `containerLabel`, `mainAxisLabel`, `crossAxisLabel`, `properties`, `displayMode`, `wrap`
 - `direction`: `"row"` | `"row-reverse"` | `"column"` | `"column-reverse"`
 - `displayMode`: `"single"` | `"beforeAfter"`
-- `wrap`: `"nowrap"` | `"wrap"`. 표시 모드와 별도인 flex-wrap 축
+- `properties`: 화면에 표시되는 CSS 라벨. `flex-wrap`을 넣을 수 있지만 레이아웃 상태는 `wrap`이 결정
+- `wrap`: `"nowrap"` | `"wrap"`. 표시 모드와 별도인 flex-wrap 시연 상태
+- 구현 메모: `displayMode: "beforeAfter"`로 wrap 변화를 비교하려면 단일 `wrap` 대신 `beforeWrap`/`afterWrap` 또는 `beforeAfter` 구조가 필요할 수 있음
 - 선택 근거: `DiagramScreen` 좌표로는 axis 전환, gap, wrap, justify/align 차이를 안정적으로 표현하기 어려움
 
 ### SelectorMatchScreen（후보）
