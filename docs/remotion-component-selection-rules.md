@@ -4,6 +4,34 @@
 도메인 특화 시각 패턴의 신규/보류 판단은 `docs/remotion-domain-visual-patterns.md`를 함께 따른다.
 컴포넌트 선택 후 강의 맥락별 시각 톤은 `docs/remotion-visual-style-presets.md`의 `visual.stylePreset` 정책을 따른다.
 
+## 단문 슬라이드 남용 방지
+
+일반 설명 씬에서 `KeyPointScreen`, `DefinitionScreen`, `QnAScreen`, `CalloutScreen`을 고를 때는 먼저 정보 단위 수를 확인한다. 이 컴포넌트들은 한 가지 메시지를 강하게 고정하는 데 유용하지만, 나레이션에 포함된 구조·예시·판단 기준을 한 줄로 압축하기 쉽다.
+
+단문 `headline + detail`, `question + answer`, `title + body` 구성이 적절한 경우:
+
+- 강의 시작, 섹션 전환, 마무리처럼 다음 흐름을 열거나 닫는 장면
+- 한 가지 오해 방지 메시지를 크게 고정해야 하는 장면
+- 인용문, 정의, 안전 경고처럼 시각적 초점이 1개여야 하는 장면
+- 직전 또는 직후 씬의 Playwright/코드 화면이 이미 예시와 구조를 충분히 보여주고, 현재 씬은 그 화면의 결론만 고정하는 장면
+
+위 경우가 아니라면 다음 선택을 우선 검토한다.
+
+| 나레이션에 들어 있는 구조 | 우선 컴포넌트 |
+|---|---|
+| A와 B의 판단 기준, 오해 대비 | `ComparisonScreen`, `BeforeAfterScreen`, `TwoColumnScreen` |
+| 단계, 절차, 현재 위치 | `NumberedListScreen`, `TimelineScreen`, `ProgressScreen` |
+| 계층, 부모-자식, 포함 관계 | `HierarchyScreen`, `DiagramScreen`, 활성화된 전용 컴포넌트 |
+| 3〜6개 병렬 포인트와 예시 | `BulletDetailScreen`, `IconListScreen`, `FeatureGridScreen` |
+| 코드와 설명의 대응 | `CodeWalkthroughScreen`; 결과 대응이 핵심이면 #127 후보로 기록 |
+
+선택 기준:
+
+- 화면에 남길 의미 단위가 3개 이상이면 단문 컴포넌트보다 구조형 컴포넌트를 우선한다.
+- 단문 컴포넌트를 쓰더라도 `detail`/`body`에 긴 문단을 넣어 정보량을 해결하지 않는다. 구조형 컴포넌트로 분해한다.
+- `SummaryScreen`은 강의 마무리나 전체 요약에 쓴다. 일반 본문 설명에서 세부 규칙·판단 기준을 담는 용도라면 `BulletDetailScreen` 또는 비교/도식 계열을 우선한다.
+- 컴포넌트 표현 한계 때문에 구조가 손실되면 lecture JSON에는 활성 컴포넌트만 쓰고, 비교 문서 또는 이슈 댓글에 #126 / #127 후속 후보로 기록한다.
+
 ## コンポーネント選択（31種）
 
 씬마다 아래 테이블에서 스크립트 내용에 맞는 컴포넌트를 선택한다. **동일 컴포넌트 3씬 이상 연속 금지. 연속된 씬은 내용뿐 아니라 레이아웃·컴포넌트 종류도 달라야 한다.**
