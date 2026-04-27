@@ -77,7 +77,7 @@ export const BeforeAfterScreen: React.FC<BeforeAfterScreenProps> = ({
       borderAccent={color}
       borderPosition="left"
       style={{
-        padding: '26px 36px',
+        padding: '36px 44px',
         opacity,
         transform: `translateY(${translateY}px)`,
       }}
@@ -113,7 +113,7 @@ export const BeforeAfterScreen: React.FC<BeforeAfterScreenProps> = ({
                 flexShrink: 0,
               }}
             />
-            <span style={{ fontSize: 26, color: theme.color.textPrimary, lineHeight: 1.5 }}>
+            <span style={{ fontSize: 30, color: theme.color.textPrimary, lineHeight: 1.5 }}>
               {pt}
             </span>
           </div>

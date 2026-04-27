@@ -31,14 +31,14 @@ export const NumberedListScreen: React.FC<NumberedListScreenProps> = ({ title, i
   const interval = a.item?.staggerInterval ?? 16;
 
   return (
-    <AbsoluteFill style={{ background: theme.bg.primary, padding: '80px 120px' }}>
+    <AbsoluteFill style={{ background: theme.bg.primary, padding: '80px 120px', display: 'flex', flexDirection: 'column' }}>
       {title && (
         <h1 style={{ fontSize: 52, fontWeight: 800, color: theme.color.textPrimary, opacity: titleOpacity, marginBottom: 52 }}>
           {title}
         </h1>
       )}
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 28, flex: 1, justifyContent: 'center' }}>
         {items.map((item, i) => {
           const itemDelay = baseDelay + i * interval;
           const itemSpring = spring({ frame: Math.max(0, frame - itemDelay), fps, config: resolveSpring(a.item?.spring) });

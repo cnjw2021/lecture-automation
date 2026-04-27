@@ -49,7 +49,7 @@ export const CodeWalkthroughScreen: React.FC<CodeWalkthroughScreenProps> = ({
   });
 
   return (
-    <AbsoluteFill style={{ background: theme.bg.primary, padding: '70px 120px' }}>
+    <AbsoluteFill style={{ background: theme.bg.primary, padding: '70px 120px', display: 'flex', flexDirection: 'column' }}>
       {title && (
         <h1
           style={{
@@ -71,10 +71,13 @@ export const CodeWalkthroughScreen: React.FC<CodeWalkthroughScreenProps> = ({
           borderRadius: 20,
           border: `1px solid ${theme.color.divider}`,
           boxShadow: theme.color.nodeShadow,
-          padding: '36px 40px',
+          padding: '48px 56px',
           opacity: codeOpacity,
           transform: `translateY(${codeY}px)`,
           overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
         }}
       >
         {/* Language badge */}
@@ -120,11 +123,11 @@ export const CodeWalkthroughScreen: React.FC<CodeWalkthroughScreenProps> = ({
               >
                 <span
                   style={{
-                    width: 44,
-                    fontSize: 18,
+                    width: 56,
+                    fontSize: 24,
                     color: theme.color.textMuted,
                     textAlign: 'right',
-                    marginRight: 20,
+                    marginRight: 28,
                     fontVariantNumeric: 'tabular-nums',
                     userSelect: 'none',
                   }}
@@ -133,7 +136,7 @@ export const CodeWalkthroughScreen: React.FC<CodeWalkthroughScreenProps> = ({
                 </span>
                 <span
                   style={{
-                    fontSize: 22,
+                    fontSize: 30,
                     color: isHighlighted ? theme.color.textPrimary : theme.color.textSecondary,
                     fontWeight: isHighlighted ? 600 : 400,
                     whiteSpace: 'pre',

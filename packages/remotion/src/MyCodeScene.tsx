@@ -41,25 +41,26 @@ export const MyCodeScene: React.FC<MyCodeSceneProps> = ({
     : 0;
 
   return (
-    <AbsoluteFill style={{ backgroundColor: theme.bg.code, padding: '60px' }}>
+    <AbsoluteFill style={{ backgroundColor: theme.bg.code, padding: '80px 120px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
       {title && (
         <h2
           style={{
-            fontSize: 32,
-            fontWeight: 700,
+            fontSize: 44,
+            fontWeight: 800,
             color: theme.color.textPrimary,
-            marginBottom: 20,
+            marginBottom: 32,
             opacity: titleOpacity,
+            letterSpacing: '-0.01em',
           }}
         >
           {title}
         </h2>
       )}
-      <div style={{ fontSize: '35px', overflow: 'hidden', border: `1px solid ${theme.color.divider}`, borderRadius: '15px' }}>
+      <div style={{ fontSize: '40px', overflow: 'hidden', border: `1px solid ${theme.color.divider}`, borderRadius: '20px', boxShadow: theme.elevation.subtle }}>
         <SyntaxHighlighter
           language={language}
           style={prism}
-          customStyle={{ padding: '40px', lineHeight: '1.5' }}
+          customStyle={{ padding: '56px 64px', lineHeight: '1.65', margin: 0 }}
         >
           {codeToShow}
         </SyntaxHighlighter>

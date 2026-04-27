@@ -67,10 +67,10 @@ export const PieChartScreen: React.FC<PieChartScreenProps> = ({
   const total = slices.reduce((s, sl) => s + sl.value, 0);
   const defaultColors = theme.infographic.chartPalette;
 
-  const cx = 200;
-  const cy = 200;
-  const r = 158;
-  const innerR = 88;
+  const cx = 300;
+  const cy = 300;
+  const r = 240;
+  const innerR = 134;
 
   const legendDelay = a.legend?.delay ?? 30;
 
@@ -180,7 +180,7 @@ export const PieChartScreen: React.FC<PieChartScreenProps> = ({
       >
         {/* Donut chart */}
         <div style={{ opacity: chartOpacity, transform: `scale(${chartScale})` }}>
-          <svg width={400} height={400} viewBox="0 0 400 400">
+          <svg width={600} height={600} viewBox="0 0 600 600">
             {/* Track ring */}
             <circle
               cx={cx}
@@ -209,9 +209,9 @@ export const PieChartScreen: React.FC<PieChartScreenProps> = ({
             <circle cx={cx} cy={cy} r={innerR - 3} fill={theme.infographic.panelBg} />
             <text
               x={cx}
-              y={cy - 10}
+              y={cy - 14}
               textAnchor="middle"
-              fontSize={38}
+              fontSize={56}
               fontWeight={800}
               fill={theme.color.textPrimary}
               fontFamily={theme.font.numeric}
@@ -220,9 +220,9 @@ export const PieChartScreen: React.FC<PieChartScreenProps> = ({
             </text>
             <text
               x={cx}
-              y={cy + 18}
+              y={cy + 28}
               textAnchor="middle"
-              fontSize={15}
+              fontSize={20}
               fill={theme.color.textMuted}
               fontFamily={theme.font.numeric}
               letterSpacing="0.06em"
@@ -258,9 +258,9 @@ export const PieChartScreen: React.FC<PieChartScreenProps> = ({
               >
                 <div
                   style={{
-                    width: 20,
-                    height: 20,
-                    borderRadius: 5,
+                    width: 28,
+                    height: 28,
+                    borderRadius: 6,
                     background: seg.color,
                     flexShrink: 0,
                     boxShadow: theme.elevation.subtle,
@@ -268,16 +268,16 @@ export const PieChartScreen: React.FC<PieChartScreenProps> = ({
                 />
                 <span
                   style={{
-                    fontSize: 26,
+                    fontSize: 34,
                     fontWeight: 700,
                     color: seg.color,
-                    minWidth: 64,
+                    minWidth: 84,
                     fontFamily: theme.font.numeric,
                   }}
                 >
                   {pct}%
                 </span>
-                <span style={{ fontSize: 26, color: theme.color.textSecondary }}>{seg.label}</span>
+                <span style={{ fontSize: 32, color: theme.color.textSecondary }}>{seg.label}</span>
               </div>
             );
           })}

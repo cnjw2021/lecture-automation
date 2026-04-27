@@ -75,16 +75,17 @@ export const EndScreen: React.FC<EndScreenProps> = ({
           <div
             style={{
               display: 'inline-block',
-              padding: '14px 36px',
-              borderRadius: 30,
+              padding: '20px 48px',
+              borderRadius: 40,
               border: `2px solid ${theme.color.surfaceBorder}`,
               background: theme.color.surface,
               opacity: msgOpacity,
               marginBottom: 36,
+              boxShadow: theme.elevation.subtle,
             }}
           >
-            <span style={{ fontSize: 22, color: theme.color.textMuted, marginRight: 12 }}>次回</span>
-            <span style={{ fontSize: 26, fontWeight: 600, color: theme.color.textPrimary }}>{nextPreview}</span>
+            <span style={{ fontSize: 28, color: theme.color.textMuted, marginRight: 18 }}>次回</span>
+            <span style={{ fontSize: 36, fontWeight: 700, color: theme.color.textPrimary }}>{nextPreview}</span>
           </div>
         )}
 

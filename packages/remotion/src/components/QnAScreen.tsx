@@ -37,23 +37,23 @@ export const QnAScreen: React.FC<QnAScreenProps> = ({ question, answer, animatio
   return (
     <AbsoluteFill style={{ background: theme.bg.primary, justifyContent: 'center', padding: '0 160px' }}>
       {/* Question */}
-      <div style={{ opacity: qOpacity, transform: `translateY(${qY}px)`, marginBottom: 48 }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 24 }}>
-          <span style={{ fontSize: 64, fontWeight: 900, color: theme.color.accent, opacity: 0.3, lineHeight: 1, flexShrink: 0 }}>Q</span>
-          <p style={{ fontSize: 48, fontWeight: 700, color: theme.color.textPrimary, lineHeight: 1.5, margin: 0 }}>
+      <div style={{ opacity: qOpacity, transform: `translateY(${qY}px)`, marginBottom: 56 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 32 }}>
+          <span style={{ fontSize: 110, fontWeight: 900, color: theme.color.accent, opacity: 0.45, lineHeight: 1, flexShrink: 0, fontFamily: theme.font.numeric }}>Q</span>
+          <p style={{ fontSize: 56, fontWeight: 700, color: theme.color.textPrimary, lineHeight: 1.4, margin: 0 }}>
             {question}
           </p>
         </div>
       </div>
 
       {/* Divider */}
-      <div style={{ width: lineWidth, height: 3, background: theme.color.gradientLine, margin: '0 0 48px 88px', borderRadius: 2 }} />
+      <div style={{ width: lineWidth, height: 3, background: theme.color.gradientLine, margin: '0 0 56px 142px', borderRadius: 2 }} />
 
       {/* Answer */}
       <div style={{ opacity: aOpacity, transform: `translateY(${aY}px)` }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 24 }}>
-          <span style={{ fontSize: 64, fontWeight: 900, color: theme.color.accentSecondary, opacity: 0.3, lineHeight: 1, flexShrink: 0 }}>A</span>
-          <p style={{ fontSize: 38, fontWeight: 500, color: theme.color.textSecondary, lineHeight: 1.7, margin: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 32 }}>
+          <span style={{ fontSize: 110, fontWeight: 900, color: theme.color.accentSecondary, opacity: 0.45, lineHeight: 1, flexShrink: 0, fontFamily: theme.font.numeric }}>A</span>
+          <p style={{ fontSize: 40, fontWeight: 500, color: theme.color.textSecondary, lineHeight: 1.65, margin: 0 }}>
             {answer}
           </p>
         </div>

@@ -356,6 +356,84 @@ export const CodeWalkthroughScreenSchema = z.object({
   caption: z.string().optional(),
 }).passthrough();
 
+// ─── 도메인 시각 패턴 (#127) ─────────────────────────────────────────────────
+
+export const CodeRenderMappingScreenSchema = z.object({
+  code: z.string(),
+  language: z.string().optional(),
+  result: z.object({
+    url: z.string().optional(),
+    html: z.string().optional(),
+    imageSrc: z.string().optional(),
+  }),
+  mappings: z.array(z.object({
+    lineRange: z.tuple([z.number().int(), z.number().int()]),
+    target: z.string(),
+    label: z.string(),
+    color: z.string().optional(),
+  })).min(1),
+  title: z.string().optional(),
+  highlightLines: z.array(z.number().int()).optional(),
+  ...commonOptional,
+}).passthrough();
+
+export const StructureToRenderScreenSchema = z.object({
+  tree: z.lazy(() => z.object({
+    id: z.string().optional(),
+    label: z.string(),
+    icon: z.string().optional(),
+    children: z.array(z.any()).optional(),
+  })),
+  rendered: z.object({
+    regions: z.array(z.object({
+      id: z.string(),
+      label: z.string(),
+      description: z.string().optional(),
+    })).min(1),
+    url: z.string().optional(),
+  }),
+  title: z.string().optional(),
+  activeId: z.string().optional(),
+  ...commonOptional,
+}).passthrough();
+
+export const FlexLayoutDiagramScreenSchema = z.object({
+  items: z.array(z.object({
+    label: z.string(),
+    color: z.string().optional(),
+    size: z.number().optional(),
+  })).min(1),
+  direction: z.enum(['row', 'row-reverse', 'column', 'column-reverse']),
+  title: z.string().optional(),
+  containerLabel: z.string().optional(),
+  mainAxisLabel: z.string().optional(),
+  crossAxisLabel: z.string().optional(),
+  properties: z.record(z.string(), z.string()).optional(),
+  wrap: z.enum(['nowrap', 'wrap']).optional(),
+  justifyContent: z.enum(['flex-start', 'flex-end', 'center', 'space-between', 'space-around', 'space-evenly']).optional(),
+  alignItems: z.enum(['flex-start', 'flex-end', 'center', 'stretch', 'baseline']).optional(),
+  ...commonOptional,
+}).passthrough();
+
+export const SelectorMatchScreenSchema = z.object({
+  selector: z.string(),
+  tokens: z.array(z.object({
+    text: z.string(),
+    role: z.enum(['tag', 'class', 'id', 'pseudo', 'attr', 'combinator', 'plain']),
+    color: z.string().optional(),
+  })).min(1),
+  dom: z.lazy(() => z.object({
+    id: z.string().optional(),
+    label: z.string(),
+    matched: z.boolean().optional(),
+    children: z.array(z.any()).optional(),
+  })),
+  title: z.string().optional(),
+  activeNodeIds: z.array(z.string()).optional(),
+  explanation: z.string().optional(),
+  ...commonOptional,
+}).passthrough();
+
 // ─── Schema Registry ─────────────────────────────────────────────────────────
 
 export const REMOTION_PROPS_SCHEMAS: Record<string, z.ZodTypeAny> = {
@@ -390,4 +468,8 @@ export const REMOTION_PROPS_SCHEMAS: Record<string, z.ZodTypeAny> = {
   ImageScreen: ImageScreenSchema,
   MyCodeScene: MyCodeSceneSchema,
   CodeWalkthroughScreen: CodeWalkthroughScreenSchema,
+  CodeRenderMappingScreen: CodeRenderMappingScreenSchema,
+  StructureToRenderScreen: StructureToRenderScreenSchema,
+  FlexLayoutDiagramScreen: FlexLayoutDiagramScreenSchema,
+  SelectorMatchScreen: SelectorMatchScreenSchema,
 };

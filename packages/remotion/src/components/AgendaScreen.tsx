@@ -51,6 +51,8 @@ export const AgendaScreen: React.FC<AgendaScreenProps> = ({
       style={{
         background: theme.bg.primary,
         padding: '80px 120px',
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
       {/* Title */}
@@ -70,7 +72,7 @@ export const AgendaScreen: React.FC<AgendaScreenProps> = ({
       )}
 
       {/* Items */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 20, flex: 1, justifyContent: 'center' }}>
         {items.map((item, i) => {
           const itemDelay = baseDelay + i * interval;
           const itemSpring = spring({

@@ -57,7 +57,7 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
       )}
 
       {/* Steps */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24, flex: 1, justifyContent: 'center' }}>
         {steps.map((step, i) => {
           const stepDelay = stepBaseDelay + i * stepInterval;
           const stepSpring = spring({
