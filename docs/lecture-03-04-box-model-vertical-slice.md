@@ -42,7 +42,9 @@ Regression stills for unrelated lectures:
 
 ## Explanation scene coverage
 
-Title, code-only, and end scenes are excluded from this table because #126 asks for explanation-scene comparison. Excluded scenes: 1, 10-14, 27, 29, 31-33, 35, 37, 40.
+Title, code-centered, and end scenes are excluded from this table because #126 asks for explanation-scene comparison. Excluded scenes: 1, 10-14, 27, 29, 31-33, 35, 37, 40.
+
+`CodeWalkthroughScreen` scenes 12, 14, and 33 do explain code, but their primary gap is code/result mapping rather than box-model layer visualization. Treat them as follow-up input for #127 instead of expanding this PR's pilot scope.
 
 | Scene | Status | Component after pilot | Decision / follow-up |
 |---:|---|---|---|
@@ -106,6 +108,7 @@ Boundary for #127: this PR proves the box-model pattern is useful in one vertica
 | Review cost | Only the seven changed `lecture-03-04` scenes need visual review now. Full-course adoption should be scoped after #127 decides component ownership. |
 | Tone change | Limited to `lecture-03-04` box-model scenes. Other lectures keep their current visual rhythm, so cross-lecture tone drift is not introduced by this PR. |
 | Follow-up | #127 should absorb or generalize the component. #128 can later decide whether CSS concept diagrams need a dedicated context style. |
+| Lint tracking | `lecture-03-04` narration still has 21 known `A-tts-landmines` findings. Tracked separately in #131 before final video rendering. |
 
 ## Verification
 
@@ -114,4 +117,4 @@ Boundary for #127: this PR proves the box-model pattern is useful in one vertica
 - `npx remotion compositions src/PreviewRoot.tsx`
 - Rendered changed-scene before/after stills for scenes 5, 6, 15, 20, 25, 28, 36.
 - Rendered unrelated lecture stills for `lecture-01-01.json` scene 3 and `lecture-03-05.json` scene 7.
-- `make lint LECTURE=lecture-03-04.json STRICT=1` was run and still reports 21 `A-tts-landmines` errors in narration text (`てみ`, standalone `p`, `タグ`). This PR does not edit narration, but those findings should be resolved before final video rendering.
+- `make lint LECTURE=lecture-03-04.json STRICT=1` was run and still reports 21 `A-tts-landmines` errors in narration text (`てみ`, standalone `p`, `タグ`). This PR does not edit narration; #131 tracks the required fix before final video rendering.

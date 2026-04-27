@@ -525,7 +525,7 @@
             }
           ],
           "contentLabel": "300px",
-          "contentDetail": "content width",
+          "contentDetail": "コンテント幅",
           "callouts": [
             {
               "title": "青: コンテント 300px",
@@ -751,7 +751,7 @@
           "eyebrow": "box-sizing",
           "title": "border-box は「全体で300px」にする",
           "subtitle": "指定した width の内側に padding と border を収める",
-          "highlightLayer": "border",
+          "highlightLayer": "content",
           "layers": [
             {
               "key": "margin",
