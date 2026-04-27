@@ -71,21 +71,59 @@
       "durationSec": 46,
       "visual": {
         "type": "remotion",
-        "component": "BulletDetailScreen",
+        "component": "BoxModelDiagramScreen",
         "props": {
-          "title": "ボックスモデルの4層構造（内側から）",
-          "items": [
+          "eyebrow": "ボックスモデル",
+          "title": "内側から見るボックスモデル",
+          "subtitle": "コンテントの外側にパディングが重なると、箱の中にゆとりが生まれる",
+          "highlightLayer": "padding",
+          "layers": [
             {
-              "title": "コンテント",
-              "detail": "テキストや画像など、要素本来の中身が入る領域",
-              "icon": "📄",
+              "key": "margin",
+              "label": "マージン",
+              "value": "30px",
+              "description": "他の要素との間にある外側の余白。背景色はつかず透明",
+              "color": "#ef4444"
+            },
+            {
+              "key": "border",
+              "label": "ボーダー",
+              "value": "2px",
+              "description": "箱の境界線。線の太さも全体サイズに加わる",
+              "color": "#f59e0b"
+            },
+            {
+              "key": "padding",
+              "label": "パディング",
+              "value": "20px",
+              "description": "コンテントと境界線の間にある内側の余白。背景色がつく",
+              "color": "#10b981"
+            },
+            {
+              "key": "content",
+              "label": "コンテント",
+              "value": "300px",
+              "description": "テキストや画像など、要素本来の中身が入る領域",
+              "color": "#3b82f6"
+            }
+          ],
+          "contentLabel": "テキスト / 画像",
+          "contentDetail": "要素本来の中身",
+          "callouts": [
+            {
+              "title": "コンテント: 中身",
+              "detail": "文字・画像など、HTML要素が本来持っている情報",
               "color": "#3b82f6"
             },
             {
-              "title": "パディング",
-              "detail": "コンテントと境界線の間にある箱の内側の余白",
-              "icon": "🔲",
+              "title": "パディング: 内側の余白",
+              "detail": "中身と枠線の間。背景色がつくので、ボタンの押しやすさや見た目の余裕を作る",
               "color": "#10b981"
+            },
+            {
+              "title": "画面で残す関係",
+              "detail": "「中身」と「内側の余白」は同じ箱の内部にある",
+              "color": "#64748b"
             }
           ]
         },
@@ -100,21 +138,59 @@
       "durationSec": 46,
       "visual": {
         "type": "remotion",
-        "component": "BulletDetailScreen",
+        "component": "BoxModelDiagramScreen",
         "props": {
-          "title": "ボックスモデルの4層構造（外側まで）",
-          "items": [
+          "eyebrow": "ボックスモデル",
+          "title": "外側まで広げる4層構造",
+          "subtitle": "ボーダーが箱の境界、マージンが他の箱との距離を作る",
+          "highlightLayer": "margin",
+          "layers": [
             {
-              "title": "ボーダー",
-              "detail": "箱の境界線。線を引いたり透明にしたりできる",
-              "icon": "🔳",
+              "key": "margin",
+              "label": "マージン",
+              "value": "30px",
+              "description": "他の要素との間にある外側の余白。背景色はつかず透明",
+              "color": "#ef4444"
+            },
+            {
+              "key": "border",
+              "label": "ボーダー",
+              "value": "2px",
+              "description": "箱の境界線。線の太さも全体サイズに加わる",
               "color": "#f59e0b"
             },
             {
-              "title": "マージン",
-              "detail": "他の要素との間にある箱の外側の余白。常に透明",
-              "icon": "↔️",
+              "key": "padding",
+              "label": "パディング",
+              "value": "20px",
+              "description": "コンテントと境界線の間にある内側の余白。背景色がつく",
+              "color": "#10b981"
+            },
+            {
+              "key": "content",
+              "label": "コンテント",
+              "value": "300px",
+              "description": "テキストや画像など、要素本来の中身が入る領域",
+              "color": "#3b82f6"
+            }
+          ],
+          "contentLabel": "箱の本体",
+          "contentDetail": "content + padding + border",
+          "callouts": [
+            {
+              "title": "ボーダー: 境界線",
+              "detail": "見える線。太さを持つので、実際の箱の幅に加わる",
+              "color": "#f59e0b"
+            },
+            {
+              "title": "マージン: 外側の余白",
+              "detail": "隣の要素との距離。箱の外側なので背景色はつかない",
               "color": "#ef4444"
+            },
+            {
+              "title": "覚える順番",
+              "detail": "内側から コンテント → パディング → ボーダー → マージン",
+              "color": "#64748b"
             }
           ]
         }
@@ -273,14 +349,64 @@
       "durationSec": 30,
       "visual": {
         "type": "remotion",
-        "component": "SummaryScreen",
+        "component": "BoxModelDiagramScreen",
         "props": {
+          "eyebrow": "復習",
           "title": "ボックスモデル4層の役割",
-          "points": [
-            "コンテント：テキスト・画像など実際の中身",
-            "パディング：コンテントと枠線の間の内側の余白",
-            "ボーダー：箱の境界線",
-            "マージン：他の要素との間の外側の余白（常に透明）"
+          "subtitle": "一覧ではなく、含まれる位置で覚える",
+          "layers": [
+            {
+              "key": "margin",
+              "label": "マージン",
+              "value": "30px",
+              "description": "他の要素との間にある外側の余白。背景色はつかず透明",
+              "color": "#ef4444"
+            },
+            {
+              "key": "border",
+              "label": "ボーダー",
+              "value": "2px",
+              "description": "箱の境界線。線の太さも全体サイズに加わる",
+              "color": "#f59e0b"
+            },
+            {
+              "key": "padding",
+              "label": "パディング",
+              "value": "20px",
+              "description": "コンテントと境界線の間にある内側の余白。背景色がつく",
+              "color": "#10b981"
+            },
+            {
+              "key": "content",
+              "label": "コンテント",
+              "value": "300px",
+              "description": "テキストや画像など、要素本来の中身が入る領域",
+              "color": "#3b82f6"
+            }
+          ],
+          "contentLabel": "HTML要素",
+          "contentDetail": "すべて四角い箱として計算される",
+          "callouts": [
+            {
+              "title": "コンテント",
+              "detail": "テキスト・画像など実際の中身",
+              "color": "#3b82f6"
+            },
+            {
+              "title": "パディング",
+              "detail": "内側の余白。背景色がつく",
+              "color": "#10b981"
+            },
+            {
+              "title": "ボーダー",
+              "detail": "箱の境界線。太さもサイズに含まれる",
+              "color": "#f59e0b"
+            },
+            {
+              "title": "マージン",
+              "detail": "外側の余白。常に透明",
+              "color": "#ef4444"
+            }
           ]
         }
       }
@@ -363,32 +489,62 @@
       "durationSec": 48,
       "visual": {
         "type": "remotion",
-        "component": "BulletDetailScreen",
+        "component": "BoxModelDiagramScreen",
         "props": {
-          "title": "開発者ツールのボックスモデル図（色分け）",
-          "items": [
+          "eyebrow": "開発者ツール",
+          "title": "開発者ツールのボックスモデル図",
+          "subtitle": "色を見るだけで、余白の原因が内側か外側か分かる",
+          "layers": [
             {
-              "title": "青：コンテント（300px）",
-              "detail": "実際の中身の領域",
-              "icon": "🔵",
-              "color": "#3b82f6"
+              "key": "margin",
+              "label": "マージン",
+              "value": "30px",
+              "description": "他の要素との間にある外側の余白。背景色はつかず透明",
+              "color": "#ef4444"
             },
             {
-              "title": "緑：パディング（20px）",
-              "detail": "内側の余白。背景色がつく",
-              "icon": "🟢",
-              "color": "#10b981"
-            },
-            {
-              "title": "黄：ボーダー（2px）",
-              "detail": "境界線",
-              "icon": "🟡",
+              "key": "border",
+              "label": "ボーダー",
+              "value": "2px",
+              "description": "箱の境界線。線の太さも全体サイズに加わる",
               "color": "#f59e0b"
             },
             {
-              "title": "橙：マージン（30px）",
-              "detail": "外側の余白。常に透明",
-              "icon": "🟠",
+              "key": "padding",
+              "label": "パディング",
+              "value": "20px",
+              "description": "コンテントと境界線の間にある内側の余白。背景色がつく",
+              "color": "#10b981"
+            },
+            {
+              "key": "content",
+              "label": "コンテント",
+              "value": "300px",
+              "description": "テキストや画像など、要素本来の中身が入る領域",
+              "color": "#3b82f6"
+            }
+          ],
+          "contentLabel": "300px",
+          "contentDetail": "コンテント幅",
+          "callouts": [
+            {
+              "title": "青: コンテント 300px",
+              "detail": "CSSの width が指している中身の領域",
+              "color": "#3b82f6"
+            },
+            {
+              "title": "緑: パディング 20px",
+              "detail": "背景色が広がる内側の余白",
+              "color": "#10b981"
+            },
+            {
+              "title": "黄: ボーダー 2px",
+              "detail": "境界線。左右それぞれ2pxずつ足される",
+              "color": "#f59e0b"
+            },
+            {
+              "title": "橙: マージン 30px",
+              "detail": "外側の透明な距離。隣の要素との隙間",
               "color": "#ef4444"
             }
           ]
@@ -477,25 +633,79 @@
       "durationSec": 44,
       "visual": {
         "type": "remotion",
-        "component": "ComparisonScreen",
+        "component": "BoxModelDiagramScreen",
         "props": {
-          "left": {
-            "title": "指定した幅",
-            "points": [
-              "width: 300px",
-              "「300ピクセルの箱」のつもり"
-            ],
-            "color": "#10b981"
-          },
-          "right": {
-            "title": "実際の幅",
-            "points": [
-              "300 + 20 + 20 + 2 + 2 = 344px",
-              "パディング・ボーダーが外側に追加される"
-            ],
-            "color": "#ef4444"
-          },
-          "vsLabel": "→ 現実は"
+          "eyebrow": "サイズ計算",
+          "title": "width: 300px の箱は実際に 344px",
+          "subtitle": "content-box では padding と border が外側に足される",
+          "highlightLayer": "content",
+          "layers": [
+            {
+              "key": "margin",
+              "label": "マージン",
+              "value": "外側",
+              "description": "他の要素との間にある外側の余白。背景色はつかず透明",
+              "color": "#ef4444"
+            },
+            {
+              "key": "border",
+              "label": "ボーダー",
+              "value": "2px",
+              "description": "箱の境界線。線の太さも全体サイズに加わる",
+              "color": "#f59e0b"
+            },
+            {
+              "key": "padding",
+              "label": "パディング",
+              "value": "20px",
+              "description": "コンテントと境界線の間にある内側の余白。背景色がつく",
+              "color": "#10b981"
+            },
+            {
+              "key": "content",
+              "label": "コンテント",
+              "value": "300px",
+              "description": "テキストや画像など、要素本来の中身が入る領域",
+              "color": "#3b82f6"
+            }
+          ],
+          "contentLabel": "width: 300px",
+          "contentDetail": "指定した幅はコンテントだけ",
+          "formula": [
+            {
+              "label": "content",
+              "value": "300",
+              "color": "#3b82f6"
+            },
+            {
+              "label": "padding L/R",
+              "value": "40",
+              "color": "#10b981"
+            },
+            {
+              "label": "border L/R",
+              "value": "4",
+              "color": "#f59e0b"
+            }
+          ],
+          "totalLabel": "344px",
+          "callouts": [
+            {
+              "title": "指定した幅",
+              "detail": "width: 300px はコンテント領域だけを指す",
+              "color": "#3b82f6"
+            },
+            {
+              "title": "外側に足される",
+              "detail": "padding 20px が左右、border 2px が左右に追加される",
+              "color": "#10b981"
+            },
+            {
+              "title": "マージンは別枠",
+              "detail": "外側の距離なので、箱本体の 344px には含めない",
+              "color": "#ef4444"
+            }
+          ]
         }
       }
     },
@@ -536,11 +746,79 @@
       "durationSec": 39,
       "visual": {
         "type": "remotion",
-        "component": "CalloutScreen",
+        "component": "BoxModelDiagramScreen",
         "props": {
-          "type": "info",
-          "title": "border-box の効果を開発者ツールで確認",
-          "body": "width: 300pxのまま変わらず、コンテント幅だけが自動縮小。全体でちょうど300pxに収まるように調整される。"
+          "eyebrow": "box-sizing",
+          "title": "border-box は「全体で300px」にする",
+          "subtitle": "指定した width の内側に padding と border を収める",
+          "highlightLayer": "content",
+          "layers": [
+            {
+              "key": "margin",
+              "label": "マージン",
+              "value": "外側",
+              "description": "外側の距離。width の計算には入らない",
+              "color": "#ef4444"
+            },
+            {
+              "key": "border",
+              "label": "ボーダー",
+              "value": "2px",
+              "description": "指定幅300pxの内側に含まれる",
+              "color": "#f59e0b"
+            },
+            {
+              "key": "padding",
+              "label": "パディング",
+              "value": "20px",
+              "description": "指定幅300pxの内側に含まれる",
+              "color": "#10b981"
+            },
+            {
+              "key": "content",
+              "label": "コンテント",
+              "value": "自動縮小",
+              "description": "残り幅に合わせて小さくなる",
+              "color": "#3b82f6"
+            }
+          ],
+          "contentLabel": "残り幅",
+          "contentDetail": "padding と border の分だけ縮む",
+          "formula": [
+            {
+              "label": "total width",
+              "value": "300",
+              "color": "#3b82f6"
+            },
+            {
+              "label": "includes padding",
+              "value": "40",
+              "color": "#10b981"
+            },
+            {
+              "label": "includes border",
+              "value": "4",
+              "color": "#f59e0b"
+            }
+          ],
+          "totalLabel": "300px",
+          "callouts": [
+            {
+              "title": "content-box",
+              "detail": "指定幅の外側に padding と border が足される",
+              "color": "#94a3b8"
+            },
+            {
+              "title": "border-box",
+              "detail": "padding と border を指定幅の内側に収める",
+              "color": "#f59e0b"
+            },
+            {
+              "title": "レイアウトが崩れにくい",
+              "detail": "300px と書いたら、見た目も300pxの箱になる",
+              "color": "#10b981"
+            }
+          ]
         }
       }
     },
@@ -672,33 +950,63 @@
       "durationSec": 59,
       "visual": {
         "type": "remotion",
-        "component": "BulletDetailScreen",
+        "component": "BoxModelDiagramScreen",
         "props": {
-          "title": "ボックスモデルをフル活用したカード",
-          "items": [
+          "eyebrow": "カードレイアウト",
+          "title": "カード型レイアウトで使う4層",
+          "subtitle": "カードの見た目は、ボックスモデルの部品を組み合わせて作る",
+          "layers": [
             {
-              "title": "パディング",
-              "detail": "テキストと枠の間にゆとりある内側の余白",
-              "icon": "🔲",
-              "color": "#3b82f6"
+              "key": "margin",
+              "label": "マージン",
+              "value": "20px",
+              "description": "カード同士の距離",
+              "color": "#ef4444"
             },
             {
-              "title": "ボーダー + border-radius",
-              "detail": "薄いグレーの枠線と12pxの角丸でカード感を演出",
-              "icon": "🔳",
-              "color": "#10b981"
-            },
-            {
-              "title": "マージン",
-              "detail": "他要素との外側の余白を確保",
-              "icon": "↔️",
+              "key": "border",
+              "label": "ボーダー",
+              "value": "1px + radius",
+              "description": "薄い枠線と角丸でカード感を作る",
               "color": "#f59e0b"
             },
             {
-              "title": "box-sizing: border-box",
-              "detail": "350pxと書いたら本当に350pxの箱になる",
-              "icon": "📐",
+              "key": "padding",
+              "label": "パディング",
+              "value": "24px",
+              "description": "本文と枠の間にゆとりを作る",
+              "color": "#10b981"
+            },
+            {
+              "key": "content",
+              "label": "コンテント",
+              "value": "見出し + 本文",
+              "description": "自己紹介のテキスト",
+              "color": "#3b82f6"
+            }
+          ],
+          "contentLabel": "自己紹介",
+          "contentDetail": "h2 + p",
+          "callouts": [
+            {
+              "title": "padding: 24px",
+              "detail": "テキストと枠の間に読みやすい余白を作る",
+              "color": "#10b981"
+            },
+            {
+              "title": "border + radius",
+              "detail": "薄い線と角丸でカードとして認識しやすくする",
+              "color": "#f59e0b"
+            },
+            {
+              "title": "margin: 20px",
+              "detail": "カードを複数並べた時の外側の距離を確保",
               "color": "#ef4444"
+            },
+            {
+              "title": "border-box",
+              "detail": "350pxと書いたら、本当に350pxのカードにする",
+              "color": "#3b82f6"
             }
           ]
         }

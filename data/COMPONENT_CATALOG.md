@@ -114,6 +114,40 @@ AI가 강의 대본(JSON)을 생성할 때, 각 씬의 `visual.component`에 아
 
 ---
 
+## BoxModelDiagramScreen
+**용도**: CSS box model처럼 공간적 포함 관계, 색상 구분, 크기 계산을 한 화면에 같이 남겨야 할 때
+**애니메이션**: 4개 레이어 순차 등장 → 설명 콜아웃 stagger → 계산식 표시
+
+```json
+{
+  "type": "remotion",
+  "component": "BoxModelDiagramScreen",
+  "props": {
+    "title": "width: 300px の箱は実際に 344px",
+    "subtitle": "content-box では padding と border が外側に足される",
+    "highlightLayer": "content",
+    "contentLabel": "width: 300px",
+    "contentDetail": "指定した幅はコンテントだけ",
+    "layers": [
+      { "key": "margin", "label": "マージン", "value": "外側", "color": "#ef4444" },
+      { "key": "border", "label": "ボーダー", "value": "2px", "color": "#f59e0b" },
+      { "key": "padding", "label": "パディング", "value": "20px", "color": "#10b981" },
+      { "key": "content", "label": "コンテント", "value": "300px", "color": "#3b82f6" }
+    ],
+    "formula": [
+      { "label": "content", "value": "300", "color": "#3b82f6" },
+      { "label": "padding L/R", "value": "40", "color": "#10b981" },
+      { "label": "border L/R", "value": "4", "color": "#f59e0b" }
+    ],
+    "totalLabel": "344px"
+  }
+}
+```
+
+**선택 기준**: 단순한 용어 나열이면 `BulletDetailScreen`, 일반 흐름/관계면 `DiagramScreen`, 박스 모델의 중첩 구조나 width 계산을 화면에 남겨야 하면 `BoxModelDiagramScreen`.
+
+---
+
 ## ProgressScreen
 **용도**: 강의 진행 단계 표시 (현재 위치 강조)
 **애니메이션**: 각 단계 stagger slide-in, 현재 단계 하이라이트 + 미세 pulse

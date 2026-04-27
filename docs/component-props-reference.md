@@ -1,4 +1,4 @@
-# コンポーネントPropsリファレンス（30種）
+# コンポーネントPropsリファレンス（31種）
 
 Remotion 동영상 생성에 사용하는 각 컴포넌트의 props 명세서입니다.
 컴포넌트 선택 기준은 `docs/json-conversion-rules.md` 참조.
@@ -144,6 +144,17 @@ Remotion 동영상 생성에 사용하는 각 컴포넌트의 props 명세서입
 - `title`: タイトル。なければ省略
 - `root`: ツリー構造。`label`, `icon`(選択), `children`(再帰配列)
 - children 2〜4個、深さ2段階まで推奨
+
+### BoxModelDiagramScreen
+- `title`: タイトル。なければ省略
+- `subtitle`: ボックス図の学習焦点。なければ省略
+- `layers`: 4層配列。各 `key` は `"margin"` | `"border"` | `"padding"` | `"content"`、任意で `label`, `value`, `description`, `color`
+- `highlightLayer`: 強調する層。`layers.key` と同じ4種
+- `contentLabel` / `contentDetail`: 中央コンテント領域に表示する短い説明
+- `callouts`: 右側説明。3〜4個推奨。各 `title`, `detail`, `color`
+- `formula`: 横幅計算を表示する場合の項。各 `label`, `value`, `color`
+- `totalLabel`: formula の結果（例: `"344px"`）
+- 용도: CSS box model처럼 포함 관계·색상·계산을 한 화면에 남겨야 하는 씬. 단순 용어 나열이면 `BulletDetailScreen`, 일반 관계도면 `DiagramScreen` 사용
 
 ---
 
