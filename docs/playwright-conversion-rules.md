@@ -171,6 +171,28 @@ syncPoints 가 있는 일반 Playwright 씬에서는 1.7b단계 순방향 싱크
 - ❌ `goto + mouse_move + click` 이전인 0~3초 phrase 에 첫 `type` 을 맞추려 함
 - ✅ `"では、CodePen を開いて準備します。左上のHTML入力欄をクリックしたら、見出しを入力します"` 처럼 setup 설명 후 첫 teaching action phrase 를 둠
 
+**syncPoint 밀도 — narration 이 type 을 직접 호명하는 경우**
+
+narration 이 type 액션을 직접 호명하는 구조(예: type 6개 `<h1>...</h1>` ~ `<h6>...</h6>` 와 narration 안 `"いちばん大きな見出し、2番目の見出し、…、いちばん小さな見出し"` 가 일렬 매칭) 에서는 **syncPoint 를 그 수만큼 추가**한다. syncPoint 1개로 두면 sync-playwright 가 첫 phrase 만 매칭하고 나머지는 wait 균등 분산만 하므로, narration 흐름이 type 흐름보다 빨리 흘러가 청각적으로 어색하다.
+
+실측: `lecture-02-02` 씬 4 에서 syncPoint 1개로 두었을 때 narration 11초 vs type/visual 25초 → 약 14초 차이로 narration 이 빠르게 들림. syncPoint 6개로 확장 후 정밀 매칭.
+
+**판단 기준**
+
+| narration 안 phrase ↔ type 매칭 | syncPoint 수 |
+|---|---|
+| 일렬 1:1 매칭 (type 6개 ↔ phrase 6개) | type 수만큼 |
+| 부분 매칭 또는 type 결과만 묘사 | 1~2개 |
+| narration 이 type 동작을 호명하지 않음 | 1개 (마지막 또는 결과 묘사 시점) |
+
+**budget 검증 필수**
+
+syncPoint 수를 늘리면 syncPoint 사이 narration budget 이 작아진다. 각 segment 의 fixed action 시간 (`type 1.6s + press 0.1s` 등) 보다 narration budget 이 짧으면 sync 불가.
+
+- segment 부족분 발생 시 narration 안 phrase 사이에 connector(`つぎに`, `つづいて`, `それから`, `さらに`, `最後に` 등) 를 추가해 자수 확보
+- 각 segment 여유 ≥ 1초 권장 (lint 워닝 회피). 1초 미만이면 워닝, 0초 미만이면 error
+- error 발생 시 narration 보강 또는 syncPoint 일부 삭제
+
 **작성 예시: 순방향 싱크 (일반 Playwright 씬)**
 ```json
 {
@@ -297,6 +319,35 @@ wait 0
 | `<` `>` (山括弧) | 반드시 **半角**. 스크립트가 "半角の山括弧" 를 설명하면 화면 입력도 그 설명과 맞춘다 |
 | 일본어 문자열 (예: `はじめてのWebページです！`) | `type.key` 에 그대로 사용 가능 — Playwright 가 IME 없이 직접 입력 |
 | Enter 줄바꿈 | `press Enter` 액션으로 분리. `type.key` 안에 `\n` 사용 금지 (CodeMirror 에서 인식 안 됨) |
+
+**한 `type` 에 중첩 닫기 태그 넣지 않기 (CodeMirror auto-close-tag race 회피)**
+
+CodePen 의 CodeMirror 는 `<X>` 입력 시 자동으로 `</X>` 를 닫는 auto-close-tag 가 활성화돼 있다.
+한 `type` 액션 안에 `<p><strong>...</strong>...</p>` 처럼 **중첩 닫기 태그**를 한꺼번에 입력하면
+raw keyboard input 과 자동완성 이벤트가 race condition 을 일으켜 페이지가 close 될 수 있다.
+
+이 경우 page 가 닫혀도 context 의 `recordVideo` 는 계속 진행되므로 빈 화면을 수십 분 녹화한
+비정상 webm (60MB+) 이 만들어지고, 사실상 hang 처럼 보인다 (다른 씬 webm 은 보통 2~3MB).
+**비결정적**이라 같은 JSON 으로 한 번은 통과하고 한 번은 hang 한다.
+실측: `lecture-02-02` 씬 11 에서 `<p><strong>カレーライス</strong>...</p>` 한 번에 type 했을 때 매번 발생.
+
+규칙:
+- 같은 `type` 안에 동일 태그명의 열기/닫기 페어가 들어 있고 그 사이에 텍스트가 있는 패턴은 분할한다
+  - 분할 안전: `<br>`, `<hr>` (셀프클로징, 닫기 페어 없음)
+  - 분할 안전: `<h1>Hello</h1>` 같은 단순 단일 태그
+  - 분할 대상: `<p><strong>X</strong>Y</p>`, `<p>...<em>X</em>Y</p>`
+- 분할 단위는 **태그 경계** — 열기/닫기 페어를 한 `type` 안에 그대로 두고, 페어 사이에 짧은 `wait` (150~200ms) 를 끼운다
+- 분할로 `actionIndex` 가 바뀌므로 **syncPoint 의 actionIndex 도 같이 갱신**한다
+
+분할 예 (lecture-02-02 씬 11 기준):
+
+```json
+{ "cmd": "type", "selector": "#box-html .CodeMirror textarea", "key": "<p>" },
+{ "cmd": "wait", "ms": 200 },
+{ "cmd": "type", "selector": "#box-html .CodeMirror textarea", "key": "<strong>カレーライス</strong>" },
+{ "cmd": "wait", "ms": 200 },
+{ "cmd": "type", "selector": "#box-html .CodeMirror textarea", "key": "が私のいちばんの好物です。</p>" }
+```
 
 **스크립트-액션 대조 포인트**
 - 스크립트가 "左上の「HTML」と書かれた入力エリアをクリック" 처럼 화면 위치를 말하면, action 도 해당 위치/셀렉터를 가리켜야 한다

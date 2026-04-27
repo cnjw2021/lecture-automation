@@ -103,6 +103,32 @@ describe('A-tts-landmines', () => {
     expect(ttsLandminesRule.run(lec)).toHaveLength(0);
   });
 
+  it("detects standalone 'p' but not inside larger words", () => {
+    const lec = makeLecture([
+      "2つの'たぐ'のpたぐが入れ子になっている",
+      'help や spider のような単語は除外',
+    ]);
+    const fixDescs = ttsLandminesRule.run(lec).map(i => i.fixDescription).sort();
+    expect(fixDescs).toEqual(["「p」→「ぴー」"]);
+  });
+
+  it('detects てみ 連接 patterns (てみま / てみて)', () => {
+    const lec = makeLecture([
+      '見てみましょう、上から順に',
+      'プレビューを見てみてください',
+    ]);
+    const fixDescs = ttsLandminesRule.run(lec).map(i => i.fixDescription).sort();
+    expect(fixDescs).toContain('「てみま」→「ま」');
+    expect(fixDescs).toContain('「てみて」→「て」');
+  });
+
+  it('てみ fix preserves meaning', () => {
+    const lec = makeLecture(['見てみましょう、上から順に']);
+    const issues = ttsLandminesRule.run(lec);
+    issues.find(i => i.fixDescription === '「てみま」→「ま」')!.fix!(lec);
+    expect(lec.sequence[0].narration).toBe('見ましょう、上から順に');
+  });
+
   it('fix function applies correctly and removes the issue', () => {
     const lec = makeLecture(['パート1の最初の講義']);
     const issues = ttsLandminesRule.run(lec);
