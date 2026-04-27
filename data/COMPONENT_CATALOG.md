@@ -1,6 +1,7 @@
 # Remotion Component Catalog
 
 AI가 강의 대본(JSON)을 생성할 때, 각 씬의 `visual.component`에 아래 컴포넌트 중 하나를 지정합니다.
+도메인 특화 후보(`CodeRenderMappingScreen`, `StructureToRenderScreen`, `FlexLayoutDiagramScreen`, `SelectorMatchScreen`)는 `docs/remotion-domain-visual-patterns.md`에 명세만 있으며 아직 이 카탈로그의 활성 컴포넌트가 아닙니다.
 
 ---
 
@@ -145,6 +146,7 @@ AI가 강의 대본(JSON)을 생성할 때, 각 씬의 `visual.component`에 아
 ```
 
 **선택 기준**: 단순한 용어 나열이면 `BulletDetailScreen`, 일반 흐름/관계면 `DiagramScreen`, 박스 모델의 중첩 구조나 width 계산을 화면에 남겨야 하면 `BoxModelDiagramScreen`.
+**#127 결정**: CSS 박스 모델 전용으로 유지. content/padding/border/margin 외의 일반 중첩 개념에는 사용하지 않습니다.
 
 ---
 
