@@ -95,6 +95,7 @@ export interface SceneData {
     description?: string;
     layout?: string;
     animation?: Record<string, unknown>;
+    stylePreset?: string;
   };
 }
 

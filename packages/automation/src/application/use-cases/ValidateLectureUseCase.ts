@@ -1,6 +1,7 @@
 import { Lecture, RemotionVisual } from '../../domain/entities/Lecture';
 import { validateSharedSessions } from '../../domain/policies/SharedSessionValidator';
 import { validateRemotionVisualProps, printPropValidationResult } from '../../domain/validation/validateRemotionVisualProps';
+import { isSupportedVisualStylePreset, SUPPORTED_VISUAL_STYLE_PRESETS } from '../../domain/visual-style/VisualStylePreset';
 
 export class ValidateLectureUseCase {
   // 현재 Remotion에 실제 구현되어 있는 컴포넌트 목록
@@ -35,6 +36,7 @@ export class ValidateLectureUseCase {
     'HierarchyScreen',
     'BrowserMockScreen',
     'ImageScreen',
+    'BoxModelDiagramScreen',
   ];
 
   execute(lecture: Lecture): void {
@@ -50,6 +52,14 @@ export class ValidateLectureUseCase {
           
           throw new Error(`Unsupported Remotion Component: ${visual.component}`);
         }
+      }
+
+      const stylePreset = scene.visual.stylePreset;
+      if (stylePreset && !isSupportedVisualStylePreset(stylePreset)) {
+        console.error(`\n❌ [치명적 에러] Scene ${scene.scene_id}에서 지원하지 않는 stylePreset을 참조함: "${stylePreset}"`);
+        console.error(`📍 허용된 stylePreset 목록: ${SUPPORTED_VISUAL_STYLE_PRESETS.join(', ')}`);
+        console.error(`💡 해결책: docs/remotion-visual-style-presets.md의 맥락별 preset 표에 맞춰 값을 수정하세요.\n`);
+        throw new Error(`Unsupported visual style preset: ${stylePreset}`);
       }
     }
 
