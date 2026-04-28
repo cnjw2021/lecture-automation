@@ -526,6 +526,10 @@
       "visual": {
         "type": "playwright",
         "storageState": "config/auth/codepen.json",
+        "session": {
+          "id": "lec02-03-link-rewrite",
+          "mode": "shared"
+        },
         "syncPoints": [
           {
             "actionIndex": 6,
@@ -620,21 +624,17 @@
       "visual": {
         "type": "playwright",
         "storageState": "config/auth/codepen.json",
+        "session": {
+          "id": "lec02-03-link-rewrite",
+          "mode": "shared"
+        },
         "syncPoints": [
           {
-            "actionIndex": 14,
+            "actionIndex": 6,
             "phrase": "ターゲット属性は"
           }
         ],
         "action": [
-          {
-            "cmd": "goto",
-            "url": "https://codepen.io/pen/"
-          },
-          {
-            "cmd": "wait",
-            "ms": 0
-          },
           {
             "cmd": "mouse_move",
             "to": [
@@ -655,32 +655,6 @@
             "ms": 0
           },
           {
-            "cmd": "type",
-            "selector": "#box-html .CodeMirror textarea",
-            "key": "<a href=\"https://www.google.com\">Googleを開く</a>"
-          },
-          {
-            "cmd": "wait",
-            "ms": 182
-          },
-          {
-            "cmd": "press",
-            "key": "Enter"
-          },
-          {
-            "cmd": "wait",
-            "ms": 182
-          },
-          {
-            "cmd": "type",
-            "selector": "#box-html .CodeMirror textarea",
-            "key": "<a href=\"https://www.youtube.com\">YouTubeを見る</a>"
-          },
-          {
-            "cmd": "wait",
-            "ms": 2734
-          },
-          {
             "cmd": "press",
             "key": "Meta+a"
           },
@@ -695,7 +669,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 615
+            "ms": 200
           },
           {
             "cmd": "press",
@@ -703,7 +677,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 615
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -712,7 +686,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 12291
+            "ms": 0
           },
           {
             "cmd": "mouse_move",
@@ -723,7 +697,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 24583
+            "ms": 0
           }
         ]
       }
