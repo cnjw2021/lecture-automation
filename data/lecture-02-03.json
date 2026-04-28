@@ -1339,7 +1339,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 3500
+            "ms": 16041
           },
           {
             "cmd": "mouse_move",
@@ -1350,20 +1350,20 @@
           },
           {
             "cmd": "click",
-            "selector": "input[type='search']"
+            "selector": "[data-testid='homepage-header-search-form-input']"
           },
           {
             "cmd": "wait",
-            "ms": 500
+            "ms": 1580
           },
           {
             "cmd": "type",
-            "selector": "input[type='search']",
+            "selector": "[data-testid='homepage-header-search-form-input']",
             "key": "coffee"
           },
           {
             "cmd": "wait",
-            "ms": 500
+            "ms": 2057
           },
           {
             "cmd": "press",
@@ -1371,7 +1371,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 4500
+            "ms": 18511
           },
           {
             "cmd": "mouse_move",
@@ -1382,15 +1382,15 @@
           },
           {
             "cmd": "wait",
-            "ms": 1500
+            "ms": 6170
           },
           {
             "cmd": "click",
-            "selector": "a[href*='/photos/']"
+            "selector": "a[href^='/photos/'] >> nth=0"
           },
           {
             "cmd": "wait",
-            "ms": 4500
+            "ms": 6540
           },
           {
             "cmd": "mouse_move",
@@ -1401,7 +1401,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 2000
+            "ms": 18238
           }
         ]
       }
