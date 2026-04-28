@@ -1,7 +1,44 @@
-import { chromium, LaunchOptions } from 'playwright';
+import { chromium, LaunchOptions, Locator } from 'playwright';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { config } from '../config';
+
+/**
+ * Playwright `pressSequentially` 는 per-character timeout 이 없어
+ * CodeMirror auto-close-bracket / auto-close-tag race 등으로 textarea 가
+ * 일시적으로 unresponsive 가 되면 다음 키 입력을 영원히 재시도한다.
+ *
+ * 이 헬퍼는 입력 길이에 비례하는 상한을 걸어 매달림을 강제 종료한다.
+ * 정상 입력 속도(`delay: 100ms`)의 두 배 + 5초 여유를 기본으로 잡는다.
+ *
+ * timeout 발생 시 throw 하여 호출자가 fail-fast 처리하도록 한다.
+ * webm 일부 입력 상태로 다음 단계가 진행되어 garbage 영상이 생기는 것을 막는다.
+ */
+export async function typeWithTimeout(
+  locator: Locator,
+  key: string,
+  options: { delay?: number; selector?: string } = {},
+): Promise<void> {
+  const delay = options.delay ?? 100;
+  const timeoutMs = key.length * (delay * 2) + 5000;
+  let timeoutId: NodeJS.Timeout | undefined;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error(
+        `pressSequentially timeout (${timeoutMs}ms): ${key.length}자 입력 못 함` +
+        (options.selector ? ` [selector=${options.selector}]` : ''),
+      ));
+    }, timeoutMs);
+  });
+  try {
+    await Promise.race([
+      locator.pressSequentially(key, { delay }),
+      timeoutPromise,
+    ]);
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
+}
 
 /**
  * storageState 경로를 절대 경로로 해결한다. 파일이 없으면 undefined を返す。

@@ -5,6 +5,26 @@ import { config } from '../config';
 import { IVisualProvider } from '../../domain/interfaces/IVisualProvider';
 import { Scene, PlaywrightVisual, PlaywrightAction } from '../../domain/entities/Lecture';
 import { executeEduDevtoolsAction, getEduDevtoolsActionDuration } from './playwrightEduDevtools';
+import { typeWithTimeout } from './playwrightBrowserUtils';
+
+/**
+ * 액션 실패 시 즉시 파이프라인을 중단해야 하는 critical 액션 목록.
+ * 이 액션들이 실패하면 webm 이 garbage 상태가 되어 후속 렌더·concat 이 무의미해진다.
+ *
+ * 그 외 액션(`wait_for`, `mouse_move`, `highlight`, `mouse_drag`, `scroll`,
+ * `disable_css`, `enable_css`, `wait`, `render_code_block`)은 실패해도
+ * 시각 효과 누락 정도라 warn + continue.
+ */
+const CRITICAL_ACTION_CMDS = new Set([
+  'goto',
+  'click',
+  'type',
+  'press',
+  'focus',
+  'open_devtools',
+  'select_devtools_node',
+  'toggle_devtools_node',
+]);
 
 /** 녹화 매니페스트: 각 액션의 실행 타임스탬프를 기록 */
 export interface RecordingActionTimestamp {
@@ -70,6 +90,7 @@ export class PlaywrightVisualProvider implements IVisualProvider {
 
     const page = await context.newPage();
     let hasError = false;
+    let caughtError: Error | undefined;
 
     try {
       console.log(`- Scene ${scene.scene_id} 녹화 시작...`);
@@ -96,6 +117,7 @@ export class PlaywrightVisualProvider implements IVisualProvider {
       }
     } catch (error: any) {
       hasError = true;
+      caughtError = error;
       console.error(`  > Scene ${scene.scene_id} 녹화 중 에러:`, error.message);
     } finally {
       if (hasError) {
@@ -114,9 +136,22 @@ export class PlaywrightVisualProvider implements IVisualProvider {
       await browser.close();
 
       if (videoPath) {
-        await fs.move(videoPath, outputPath, { overwrite: true });
-        console.log(`  > Scene ${scene.scene_id} 녹화 저장 완료: ${outputPath}`);
+        if (hasError) {
+          // 부분 녹화된 garbage webm 이 캐시 경로로 저장되면 다음 실행에서 캐시 hit 으로
+          // 잘못 재사용된다. 임시 webm 자체는 context.close 후 임시 디렉토리에 남아 있을 수
+          // 있으므로 명시적으로 삭제한다.
+          await fs.remove(videoPath).catch(() => {});
+          console.log(`  > 에러 발생 → 부분 녹화 webm 폐기 (캐시 미생성)`);
+        } else {
+          await fs.move(videoPath, outputPath, { overwrite: true });
+          console.log(`  > Scene ${scene.scene_id} 녹화 저장 완료: ${outputPath}`);
+        }
       }
+    }
+
+    // critical 액션 실패는 호출자(RecordVisualUseCase)로 전파해 파이프라인을 중단시킨다.
+    if (caughtError) {
+      throw caughtError;
     }
   }
 
@@ -411,7 +446,10 @@ export class PlaywrightVisualProvider implements IVisualProvider {
             if (action.selector && action.key) {
               const typeLoc = page.locator(action.selector);
               await typeLoc.waitFor({ state: 'visible', timeout: 10000 });
-              await typeLoc.pressSequentially(action.key, { delay: 100 });
+              await typeWithTimeout(typeLoc, action.key, {
+                delay: 100,
+                selector: action.selector,
+              });
             }
             break;
           case 'click':
@@ -546,6 +584,13 @@ export class PlaywrightVisualProvider implements IVisualProvider {
             console.warn(`  ⚠️ 알려지지 않거나 미구현된 Action '${action.cmd}' (건너뜀)`);
         }
       } catch (actionError: any) {
+        if (CRITICAL_ACTION_CMDS.has(action.cmd)) {
+          // critical 액션 실패 = webm 이 garbage 상태 → fail-fast.
+          // 실패 위치를 명확히 알려 사용자가 JSON 또는 환경을 고친 뒤 재시작하도록 한다.
+          throw new Error(
+            `Critical action '${action.cmd}' (index=${i}) 실패 — 녹화 중단: ${actionError.message}`,
+          );
+        }
         console.warn(`  ⚠️ Action '${action.cmd}' 실패 (건너뜀): ${actionError.message}`);
       }
 
