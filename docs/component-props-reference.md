@@ -1,10 +1,10 @@
-# コンポーネントPropsリファレンス（31種）
+# コンポーネントPropsリファレンス（35種）
 
 Remotion 동영상 생성에 사용하는 각 컴포넌트의 props 명세서입니다.
 컴포넌트 선택 기준은 `docs/json-conversion-rules.md` 참조.
 도메인 시각 패턴 후보 명세와 활성/비활성 판단은 `docs/remotion-domain-visual-patterns.md` 참조.
 
-주의: 이 문서의 본문에 있는 31종만 현재 lecture JSON에서 사용할 수 있습니다. `CodeRenderMappingScreen`, `StructureToRenderScreen`, `FlexLayoutDiagramScreen`, `SelectorMatchScreen`은 후보 명세이며 아직 사용 가능한 component 값이 아닙니다.
+본 문서의 35종 모두 현재 lecture JSON에서 사용 가능합니다. 31종 기존 컴포넌트 + 4종 도메인 시각 패턴(`CodeRenderMappingScreen`, `StructureToRenderScreen`, `FlexLayoutDiagramScreen`, `SelectorMatchScreen`)은 #127 마이그레이션에서 구현 완료되어 schema registry · COMPONENT_MAP 에 등록됨.
 
 ## 공통 visual 필드
 
@@ -228,15 +228,15 @@ Remotion 동영상 생성에 사용하는 각 컴포넌트의 props 명세서입
 - `highlightLines`: 強調行番号の配列（例: [2, 3, 4]）。なければ全体均一
 - `caption`: コード下部の説明。なければ省略
 - MyCodeSceneとの使い分け: 初登場=MyCodeScene / 行別説明=CodeWalkthroughScreen
-- 제한: 코드 행과 렌더링 결과를 한 화면에서 연결해야 하는 씬에는 충분하지 않다. 해당 패턴은 #127 후보 `CodeRenderMappingScreen`으로 추적하며, 구현 전에는 JSON에 후보명을 쓰지 않는다.
+- 코드↔렌더 결과 매핑이 필요한 씬은 `CodeRenderMappingScreen` 사용 (활성화됨)
 
 ---
 
-## 도메인 패턴 후보（현재 JSON 사용 금지）
+## 도메인 패턴 (#127 — 활성)
 
-아래 명세는 #127 후보 압축 결과다. 아직 Remotion 컴포넌트, export, schema registry가 없으므로 lecture JSON의 `visual.component` 값으로 사용하지 않는다.
+아래 4개 컴포넌트는 #127 의 도메인 시각 패턴 후보로 명세된 뒤 본 마이그레이션에서 구현·등록 완료. lecture JSON 의 `visual.component` 값으로 직접 사용 가능.
 
-### CodeRenderMappingScreen（후보）
+### CodeRenderMappingScreen
 - 책임: 코드와 렌더링 결과를 동시에 보여주고, 코드 line range를 결과 영역에 연결
 - 필수 props: `code`, `language`, `result`, `mappings`
 - 선택 props: `title`, `highlightLines`, `caption`
@@ -244,7 +244,7 @@ Remotion 동영상 생성에 사용하는 각 컴포넌트의 props 명세서입
 - `mappings`: 각 `{ lineRange: [start, end], target, label, color? }`. 최소 1개 필요
 - 선택 근거: `CodeWalkthroughScreen`은 코드만, `BrowserMockScreen`은 결과만 보여주므로 line-to-result 대응을 보존할 수 없음
 
-### StructureToRenderScreen（후보）
+### StructureToRenderScreen
 - 책임: HTML/문서 트리와 렌더링 결과를 좌우로 보여주고 같은 id를 하이라이트
 - 필수 props: `tree`, `rendered`
 - 선택 props: `title`, `activeId`, `caption`
@@ -252,18 +252,19 @@ Remotion 동영상 생성에 사용하는 각 컴포넌트의 props 명세서입
 - `rendered.regions`: 각 `{ id, label, description?, bounds? }`
 - 선택 근거: `HierarchyScreen`과 `BrowserMockScreen`을 분리하면 구조와 결과의 대응이 사라짐
 
-### FlexLayoutDiagramScreen（후보）
+### FlexLayoutDiagramScreen
 - 책임: flex container, items, main/cross axis, 정렬/분포 상태를 표시
 - 필수 props: `items`, `direction`
-- 선택 props: `title`, `containerLabel`, `mainAxisLabel`, `crossAxisLabel`, `properties`, `displayMode`, `wrap`
+- 선택 props: `title`, `containerLabel`, `mainAxisLabel`, `crossAxisLabel`, `properties`, `wrap`, `justifyContent`, `alignItems`, `caption` 외 commonOptional
+- `items`: 각 `{ label, color?, size? }`. `size` 는 flexBasis 비율
 - `direction`: `"row"` | `"row-reverse"` | `"column"` | `"column-reverse"`
-- `displayMode`: `"single"` | `"beforeAfter"`
-- `properties`: 화면에 표시되는 CSS 라벨. `flex-wrap`을 넣을 수 있지만 레이아웃 상태는 `wrap`이 결정
-- `wrap`: `"nowrap"` | `"wrap"`. 표시 모드와 별도인 flex-wrap 시연 상태
-- 구현 메모: `displayMode: "beforeAfter"`로 wrap 변화를 비교하려면 단일 `wrap` 대신 `beforeWrap`/`afterWrap` 또는 `beforeAfter` 구조가 필요할 수 있음
+- `wrap`: `"nowrap"` | `"wrap"`
+- `justifyContent`: `"flex-start"` | `"flex-end"` | `"center"` | `"space-between"` | `"space-around"` | `"space-evenly"`
+- `alignItems`: `"flex-start"` | `"flex-end"` | `"center"` | `"stretch"` | `"baseline"`
+- `properties`: 화면에 표시되는 CSS 라벨 칩(예: `{ display: "flex", gap: "16px" }`)
 - 선택 근거: `DiagramScreen` 좌표로는 axis 전환, gap, wrap, justify/align 차이를 안정적으로 표현하기 어려움
 
-### SelectorMatchScreen（후보）
+### SelectorMatchScreen
 - 책임: selector token, DOM tree, matched/unmatched node 상태를 한 화면에 표시
 - 필수 props: `selector`, `tokens`, `dom`
 - 선택 props: `title`, `activeNodeIds`, `explanation`

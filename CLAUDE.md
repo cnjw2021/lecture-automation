@@ -97,31 +97,31 @@ make preview SCENE=6                         # 씬 프리뷰 PNG
 
 | 파일 | 강의 | 상태 |
 |------|------|------|
-| `data/lecture-01-01.json` | 1-1 オリエンテーション | 완성 |
-| `data/lecture-01-02.json` | 1-2 Webの仕組みと3つの言語 | 완성 |
-| `data/lecture-01-03.json` | 1-3 AIが変えたWeb制作の風景 | 완성 |
-| `data/lecture-01-04.json` | 1-4 CodePenセットアップ + Hello World | 완성 |
-| `data/lecture-02-01.json` | 2-1 HTMLのルール | 완성 |
-| `data/lecture-02-02.json` | 2-2 テキストを扱うタグ | 완성 |
-| `data/lecture-02-03.json` | 2-3 リンクと画像 | 완성 |
-| `data/lecture-02-04.json` | 2-4 構造を組み立てるタグ | 완성 |
-| `data/lecture-02-05.json` | 2-5 フォーム | 완성 |
-| `data/lecture-02-06.json` | 2-6 テーブル基礎 | 완성 |
-| `data/lecture-02-07.json` | 2-7 AIにHTMLを任せる | 완성 |
-| `data/lecture-03-01.json` | 3-1 CSSの仕組み | 완성 |
-| `data/lecture-03-02.json` | 3-2 セレクタ | 완성 |
-| `data/lecture-03-03.json` | 3-3 色とタイポグラフィ | 완성 |
-| `data/lecture-03-04.json` | 3-4 ボックスモデル | 완성 |
-| `data/lecture-03-05.json` | 3-5 Flexbox | 완성 |
-| `data/lecture-03-06.json` | 3-6 レスポンシブデザイン | 완성 |
-| `data/lecture-03-07.json` | 3-7 AIにCSSを任せる | 완성 |
-| `data/lecture-04-01.json` | 4-1 サロンサイト企画 + AI初稿生成 | 완성 |
-| `data/lecture-04-02.json` | 4-2 コードを読む + 新テクニック | 완성 |
-| `data/lecture-04-03.json` | 4-3 カスタマイズ | 완성 |
-| `data/lecture-04-04.json` | 4-4 仕上げ + レビュー | 완성 |
-| `data/lecture-05-01.json` | 5-1 CodePenからファイルへ — StackBlitzで変換 | 완성 |
-| `data/lecture-05-02.json` | 5-2 Netlifyでデプロイ | 완성 |
-| `data/lecture-05-03.json` | 5-3 まとめと次のステップ | 완성 |
+| `data/lecture-01-01.json` | 1-1 オリエンテーション | JSON 완료 |
+| `data/lecture-01-02.json` | 1-2 Webの仕組みと3つの言語 | JSON 완료 |
+| `data/lecture-01-03.json` | 1-3 AIが変えたWeb制作の風景 | JSON 완료 |
+| `data/lecture-01-04.json` | 1-4 CodePenセットアップ + Hello World | JSON 완료 |
+| `data/lecture-02-01.json` | 2-1 HTMLのルール | JSON 완료 |
+| `data/lecture-02-02.json` | 2-2 テキストを扱うタグ | JSON 완료 |
+| `data/lecture-02-03.json` | 2-3 リンクと画像 | JSON 완료 |
+| `data/lecture-02-04.json` | 2-4 構造を組み立てるタグ | JSON 완료 |
+| `data/lecture-02-05.json` | 2-5 フォーム | JSON 완료 |
+| `data/lecture-02-06.json` | 2-6 テーブル基礎 | JSON 완료 |
+| `data/lecture-02-07.json` | 2-7 AIにHTMLを任せる | JSON 완료 |
+| `data/lecture-03-01.json` | 3-1 CSSの仕組み | JSON 완료 |
+| `data/lecture-03-02.json` | 3-2 セレクタ | JSON 완료 |
+| `data/lecture-03-03.json` | 3-3 色とタイポグラフィ | JSON 완료 |
+| `data/lecture-03-04.json` | 3-4 ボックスモデル | JSON 완료 |
+| `data/lecture-03-05.json` | 3-5 Flexbox | JSON 완료 |
+| `data/lecture-03-06.json` | 3-6 レスポンシブデザイン | JSON 완료 |
+| `data/lecture-03-07.json` | 3-7 AIにCSSを任せる | JSON 완료 |
+| `data/lecture-04-01.json` | 4-1 サロンサイト企画 + AI初稿生成 | JSON 완료 |
+| `data/lecture-04-02.json` | 4-2 コードを読む + 新テクニック | JSON 완료 |
+| `data/lecture-04-03.json` | 4-3 カスタマイズ | JSON 완료 |
+| `data/lecture-04-04.json` | 4-4 仕上げ + レビュー | JSON 완료 |
+| `data/lecture-05-01.json` | 5-1 CodePenからファイルへ — StackBlitzで変換 | JSON 완료 |
+| `data/lecture-05-02.json` | 5-2 Netlifyでデプロイ | JSON 완료 |
+| `data/lecture-05-03.json` | 5-3 まとめと次のステップ | JSON 완료 |
 
 커리큘럼 전체: [docs/curriculum.md](docs/curriculum.md)
 

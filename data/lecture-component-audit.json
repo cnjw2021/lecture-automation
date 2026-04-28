@@ -1,0 +1,690 @@
+{
+  "lecture_id": "component-audit",
+  "title": "Component Audit Fixture",
+  "part": 2,
+  "totalDurationSec": 300,
+  "sequence": [
+    {
+      "scene_id": 1,
+      "narration": "TitleScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "TitleScreen",
+        "props": {
+          "title": "リンクと画像",
+          "sub": "PART 2 — HTMLの基礎"
+        }
+      }
+    },
+    {
+      "scene_id": 2,
+      "narration": "SectionBreakScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "SectionBreakScreen",
+        "props": {
+          "section": "PART 2",
+          "title": "HTMLの基礎",
+          "subtitle": "テキスト・リンク・画像で文書を組み立てる"
+        }
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "EndScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "EndScreen",
+        "props": {
+          "title": "お疲れ様でした",
+          "message": "次回もお楽しみに",
+          "nextPreview": "HTMLの構造を組み立てるタグ"
+        }
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "KeyPointScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "KeyPointScreen",
+        "props": {
+          "icon": "🎯",
+          "headline": "今日のゴール",
+          "detail": "プロフィール写真とSNSリンクを追加する"
+        }
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "QuoteScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "QuoteScreen",
+        "props": {
+          "quote": "コードを書くのではなく、AIに正確に指示できる人を目指す",
+          "attribution": "本講座の核心"
+        }
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "DefinitionScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "DefinitionScreen",
+        "props": {
+          "term": "HTML",
+          "reading": "エイチティーエムエル",
+          "definition": "Webページの構造を作るマークアップ言語。要素をタグで囲んで文書を組み立てる",
+          "example": "<h1>見出し</h1>"
+        }
+      }
+    },
+    {
+      "scene_id": 7,
+      "narration": "QnAScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "QnAScreen",
+        "props": {
+          "question": "なぜalt属性が必要なのか?",
+          "answer": "画像が表示できないときの代替テキスト。スクリーンリーダーへの配慮にもなる"
+        }
+      }
+    },
+    {
+      "scene_id": 8,
+      "narration": "BulletDetailScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "BulletDetailScreen",
+        "props": {
+          "title": "今日学ぶこと",
+          "items": [
+            {
+              "title": "aタグとhref属性",
+              "detail": "リンクを作る基本",
+              "icon": "🔗",
+              "color": "#3b82f6"
+            },
+            {
+              "title": "imgタグとsrc属性",
+              "detail": "画像を表示する",
+              "icon": "🖼",
+              "color": "#10b981"
+            },
+            {
+              "title": "alt属性",
+              "detail": "アクセシビリティ配慮",
+              "icon": "♿",
+              "color": "#f59e0b"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 9,
+      "narration": "TwoColumnScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "TwoColumnScreen",
+        "props": {
+          "title": "absolute path vs relative path",
+          "left": {
+            "title": "絶対パス",
+            "body": "https://から始まる完全なURL\nどこからでも参照可能",
+            "icon": "🌐",
+            "color": "#3b82f6"
+          },
+          "right": {
+            "title": "相対パス",
+            "body": "images/photo.jpg\nプロジェクト内のファイル参照",
+            "icon": "📁",
+            "color": "#10b981"
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 10,
+      "narration": "SummaryScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "SummaryScreen",
+        "props": {
+          "title": "今日のまとめ",
+          "points": [
+            "aタグ + href属性でリンクを作る",
+            "外部リンクには target=\"_blank\"",
+            "imgタグ + src + alt で画像表示",
+            "altは代替テキストとアクセシビリティ"
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 11,
+      "narration": "NumberedListScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "NumberedListScreen",
+        "props": {
+          "title": "Unsplashの使い方",
+          "items": [
+            { "title": "unsplash.comにアクセス", "description": "新しいタブでサイトを開く" },
+            { "title": "キーワードで検索", "description": "英語で coffee や nature を入力" },
+            { "title": "右クリックで画像URLコピー", "description": "選んだ写真の上で操作" },
+            { "title": "imgタグのsrcに貼り付け", "description": "altも内容に合わせて更新" }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 12,
+      "narration": "IconListScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "IconListScreen",
+        "props": {
+          "title": "業種別の写真活用",
+          "items": [
+            { "icon": "✂️", "title": "美容室", "description": "施術のビフォーアフター写真", "color": "#ef4444" },
+            { "icon": "☕", "title": "カフェ", "description": "店内の雰囲気がわかる写真", "color": "#f59e0b" },
+            { "icon": "📚", "title": "教室", "description": "生徒さんの楽しそうな様子", "color": "#10b981" }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 13,
+      "narration": "AgendaScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "AgendaScreen",
+        "props": {
+          "title": "今日のアジェンダ",
+          "items": [
+            { "title": "リンクを作る — aタグ", "icon": "🔗", "duration": "8分" },
+            { "title": "画像を表示 — imgタグ", "icon": "🖼", "duration": "6分" },
+            { "title": "画像パスの理解", "icon": "📂", "duration": "4分" },
+            { "title": "実習 SNSリンク追加", "icon": "✏️", "duration": "4分" }
+          ],
+          "activeIndex": 1
+        }
+      }
+    },
+    {
+      "scene_id": 14,
+      "narration": "ProgressScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "ProgressScreen",
+        "props": {
+          "title": "コース全体の進捗",
+          "steps": [
+            "PART 1 オリエンテーション",
+            "PART 2 HTMLの基礎",
+            "PART 3 CSSの基礎",
+            "PART 4 実践プロジェクト",
+            "PART 5 公開とデプロイ"
+          ],
+          "currentStep": 2
+        }
+      }
+    },
+    {
+      "scene_id": 15,
+      "narration": "ComparisonScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "ComparisonScreen",
+        "props": {
+          "eyebrow": "リンクテキストの書き方",
+          "left": {
+            "title": "良い例",
+            "points": ["Googleを開く", "お問い合わせページへ", "サービス紹介を見る"],
+            "color": "#10b981"
+          },
+          "right": {
+            "title": "避けたい例",
+            "points": ["ここをクリック", "こちら", "リンク"],
+            "color": "#ef4444"
+          },
+          "vsLabel": "VS"
+        }
+      }
+    },
+    {
+      "scene_id": 16,
+      "narration": "BeforeAfterScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "BeforeAfterScreen",
+        "props": {
+          "title": "自己紹介ページの成長",
+          "before": {
+            "label": "前回まで",
+            "points": ["名前の見出し", "自己紹介文", "趣味のリスト"],
+            "color": "#94a3b8"
+          },
+          "after": {
+            "label": "今日追加",
+            "points": ["プロフィール写真", "SNSリンク一覧", "ウェブサイトらしい見た目"],
+            "color": "#10b981"
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 17,
+      "narration": "VennDiagramScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "VennDiagramScreen",
+        "props": {
+          "title": "HTML と CSS の関係",
+          "left": { "label": "HTML — 構造", "color": "#ef4444" },
+          "right": { "label": "CSS — 見た目", "color": "#3b82f6" },
+          "intersection": "セレクタで連結"
+        }
+      }
+    },
+    {
+      "scene_id": 18,
+      "narration": "StatScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "StatScreen",
+        "props": {
+          "value": "60",
+          "label": "Webサイトに使われる言語の割合",
+          "suffix": "%",
+          "description": "HTML / CSS / JavaScriptが基本3言語"
+        }
+      }
+    },
+    {
+      "scene_id": 19,
+      "narration": "BarChartScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "BarChartScreen",
+        "props": {
+          "title": "ブラウザのシェア",
+          "bars": [
+            { "label": "Chrome", "value": 65, "color": "#3b82f6" },
+            { "label": "Safari", "value": 19, "color": "#10b981" },
+            { "label": "Edge", "value": 5, "color": "#f59e0b" },
+            { "label": "Firefox", "value": 3, "color": "#ef4444" }
+          ],
+          "unit": "%"
+        }
+      }
+    },
+    {
+      "scene_id": 20,
+      "narration": "PieChartScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "PieChartScreen",
+        "props": {
+          "title": "学習時間の配分",
+          "slices": [
+            { "label": "HTML/CSS", "value": 40, "color": "#3b82f6" },
+            { "label": "AIツール活用", "value": 35, "color": "#10b981" },
+            { "label": "デプロイ", "value": 15, "color": "#f59e0b" },
+            { "label": "その他", "value": 10, "color": "#94a3b8" }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 21,
+      "narration": "DiagramScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "DiagramScreen",
+        "props": {
+          "title": "HTTP リクエストの流れ",
+          "subtitle": "ブラウザとサーバーの基本的なやり取り",
+          "nodes": [
+            { "id": "browser", "label": "ブラウザ", "x": 360, "y": 420, "icon": "🌐", "color": "#3b82f6" },
+            { "id": "dns", "label": "DNS", "x": 840, "y": 220, "icon": "🗺", "color": "#f59e0b" },
+            { "id": "server", "label": "サーバー", "x": 1320, "y": 420, "icon": "🖥", "color": "#10b981" }
+          ],
+          "edges": [
+            { "from": "browser", "to": "dns", "label": "URL問い合わせ" },
+            { "from": "dns", "to": "server", "label": "IP応答" },
+            { "from": "browser", "to": "server", "label": "HTTPリクエスト" }
+          ],
+          "caption": "DNSがURLをIPに変換してからリクエストが届く"
+        }
+      }
+    },
+    {
+      "scene_id": 22,
+      "narration": "TimelineScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "TimelineScreen",
+        "props": {
+          "title": "Web技術の進化",
+          "events": [
+            { "label": "1990 HTML 誕生", "description": "Webの基礎が作られる", "icon": "📄", "color": "#94a3b8" },
+            { "label": "1996 CSS 登場", "description": "見た目を分離して設計", "icon": "🎨", "color": "#3b82f6" },
+            { "label": "1995 JavaScript 登場", "description": "動的な振る舞いが可能に", "icon": "⚡", "color": "#f59e0b" },
+            { "label": "2010s レスポンシブ時代", "description": "モバイル対応が標準に", "icon": "📱", "color": "#10b981" }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 23,
+      "narration": "FeatureGridScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "FeatureGridScreen",
+        "props": {
+          "title": "AIに頼める作業",
+          "features": [
+            { "icon": "📝", "title": "下書き生成", "description": "HTML/CSSの初稿を作成", "color": "#3b82f6" },
+            { "icon": "🔍", "title": "コードレビュー", "description": "改善点を指摘", "color": "#10b981" },
+            { "icon": "🐛", "title": "バグ修正", "description": "エラーの原因を特定", "color": "#ef4444" },
+            { "icon": "📚", "title": "解説生成", "description": "わからない部分を説明", "color": "#f59e0b" }
+          ],
+          "columns": 2
+        }
+      }
+    },
+    {
+      "scene_id": 24,
+      "narration": "HierarchyScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "HierarchyScreen",
+        "props": {
+          "title": "HTMLの入れ子構造",
+          "root": {
+            "label": "<ul>",
+            "icon": "📦",
+            "children": [
+              {
+                "label": "<li>",
+                "icon": "📎",
+                "children": [
+                  { "label": "<a href=\"...\">X</a>", "icon": "🔗" }
+                ]
+              },
+              {
+                "label": "<li>",
+                "icon": "📎",
+                "children": [
+                  { "label": "<a href=\"...\">Instagram</a>", "icon": "🔗" }
+                ]
+              },
+              {
+                "label": "<li>",
+                "icon": "📎",
+                "children": [
+                  { "label": "<a href=\"...\">YouTube</a>", "icon": "🔗" }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scene_id": 25,
+      "narration": "BoxModelDiagramScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "BoxModelDiagramScreen",
+        "props": {
+          "title": "CSS Box Model",
+          "subtitle": "要素は4つの層で構成される",
+          "layers": [
+            { "key": "margin", "label": "Margin", "value": "20px", "description": "外側の余白", "color": "#f59e0b" },
+            { "key": "border", "label": "Border", "value": "2px", "description": "枠線", "color": "#ef4444" },
+            { "key": "padding", "label": "Padding", "value": "16px", "description": "内側の余白", "color": "#10b981" },
+            { "key": "content", "label": "Content", "color": "#3b82f6" }
+          ],
+          "highlightLayer": "padding",
+          "contentLabel": "Content",
+          "contentDetail": "300 × 200",
+          "callouts": [
+            { "title": "Margin", "detail": "外側の余白で隣接要素との距離", "color": "#f59e0b" },
+            { "title": "Border", "detail": "見える枠線", "color": "#ef4444" },
+            { "title": "Padding", "detail": "Borderと中身の間の余白", "color": "#10b981" }
+          ]
+        }
+      }
+    },
+    {
+      "scene_id": 26,
+      "narration": "CalloutScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "CalloutScreen",
+        "props": {
+          "type": "warning",
+          "title": "altを空にしないで",
+          "body": "altが空または欠落していると、画像が表示できないときに何の情報も伝わらない。スクリーンリーダーも読み上げできず、アクセシビリティが下がる"
+        }
+      }
+    },
+    {
+      "scene_id": 27,
+      "narration": "ImagePlaceholderScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "ImagePlaceholderScreen",
+        "props": {
+          "title": "プロフィール画像の例",
+          "description": "Unsplashで撮影された風景写真をプロフィールに使う",
+          "icon": "🖼",
+          "label": "サンプル画像",
+          "layout": "left"
+        }
+      }
+    },
+    {
+      "scene_id": 28,
+      "narration": "BrowserMockScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "BrowserMockScreen",
+        "props": {
+          "url": "https://example.com",
+          "title": "ブラウザのアドレスバー",
+          "description": "https:// で始まると暗号化されている。鍵アイコンが表示される",
+          "layout": "left"
+        }
+      }
+    },
+    {
+      "scene_id": 29,
+      "narration": "ImageScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "ImageScreen",
+        "props": {
+          "src": "https://picsum.photos/1200/800",
+          "url": "https://unsplash.com/photo/example",
+          "title": "Unsplashの写真",
+          "description": "プロのカメラマンが撮影した高品質な写真。商用利用OK",
+          "layout": "right"
+        }
+      }
+    },
+    {
+      "scene_id": 30,
+      "narration": "MyCodeScene audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "MyCodeScene",
+        "props": {
+          "code": "<a href=\"https://www.google.com\" target=\"_blank\">Googleを開く</a>",
+          "language": "html",
+          "title": "リンクの基本"
+        }
+      }
+    },
+    {
+      "scene_id": 31,
+      "narration": "CodeWalkthroughScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "CodeWalkthroughScreen",
+        "props": {
+          "title": "aタグの構造",
+          "code": "<a href=\"https://www.google.com\" target=\"_blank\">\n  Googleを開く\n</a>",
+          "highlightLines": [1],
+          "caption": "href = リンク先URL、target=\"_blank\" = 新しいタブで開く"
+        }
+      }
+    },
+    {
+      "scene_id": 32,
+      "narration": "CodeRenderMappingScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "CodeRenderMappingScreen",
+        "props": {
+          "title": "コードと画面の対応",
+          "code": "<h1>Welcome</h1>\n<p>HTMLの基本</p>\n<a href=\"#\">続きを読む</a>",
+          "language": "html",
+          "result": {
+            "html": "<h1 style='font-size:36px;font-weight:700;margin:0 0 12px'>Welcome</h1><p style='font-size:20px;margin:0 0 16px'>HTMLの基本</p><a href='#' style='color:#3b82f6;text-decoration:underline;font-size:18px'>続きを読む</a>",
+            "url": "https://example.com"
+          },
+          "mappings": [
+            { "lineRange": [1, 1], "target": "heading", "label": "見出し", "color": "#ef4444" },
+            { "lineRange": [2, 2], "target": "paragraph", "label": "段落", "color": "#3b82f6" },
+            { "lineRange": [3, 3], "target": "link", "label": "リンク", "color": "#10b981" }
+          ],
+          "caption": "HTMLの行が画面の各要素にどう変わるか"
+        }
+      }
+    },
+    {
+      "scene_id": 33,
+      "narration": "StructureToRenderScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "StructureToRenderScreen",
+        "props": {
+          "title": "構造と表示の対応",
+          "tree": {
+            "label": "<body>",
+            "children": [
+              { "id": "header", "label": "<header>" },
+              { "id": "main", "label": "<main>" },
+              { "id": "footer", "label": "<footer>" }
+            ]
+          },
+          "rendered": {
+            "url": "https://example.com",
+            "regions": [
+              { "id": "header", "label": "ヘッダー", "description": "サイト名・ナビ" },
+              { "id": "main", "label": "メイン", "description": "本文コンテンツ" },
+              { "id": "footer", "label": "フッター", "description": "コピーライト・リンク" }
+            ]
+          },
+          "activeId": "main",
+          "caption": "セマンティックタグが画面のどのエリアに対応するか"
+        }
+      }
+    },
+    {
+      "scene_id": 34,
+      "narration": "FlexLayoutDiagramScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "FlexLayoutDiagramScreen",
+        "props": {
+          "title": "Flexbox 横並び",
+          "direction": "row",
+          "items": [
+            { "label": "Item 1", "color": "#3b82f6" },
+            { "label": "Item 2", "color": "#10b981" },
+            { "label": "Item 3", "color": "#f59e0b" }
+          ],
+          "properties": {
+            "display": "flex",
+            "gap": "16px",
+            "justify-content": "space-between"
+          },
+          "justifyContent": "space-between",
+          "alignItems": "center",
+          "caption": "display: flexで子要素が主軸方向に並ぶ"
+        }
+      }
+    },
+    {
+      "scene_id": 35,
+      "narration": "SelectorMatchScreen audit",
+      "durationSec": 10,
+      "visual": {
+        "type": "remotion",
+        "component": "SelectorMatchScreen",
+        "props": {
+          "title": "セレクタとマッチング",
+          "selector": "ul li.active",
+          "tokens": [
+            { "text": "ul", "role": "tag" },
+            { "text": " ", "role": "combinator" },
+            { "text": "li", "role": "tag" },
+            { "text": ".active", "role": "class" }
+          ],
+          "dom": {
+            "label": "<ul>",
+            "children": [
+              { "id": "li1", "label": "<li>", "children": [{ "label": "Item 1" }] },
+              { "id": "li2", "label": "<li class=\"active\">", "matched": true, "children": [{ "label": "Item 2 (現在)" }] },
+              { "id": "li3", "label": "<li>", "children": [{ "label": "Item 3" }] }
+            ]
+          },
+          "explanation": "ul の子孫の li でクラス active を持つ要素のみマッチ",
+          "caption": "セレクタは「対象を特定する条件」"
+        }
+      }
+    }
+  ]
+}

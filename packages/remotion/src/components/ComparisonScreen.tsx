@@ -111,7 +111,7 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({
           }}
         />
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 18, flex: 1, justifyContent: 'center' }}>
           {side.points.map((point, i) => {
             const baseDelay = isLeft ? pointBaseDelay[0] : pointBaseDelay[1];
             const pointDelay = baseDelay + i * pointInterval;

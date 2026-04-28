@@ -63,8 +63,8 @@ export const VennDiagramScreen: React.FC<VennDiagramScreenProps> = ({
 
   const leftColor = left.color || theme.color.accent;
   const rightColor = right.color || theme.color.accentSecondary;
-  const r = 210;
-  const overlap = 80;
+  const r = 320;
+  const overlap = 140;
 
   const headlineSpec = typographyStyle('headline');
   const captionSpec = typographyStyle('caption');
@@ -147,10 +147,10 @@ export const VennDiagramScreen: React.FC<VennDiagramScreenProps> = ({
           >
             <span
               style={{
-                fontSize: 30,
+                fontSize: 38,
                 fontWeight: 700,
                 color: leftColor,
-                maxWidth: 140,
+                maxWidth: 220,
                 textAlign: 'center',
                 lineHeight: 1.35,
                 fontFamily: theme.font.base,
@@ -182,10 +182,10 @@ export const VennDiagramScreen: React.FC<VennDiagramScreenProps> = ({
           >
             <span
               style={{
-                fontSize: 30,
+                fontSize: 38,
                 fontWeight: 700,
                 color: rightColor,
-                maxWidth: 140,
+                maxWidth: 220,
                 textAlign: 'center',
                 lineHeight: 1.35,
                 fontFamily: theme.font.base,
@@ -218,7 +218,7 @@ export const VennDiagramScreen: React.FC<VennDiagramScreenProps> = ({
             >
               <span
                 style={{
-                  fontSize: 26,
+                  fontSize: 32,
                   fontWeight: 700,
                   color: theme.color.textPrimary,
                   fontFamily: theme.font.base,

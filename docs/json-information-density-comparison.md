@@ -1,18 +1,24 @@
 # JSON information density comparison
 
-Related: #122, #123, #126, #127
+Related: #122, #123, #126, #127, #128
 
-Date: 2026-04-27
+Initial date: 2026-04-27. Vertical slice sample 2 added on the same date.
 
 ## Scope
 
-Sample lecture: `data/lecture-02-02.json` (テキストを扱うタグ).
+| Sample | Lecture | Purpose |
+|---|---|---|
+| 1 | `data/lecture-02-02.json` (テキストを扱うタグ) | Original #123 sample. Validates that `visual.props` preserves learning information structure rather than summarizing narration. |
+| 2 | `data/lecture-02-03.json` (リンクと画像) | Vertical slice re-conversion. Verifies that the #123 / #128 policies hold on a second lecture with mixed gap types: lesson goal cards, conceptual network, metaphor pairing, industry use-case list, abbreviation pattern, next-lecture preview. |
 
-This comparison validates the #123 rule that `visual.props` should preserve learning information structure, not just summarize narration. Narration text was not changed. Only Remotion `visual` choices and props were reconverted.
+Both samples follow the same constraint: narration text is not changed. Only Remotion `visual` choices and props were reconverted.
 
-Committed still directory: `docs/assets/issue-123/`.
+Committed still directories:
 
-Temporary render working directory used during review: `/tmp/review/issue-123-info-density`.
+- Sample 1: `docs/assets/issue-123/`
+- Sample 2: `docs/assets/issue-126/` (created on render)
+
+Temporary render working directory used during review: `/tmp/review/issue-123-info-density` (sample 1), `/tmp/review/issue-126-info-density` (sample 2).
 
 ## Before / after stills
 
@@ -108,3 +114,99 @@ npx remotion still src/PreviewRoot.tsx PreviewScene /tmp/review/issue-123-info-d
 `0b9da9c` is the PR base commit used for the before JSON. Each future comparison should record its own PR base SHA or base branch HEAD point the same way. Use the same pattern with `sceneId` 10 and 17 for before stills, and `data/lecture-02-02.json` for after stills. The committed PNGs in `docs/assets/issue-123/` are the canonical comparison artifacts for this PR.
 
 Committed stills were downscaled to 960x540 and compressed in one batch with `pngquant --quality=70-90` to keep comparison assets small enough for git history.
+
+---
+
+## Sample 2: lecture-02-03 — Vertical slice (re-conversion)
+
+Six scenes were re-converted to validate the #123 information density policy and #128 visual style preset opt-in on a second lecture. Scenes were chosen because narration carried structured content (multi-item goals, network, metaphor pair, multi-industry list, abbreviation pattern, next-preview contrast) that the original single-message slides did not preserve.
+
+### Before / after stills
+
+Stills are rendered separately when the user runs the pipeline. Until rendered, paths below are forward declarations. Final committed PNGs live in `docs/assets/issue-126/`.
+
+| Scene | Before still | After still | Reference comparison target |
+|---:|---|---|---|
+| 3 | `docs/assets/issue-126/before-scene-3.png` | `docs/assets/issue-126/after-scene-3.png` | NotebookLM / Progate lesson outcome cards: 2〜3 deliverables with icon + short detail |
+| 5 | `docs/assets/issue-126/before-scene-5.png` | `docs/assets/issue-126/after-scene-5.png` | MDN [How the Web works](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/How_does_the_Internet_work): client-server-page network diagram |
+| 7 | `docs/assets/issue-126/before-scene-7.png` | `docs/assets/issue-126/after-scene-7.png` | MDN [`<a>` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/a): anchor element semantics and naming |
+| 23 | `docs/assets/issue-126/before-scene-23.png` | `docs/assets/issue-126/after-scene-23.png` | MDN [Images in HTML](https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Images_in_HTML): why images matter on a web page |
+| 24 | `docs/assets/issue-126/before-scene-24.png` | `docs/assets/issue-126/after-scene-24.png` | MDN [HTML elements reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements): per-element abbreviation origin |
+| 56 | `docs/assets/issue-126/before-scene-56.png` | `docs/assets/issue-126/after-scene-56.png` | MDN [Document and website structure](https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Document_and_website_structure): semantic regions vs flat tag list |
+
+### Scene decisions
+
+| Scene | Before | After | Style preset | Information units retained after reconversion |
+|---:|---|---|---|---|
+| 3 | `KeyPointScreen` | `BulletDetailScreen` | `concept-calm` | 3 lesson goals (写真, SNSリンク, ウェブサイトらしい見た目) each with icon + role detail |
+| 5 | `QuoteScreen` | `DiagramScreen` | `concept-calm` | 4 page nodes (ニュース・ショップ・ブログ・動画), 6 link edges, WWW take-away in title, URL手入力 counter-example in caption |
+| 7 | `DefinitionScreen` | `TwoColumnScreen` | `concept-calm` | 船の錨 metaphor column, aタグ concrete column with code shape, "Anchor 頭文字" anchored as title |
+| 23 | `KeyPointScreen` | `IconListScreen` | `concept-calm` | 3 industry use cases (美容室・カフェ・教室) with the photo subject each industry needs |
+| 24 | `DefinitionScreen` | `BulletDetailScreen` | `concept-calm` | abbreviation pattern as title + 3 instances (img→Image, a→Anchor, p→Paragraph) |
+| 56 | `KeyPointScreen` | `ComparisonScreen` | `recap-synthesis` | 現在 column (h1/p/ul/img/a, 順に並ぶ, まとまり見えない), 次回 column (ヘッダー/メイン/フッター, 区分け, AI読みやすい), structural shift in subtitle |
+
+### #123 criteria check
+
+| Scene | Narration core units | Still-recoverable units | Recovery |
+|---:|---:|---:|---:|
+| 3 | 3 (3 goals) | 3 | 100% |
+| 5 | 4 (network, WWW meaning, link role, no-link counter-example) | 4 | 100% |
+| 7 | 4 (aタグ, Anchor 略, 錨 metaphor, ページ接続役割) | 4 | 100% |
+| 23 | 5 (1 general + 3 industry examples + 1 take-away) | 4 | 80% |
+| 24 | 5 (imgタグ + 略パターン + 3 examples + 推測しやすい insight) | 4 | 80% |
+| 56 | 5 (next topic, 現状, 次回構造, 見た目変わらず, AI読みやすい) | 5 | 100% |
+
+| Criterion | Result |
+|---|---|
+| Audio dependency | Pass. All six scenes meet or exceed the 70% still-recovery threshold. |
+| Simultaneous information units | Pass. Every scene retains at least 4 still-recoverable information units. |
+| Visual hierarchy | Pass. Headline/title plus 3〜4 sub-items keep one focal anchor per scene. |
+| Reference comparison | Documented. External reference URLs listed above; project stills will be committed after render. |
+| Narration-screen complement | Pass. Each after-slide encodes a relationship (network, before/after, metaphor pairing, abbreviation table) instead of repeating a single narration sentence. |
+
+### Component boundary notes
+
+No #127 candidate component was required. The six scenes fit existing components:
+
+- Goal cards → `BulletDetailScreen`
+- Network → `DiagramScreen`
+- Metaphor pairing → `TwoColumnScreen`
+- Use-case list → `IconListScreen`
+- Abbreviation pattern → `BulletDetailScreen`
+- Structural progression → `ComparisonScreen`
+
+If subsequent lectures introduce code↔result mapping, HTML tree↔region mapping, Flexbox layouts, or selector matching, fall back to the closest current component and record the gap as #127 follow-up. Do not write candidate component names into lecture JSON.
+
+### Verification
+
+- `jq empty data/lecture-02-03.json`
+- `make lint-fix LECTURE=lecture-02-03.json`
+- `make lint LECTURE=lecture-02-03.json STRICT=1`
+- Render before/after stills for scenes 3, 5, 7, 23, 24, 56 and commit downscaled PNGs into `docs/assets/issue-126/`.
+
+### Still reproduction commands
+
+The "before" JSON is the state of `data/lecture-02-03.json` at the base commit `e8a88f2` (origin/main HEAD when this branch was cut).
+
+```bash
+mkdir -p /tmp/review/issue-126-info-density
+git show e8a88f2:data/lecture-02-03.json > /tmp/review/issue-126-info-density/lecture-02-03-before.json
+
+# Before still example for scene 3
+jq -n --slurpfile lecture /tmp/review/issue-126-info-density/lecture-02-03-before.json \
+  '{lectureData:$lecture[0],sceneId:3,durationInFrames:120}' \
+  > /tmp/review/issue-126-info-density/before-scene-3-props.json
+npx remotion still src/PreviewRoot.tsx PreviewScene \
+  /tmp/review/issue-126-info-density/before-scene-3.png --frame=60 \
+  --props=/tmp/review/issue-126-info-density/before-scene-3-props.json
+
+# After still example for scene 3
+jq -n --slurpfile lecture data/lecture-02-03.json \
+  '{lectureData:$lecture[0],sceneId:3,durationInFrames:120}' \
+  > /tmp/review/issue-126-info-density/after-scene-3-props.json
+npx remotion still src/PreviewRoot.tsx PreviewScene \
+  /tmp/review/issue-126-info-density/after-scene-3.png --frame=60 \
+  --props=/tmp/review/issue-126-info-density/after-scene-3-props.json
+```
+
+Repeat the same pattern with `sceneId` 5, 7, 23, 24, and 56. Downscale to 960x540 and compress with `pngquant --quality=70-90` before committing into `docs/assets/issue-126/`.

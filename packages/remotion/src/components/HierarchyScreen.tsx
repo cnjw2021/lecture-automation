@@ -74,7 +74,7 @@ export const HierarchyScreen: React.FC<HierarchyScreenProps> = ({
         {/* Node card */}
         <div
           style={{
-            padding: isRoot ? '18px 36px' : '12px 24px',
+            padding: isRoot ? '24px 44px' : '18px 32px',
             borderRadius: theme.radius.card,
             background: isRoot
               ? `linear-gradient(135deg, ${nodeColor}1a 0%, ${theme.infographic.panelBgStrong} 100%)`
@@ -108,7 +108,7 @@ export const HierarchyScreen: React.FC<HierarchyScreenProps> = ({
           )}
           <span
             style={{
-              fontSize: isRoot ? 30 : 24,
+              fontSize: isRoot ? 38 : 28,
               fontWeight: isRoot ? 700 : 600,
               color: theme.color.textPrimary,
               fontFamily: theme.font.base,
@@ -221,7 +221,7 @@ export const HierarchyScreen: React.FC<HierarchyScreenProps> = ({
         </h1>
       )}
 
-      <div style={{ display: 'flex', justifyContent: 'center', flex: 1, alignItems: 'flex-start' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', flex: 1, alignItems: 'center' }}>
         {renderNode(root, 0)}
       </div>
 

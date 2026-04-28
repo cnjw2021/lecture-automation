@@ -32,13 +32,13 @@
 - `SummaryScreen`은 강의 마무리나 전체 요약에 쓴다. 일반 본문 설명에서 세부 규칙·판단 기준을 담는 용도라면 `BulletDetailScreen` 또는 비교/도식 계열을 우선한다.
 - 컴포넌트 표현 한계 때문에 구조가 손실되면 lecture JSON에는 활성 컴포넌트만 쓰고, 비교 문서 또는 이슈 댓글에 #126 / #127 후속 후보로 기록한다.
 
-## コンポーネント選択（31種）
+## コンポーネント選択（35種）
 
 씬마다 아래 테이블에서 스크립트 내용에 맞는 컴포넌트를 선택한다. **동일 컴포넌트 3씬 이상 연속 금지. 연속된 씬은 내용뿐 아니라 레이아웃·컴포넌트 종류도 달라야 한다.**
 
 props 상세는 `docs/component-props-reference.md` 참조.
 
-주의: `CodeRenderMappingScreen`, `StructureToRenderScreen`, `FlexLayoutDiagramScreen`, `SelectorMatchScreen`은 #127 후보 명세이며 아직 활성 컴포넌트가 아니다. 현재 lecture JSON에는 사용하지 않는다.
+**활성**: `CodeRenderMappingScreen`, `StructureToRenderScreen`, `FlexLayoutDiagramScreen`, `SelectorMatchScreen` 4종 모두 #127 마이그레이션에서 구현·등록 완료. lecture JSON 의 `visual.component` 값으로 직접 사용한다.
 
 ### 기본/전환
 | 스크립트 내용 | 컴포넌트 | 판단 기준 |
@@ -89,16 +89,19 @@ props 상세는 `docs/component-props-reference.md` 참조.
 | 계층/분류 구조 | `HierarchyScreen` | 트리 구조 |
 | CSS 박스 모델·중첩 레이어 | `BoxModelDiagramScreen` | content/padding/border/margin처럼 포함 관계, DevTools 색상, width 계산을 한 화면에 남겨야 할 때 |
 
-### 도메인 시각 패턴 후보
+### 도메인 시각 패턴 (활성)
 
-아래 패턴은 `docs/remotion-domain-visual-patterns.md`의 #127 결정표에 따라 관리한다. 활성 컴포넌트로 구현되기 전까지는 JSON에 후보 컴포넌트명을 쓰지 않는다.
+아래 4개 패턴은 #127 에서 구현 완료. lecture JSON 의 `visual.component` 값으로 직접 사용한다.
+
+| 스크립트 내용 | 컴포넌트 | 판단 기준 |
+|---|---|---|
+| 코드 행과 렌더링 결과를 연결해서 보여줘야 함 | `CodeRenderMappingScreen` | 좌(코드) ↔ 우(렌더) + line→region 매핑. 단순 행 설명만이면 `CodeWalkthroughScreen` |
+| HTML 트리와 페이지 결과를 동시에 연결해야 함 | `StructureToRenderScreen` | 좌(트리) ↔ 우(영역). 트리만 핵심이면 `HierarchyScreen`, 화면 결과만 핵심이면 `BrowserMockScreen` |
+| Flexbox 축, 정렬, 아이템 분포가 핵심 | `FlexLayoutDiagramScreen` | direction/wrap/justify/align 한 화면에 표시. 단순 용어 정의는 `DefinitionScreen`, 코드 중심이면 `CodeWalkthroughScreen` |
+| CSS selector가 어떤 DOM 노드에 매칭되는지 보여줘야 함 | `SelectorMatchScreen` | tokens(role-colored) + DOM tree(matched 표시). 단순 종류 나열은 `BulletDetailScreen` |
 
 | 스크립트 내용 | 상태 | 현재 선택 | 후속 후보 |
 |---|---|---|---|
-| 코드 행과 렌더링 결과를 연결해서 보여줘야 함 | 후보 | 단순 행 설명이면 `CodeWalkthroughScreen`, 결과가 핵심이면 가장 가까운 코드/브라우저 씬으로 분리하고 follow-up 기록 | `CodeRenderMappingScreen` |
-| HTML 트리와 페이지 결과를 동시에 연결해야 함 | 후보 | 트리만 핵심이면 `HierarchyScreen`, 화면 결과만 핵심이면 `BrowserMockScreen` | `StructureToRenderScreen` |
-| Flexbox 축, 정렬, 아이템 분포가 핵심 | 후보 | 단순 용어 정의는 `DefinitionScreen`, 두 개념 병렬은 `TwoColumnScreen`, 코드 설명은 `CodeWalkthroughScreen` | `FlexLayoutDiagramScreen` |
-| CSS selector가 어떤 DOM 노드에 매칭되는지 보여줘야 함 | 후보 | selector 종류 나열은 `BulletDetailScreen`, CSS 문법 설명은 `CodeWalkthroughScreen` | `SelectorMatchScreen` |
 | Playwright 캡처 이미지 위에 주석/하이라이트가 필요 | 보류 | 실제 조작은 `Playwright`, 정적 캡처는 `ImageScreen`, URL UI 설명은 `BrowserMockScreen` | annotated image variant |
 
 ### 강조
@@ -131,10 +134,10 @@ props 상세는 `docs/component-props-reference.md` 참조.
 - 코드: 첫 등장 → `MyCodeScene` / 행별 설명 → `CodeWalkthroughScreen`
 - 단계: 절차 → `NumberedListScreen` / 시간축 → `TimelineScreen` / 현재 위치 → `ProgressScreen`
 - CSS 박스 모델: 4층 위치 관계나 width 계산이 핵심 → `BoxModelDiagramScreen` / 단순 용어 나열 → `BulletDetailScreen`
-- 코드와 결과 매핑: 현재 활성 컴포넌트 없음. 후보는 `CodeRenderMappingScreen`; 임시로 `CodeWalkthroughScreen`과 `BrowserMockScreen`을 인접 씬으로 나누고 follow-up 기록
-- HTML 구조와 렌더 결과 매핑: 현재 활성 컴포넌트 없음. 후보는 `StructureToRenderScreen`; 트리만이면 `HierarchyScreen`, 결과만이면 `BrowserMockScreen`
-- Flexbox 축/분포: 현재 활성 컴포넌트 없음. 후보는 `FlexLayoutDiagramScreen`; 단순 정의면 `DefinitionScreen`, 코드 중심이면 `CodeWalkthroughScreen`
-- selector-DOM 매칭: 현재 활성 컴포넌트 없음. 후보는 `SelectorMatchScreen`; 단순 종류 나열이면 `BulletDetailScreen`
+- 코드와 결과 매핑: `CodeRenderMappingScreen` (line→region mapping). 단순 행 설명만이면 `CodeWalkthroughScreen`
+- HTML 구조와 렌더 결과 매핑: `StructureToRenderScreen`. 트리만이면 `HierarchyScreen`, 결과만이면 `BrowserMockScreen`
+- Flexbox 축/분포: `FlexLayoutDiagramScreen`. 단순 정의면 `DefinitionScreen`, 코드 중심이면 `CodeWalkthroughScreen`
+- selector-DOM 매칭: `SelectorMatchScreen`. 단순 종류 나열이면 `BulletDetailScreen`
 - 브라우저 UI: 이미지 없음 → `BrowserMockScreen` / 실제 캡처 이미지 있음 → `ImageScreen`
 
 ### Style preset 선택

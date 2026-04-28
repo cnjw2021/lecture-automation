@@ -31,3 +31,7 @@ export { BrowserMockScreen } from './BrowserMockScreen';
 export { ImageScreen } from './ImageScreen';
 export { PlaywrightSynthScene } from './PlaywrightSynthScene';
 export { BoxModelDiagramScreen } from './BoxModelDiagramScreen';
+export { CodeRenderMappingScreen } from './CodeRenderMappingScreen';
+export { StructureToRenderScreen } from './StructureToRenderScreen';
+export { FlexLayoutDiagramScreen } from './FlexLayoutDiagramScreen';
+export { SelectorMatchScreen } from './SelectorMatchScreen';

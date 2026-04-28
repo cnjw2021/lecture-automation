@@ -135,9 +135,9 @@ export const BarChartScreen: React.FC<BarChartScreenProps> = ({
           return (
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 20, opacity: barOpacity }}>
               {/* Label */}
-              <div style={{ width: 200, textAlign: 'right', flexShrink: 0 }}>
+              <div style={{ width: 240, textAlign: 'right', flexShrink: 0 }}>
                 <span
-                  style={{ fontSize: 26, fontWeight: 600, color: theme.color.textPrimary }}
+                  style={{ fontSize: 32, fontWeight: 600, color: theme.color.textPrimary }}
                 >
                   {bar.label}
                 </span>
@@ -147,7 +147,7 @@ export const BarChartScreen: React.FC<BarChartScreenProps> = ({
               <div
                 style={{
                   flex: 1,
-                  height: 46,
+                  height: 68,
                   background: theme.infographic.panelBg,
                   border: `1px solid ${theme.infographic.panelBorder}`,
                   borderRadius: theme.radius.card,
@@ -172,7 +172,7 @@ export const BarChartScreen: React.FC<BarChartScreenProps> = ({
                   {barProgress > 0.5 && (
                     <span
                       style={{
-                        fontSize: 19,
+                        fontSize: 26,
                         fontWeight: 700,
                         color: '#fff',
                         fontFamily: theme.font.numeric,

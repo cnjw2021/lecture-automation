@@ -112,22 +112,22 @@ export const StatScreen: React.FC<StatScreenProps> = ({
       <div
         style={{
           position: 'absolute',
-          width: 440,
-          height: 440,
+          width: 660,
+          height: 660,
           borderRadius: '50%',
-          border: `3px solid ${accentColor}`,
-          opacity: 0.10,
+          border: `4px solid ${accentColor}`,
+          opacity: 0.12,
           transform: `scale(${ringScale}) rotate(${ringRotation}deg)`,
         }}
       />
       <div
         style={{
           position: 'absolute',
-          width: 530,
-          height: 530,
+          width: 780,
+          height: 780,
           borderRadius: '50%',
-          border: `1.5px dashed ${accentColor}`,
-          opacity: 0.07,
+          border: `2px dashed ${accentColor}`,
+          opacity: 0.08,
           transform: `scale(${ringScale})`,
         }}
       />
@@ -136,10 +136,10 @@ export const StatScreen: React.FC<StatScreenProps> = ({
       <div
         style={{
           position: 'absolute',
-          width: 640,
-          height: 640,
+          width: 920,
+          height: 920,
           borderRadius: '50%',
-          background: `radial-gradient(circle, ${accentColor}14 0%, transparent 65%)`,
+          background: `radial-gradient(circle, ${accentColor}18 0%, transparent 65%)`,
           transform: `scale(${ringScale})`,
         }}
       />

@@ -133,7 +133,7 @@ export const FeatureGridScreen: React.FC<FeatureGridScreenProps> = ({
           gap,
           justifyContent: 'center',
           flex: 1,
-          alignContent: 'flex-start',
+          alignContent: 'center',
         }}
       >
         {features.map((feature, i) => {

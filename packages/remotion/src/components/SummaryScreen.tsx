@@ -103,7 +103,7 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({
       </div>
 
       {/* Points */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 20, flex: 1 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 20, flex: 1, justifyContent: 'center' }}>
         {points.map((point, i) => {
           const baseDelay = (a.item.baseDelay as number) ?? 15;
           const interval = a.item.staggerInterval ?? 20;
