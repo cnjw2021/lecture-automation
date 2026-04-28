@@ -227,8 +227,16 @@
             "key": "<h1>山田太郎</h1>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -236,8 +244,16 @@
             "key": "<p>Web制作を勉強しています。</p>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -245,8 +261,16 @@
             "key": "<h2>趣味</h2>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -254,8 +278,16 @@
             "key": "<ul>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -263,8 +295,16 @@
             "key": "<li>映画鑑賞</li>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -272,8 +312,16 @@
             "key": "<li>カフェ巡り</li>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -364,8 +412,16 @@
             "key": "<h1>山田太郎</h1>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -373,8 +429,16 @@
             "key": "<p>Web制作を勉強しています。</p>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -382,8 +446,16 @@
             "key": "<h2>趣味</h2>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -391,8 +463,16 @@
             "key": "<ul>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -400,8 +480,16 @@
             "key": "<li>映画鑑賞</li>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -409,8 +497,16 @@
             "key": "<li>カフェ巡り</li>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -418,8 +514,16 @@
             "key": "</ul>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -600,8 +704,16 @@
             "key": "<a href=\"https://www.google.com\">Googleを開く</a>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -680,8 +792,16 @@
             "key": "<a href=\"https://www.google.com\">Googleを開く</a>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -706,8 +826,16 @@
             "key": "<a href=\"https://www.google.com\" target=\"_blank\">Googleを開く</a>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -859,8 +987,16 @@
             "key": "<a href=\"https://www.google.com\" target=\"_blank\">Googleを開く</a>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -868,8 +1004,16 @@
             "key": "<a href=\"https://www.youtube.com\" target=\"_blank\">YouTubeを見る</a>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -1470,13 +1614,25 @@
             "key": "Enter"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "type",
             "selector": "#box-html .CodeMirror textarea",
             "key": "<h2>SNS</h2>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -1484,8 +1640,16 @@
             "key": "<ul>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -1493,8 +1657,16 @@
             "key": "<li><a href=\"https://x.com\" target=\"_blank\">X</a></li>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -1502,8 +1674,16 @@
             "key": "<li><a href=\"https://instagram.com\" target=\"_blank\">Instagram</a></li>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -1511,8 +1691,16 @@
             "key": "<li><a href=\"https://youtube.com\" target=\"_blank\">YouTube</a></li>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -1640,8 +1828,16 @@
             "key": "<h1>山田太郎</h1>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -1649,8 +1845,16 @@
             "key": "<p>Web制作を勉強しています。</p>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -1658,8 +1862,16 @@
             "key": "<ul><li>映画</li><li>カフェ巡り</li></ul>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -1667,8 +1879,16 @@
             "key": "<img src=\"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600\" alt=\"コーヒーカップの写真\">"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
@@ -1676,8 +1896,16 @@
             "key": "<h2>SNS</h2>"
           },
           {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
             "cmd": "press",
             "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
           },
           {
             "cmd": "type",
