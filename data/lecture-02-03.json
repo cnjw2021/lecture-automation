@@ -543,7 +543,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 420
+            "ms": 419
           },
           {
             "cmd": "mouse_move",
@@ -554,7 +554,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 420
+            "ms": 419
           },
           {
             "cmd": "click",
@@ -562,7 +562,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 420
+            "ms": 419
           },
           {
             "cmd": "type",
@@ -571,7 +571,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 366
+            "ms": 372
           },
           {
             "cmd": "press",
@@ -579,7 +579,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 366
+            "ms": 372
           },
           {
             "cmd": "type",
@@ -588,7 +588,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 5495
+            "ms": 5580
           },
           {
             "cmd": "mouse_move",
@@ -599,7 +599,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 9159
+            "ms": 9302
           }
         ]
       }
@@ -636,23 +636,27 @@
         ],
         "action": [
           {
+            "cmd": "wait",
+            "ms": 2000,
+            "offscreen": true
+          },
+          {
             "cmd": "mouse_move",
             "to": [
               400,
               250
-            ]
-          },
-          {
-            "cmd": "wait",
-            "ms": 0
+            ],
+            "offscreen": true
           },
           {
             "cmd": "click",
-            "selector": "#box-html .CodeMirror"
+            "selector": "#box-html .CodeMirror",
+            "offscreen": true
           },
           {
             "cmd": "wait",
-            "ms": 0
+            "ms": 500,
+            "offscreen": true
           },
           {
             "cmd": "press",
@@ -669,7 +673,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 200
+            "ms": 0
           },
           {
             "cmd": "press",
@@ -677,7 +681,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 200
+            "ms": 0
           },
           {
             "cmd": "type",
@@ -1798,7 +1802,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 3117
+            "ms": 3119
           },
           {
             "cmd": "mouse_move",
