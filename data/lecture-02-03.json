@@ -224,7 +224,61 @@
           {
             "cmd": "type",
             "selector": "#box-html .CodeMirror textarea",
-            "key": "<h1>山田太郎</h1>\n<p>Web制作を勉強しています。</p>\n<h2>趣味</h2>\n<ul>\n  <li>映画鑑賞</li>\n  <li>カフェ巡り</li>\n</ul>"
+            "key": "<h1>山田太郎</h1>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>Web制作を勉強しています。</p>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>趣味</h2>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<ul>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<li>映画鑑賞</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<li>カフェ巡り</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</ul>"
           },
           {
             "cmd": "wait",
@@ -307,7 +361,70 @@
           {
             "cmd": "type",
             "selector": "#box-html .CodeMirror textarea",
-            "key": "<h1>山田太郎</h1>\n<p>Web制作を勉強しています。</p>\n<h2>趣味</h2>\n<ul>\n  <li>映画鑑賞</li>\n  <li>カフェ巡り</li>\n</ul>\n<a href=\"https://www.google.com\">Googleを開く</a>"
+            "key": "<h1>山田太郎</h1>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>Web制作を勉強しています。</p>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>趣味</h2>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<ul>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<li>映画鑑賞</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<li>カフェ巡り</li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</ul>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"https://www.google.com\">Googleを開く</a>"
           },
           {
             "cmd": "wait",
@@ -480,7 +597,16 @@
           {
             "cmd": "type",
             "selector": "#box-html .CodeMirror textarea",
-            "key": "<a href=\"https://www.google.com\">Googleを開く</a>\n<a href=\"https://www.youtube.com\">YouTubeを見る</a>"
+            "key": "<a href=\"https://www.google.com\">Googleを開く</a>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"https://www.youtube.com\">YouTubeを見る</a>"
           },
           {
             "cmd": "wait",
@@ -551,7 +677,16 @@
           {
             "cmd": "type",
             "selector": "#box-html .CodeMirror textarea",
-            "key": "<a href=\"https://www.google.com\">Googleを開く</a>\n<a href=\"https://www.youtube.com\">YouTubeを見る</a>"
+            "key": "<a href=\"https://www.google.com\">Googleを開く</a>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"https://www.youtube.com\">YouTubeを見る</a>"
           },
           {
             "cmd": "wait",
@@ -568,7 +703,16 @@
           {
             "cmd": "type",
             "selector": "#box-html .CodeMirror textarea",
-            "key": "<a href=\"https://www.google.com\" target=\"_blank\">Googleを開く</a>\n<a href=\"https://www.youtube.com\" target=\"_blank\">YouTubeを見る</a>"
+            "key": "<a href=\"https://www.google.com\" target=\"_blank\">Googleを開く</a>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"https://www.youtube.com\" target=\"_blank\">YouTubeを見る</a>"
           },
           {
             "cmd": "wait",
@@ -712,7 +856,25 @@
           {
             "cmd": "type",
             "selector": "#box-html .CodeMirror textarea",
-            "key": "<a href=\"https://www.google.com\" target=\"_blank\">Googleを開く</a>\n<a href=\"https://www.youtube.com\" target=\"_blank\">YouTubeを見る</a>\n<img src=\"https://picsum.photos/400/300\" alt=\"サンプル画像\">"
+            "key": "<a href=\"https://www.google.com\" target=\"_blank\">Googleを開く</a>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"https://www.youtube.com\" target=\"_blank\">YouTubeを見る</a>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<img src=\"https://picsum.photos/400/300\" alt=\"サンプル画像\">"
           },
           {
             "cmd": "wait",
@@ -1310,7 +1472,52 @@
           {
             "cmd": "type",
             "selector": "#box-html .CodeMirror textarea",
-            "key": "<h2>SNS</h2>\n<ul>\n  <li><a href=\"https://x.com\" target=\"_blank\">X</a></li>\n  <li><a href=\"https://instagram.com\" target=\"_blank\">Instagram</a></li>\n  <li><a href=\"https://youtube.com\" target=\"_blank\">YouTube</a></li>\n</ul>"
+            "key": "<h2>SNS</h2>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<ul>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<li><a href=\"https://x.com\" target=\"_blank\">X</a></li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<li><a href=\"https://instagram.com\" target=\"_blank\">Instagram</a></li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<li><a href=\"https://youtube.com\" target=\"_blank\">YouTube</a></li>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</ul>"
           },
           {
             "cmd": "wait",
@@ -1430,7 +1637,52 @@
           {
             "cmd": "type",
             "selector": "#box-html .CodeMirror textarea",
-            "key": "<h1>山田太郎</h1>\n<p>Web制作を勉強しています。</p>\n<ul><li>映画</li><li>カフェ巡り</li></ul>\n<img src=\"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600\" alt=\"コーヒーカップの写真\">\n<h2>SNS</h2>\n<ul><li><a href=\"https://x.com\" target=\"_blank\">X</a></li><li><a href=\"https://instagram.com\" target=\"_blank\">Instagram</a></li></ul>"
+            "key": "<h1>山田太郎</h1>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>Web制作を勉強しています。</p>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<ul><li>映画</li><li>カフェ巡り</li></ul>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<img src=\"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600\" alt=\"コーヒーカップの写真\">"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>SNS</h2>"
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<ul><li><a href=\"https://x.com\" target=\"_blank\">X</a></li><li><a href=\"https://instagram.com\" target=\"_blank\">Instagram</a></li></ul>"
           },
           {
             "cmd": "wait",
