@@ -45,9 +45,11 @@ export class SharedPlaywrightStateCaptureProvider implements ISharedVisualSessio
     const storageStatePath = resolveStorageState(plan.storageState);
     const launchOptions = buildLaunchOptions(!!storageStatePath);
 
-    // storageState 씬: 사이드바 닫힌 상태의 storageState 준비 (Cloudflare 봇 감지 우회 필수)
+    // Claude 씬에 한해 사이드바 닫힌 상태의 storageState 준비 (Cloudflare 봇 감지 우회 필수).
+    // CodePen 등 다른 사이트는 메뉴 설명에 사이드바가 보여야 하고, 프리플라이트 함수 자체가
+    // claude.ai 셀렉터에만 의미가 있으므로 스킵한다.
     let effectiveStorageState = storageStatePath;
-    if (storageStatePath) {
+    if (storageStatePath && /claude/i.test(storageStatePath)) {
       effectiveStorageState = await preflightCloseSidebar(launchOptions, storageStatePath, width, height);
     }
 

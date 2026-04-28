@@ -63,9 +63,11 @@ export class PlaywrightVisualProvider implements IVisualProvider {
       } : {}),
     };
 
-    // storageState 씬: 녹화 전 프리플라이트로 사이드바 닫힌 상태의 storageState 생성
+    // Claude 씬에 한해 녹화 전 프리플라이트로 사이드바 닫힌 상태의 storageState 생성.
+    // CodePen 등 다른 사이트는 사이드바를 닫을 필요가 없고(메뉴 설명에 사이드바가 보여야 함),
+    // 프리플라이트 함수 자체가 claude.ai 셀렉터에만 의미가 있으므로 스킵한다.
     let effectiveStorageState: string | undefined = storageStatePath;
-    if (storageStatePath) {
+    if (storageStatePath && /claude/i.test(storageStatePath)) {
       effectiveStorageState = await this.preflightCloseSidebar(
         launchOptions, storageStatePath, width, height,
       );
