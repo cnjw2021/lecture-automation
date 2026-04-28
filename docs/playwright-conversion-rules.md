@@ -318,7 +318,38 @@ wait 0
 |---|---|
 | `<` `>` (山括弧) | 반드시 **半角**. 스크립트가 "半角の山括弧" 를 설명하면 화면 입력도 그 설명과 맞춘다 |
 | 일본어 문자열 (예: `はじめてのWebページです！`) | `type.key` 에 그대로 사용 가능 — Playwright 가 IME 없이 직접 입력 |
-| Enter 줄바꿈 | `press Enter` 액션으로 분리. `type.key` 안에 `\n` 사용 금지 (CodeMirror 에서 인식 안 됨) |
+| `\n` 줄바꿈 | **금지** — 별도 `press Enter` 액션으로 분리한다. 자세한 이유와 분할 패턴은 아래 별도 항목 참조 |
+
+**`type.key` 안에 `\n` 넣지 않기 (pressSequentially hang 회피)**
+
+CodePen 의 CodeMirror textarea 에 `\n` 이 포함된 `type.key` 를 보내면 `pressSequentially` 가
+무한히 멈춘다. Playwright 의 `pressSequentially` 는 per-character timeout 이 없고,
+CodeMirror 의 auto-indent / auto-close-tag 처리 중에 textarea 포커스나 actionability state
+가 흔들리면 다음 키 입력을 영원히 재시도한다.
+
+증상은 위 "auto-close-tag race" 와 동일하다 — 페이지는 살아있고 ffmpeg 는 계속 frame 을
+받지만 새 액션이 진행되지 않아 webm 이 수십 MB 까지 자라며 다른 씬은 시작도 못 한다.
+다른 액션(`click`, `wait_for` 등)은 모두 timeout 이 걸려 있어 빠져나가지만 `type` 은 빠지는 구멍이다.
+
+실측: `lecture-02-03` 씬 6 의 `key: "<h1>...</h1>\n<p>...</p>\n<h2>...</h2>\n<ul>\n  <li>...</li>\n  <li>...</li>\n</ul>"` 한 번에 type 했을 때 1시간+ 멈춤.
+
+규칙:
+- `type.key` 안에 `\n` 절대 금지. 줄별로 `type` + `press Enter` 로 분리한다
+- 들여쓰기용 leading whitespace 는 `type.key` 에 포함하지 않는다 — CodeMirror 가 auto-indent 한다
+- 분할로 `actionIndex` 가 바뀌므로 **syncPoint 의 actionIndex 도 같이 갱신**한다
+- 정상 패턴 참고: `data/lecture-02-01.json`, `data/lecture-02-02.json` 의 모든 CodePen typing 씬
+
+multi-line block 분할 예 (`<ul>` 안에 `<li>` 두 줄):
+
+```json
+{ "cmd": "type", "selector": "#box-html .CodeMirror textarea", "key": "<ul>" },
+{ "cmd": "press", "key": "Enter" },
+{ "cmd": "type", "selector": "#box-html .CodeMirror textarea", "key": "<li>映画鑑賞</li>" },
+{ "cmd": "press", "key": "Enter" },
+{ "cmd": "type", "selector": "#box-html .CodeMirror textarea", "key": "<li>カフェ巡り</li>" },
+{ "cmd": "press", "key": "Enter" },
+{ "cmd": "type", "selector": "#box-html .CodeMirror textarea", "key": "</ul>" }
+```
 
 **한 `type` 에 중첩 닫기 태그 넣지 않기 (CodeMirror auto-close-tag race 회피)**
 
