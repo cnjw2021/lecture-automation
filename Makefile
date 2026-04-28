@@ -1,7 +1,7 @@
 # Lecture Automation Makefile
 
 .PHONY: help install build run run-lambda run-force run-force-lambda regen-scene regen-scene-lambda regen-visual regen-visual-lambda run-tts-only run-tts-chunk apply-tts apply-tts-lambda apply-tts-chunk apply-tts-chunk-lambda list-chunks find-chunk run-render-only run-render-only-lambda render-scene render-scene-lambda record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
-        sync-playwright save-auth validate-schema lint lint-fix audit deploy-lambda
+        sync-playwright sync-preview save-auth validate-schema lint lint-fix audit deploy-lambda
 
 # 기본 변수 설정
 LECTURE ?= lecture-01-01.json
@@ -90,6 +90,8 @@ help:
 	@echo "--------------------------------------------------"
 	@echo "make sync-playwright LECTURE=xxx              - Playwright 씬 narration-action 싱크 자동 조정"
 	@echo "make sync-playwright LECTURE=xxx SCENE=17     - 특정 씬만 싱크 조정"
+	@echo "make sync-preview LECTURE=xxx                 - 녹화 전 sync 결과 시뮬레이션 (drift 사전 점검)"
+	@echo "make sync-preview LECTURE=xxx SCENE=17        - 특정 씬만 시뮬레이션"
 	@echo "make save-auth SERVICE=claude                 - 브라우저 인증 상태 저장 (Claude/ChatGPT 등)"
 	@echo ""
 	@echo "--------------------------------------------------"
@@ -381,6 +383,15 @@ sync-playwright:
 		npx tsx packages/automation/src/presentation/cli/sync-playwright.ts $(LECTURE) $(SCENE); \
 	else \
 		npx tsx packages/automation/src/presentation/cli/sync-playwright.ts $(LECTURE); \
+	fi
+
+sync-preview:
+	@echo "🔍 Playwright 씬 sync 사전 시뮬레이션: $(LECTURE)"
+	@if [ -n "$(SCENE)" ]; then \
+		echo "   대상 씬: $(SCENE)"; \
+		npx tsx packages/automation/src/presentation/cli/sync-preview.ts $(LECTURE) $(SCENE); \
+	else \
+		npx tsx packages/automation/src/presentation/cli/sync-preview.ts $(LECTURE); \
 	fi
 
 save-auth:
