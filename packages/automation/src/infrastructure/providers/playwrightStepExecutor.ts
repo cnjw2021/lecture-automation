@@ -3,6 +3,7 @@ import * as path from 'path';
 import { PlaywrightAction } from '../../domain/entities/Lecture';
 import { StepData, CursorPosition } from '../../domain/entities/StepManifest';
 import { executeEduDevtoolsAction, getEduDevtoolsActionDuration } from './playwrightEduDevtools';
+import { typeWithTimeout } from './playwrightBrowserUtils';
 
 /**
  * Playwright 액션을 실행하고 그 결과를 합성 캡처용 StepData 로 환원한다.
@@ -168,7 +169,10 @@ export async function executeAndCaptureStep(
       // 맞지 않아 placeholder 와 겹치고 박스 경계를 벗어나던 문제를 피하기 위해,
       // 실제 입력창에 래핑된 최종 상태를 캡처한다. typedText 는 manifest 에서 제외해
       // Remotion 의 typing overlay 가 렌더되지 않도록 한다.
-      await typeLoc.pressSequentially(action.key, { delay: 100 });
+      await typeWithTimeout(typeLoc, action.key, {
+        delay: 100,
+        selector: action.selector,
+      });
       await page.screenshot({ path: screenshotPath });
       const charDuration = action.key.length * 120;
       return {
@@ -374,7 +378,10 @@ export async function executeActionOffscreen(
       if (action.selector && action.key) {
         const loc = page.locator(action.selector);
         await loc.waitFor({ state: 'visible', timeout: 10000 });
-        await loc.pressSequentially(action.key, { delay: 100 });
+        await typeWithTimeout(loc, action.key, {
+          delay: 100,
+          selector: action.selector,
+        });
       }
       return;
     case 'focus':

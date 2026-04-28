@@ -2,11 +2,11 @@
   "lecture_id": "02-03",
   "title": "リンクと画像",
   "part": 2,
-  "totalDurationSec": 1792,
+  "totalDurationSec": 1803,
   "sequence": [
     {
       "scene_id": 1,
-      "narration": "皆さん、こんにちは。前回の講義では、HTMLのテキスト系'たぐ'を一気に学びましたね。エイチワンからエイチシックスまでの見出し、ぴー'たぐ'でだんらく、strongやemで強調、そしてリストのulとli。CodePenの自己紹介ページに、見出しや紹介文、趣味のリストを追加するところまで進みました。",
+      "narration": "皆さん、こんにちは。前回の講義では、HTMLのテキスト系 たぐを一気に学びましたね。エイチワンからエイチシックスまでの見出し、ぴーたぐでだんらく、ストロングやイーエムで強調、そしてリストのユーエルとエルアイ。CodePenの自己紹介ページに、見出しや紹介文、趣味のリストを追加するところまで進みました。",
       "durationSec": 27,
       "visual": {
         "type": "remotion",
@@ -22,7 +22,7 @@
     },
     {
       "scene_id": 2,
-      "narration": "今日はその自己紹介ページを、もっとウェブサイトらしくしていきます。テーマは「リンクと画像」です。リンクというのは、テキストや画像をクリックすると別のページに飛べる、あの仕組みのことです。ニュースサイトで記事の見出しをクリックして本文に飛んだり、お店のサイトで「アクセス」をクリックして地図のページに移動したり。皆さんも普段から何気なく使っていますよね。",
+      "narration": "今日はその自己紹介ページを、もっとウェブサイトらしくしていきます。テーマは「リンクと画像」です。今日の流れを見ておきましょう。まず、リンクを作るためのエーたぐ。次に、画像を表示するイメージたぐ。続いて画像パスの考え方と、無料で使える画像ソースの紹介。最後に、自己紹介ページにSNSリンクを追加する実習です。リンクと画像が入るだけで、ページがぐっとウェブサイトらしくなりますよ。",
       "durationSec": 35,
       "visual": {
         "type": "remotion",
@@ -32,31 +32,25 @@
           "items": [
             {
               "title": "リンクを作る — aタグ",
-              "icon": "🔗",
-              "duration": "8分"
+              "icon": "🔗"
             },
             {
               "title": "画像を表示する — imgタグ",
-              "icon": "🖼",
-              "duration": "6分"
+              "icon": "🖼"
             },
             {
               "title": "画像パスの理解",
-              "icon": "📂",
-              "duration": "3.5分"
+              "icon": "📂"
             },
             {
               "title": "無料画像ソース紹介",
-              "icon": "📷",
-              "duration": "3分"
+              "icon": "📷"
             },
             {
               "title": "実習 — SNSリンク追加",
-              "icon": "✏️",
-              "duration": "3.5分"
+              "icon": "✏️"
             }
-          ],
-          "activeIndex": 0
+          ]
         }
       }
     },
@@ -188,21 +182,23 @@
     },
     {
       "scene_id": 6,
-      "narration": "では、このリンクをHTMLでどう書くのか見ていきましょう。CodePenを開いてください。前回作った自己紹介ページがそのまま残っていますか？CodePenにログインしていれば、前回保存した'ぺ'んが残っているはずです。残っていれば、その続きから始めます。もし消えてしまった方がいたら、エイチワン'たぐ'で名前、ぴー'たぐ'で簡単な自己紹介文だけ書いておいてくださいね。準備ができたら進めていきましょう。",
-      "durationSec": 38,
+      "narration": "では、このリンクをHTMLでどう書くのか見ていきましょう。CodePenを開いてください。前回作った自己紹介ページがそのまま残っていますか？CodePenにログインしていれば、前回保存した'ぺ'んが残っているはずです。残っていれば、その続きから始めます。もし消えてしまった方がいたら、エイチワンたぐで名前、ぴーたぐで簡単な自己紹介文、そして趣味のリストだけ書いておいてくださいね。準備ができたら進めていきましょう。",
+      "durationSec": 33,
       "visual": {
         "type": "remotion",
-        "component": "CalloutScreen",
+        "component": "KeyPointScreen",
+        "stylePreset": "concept-calm",
         "props": {
-          "type": "info",
-          "title": "CodePenの準備",
-          "body": "前回の自己紹介ページを開いてください。消えてしまった方は、h1タグで名前、pタグで自己紹介文を書いておきましょう"
+          "icon": "📝",
+          "headline": "前回のペンを準備",
+          "detail": "残っていれば続きから / なければh1・p・ulだけ書く",
+          "color": "#ef4444"
         }
       }
     },
     {
       "scene_id": 7,
-      "narration": "リンクに使うのは、a'たぐ'です。aというのはアンカーの頭文字で、日本語にすると「錨」という意味です。船の錨が海底にガッチリ固定するように、a'たぐ'は別のページへの接続をしっかり結びつけてくれる。そんなイメージを持っていただければと思います。",
+      "narration": "リンクに使うのは、エーたぐです。エーというのはアンカーの頭文字で、日本語にすると「錨」という意味です。船の錨が海底にガッチリ固定するように、エーたぐは別のページへの接続をしっかり結びつけてくれる。そんなイメージを持っていただければと思います。",
       "durationSec": 24,
       "visual": {
         "type": "remotion",
@@ -227,63 +223,190 @@
     },
     {
       "scene_id": 8,
-      "narration": "では実際に書いましょう。自己紹介ページの一番下あたりに、こう書いてください。",
-      "durationSec": 8,
+      "narration": "では実際に書いましょう。まず自己紹介ページの土台を用意して、その一番下あたりにリンクを追加します。ここに、こう書いてください。はい、書けましたか？ゆっくりで大丈夫ですよ。特にエイチレフの綴りは間違えやすいポイントです。エイチ、アール、イー、エフの4文字。そしてイコールの後ろの引用符も忘れずに。プレビューを見ましょう。「Googleを開く」という青い文字が表示されていますよね。何も特別なCSSを書いていないのに、エーたぐで囲んだテキストは自動的に青色になって、下線が引かれます。これがブラウザの初期設定なんです。「あ、これはリンクだな」と訪問者がすぐわかるようになっているわけですね。",
+      "durationSec": 52,
       "visual": {
-        "type": "remotion",
-        "component": "KeyPointScreen",
-        "props": {
-          "icon": "✍️",
-          "headline": "実際に書いてみよう",
-          "detail": "自己紹介ページの一番下にaタグを追加",
-          "color": "#ef4444"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 6,
+            "phrase": "ここに"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 992
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 992
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 992
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h1>山田太郎</h1>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 543
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 543
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>Web制作を勉強しています。</p>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 543
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 543
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>趣味</h2>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 543
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 543
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<ul>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 543
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 543
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<li>映画鑑賞</li>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 543
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 543
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<li>カフェ巡り</li>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 543
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 543
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</ul>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 543
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 543
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"https://www.google.com\">Googleを開く</a>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 8146
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 13576
+          }
+        ]
       }
     },
     {
       "scene_id": 9,
-      "narration": "はい、書けましたか？ゆっくりで大丈夫ですよ。特にhrefの綴りは間違えやすいポイントです。h、r、e、fの4文字。そしてイコールの後ろの引用符も忘れずに。",
-      "durationSec": 15,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<a href=\"https://www.google.com\">Googleを開く</a>",
-          "language": "html",
-          "title": "初めてのリンク"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 10,
-      "narration": "プレビューを見ましょう。「Googleを開く」という青い文字が表示されていますよね。何も特別なCSSを書いていないのに、a'たぐ'で囲んだテキストは自動的に青色になって、下線が引かれます。これがブラウザの初期設定なんです。「あ、これはリンクだな」と訪問者がすぐわかるようになっているわけですね。",
-      "durationSec": 29,
-      "visual": {
-        "type": "remotion",
-        "component": "BulletDetailScreen",
-        "props": {
-          "title": "aタグの初期スタイル",
-          "items": [
-            {
-              "title": "青い文字",
-              "detail": "CSSを書かなくても自動的に青色になる",
-              "icon": "🔵"
-            },
-            {
-              "title": "下線付き",
-              "detail": "リンクであることが訪問者にすぐわかる",
-              "icon": "📎"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "scene_id": 11,
-      "narration": "では、このコードを一つずつ確認していきましょう。まず、aの後ろに半角スペースを空けて「href」と書いてあります。エイチレフと読みます。正式にはハイパーリファレンスの略で、リンク先のアドレスを指定する場所です。イコールの後ろのダブルクォーテーション、つまり引用符の中に、移動先のURLを入れます。",
+      "narration": "では、このコードを一つずつ確認していきましょう。まず、エーの後ろに半角スペースを空けて、エイチレフと書いてあります。正式にはハイパーリファレンスの略で、リンク先のアドレスを指定する場所です。イコールの後ろのダブルクォーテーション、つまり引用符の中に、移動先のURLを入れます。",
       "durationSec": 30,
       "visual": {
         "type": "remotion",
@@ -302,8 +425,8 @@
       }
     },
     {
-      "scene_id": 12,
-      "narration": "このhrefのように、'たぐ'に追加の情報を持たせる仕組みのことを、HTMLでは「属性」と呼びます。前回までのエイチワンやぴー'たぐ'では属性を使いませんでしたが、a'たぐ'ではこのhref属性が欠かせません。リンク先を指定しないリンクなんて意味がないですからね。これからいろいろな'たぐ'を学んでいく中で、属性はたくさん出てきますが、基本は全部同じです。'たぐ'の名前の後ろに半角スペースを空けて、属性名イコール引用符の中に値を書く。この形を覚えておいてください。",
+      "scene_id": 10,
+      "narration": "このエイチレフのように、たぐに追加の情報を持たせる仕組みのことを、HTMLでは「属性」と呼びます。前回までのエイチワンやぴーたぐでは属性を使いませんでしたが、エーたぐではこのエイチレフ属性が欠かせません。リンク先を指定しないリンクなんて意味がないですからね。これからいろいろなたぐを学んでいく中で、属性はたくさん出てきますが、基本は全部同じです。たぐの名前の後ろに半角スペースを空けて、属性名イコール引用符の中に値を書く。この形を覚えておいてください。",
       "durationSec": 43,
       "visual": {
         "type": "remotion",
@@ -317,8 +440,8 @@
       }
     },
     {
-      "scene_id": 13,
-      "narration": "そして、aの開始'たぐ'と終了'たぐ'の間に書いた「Googleを開く」。これが画面に表示されるリンクの文字になります。前回学んだぴー'たぐ'やエイチワン'たぐ'と同じ構造ですよね。開始'たぐ'と終了'たぐ'で中身を囲む。HTMLの基本パターンです。",
+      "scene_id": 11,
+      "narration": "そして、エーの開始たぐと終了たぐの間に書いた「Googleを開く」。これが画面に表示されるリンクの文字になります。前回学んだぴーたぐやエイチワンたぐと同じ構造ですよね。開始たぐと終了たぐで中身を囲む。HTMLの基本パターンです。",
       "durationSec": 22,
       "visual": {
         "type": "remotion",
@@ -367,7 +490,7 @@
       }
     },
     {
-      "scene_id": 14,
+      "scene_id": 12,
       "narration": "一つ大事なポイントがあります。リンクの文字は「Googleを開く」と書きましたが、これは好きなように変えられます。ただし、リンクの文字を読んだだけで「これをクリックしたらどこに行くのか」がわかるように書くのが親切です。たまに「ここをクリック」とだけ書いてあるリンクを見かけますが、あれだとクリックするまで何のページに飛ぶのかわかりませんよね。",
       "durationSec": 34,
       "visual": {
@@ -397,126 +520,278 @@
       }
     },
     {
-      "scene_id": 15,
-      "narration": "では、もう一つリンクを追加しましょう。今度はYouTubeへのリンクです。先ほどのa'たぐ'の下に、もう1行書いてください。",
-      "durationSec": 13,
+      "scene_id": 13,
+      "narration": "では、もう一つリンクを追加しましょう。今度はYouTubeへのリンクです。画面では先ほどのGoogleリンクも入れたうえで、その下にYouTubeのリンクをもう1行追加します。プレビューに2つ目のリンクが出ましたね。2つのリンクが縦に並んでいる方もいれば、横にくっついている方もいるかもしれません。これはHTML側の並び方の仕組みに関係しているんですが、今は気にしなくて大丈夫です。さて、ここで一つ困ったことに気づきませんか。CodePenのプレビューでリンクをクリックすると、CodePenの画面から離れてしまいますよね。実際のウェブサイトでも同じ問題が起きます。皆さんが将来自分のサイトを作ったとき、訪問者がリンクをクリックしてそのまま外部のサイトに移動してしまったら、もう戻ってきてもらえないかもしれません。せっかく見に来てくれたのに、もったいないですよね。そこで使うのが、「新しいタブで開く」という機能です。先ほどのYouTubeのリンクを、ターゲット属性付きの形に書きかえましょう。エイチレフの後ろに半角スペースを空けて、ターゲット属性にアンダーバーブランクを追加しました。ターゲット属性は「リンクをどこで開くか」を指定する属性です。ブランクは英語で「空白」という意味ですから、「空白の新しいタブで開く」という指定になります。これを付けると、リンクをクリックしたときに新しいタブが開いて、元のページはそのまま残ります。訪問者は外部サイトを見終わったら、タブを切り替えるだけで元のページに戻れるわけです。外部のサイトへリンクするときは、基本的にこのターゲット属性にアンダーバーブランクを指定しておくと親切ですね。一方、自分のサイト内で別のページに移動するだけのときは、付けなくても大丈夫です。では、Googleのリンクにもターゲット属性にアンダーバーブランクを追加して、2つの外部リンクを同じ形にそろえておきましょう。",
+      "durationSec": 142,
       "visual": {
-        "type": "remotion",
-        "component": "KeyPointScreen",
-        "props": {
-          "icon": "➕",
-          "headline": "2つ目のリンク追加",
-          "detail": "YouTubeへのリンクを書いてみよう",
-          "color": "#ef4444"
-        }
-      }
-    },
-    {
-      "scene_id": 16,
-      "narration": "プレビューに2つ目のリンクが出ましたね。2つのリンクが縦に並んでいる方もいれば、横にくっついている方もいるかもしれません。これはHTML側の並び方の仕組みに関係しているんですが、今は気にしなくて大丈夫です。",
-      "durationSec": 21,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<a href=\"https://www.youtube.com\">YouTubeを見る</a>",
-          "language": "html",
-          "title": "YouTubeへのリンク"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 17,
-      "narration": "さて、ここで一つ困ったことに気づきませんか。CodePenのプレビューでリンクをクリックすると、CodePenの画面から離れてしまいますよね。実際のウェブサイトでも同じ問題が起きます。皆さんが将来自分のサイトを作ったとき、訪問者がリンクをクリックしてそのまま外部のサイトに移動してしまったら、もう戻ってきてもらえないかもしれません。せっかく見に来てくれたのに、もったいないですよね。",
-      "durationSec": 38,
-      "visual": {
-        "type": "remotion",
-        "component": "QnAScreen",
-        "props": {
-          "question": "リンクをクリックすると、元のページから離れてしまう？",
-          "answer": "外部サイトに移動すると、訪問者が戻ってきてくれないかもしれません。これを解決する方法があります"
-        }
-      }
-    },
-    {
-      "scene_id": 18,
-      "narration": "そこで使うのが、「新しいタブで開く」という機能です。先ほどのYouTubeのリンクを、こう書き換えましょう。",
-      "durationSec": 11,
-      "visual": {
-        "type": "remotion",
-        "component": "KeyPointScreen",
-        "props": {
-          "icon": "🆕",
-          "headline": "新しいタブで開く",
-          "detail": "target=\"_blank\"で別タブに開く",
-          "color": "#ef4444"
-        }
-      }
-    },
-    {
-      "scene_id": 19,
-      "narration": "hrefの後ろに半角スペースを空けて、target=\"_blank\"を追加しました。targetは「リンクをどこで開くか」を指定する属性です。ブランクは英語で「空白」という意味ですから、「空白の新しいタブで開く」という指定になります。",
-      "durationSec": 23,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<a href=\"https://www.youtube.com\" target=\"_blank\">YouTubeを見る</a>",
-          "language": "html",
-          "title": "target=\"_blank\"の追加"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 20,
-      "narration": "これを付けると、リンクをクリックしたときに新しいタブが開いて、元のページはそのまま残ります。訪問者は外部サイトを見終わったら、タブを切り替えるだけで元のページに戻れるわけです。外部のサイトへリンクするときは、基本的にこのtarget=\"_blank\"を付けておくと親切ですね。一方、自分のサイト内で別のページに移動するだけのときは、付けなくても大丈夫です。",
-      "durationSec": 36,
-      "visual": {
-        "type": "remotion",
-        "component": "TwoColumnScreen",
-        "props": {
-          "title": "target=\"_blank\"の使い分け",
-          "left": {
-            "title": "付ける",
-            "body": "外部サイトへのリンク\n→ 新しいタブで開く\n→ 元のページが残る",
-            "icon": "✅",
-            "color": "#10b981"
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 10,
+            "phrase": "もう1行追加します"
           },
-          "right": {
-            "title": "付けない",
-            "body": "自分のサイト内リンク\n→ 同じタブで移動\n→ 自然なページ遷移",
-            "icon": "➡️",
-            "color": "#3b82f6"
+          {
+            "actionIndex": 14,
+            "phrase": "そこで使うのが"
+          },
+          {
+            "actionIndex": 33,
+            "phrase": "追加しました",
+            "target": "end"
+          },
+          {
+            "actionIndex": 52,
+            "phrase": "Googleのリンクにも"
           }
-        }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 253
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 253
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 253
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"https://www.google.com\">Googleを開く</a>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 253
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 253
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"https://www.youtube.com\">YouTubeを見る</a>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 22050
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 22050
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 6601
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 6601
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": " target=\"_blank\""
+          },
+          {
+            "cmd": "wait",
+            "ms": 21201
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+Home"
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+ArrowRight"
+          },
+          {
+            "cmd": "wait",
+            "ms": 21201
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": " target=\"_blank\""
+          },
+          {
+            "cmd": "wait",
+            "ms": 2559
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 2559
+          }
+        ]
       }
     },
     {
-      "scene_id": 21,
-      "narration": "では、Googleのリンクにもtarget=\"_blank\"を追加しておきましょう。",
-      "durationSec": 8,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<a href=\"https://www.google.com\" target=\"_blank\">Googleを開く</a>",
-          "language": "html",
-          "title": "Googleリンクにも追加"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 22,
-      "narration": "これでリンクの基本はバッチリです。もう一度整理しますね。a'たぐ'でリンクを作る。href属性でリンク先のURLを指定する。外部サイトへのリンクにはtarget=\"_blank\"を付けて、新しいタブで開くようにする。この3点セットです。暗記する必要はありませんよ。「a'たぐ'にはhrefが必要で、外部リンクにはtarget=\"_blank\"を付ける」、これだけ覚えていれば十分です。",
+      "scene_id": 14,
+      "narration": "これでリンクの基本はバッチリです。もう一度整理しますね。エーたぐでリンクを作る。エイチレフ属性でリンク先のURLを指定する。外部サイトへのリンクにはターゲット属性にアンダーバーブランクを指定して、新しいタブで開くようにする。この3点セットです。暗記する必要はありませんよ。「エーたぐにはエイチレフが必要で、外部リンクにはターゲット属性にアンダーバーブランクを指定する」、これだけ覚えていれば十分です。",
       "durationSec": 38,
       "visual": {
         "type": "remotion",
@@ -532,7 +807,7 @@
       }
     },
     {
-      "scene_id": 23,
+      "scene_id": 15,
       "narration": "次は画像です。テキストとリンクだけのページも情報としては成り立ちますが、やっぱり写真が1枚あるだけで印象がまるで違います。美容室のサイトなら施術のビフォーアフター写真、カフェなら店内の雰囲気がわかる写真、教室なら生徒さんたちの楽しそうな様子。文字だけでは伝わらない魅力を、写真は一瞬で伝えてくれますよね。",
       "durationSec": 30,
       "visual": {
@@ -568,8 +843,8 @@
       }
     },
     {
-      "scene_id": 24,
-      "narration": "画像を表示する'たぐ'は、img'たぐ'です。imgはイメージの略ですね。HTMLの'たぐ'は、こういうふうに英語の単語を短くしたものが名前になっていることが多いです。aはアンカー、imgはイメージ、ぴーはパラグラフ。名前の由来を知っておくと、初めて見る'たぐ'でも「あ、これはこういう意味かな」と推測しやすくなります。",
+      "scene_id": 16,
+      "narration": "画像を表示するたぐは、イメージたぐです。スペルはアイ、エム、ジーで、イメージの略ですね。HTMLのたぐは、こういうふうに英語の単語を短くしたものが名前になっていることが多いです。エーはアンカー、イメージは画像、ぴーはパラグラフ。名前の由来を知っておくと、初めて見るたぐでも「あ、これはこういう意味かな」と推測しやすくなります。",
       "durationSec": 30,
       "visual": {
         "type": "remotion",
@@ -601,40 +876,106 @@
       }
     },
     {
-      "scene_id": 25,
-      "narration": "では書いましょう。先ほどのリンクの下に、こう書いてください。",
-      "durationSec": 7,
+      "scene_id": 17,
+      "narration": "では書きましょう。先ほどのリンクの下に、画像のたぐを追加します。画面ではリンクの下にイメージたぐを入れた形を作っていきます。プレビューを見ましょう。写真が1枚表示されましたか？何かしらの写真が表示されているはずです。ページをリロードするたびに違う写真に変わるかもしれませんが、心配しないでください。今使っているURLは、テスト用のダミー画像をランダムに返してくれるサービスです。後ほど本物の写真に差し替えます。",
+      "durationSec": 36,
       "visual": {
-        "type": "remotion",
-        "component": "KeyPointScreen",
-        "props": {
-          "icon": "✍️",
-          "headline": "imgタグを書いてみよう",
-          "detail": "リンクの下に画像タグを追加",
-          "color": "#ef4444"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 14,
+            "phrase": "今使っ"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"https://www.google.com\" target=\"_blank\">Googleを開く</a>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 2982
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 2982
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"https://www.youtube.com\" target=\"_blank\">YouTubeを見る</a>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 2982
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 2982
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<img src=\"https://picsum.photos/400/300\" alt=\"サンプル画像\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1560
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 2080
+          }
+        ]
       }
     },
     {
-      "scene_id": 26,
-      "narration": "プレビューを見ましょう。写真が1枚表示されましたか？何かしらの写真が表示されているはずです。ページをリロードするたびに違う写真に変わるかもしれませんが、心配しないでください。今使っているURLは、テスト用のダミー画像をランダムに返してくれるサービスです。後ほど本物の写真に差し替えます。",
-      "durationSec": 29,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<img src=\"https://picsum.photos/400/300\" alt=\"サンプル画像\">",
-          "language": "html",
-          "title": "初めての画像表示"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 27,
-      "narration": "さて、このimg'たぐ'をよく見てください。今まで学んできた'たぐ'と、ちょっと違うところがありませんか？そうです。閉じ'たぐ'がないんです。今まで学んだ'たぐ'には必ず閉じ'たぐ'がありました。エイチワンには /エイチワン、ぴーには /ぴー、aには /a。開始'たぐ'と終了'たぐ'の'ぺ'あが基本でしたよね。でも、img'たぐ'には'ぺ'あの相手がいません。",
+      "scene_id": 18,
+      "narration": "さて、このイメージたぐをよく見てください。今まで学んできたたぐと、ちょっと違うところがありませんか？そうです。閉じたぐがないんです。今まで学んだたぐには必ず閉じたぐがありました。エイチワンにはスラッシュ エイチワン、ぴーにはスラッシュ ぴー、エーにはスラッシュ エー。開始たぐと終了たぐの'ぺ'あが基本でしたよね。でも、イメージたぐには'ぺ'あの相手がいません。",
       "durationSec": 31,
       "visual": {
         "type": "remotion",
@@ -646,8 +987,8 @@
       }
     },
     {
-      "scene_id": 28,
-      "narration": "これはセルフクロージング'たぐ'、日本語で言うと「自己完結'たぐ'」と呼ばれるものです。ぴー'たぐ'は開始'たぐ'と終了'たぐ'の間にテキストを挟みますが、img'たぐ'は「ここに画像を表示して」という指示だけなので、間に何かを挟む必要がないんです。だから'たぐ'1つで完結する。前回学んだbr'たぐ'も同じ仲間でしたよね。かいぎょうのbrも閉じ'たぐ'がなかった。こういう'たぐ'は数が限られていますので、新しく出てきたときに「あ、これは閉じ'たぐ'なしのやつだ」と覚えていけば大丈夫です。",
+      "scene_id": 19,
+      "narration": "これはセルフクロージングたぐ、日本語で言うと「自己完結たぐ」と呼ばれるものです。ぴーたぐは開始たぐと終了たぐの間にテキストを挟みますが、イメージたぐは「ここに画像を表示して」という指示だけなので、間に何かを挟む必要がないんです。だからたぐ1つで完結する。前回学んだビーアールたぐも同じ仲間でしたよね。かいぎょうのビーアールも閉じたぐがなかった。こういうたぐは数が限られていますので、新しく出てきたときに「あ、これは閉じたぐなしのやつだ」と覚えていけば大丈夫です。",
       "durationSec": 44,
       "visual": {
         "type": "remotion",
@@ -676,8 +1017,8 @@
       }
     },
     {
-      "scene_id": 29,
-      "narration": "では、img'たぐ'の属性を詳しく見ていきましょう。2つの属性がありますね。まず、srcです。ソースの略で、画像ファイルの場所、つまり画像の住所を指定します。先ほどのa'たぐ'のhrefと役割がよく似ていますね。hrefがリンク先の住所、srcが画像の住所。引用符の中にURLを入れるところも同じです。",
+      "scene_id": 20,
+      "narration": "では、イメージたぐの属性を詳しく見ていきましょう。2つの属性がありますね。まず、ソース属性です。名前はソースの略で、画像ファイルの場所、つまり画像の住所を指定します。先ほどのエーたぐのエイチレフと役割がよく似ていますね。エイチレフがリンク先の住所、ソースが画像の住所。引用符の中にURLを入れるところも同じです。",
       "durationSec": 29,
       "visual": {
         "type": "remotion",
@@ -696,8 +1037,8 @@
       }
     },
     {
-      "scene_id": 30,
-      "narration": "次に、altです。オルトと読みます。オルタナティブ、つまり「代替」という意味です。何の代替かというと、画像が表示できなかったときに、代わりに画面に出すテキストなんです。例えば、こんな場面を想像してください。電車の中でスマートフォンがトンネルに入って、一時的にインターネットの接続が切れた。そのとき、画像が読み込めなかったページでは、画像の代わりにこのaltのテキストが表示されるんです。訪問者は「ああ、ここにはこういう写真があるんだな」と理解できますよね。",
+      "scene_id": 21,
+      "narration": "次に、オルト属性です。オルタナティブ、つまり「代替」という意味です。何の代替かというと、画像が表示できなかったときに、代わりに画面に出すテキストなんです。例えば、こんな場面を想像してください。電車の中でスマートフォンがトンネルに入って、一時的にインターネットの接続が切れた。そのとき、画像が読み込めなかったページでは、画像の代わりにこのオルトのテキストが表示されるんです。訪問者は「ああ、ここにはこういう写真があるんだな」と理解できますよね。",
       "durationSec": 46,
       "visual": {
         "type": "remotion",
@@ -720,8 +1061,8 @@
       }
     },
     {
-      "scene_id": 31,
-      "narration": "もう一つ、とても大事な役割があります。目の不自由な方が使うスクリーンリーダーという読み上げソフトは、画像そのものを見せることができません。代わりに、このaltのテキストを音声で読み上げてくれるんです。つまりaltを書くことは、すべての人がウェブを利用できるようにするための配慮なんですね。ですから、altには「この画像に何が写っているか」を簡潔に書くのがルールです。先ほど「サンプル画像」と書きましたが、実際にはもっと具体的に書きましょう。",
+      "scene_id": 22,
+      "narration": "もう一つ、とても大事な役割があります。目の不自由な方が使うスクリーンリーダーという読み上げソフトは、画像そのものを見せることができません。代わりに、このオルトのテキストを音声で読み上げてくれるんです。つまりオルトを書くことは、すべての人がウェブを利用できるようにするための配慮なんですね。ですから、オルトには「この画像に何が写っているか」を簡潔に書くのがルールです。先ほど「サンプル画像」と書きましたが、実際にはもっと具体的に書きましょう。",
       "durationSec": 44,
       "visual": {
         "type": "remotion",
@@ -734,57 +1075,151 @@
       }
     },
     {
-      "scene_id": 32,
-      "narration": "こんなふうに、見た人が画像の内容をイメージできるテキストを入れてあげてください。altを空っぽにしたり、そもそも書かなかったりするのは、できるだけ避けたいですね。",
-      "durationSec": 16,
+      "scene_id": 23,
+      "narration": "こんなふうに、見た人が画像の内容をイメージできるテキストを入れてあげてください。オルトを空っぽにしたり、そもそも書かなかったりするのは、できるだけ避けたいですね。",
+      "durationSec": 12,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<img src=\"https://picsum.photos/400/300\" alt=\"海辺のカフェのテラス席\">",
-          "language": "html",
-          "title": "具体的なaltテキスト"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<img src=\"https://picsum.photos/400/300\" alt=\"海辺のカフェのテラス席\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 500
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 500
+          }
+        ]
       }
     },
     {
-      "scene_id": 33,
-      "narration": "ちなみに、srcに指定しているURLの最後に「400/300」という数字がありますよね。これはこのテスト用サービスの機能で、横400ピクセル、縦300ピクセルの画像を返してね、という指定です。試しに数字を変えましょう。600と200にします。",
-      "durationSec": 25,
+      "scene_id": 24,
+      "narration": "ちなみに、ソースに指定しているURLの最後に「400/300」という数字がありますよね。これはこのテスト用サービスの機能で、横400ピクセル、縦300ピクセルの画像を返してね、という指定です。試しに数字を変えましょう。まず400/300の状態を確認してから、600と200に変更します。プレビューの画像が横長に変わりましたよね。こんなふうに画像のサイズは自由に変えられます。ただ、実際のウェブサイトでは画像のサイズ調整はCSSを使うのが一般的です。それはパートスリーで学びますので、今は「イメージたぐで画像を表示できる」ということが理解できていれば十分です。",
+      "durationSec": 47,
       "visual": {
-        "type": "remotion",
-        "component": "KeyPointScreen",
-        "props": {
-          "icon": "📐",
-          "headline": "画像サイズの指定",
-          "detail": "URLの数字で横幅と縦幅を変えられる",
-          "color": "#ef4444"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 8,
+            "phrase": "試しに"
+          },
+          {
+            "actionIndex": 12,
+            "phrase": "プレビューの画像"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<img src=\"https://picsum.photos/400/300\" alt=\"サンプル画像\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4699
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+a"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<img src=\"https://picsum.photos/600/200\" alt=\"横長のサンプル画像\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3881
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 20485
+          }
+        ]
       }
     },
     {
-      "scene_id": 34,
-      "narration": "プレビューの画像が横長に変わりましたよね。こんなふうに画像のサイズは自由に変えられます。ただ、実際のウェブサイトでは画像のサイズ調整はCSSを使うのが一般的です。それはパートスリーで学びますので、今は「img'たぐ'で画像を表示できる」ということが理解できていれば十分です。",
-      "durationSec": 27,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<img src=\"https://picsum.photos/600/200\" alt=\"横長のサンプル画像\">",
-          "language": "html",
-          "title": "サイズを変更"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 35,
-      "narration": "ここで少しだけ、画像の「パス」についてお話しします。パスというのは、コンピューターの世界で「ファイルの場所」を表す言葉です。先ほどimg'たぐ'のsrcにURLを書きましたよね。あのURLがまさに画像のパス、つまり画像の住所です。この住所の書き方には、大きく2種類あります。わかりやすいように、現実の住所で例えましょう。",
+      "scene_id": 25,
+      "narration": "ここで少しだけ、画像の「パス」についてお話しします。パスというのは、コンピューターの世界で「ファイルの場所」を表す言葉です。先ほどイメージたぐのソースにURLを書きましたよね。あのURLがまさに画像のパス、つまり画像の住所です。この住所の書き方には、大きく2種類あります。わかりやすいように、現実の住所で例えましょう。",
       "durationSec": 32,
       "visual": {
         "type": "remotion",
@@ -800,7 +1235,7 @@
       }
     },
     {
-      "scene_id": 36,
+      "scene_id": 26,
       "narration": "一つ目は、「東京都渋谷区〇〇町1丁目2番3号」のように、正式な住所をすべて書く方法です。日本のどこにいる人がこの住所を見ても、間違いなくたどり着けますよね。これを「絶対パス」と呼びます。HTMLの世界では、「https://」から始まる完全なURLのことです。",
       "durationSec": 26,
       "visual": {
@@ -822,7 +1257,7 @@
       }
     },
     {
-      "scene_id": 37,
+      "scene_id": 27,
       "narration": "二つ目は、「この建物の3階、右側の302号室」のように、今いる場所を基準にして案内する方法です。同じ建物にいる人なら「3階の302号室」で問題なく通じますが、別の建物にいる人にこれを言っても、どの建物の3階なのかわかりませんよね。これを「相対パス」と呼びます。HTMLでは「images/photo.jpg」のように、自分のHTMLファイルがある場所を起点にして、そこからの位置関係で書く方法です。",
       "durationSec": 40,
       "visual": {
@@ -844,7 +1279,7 @@
       }
     },
     {
-      "scene_id": 38,
+      "scene_id": 28,
       "narration": "今、CodePenで使っているのは絶対パスです。「https://picsum.photos/400/300」という、「https://」から始まる完全なURLを指定していますよね。CodePenはオンラインのエディタなので、自分のパソコンから画像ファイルをアップロードする場所がありません。ですから、インターネット上にすでにある画像のURLをそのまま指定する、つまり絶対パスを使うわけです。",
       "durationSec": 39,
       "visual": {
@@ -858,7 +1293,7 @@
       }
     },
     {
-      "scene_id": 39,
+      "scene_id": 29,
       "narration": "一方、本格的にウェブサイトを作るときは、自分のプロジェクトの中に画像ファイルを置いて、相対パスで指定するのが一般的です。例えば「images/profile.jpg」のような書き方ですね。これはパートファイブで、CodePenからファイル構成のあるツールに移ったタイミングで、実際に手を動かして体験します。自分のプロジェクトの中にimagesフォルダを作って、そこに画像を入れて、相対パスで表示する練習をします。ですので、今の段階では「画像のパスには絶対パスと相対パスの2種類がある」ということ、そして「CodePenでは絶対パスを使う」ということだけ押さえておいてください。難しく感じた方もいるかもしれませんが、大丈夫です。実際に使うときにはすぐに慣れますから。",
       "durationSec": 66,
       "visual": {
@@ -888,7 +1323,7 @@
       }
     },
     {
-      "scene_id": 40,
+      "scene_id": 30,
       "narration": "さて、いよいよ自己紹介ページに本物の写真を入れていきましょう。先ほどのテスト用画像ではなく、ちゃんとした写真を使いたいですよね。ウェブサイトで使える無料の写真素材サイトを2つ紹介します。1つ目はUnsplash、2つ目はPexelsです。どちらもプロのカメラマンが撮影した高品質な写真を、無料で使うことができます。しかも商用利用もOKですので、将来お店のサイトやビジネス用のページを作るときにも安心して使えますよ。インターネットで「フリー素材」と検索するといろいろなサイトが出てきますが、この2つはクオリティが高くて種類も豊富なので、まずはここから探すのがおすすめです。",
       "durationSec": 57,
       "visual": {
@@ -917,7 +1352,7 @@
       }
     },
     {
-      "scene_id": 41,
+      "scene_id": 31,
       "narration": "では、Unsplashから画像のURLを取得しましょう。新しいタブを開いて、アドレスバーに「unsplash.com」と入力してください。サイトが表示されましたね。英語のサイトですが、使い方はシンプルです。画面の上の方に検索バーがありますので、ここに好きなキーワードを英語で入れましょう。例えば「coffee」や「nature」、「workspace」など。自己紹介ページのプロフィール画像に合いそうなキーワードを入れてください。",
       "durationSec": 44,
       "visual": {
@@ -943,7 +1378,7 @@
       }
     },
     {
-      "scene_id": 42,
+      "scene_id": 32,
       "narration": "検索すると、きれいな写真がたくさん表示されますよね。どれもプロが撮った写真なので、クオリティが高いです。この中から気に入った写真を一つ選んで、クリックして大きく表示しましょう。写真が大きく表示されたら、その写真の上で右クリックしてください。メニューが表示されますので、「画像アドレスをコピー」という項目を選びます。Chromeを英語で使っている方は「Copy image address」と表示されます。これで画像のURLがクリップボードにコピーされました。",
       "durationSec": 46,
       "visual": {
@@ -969,39 +1404,96 @@
       }
     },
     {
-      "scene_id": 43,
-      "narration": "CodePenに戻りましょう。先ほど書いたimg'たぐ'のsrcの部分を、今コピーしたURLに書き換えます。srcのイコールの後ろの引用符の中身を一度消して、そこに貼り付けてください。altにも、選んだ画像の内容に合ったテキストを入れてくださいね。コーヒーの写真を選んだなら「コーヒーカップの写真」、自然の風景なら「山と湖の風景」といった具合です。",
-      "durationSec": 34,
+      "scene_id": 33,
+      "narration": "CodePenに戻りましょう。先ほど書いたイメージたぐを、今コピーしたURLを使った形に書き換えます。実際の作業ではソースのイコールの後ろの引用符の中身を一度消して、そこに貼り付けてください。画面では、イメージたぐ全体を完成形に置き換えて確認します。オルトにも、選んだ画像の内容に合ったテキストを入れてくださいね。コーヒーの写真を選んだなら「コーヒーカップの写真」、自然の風景なら「山と湖の風景」といった具合です。プレビューにUnsplashの写真が表示されましたか？先ほどのテスト用画像と比べると、一気に本格的な見た目になりましたよね。もちろん、ご自身の写真を使いたい場合もあると思いますが、今の段階ではUnsplashやPexelsの写真で十分です。写真の選び方に迷ったら、自分の趣味や好きなものに関連する写真を選んでみてください。自己紹介ページですから、自分らしさが伝わる写真がいいですよね。",
+      "durationSec": 67,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<img src=\"ここにコピーしたURLを貼り付け\" alt=\"プロフィール画像\">",
-          "language": "html",
-          "title": "本物の写真に差し替え"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 8,
+            "phrase": "画面では"
+          },
+          {
+            "actionIndex": 10,
+            "phrase": "オルトにも"
+          },
+          {
+            "actionIndex": 12,
+            "phrase": "プレビューに"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<img src=\"https://picsum.photos/400/300\" alt=\"サンプル画像\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 6297
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+a"
+          },
+          {
+            "cmd": "wait",
+            "ms": 5820
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<img src=\"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600\" alt=\"コーヒーカップの写真\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4740
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 28799
+          }
+        ]
       }
     },
     {
-      "scene_id": 44,
-      "narration": "プレビューにUnsplashの写真が表示されましたか？先ほどのテスト用画像と比べると、一気に本格的な見た目になりましたよね。もちろん、ご自身の写真を使いたい場合もあると思いますが、今の段階ではUnsplashやPexelsの写真で十分です。写真の選び方に迷ったら、自分の趣味や好きなものに関連する写真を選んでみてください。自己紹介ページですから、自分らしさが伝わる写真がいいですよね。",
-      "durationSec": 38,
-      "visual": {
-        "type": "remotion",
-        "component": "KeyPointScreen",
-        "props": {
-          "icon": "✨",
-          "headline": "本格的な見た目に変身",
-          "detail": "自分らしさが伝わる写真を選ぼう",
-          "color": "#ef4444"
-        }
-      }
-    },
-    {
-      "scene_id": 45,
+      "scene_id": 34,
       "narration": "Pexelsのほうも使い方はほとんど同じです。「pexels.com」にアクセスして、キーワードで検索して、右クリックで画像アドレスをコピー。UnsplashとPexelsの両方をブックマークしておくと、将来ウェブサイトを作るときに素材探しがとても楽になりますよ。",
       "durationSec": 26,
       "visual": {
@@ -1015,7 +1507,7 @@
       }
     },
     {
-      "scene_id": 46,
+      "scene_id": 35,
       "narration": "最後の仕上げに、SNSリンクを追加しましょう。プロフィールサイトやWeb名刺には、SNSアカウントへのリンクを載せるのが定番です。自己紹介ページを見てくれた人が、そこからSNSをフォローしてくれるかもしれませんよね。実際のフリーランスの方のサイトや、お店のホームページにも、よくSNSリンクが並んでいます。",
       "durationSec": 31,
       "visual": {
@@ -1033,40 +1525,174 @@
       }
     },
     {
-      "scene_id": 47,
-      "narration": "ここで、今日学んだa'たぐ'と前回学んだリストの'たぐ'を組み合わせましょう。画像の下に、こんなふうに書いてください。",
-      "durationSec": 12,
+      "scene_id": 36,
+      "narration": "ここで、今日学んだエーたぐと前回学んだリストのたぐを組み合わせましょう。画像の下に、こんなふうにSNSリンクを書いてください。画面では、プロフィール画像の下にSNSの見出しとリンクリストを追加します。少し長いですが、よく見ると今まで学んだたぐの組み合わせです。前回学んだユーエルとエルアイでリストを作って、その中に今日学んだエーたぐを入れている。HTMLのたぐは、こうやって入れ子にして組み合わせることができるんですね。エルアイたぐの中にエーたぐが入っている、という構造です。",
+      "durationSec": 43,
       "visual": {
-        "type": "remotion",
-        "component": "KeyPointScreen",
-        "props": {
-          "icon": "🔗",
-          "headline": "タグの組み合わせ",
-          "detail": "aタグとul/liリストを組み合わせる",
-          "color": "#ef4444"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 6,
+            "phrase": "画像の下に、"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 467
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 467
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 467
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<img src=\"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600\" alt=\"コーヒーカップの写真\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 851
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 170
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>SNS</h2>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 170
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 170
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<ul>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 170
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 170
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<li><a href=\"https://x.com\" target=\"_blank\">X</a></li>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 170
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 170
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<li><a href=\"https://instagram.com\" target=\"_blank\">Instagram</a></li>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 170
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 170
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<li><a href=\"https://youtube.com\" target=\"_blank\">YouTube</a></li>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 170
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 170
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</ul>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 851
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 426
+          }
+        ]
       }
     },
     {
-      "scene_id": 48,
-      "narration": "少し長いですが、よく見ると今まで学んだ'たぐ'の組み合わせです。前回学んだulとliでリストを作って、その中に今日学んだa'たぐ'を入れている。HTMLの'たぐ'は、こうやって入れ子にして組み合わせることができるんですね。li'たぐ'の中にa'たぐ'が入っている、という構造です。",
-      "durationSec": 26,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<h2>SNS</h2>\n<ul>\n  <li><a href=\"https://twitter.com\" target=\"_blank\">X 旧Twitter</a></li>\n  <li><a href=\"https://www.instagram.com\" target=\"_blank\">Instagram</a></li>\n  <li><a href=\"https://www.youtube.com\" target=\"_blank\">YouTube</a></li>\n</ul>",
-          "language": "html",
-          "title": "SNSリンクリスト"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 49,
-      "narration": "URLの部分は、もし皆さんがSNSのアカウントをお持ちであれば、ご自身のプロフィールページのURLに書き換えてください。例えばXなら、ブラウザで自分のプロフィールページを開いて、アドレスバーに表示されているURLをコピーして、hrefの引用符の中に貼り付ける。Instagramも同じ要領です。アカウントがない方は、今書いたようにサービスのトップページのURLのままでまったく問題ありません。",
+      "scene_id": 37,
+      "narration": "URLの部分は、もし皆さんがSNSのアカウントをお持ちであれば、ご自身のプロフィールページのURLに書き換えてください。例えばXなら、ブラウザで自分のプロフィールページを開いて、アドレスバーに表示されているURLをコピーして、エイチレフの引用符の中に貼り付ける。Instagramも同じ要領です。アカウントがない方は、今書いたようにサービスのトップページのURLのままでまったく問題ありません。",
       "durationSec": 40,
       "visual": {
         "type": "remotion",
@@ -1079,8 +1705,8 @@
       }
     },
     {
-      "scene_id": 50,
-      "narration": "ここで一つ、コードの構造を確認しておきましょう。li'たぐ'の中にa'たぐ'が入っていますよね。このように、HTMLでは'たぐ'の中に別の'たぐ'を入れることができます。パートワンでも少し触れましたが、これを「入れ子」とか「ネスト」と呼びます。ulの中にliがあって、そのliの中にaがある。'たぐ'が何重にも重なっていく感じですが、開始'たぐ'と終了'たぐ'の対応さえ崩れなければ、問題なく動きます。",
+      "scene_id": 38,
+      "narration": "ここで一つ、コードの構造を確認しておきましょう。エルアイたぐの中にエーたぐが入っていますよね。このように、HTMLではたぐの中に別のたぐを入れることができます。パートワンでも少し触れましたが、これを「入れ子」とか「ネスト」と呼びます。ユーエルの中にエルアイがあって、そのエルアイの中にエーがある。たぐが何重にも重なっていく感じですが、開始たぐと終了たぐの対応さえ崩れなければ、問題なく動きます。",
       "durationSec": 37,
       "visual": {
         "type": "remotion",
@@ -1127,62 +1753,157 @@
       }
     },
     {
-      "scene_id": 51,
-      "narration": "プレビューを見ましょう。「SNS」という見出しの下に、箇条書きの各項目が青いリンクになっていますよね。target=\"_blank\"を付けてあるので、クリックすると新しいタブで開きます。元の自己紹介ページはそのまま残りますから、訪問者がSNSを見た後もすぐ戻ってこられる。バッチリですね。",
-      "durationSec": 29,
+      "scene_id": 39,
+      "narration": "最後に、完成形のコードを入れた状態でプレビューを見ましょう。「SNS」という見出しの下に、箇条書きの各項目が青いリンクになっていますよね。ターゲット属性にアンダーバーブランクを指定してあるので、クリックすると新しいタブで開きます。元の自己紹介ページはそのまま残りますから、訪問者がSNSを見た後もすぐ戻ってこられる。バッチリですね。さあ、ここで画面を上から順にゆっくり見てください。名前の見出しがあって、自己紹介の文章があって、趣味のリスト。そしてプロフィール写真。さらにSNSへのリンク一覧。テキストだけだった前回の状態と比べると、ずいぶんウェブサイトらしくなりましたよね。",
+      "durationSec": 47,
       "visual": {
-        "type": "remotion",
-        "component": "BulletDetailScreen",
-        "props": {
-          "title": "完成したSNSリンク",
-          "items": [
-            {
-              "title": "箇条書きリンク",
-              "detail": "ul/liの構造で各SNSが青い文字で表示",
-              "icon": "📝"
-            },
-            {
-              "title": "新しいタブで開く",
-              "detail": "target=\"_blank\"で元ページはそのまま",
-              "icon": "🆕"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "scene_id": 52,
-      "narration": "さあ、ここで画面を上から順にゆっくり見てください。名前の見出しがあって、自己紹介の文章があって、趣味のリスト。そしてプロフィール写真。さらにSNSへのリンク一覧。テキストだけだった前回の状態と比べると、ずいぶんウェブサイトらしくなりましたよね。",
-      "durationSec": 25,
-      "visual": {
-        "type": "remotion",
-        "component": "BeforeAfterScreen",
-        "props": {
-          "title": "自己紹介ページの成長",
-          "before": {
-            "label": "前回まで",
-            "points": [
-              "名前の見出し",
-              "自己紹介文",
-              "趣味のリスト"
-            ],
-            "color": "#94a3b8"
-          },
-          "after": {
-            "label": "今日追加",
-            "points": [
-              "プロフィール写真",
-              "SNSリンク一覧",
-              "ウェブサイトらしい見た目"
-            ],
-            "color": "#10b981"
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 28,
+            "phrase": "テキス"
           }
-        }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h1>山田太郎</h1>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 249
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 249
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>Web制作を勉強しています。</p>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 249
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 249
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<ul><li>映画</li><li>カフェ巡り</li></ul>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 249
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 249
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<img src=\"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600\" alt=\"コーヒーカップの写真\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 249
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 249
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>SNS</h2>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 249
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 249
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<ul><li><a href=\"https://x.com\" target=\"_blank\">X</a></li><li><a href=\"https://instagram.com\" target=\"_blank\">Instagram</a></li></ul>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3119
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 3761
+          }
+        ]
       }
     },
     {
-      "scene_id": 53,
-      "narration": "まだパートツーの3回目の講義ですが、もうここまでのものが作れているんです。HTMLの'たぐ'を少しずつ一つずつ積み重ねていくだけで、こうやってページが形になっていく。今日だけで、a'たぐ'、img'たぐ'という2つの新しい'たぐ'と、href、src、alt、targetという4つの属性を学びました。でも、全部を暗記する必要はありません。「リンクはa'たぐ'、画像はimg'たぐ'」、これだけ覚えていれば、細かい書き方はいつでも調べられます。この感覚、ぜひ大切にしてくださいね。",
+      "scene_id": 40,
+      "narration": "まだパートツーの3回目の講義ですが、もうここまでのものが作れているんです。HTMLのたぐを少しずつ一つずつ積み重ねていくだけで、こうやってページが形になっていく。今日だけで、エーたぐ、イメージたぐという2つの新しいたぐと、エイチレフ、ソース、オルト、ターゲットという4つの属性を学びました。でも、全部を暗記する必要はありません。「リンクはエーたぐ、画像はイメージたぐ」、これだけ覚えていれば、細かい書き方はいつでも調べられます。この感覚、ぜひ大切にしてくださいね。",
       "durationSec": 45,
       "visual": {
         "type": "remotion",
@@ -1194,8 +1915,8 @@
       }
     },
     {
-      "scene_id": 54,
-      "narration": "今日の内容を振り返りましょう。1つ目、リンク。a'たぐ'とhref属性で、クリックすると別のページに移動するリンクを作れます。hrefにリンク先のURLを書いて、'たぐ'の間のテキストが画面に表示される文字。外部サイトへのリンクにはtarget=\"_blank\"を付けて、新しいタブで開くようにしてあげると親切です。",
+      "scene_id": 41,
+      "narration": "今日の内容を振り返りましょう。1つ目、リンク。エーたぐとエイチレフ属性で、クリックすると別のページに移動するリンクを作れます。エイチレフにリンク先のURLを書いて、たぐの間のテキストが画面に表示される文字。外部サイトへのリンクにはターゲット属性にアンダーバーブランクを指定して、新しいタブで開くようにしてあげると親切です。",
       "durationSec": 31,
       "visual": {
         "type": "remotion",
@@ -1213,8 +1934,8 @@
       }
     },
     {
-      "scene_id": 55,
-      "narration": "2つ目、画像。img'たぐ'とsrc属性で、画像を表示できます。alt属性には画像の内容を表すテキストを必ず入れる。画像が表示できないときの代替テキストであり、スクリーンリーダーへの配慮でもあります。そしてimg'たぐ'は閉じ'たぐ'のないセルフクロージング'たぐ'でしたね。br'たぐ'と同じ仲間です。3つ目、画像のパス。住所を全部書く絶対パスと、今いる場所からの位置を書く相対パスの2種類がある。CodePenでは絶対パスを使う。相対パスはパートファイブで実際に体験します。",
+      "scene_id": 42,
+      "narration": "2つ目、画像。イメージたぐとソース属性で、画像を表示できます。オルト属性には画像の内容を表すテキストを必ず入れる。画像が表示できないときの代替テキストであり、スクリーンリーダーへの配慮でもあります。そしてイメージたぐは閉じたぐのないセルフクロージングたぐでしたね。ビーアールたぐと同じ仲間です。3つ目、画像のパス。住所を全部書く絶対パスと、今いる場所からの位置を書く相対パスの2種類がある。CodePenでは絶対パスを使う。相対パスはパートファイブで実際に体験します。",
       "durationSec": 45,
       "visual": {
         "type": "remotion",
@@ -1242,8 +1963,8 @@
       }
     },
     {
-      "scene_id": 56,
-      "narration": "そして、UnsplashやPexelsといった無料の写真素材サイトも紹介しました。きれいな写真が無料で、しかも商用利用もOK。ウェブサイトを作るときの強い味方になりますよ。ぜひブックマークしておいてくださいね。次の講義では、HTMLの「構造を組み立てる'たぐ'」を学びます。今作っている自己紹介ページのHTMLを見ると、エイチワン、ぴー、ul、img、aといった'たぐ'が上から順にずらっと並んでいる状態ですよね。次回はこのコードを、もっと意味のあるまとまりに整理するための「セマンティック'たぐ'」を学びます。ヘッダーはここ、メインコンテンツはここ、フッターはここ、というふうに区分けする。見た目は変わらないんですが、エーアイや検索エンジンにとって読み取りやすい構造にする。そんなお話です。",
+      "scene_id": 43,
+      "narration": "そして、UnsplashやPexelsといった無料の写真素材サイトも紹介しました。きれいな写真が無料で、しかも商用利用もOK。ウェブサイトを作るときの強い味方になりますよ。ぜひブックマークしておいてくださいね。次の講義では、HTMLの「構造を組み立てるたぐ」を学びます。今作っている自己紹介ページのHTMLを見ると、エイチワン、ぴー、ユーエル、イメージ、エーといったたぐが上から順にずらっと並んでいる状態ですよね。次回はこのコードを、もっと意味のあるまとまりに整理するための「セマンティックたぐ」を学びます。ヘッダーはここ、メインコンテンツはここ、フッターはここ、というふうに区分けする。見た目は変わらないんですが、エーアイや検索エンジンにとって読み取りやすい構造にする。そんなお話です。",
       "durationSec": 67,
       "visual": {
         "type": "remotion",
@@ -1276,7 +1997,7 @@
       }
     },
     {
-      "scene_id": 57,
+      "scene_id": 44,
       "narration": "では、また次の講義でお会いしましょう。今日もお疲れ様でした。",
       "durationSec": 6,
       "visual": {
