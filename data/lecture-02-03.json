@@ -2,7 +2,7 @@
   "lecture_id": "02-03",
   "title": "リンクと画像",
   "part": 2,
-  "totalDurationSec": 1792,
+  "totalDurationSec": 1803,
   "sequence": [
     {
       "scene_id": 1,
@@ -188,16 +188,60 @@
     },
     {
       "scene_id": 6,
-      "narration": "では、このリンクをHTMLでどう書くのか見ていきましょう。CodePenを開いてください。前回作った自己紹介ページがそのまま残っていますか？CodePenにログインしていれば、前回保存した'ぺ'んが残っているはずです。残っていれば、その続きから始めます。もし消えてしまった方がいたら、エイチワン'たぐ'で名前、ぴー'たぐ'で簡単な自己紹介文だけ書いておいてくださいね。準備ができたら進めていきましょう。",
+      "narration": "では、このリンクをHTMLでどう書くのか見ていきましょう。CodePenを開いてください。前回作った自己紹介ページがそのまま残っていますか？CodePenにログインしていれば、前回保存した'ぺ'んが残っているはずです。残っていれば、その続きから始めます。もし消えてしまった方がいたら、エイチワン'たぐ'で名前、ぴー'たぐ'で簡単な自己紹介文、そして趣味のリストだけ書いておいてくださいね。準備ができたら進めていきましょう。",
       "durationSec": 38,
       "visual": {
-        "type": "remotion",
-        "component": "CalloutScreen",
-        "props": {
-          "type": "info",
-          "title": "CodePenの準備",
-          "body": "前回の自己紹介ページを開いてください。消えてしまった方は、h1タグで名前、pタグで自己紹介文を書いておきましょう"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h1>山田太郎</h1>\n<p>Web制作を勉強しています。</p>\n<h2>趣味</h2>\n<ul>\n  <li>映画鑑賞</li>\n  <li>カフェ巡り</li>\n</ul>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1500
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 3500
+          }
+        ]
       }
     },
     {
@@ -227,58 +271,60 @@
     },
     {
       "scene_id": 8,
-      "narration": "では実際に書いましょう。自己紹介ページの一番下あたりに、こう書いてください。",
-      "durationSec": 8,
+      "narration": "では実際に書いましょう。まず自己紹介ページの土台を用意して、その一番下あたりにリンクを追加します。ここに、こう書いてください。はい、書けましたか？ゆっくりで大丈夫ですよ。特にhrefの綴りは間違えやすいポイントです。h、r、e、fの4文字。そしてイコールの後ろの引用符も忘れずに。プレビューを見ましょう。「Googleを開く」という青い文字が表示されていますよね。何も特別なCSSを書いていないのに、a'たぐ'で囲んだテキストは自動的に青色になって、下線が引かれます。これがブラウザの初期設定なんです。「あ、これはリンクだな」と訪問者がすぐわかるようになっているわけですね。",
+      "durationSec": 52,
       "visual": {
-        "type": "remotion",
-        "component": "KeyPointScreen",
-        "props": {
-          "icon": "✍️",
-          "headline": "実際に書いてみよう",
-          "detail": "自己紹介ページの一番下にaタグを追加",
-          "color": "#ef4444"
-        }
-      }
-    },
-    {
-      "scene_id": 9,
-      "narration": "はい、書けましたか？ゆっくりで大丈夫ですよ。特にhrefの綴りは間違えやすいポイントです。h、r、e、fの4文字。そしてイコールの後ろの引用符も忘れずに。",
-      "durationSec": 15,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<a href=\"https://www.google.com\">Googleを開く</a>",
-          "language": "html",
-          "title": "初めてのリンク"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 10,
-      "narration": "プレビューを見ましょう。「Googleを開く」という青い文字が表示されていますよね。何も特別なCSSを書いていないのに、a'たぐ'で囲んだテキストは自動的に青色になって、下線が引かれます。これがブラウザの初期設定なんです。「あ、これはリンクだな」と訪問者がすぐわかるようになっているわけですね。",
-      "durationSec": 29,
-      "visual": {
-        "type": "remotion",
-        "component": "BulletDetailScreen",
-        "props": {
-          "title": "aタグの初期スタイル",
-          "items": [
-            {
-              "title": "青い文字",
-              "detail": "CSSを書かなくても自動的に青色になる",
-              "icon": "🔵"
-            },
-            {
-              "title": "下線付き",
-              "detail": "リンクであることが訪問者にすぐわかる",
-              "icon": "📎"
-            }
-          ]
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h1>山田太郎</h1>\n<p>Web制作を勉強しています。</p>\n<h2>趣味</h2>\n<ul>\n  <li>映画鑑賞</li>\n  <li>カフェ巡り</li>\n</ul>\n<a href=\"https://www.google.com\">Googleを開く</a>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3000
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 5000
+          }
+        ]
       }
     },
     {
@@ -398,34 +444,60 @@
     },
     {
       "scene_id": 15,
-      "narration": "では、もう一つリンクを追加しましょう。今度はYouTubeへのリンクです。先ほどのa'たぐ'の下に、もう1行書いてください。",
-      "durationSec": 13,
+      "narration": "では、もう一つリンクを追加しましょう。今度はYouTubeへのリンクです。画面では先ほどのGoogleリンクも入れたうえで、その下にYouTubeのリンクをもう1行追加します。プレビューに2つ目のリンクが出ましたね。2つのリンクが縦に並んでいる方もいれば、横にくっついている方もいるかもしれません。これはHTML側の並び方の仕組みに関係しているんですが、今は気にしなくて大丈夫です。",
+      "durationSec": 34,
       "visual": {
-        "type": "remotion",
-        "component": "KeyPointScreen",
-        "props": {
-          "icon": "➕",
-          "headline": "2つ目のリンク追加",
-          "detail": "YouTubeへのリンクを書いてみよう",
-          "color": "#ef4444"
-        }
-      }
-    },
-    {
-      "scene_id": 16,
-      "narration": "プレビューに2つ目のリンクが出ましたね。2つのリンクが縦に並んでいる方もいれば、横にくっついている方もいるかもしれません。これはHTML側の並び方の仕組みに関係しているんですが、今は気にしなくて大丈夫です。",
-      "durationSec": 21,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<a href=\"https://www.youtube.com\">YouTubeを見る</a>",
-          "language": "html",
-          "title": "YouTubeへのリンク"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"https://www.google.com\">Googleを開く</a>\n<a href=\"https://www.youtube.com\">YouTubeを見る</a>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3000
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 5000
+          }
+        ]
       }
     },
     {
@@ -443,75 +515,77 @@
     },
     {
       "scene_id": 18,
-      "narration": "そこで使うのが、「新しいタブで開く」という機能です。先ほどのYouTubeのリンクを、こう書き換えましょう。",
-      "durationSec": 11,
+      "narration": "そこで使うのが、「新しいタブで開く」という機能です。先ほどのYouTubeのリンクを、target付きの形に書き換えましょう。hrefの後ろに半角スペースを空けて、target=\"_blank\"を追加しました。targetは「リンクをどこで開くか」を指定する属性です。ブランクは英語で「空白」という意味ですから、「空白の新しいタブで開く」という指定になります。これを付けると、リンクをクリックしたときに新しいタブが開いて、元のページはそのまま残ります。訪問者は外部サイトを見終わったら、タブを切り替えるだけで元のページに戻れるわけです。外部のサイトへリンクするときは、基本的にこのtarget=\"_blank\"を付けておくと親切ですね。一方、自分のサイト内で別のページに移動するだけのときは、付けなくても大丈夫です。では、Googleのリンクにもtarget=\"_blank\"を追加して、2つの外部リンクを同じ形にそろえておきましょう。",
+      "durationSec": 84,
       "visual": {
-        "type": "remotion",
-        "component": "KeyPointScreen",
-        "props": {
-          "icon": "🆕",
-          "headline": "新しいタブで開く",
-          "detail": "target=\"_blank\"で別タブに開く",
-          "color": "#ef4444"
-        }
-      }
-    },
-    {
-      "scene_id": 19,
-      "narration": "hrefの後ろに半角スペースを空けて、target=\"_blank\"を追加しました。targetは「リンクをどこで開くか」を指定する属性です。ブランクは英語で「空白」という意味ですから、「空白の新しいタブで開く」という指定になります。",
-      "durationSec": 23,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<a href=\"https://www.youtube.com\" target=\"_blank\">YouTubeを見る</a>",
-          "language": "html",
-          "title": "target=\"_blank\"の追加"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 20,
-      "narration": "これを付けると、リンクをクリックしたときに新しいタブが開いて、元のページはそのまま残ります。訪問者は外部サイトを見終わったら、タブを切り替えるだけで元のページに戻れるわけです。外部のサイトへリンクするときは、基本的にこのtarget=\"_blank\"を付けておくと親切ですね。一方、自分のサイト内で別のページに移動するだけのときは、付けなくても大丈夫です。",
-      "durationSec": 36,
-      "visual": {
-        "type": "remotion",
-        "component": "TwoColumnScreen",
-        "props": {
-          "title": "target=\"_blank\"の使い分け",
-          "left": {
-            "title": "付ける",
-            "body": "外部サイトへのリンク\n→ 新しいタブで開く\n→ 元のページが残る",
-            "icon": "✅",
-            "color": "#10b981"
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
           },
-          "right": {
-            "title": "付けない",
-            "body": "自分のサイト内リンク\n→ 同じタブで移動\n→ 自然なページ遷移",
-            "icon": "➡️",
-            "color": "#3b82f6"
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"https://www.google.com\">Googleを開く</a>\n<a href=\"https://www.youtube.com\">YouTubeを見る</a>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3000
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+a"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"https://www.google.com\" target=\"_blank\">Googleを開く</a>\n<a href=\"https://www.youtube.com\" target=\"_blank\">YouTubeを見る</a>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4000
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 8000
           }
-        }
-      }
-    },
-    {
-      "scene_id": 21,
-      "narration": "では、Googleのリンクにもtarget=\"_blank\"を追加しておきましょう。",
-      "durationSec": 8,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<a href=\"https://www.google.com\" target=\"_blank\">Googleを開く</a>",
-          "language": "html",
-          "title": "Googleリンクにも追加"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        ]
       }
     },
     {
@@ -602,34 +676,60 @@
     },
     {
       "scene_id": 25,
-      "narration": "では書いましょう。先ほどのリンクの下に、こう書いてください。",
-      "durationSec": 7,
+      "narration": "では書いましょう。先ほどのリンクの下に、画像の'たぐ'を追加します。画面ではリンクの下にimg'たぐ'を入れた形を作っていきます。プレビューを見ましょう。写真が1枚表示されましたか？何かしらの写真が表示されているはずです。ページをリロードするたびに違う写真に変わるかもしれませんが、心配しないでください。今使っているURLは、テスト用のダミー画像をランダムに返してくれるサービスです。後ほど本物の写真に差し替えます。",
+      "durationSec": 36,
       "visual": {
-        "type": "remotion",
-        "component": "KeyPointScreen",
-        "props": {
-          "icon": "✍️",
-          "headline": "imgタグを書いてみよう",
-          "detail": "リンクの下に画像タグを追加",
-          "color": "#ef4444"
-        }
-      }
-    },
-    {
-      "scene_id": 26,
-      "narration": "プレビューを見ましょう。写真が1枚表示されましたか？何かしらの写真が表示されているはずです。ページをリロードするたびに違う写真に変わるかもしれませんが、心配しないでください。今使っているURLは、テスト用のダミー画像をランダムに返してくれるサービスです。後ほど本物の写真に差し替えます。",
-      "durationSec": 29,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<img src=\"https://picsum.photos/400/300\" alt=\"サンプル画像\">",
-          "language": "html",
-          "title": "初めての画像表示"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"https://www.google.com\" target=\"_blank\">Googleを開く</a>\n<a href=\"https://www.youtube.com\" target=\"_blank\">YouTubeを見る</a>\n<img src=\"https://picsum.photos/400/300\" alt=\"サンプル画像\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1500
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 2000
+          }
+        ]
       }
     },
     {
@@ -738,48 +838,132 @@
       "narration": "こんなふうに、見た人が画像の内容をイメージできるテキストを入れてあげてください。altを空っぽにしたり、そもそも書かなかったりするのは、できるだけ避けたいですね。",
       "durationSec": 16,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<img src=\"https://picsum.photos/400/300\" alt=\"海辺のカフェのテラス席\">",
-          "language": "html",
-          "title": "具体的なaltテキスト"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<img src=\"https://picsum.photos/400/300\" alt=\"海辺のカフェのテラス席\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 500
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 500
+          }
+        ]
       }
     },
     {
       "scene_id": 33,
-      "narration": "ちなみに、srcに指定しているURLの最後に「400/300」という数字がありますよね。これはこのテスト用サービスの機能で、横400ピクセル、縦300ピクセルの画像を返してね、という指定です。試しに数字を変えましょう。600と200にします。",
-      "durationSec": 25,
+      "narration": "ちなみに、srcに指定しているURLの最後に「400/300」という数字がありますよね。これはこのテスト用サービスの機能で、横400ピクセル、縦300ピクセルの画像を返してね、という指定です。試しに数字を変えましょう。まず400/300の状態を確認してから、600と200に変更します。プレビューの画像が横長に変わりましたよね。こんなふうに画像のサイズは自由に変えられます。ただ、実際のウェブサイトでは画像のサイズ調整はCSSを使うのが一般的です。それはパートスリーで学びますので、今は「img'たぐ'で画像を表示できる」ということが理解できていれば十分です。",
+      "durationSec": 52,
       "visual": {
-        "type": "remotion",
-        "component": "KeyPointScreen",
-        "props": {
-          "icon": "📐",
-          "headline": "画像サイズの指定",
-          "detail": "URLの数字で横幅と縦幅を変えられる",
-          "color": "#ef4444"
-        }
-      }
-    },
-    {
-      "scene_id": 34,
-      "narration": "プレビューの画像が横長に変わりましたよね。こんなふうに画像のサイズは自由に変えられます。ただ、実際のウェブサイトでは画像のサイズ調整はCSSを使うのが一般的です。それはパートスリーで学びますので、今は「img'たぐ'で画像を表示できる」ということが理解できていれば十分です。",
-      "durationSec": 27,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<img src=\"https://picsum.photos/600/200\" alt=\"横長のサンプル画像\">",
-          "language": "html",
-          "title": "サイズを変更"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<img src=\"https://picsum.photos/400/300\" alt=\"サンプル画像\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3000
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+a"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<img src=\"https://picsum.photos/600/200\" alt=\"横長のサンプル画像\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3000
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 8000
+          }
+        ]
       }
     },
     {
@@ -970,34 +1154,77 @@
     },
     {
       "scene_id": 43,
-      "narration": "CodePenに戻りましょう。先ほど書いたimg'たぐ'のsrcの部分を、今コピーしたURLに書き換えます。srcのイコールの後ろの引用符の中身を一度消して、そこに貼り付けてください。altにも、選んだ画像の内容に合ったテキストを入れてくださいね。コーヒーの写真を選んだなら「コーヒーカップの写真」、自然の風景なら「山と湖の風景」といった具合です。",
-      "durationSec": 34,
+      "narration": "CodePenに戻りましょう。先ほど書いたimg'たぐ'を、今コピーしたURLを使った形に書き換えます。実際の作業ではsrcのイコールの後ろの引用符の中身を一度消して、そこに貼り付けてください。画面では、img'たぐ'全体を完成形に置き換えて確認します。altにも、選んだ画像の内容に合ったテキストを入れてくださいね。コーヒーの写真を選んだなら「コーヒーカップの写真」、自然の風景なら「山と湖の風景」といった具合です。プレビューにUnsplashの写真が表示されましたか？先ほどのテスト用画像と比べると、一気に本格的な見た目になりましたよね。もちろん、ご自身の写真を使いたい場合もあると思いますが、今の段階ではUnsplashやPexelsの写真で十分です。写真の選び方に迷ったら、自分の趣味や好きなものに関連する写真を選んでみてください。自己紹介ページですから、自分らしさが伝わる写真がいいですよね。",
+      "durationSec": 72,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<img src=\"ここにコピーしたURLを貼り付け\" alt=\"プロフィール画像\">",
-          "language": "html",
-          "title": "本物の写真に差し替え"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 44,
-      "narration": "プレビューにUnsplashの写真が表示されましたか？先ほどのテスト用画像と比べると、一気に本格的な見た目になりましたよね。もちろん、ご自身の写真を使いたい場合もあると思いますが、今の段階ではUnsplashやPexelsの写真で十分です。写真の選び方に迷ったら、自分の趣味や好きなものに関連する写真を選んでみてください。自己紹介ページですから、自分らしさが伝わる写真がいいですよね。",
-      "durationSec": 38,
-      "visual": {
-        "type": "remotion",
-        "component": "KeyPointScreen",
-        "props": {
-          "icon": "✨",
-          "headline": "本格的な見た目に変身",
-          "detail": "自分らしさが伝わる写真を選ぼう",
-          "color": "#ef4444"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<img src=\"https://picsum.photos/400/300\" alt=\"サンプル画像\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3000
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+a"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<img src=\"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600\" alt=\"コーヒーカップの写真\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4000
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 12000
+          }
+        ]
       }
     },
     {
@@ -1034,34 +1261,73 @@
     },
     {
       "scene_id": 47,
-      "narration": "ここで、今日学んだa'たぐ'と前回学んだリストの'たぐ'を組み合わせましょう。画像の下に、こんなふうに書いてください。",
-      "durationSec": 12,
+      "narration": "ここで、今日学んだa'たぐ'と前回学んだリストの'たぐ'を組み合わせましょう。画像の下に、こんなふうにSNSリンクを書いてください。画面では、プロフィール画像の下にSNSの見出しとリンクリストを追加します。少し長いですが、よく見ると今まで学んだ'たぐ'の組み合わせです。前回学んだulとliでリストを作って、その中に今日学んだa'たぐ'を入れている。HTMLの'たぐ'は、こうやって入れ子にして組み合わせることができるんですね。li'たぐ'の中にa'たぐ'が入っている、という構造です。",
+      "durationSec": 43,
       "visual": {
-        "type": "remotion",
-        "component": "KeyPointScreen",
-        "props": {
-          "icon": "🔗",
-          "headline": "タグの組み合わせ",
-          "detail": "aタグとul/liリストを組み合わせる",
-          "color": "#ef4444"
-        }
-      }
-    },
-    {
-      "scene_id": 48,
-      "narration": "少し長いですが、よく見ると今まで学んだ'たぐ'の組み合わせです。前回学んだulとliでリストを作って、その中に今日学んだa'たぐ'を入れている。HTMLの'たぐ'は、こうやって入れ子にして組み合わせることができるんですね。li'たぐ'の中にa'たぐ'が入っている、という構造です。",
-      "durationSec": 26,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<h2>SNS</h2>\n<ul>\n  <li><a href=\"https://twitter.com\" target=\"_blank\">X 旧Twitter</a></li>\n  <li><a href=\"https://www.instagram.com\" target=\"_blank\">Instagram</a></li>\n  <li><a href=\"https://www.youtube.com\" target=\"_blank\">YouTube</a></li>\n</ul>",
-          "language": "html",
-          "title": "SNSリンクリスト"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<img src=\"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600\" alt=\"コーヒーカップの写真\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1000
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>SNS</h2>\n<ul>\n  <li><a href=\"https://x.com\" target=\"_blank\">X</a></li>\n  <li><a href=\"https://instagram.com\" target=\"_blank\">Instagram</a></li>\n  <li><a href=\"https://youtube.com\" target=\"_blank\">YouTube</a></li>\n</ul>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1000
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 500
+          }
+        ]
       }
     },
     {
@@ -1128,56 +1394,60 @@
     },
     {
       "scene_id": 51,
-      "narration": "プレビューを見ましょう。「SNS」という見出しの下に、箇条書きの各項目が青いリンクになっていますよね。target=\"_blank\"を付けてあるので、クリックすると新しいタブで開きます。元の自己紹介ページはそのまま残りますから、訪問者がSNSを見た後もすぐ戻ってこられる。バッチリですね。",
-      "durationSec": 29,
+      "narration": "最後に、完成形のコードを入れた状態でプレビューを見ましょう。「SNS」という見出しの下に、箇条書きの各項目が青いリンクになっていますよね。target=\"_blank\"を付けてあるので、クリックすると新しいタブで開きます。元の自己紹介ページはそのまま残りますから、訪問者がSNSを見た後もすぐ戻ってこられる。バッチリですね。さあ、ここで画面を上から順にゆっくり見てください。名前の見出しがあって、自己紹介の文章があって、趣味のリスト。そしてプロフィール写真。さらにSNSへのリンク一覧。テキストだけだった前回の状態と比べると、ずいぶんウェブサイトらしくなりましたよね。",
+      "durationSec": 54,
       "visual": {
-        "type": "remotion",
-        "component": "BulletDetailScreen",
-        "props": {
-          "title": "完成したSNSリンク",
-          "items": [
-            {
-              "title": "箇条書きリンク",
-              "detail": "ul/liの構造で各SNSが青い文字で表示",
-              "icon": "📝"
-            },
-            {
-              "title": "新しいタブで開く",
-              "detail": "target=\"_blank\"で元ページはそのまま",
-              "icon": "🆕"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "scene_id": 52,
-      "narration": "さあ、ここで画面を上から順にゆっくり見てください。名前の見出しがあって、自己紹介の文章があって、趣味のリスト。そしてプロフィール写真。さらにSNSへのリンク一覧。テキストだけだった前回の状態と比べると、ずいぶんウェブサイトらしくなりましたよね。",
-      "durationSec": 25,
-      "visual": {
-        "type": "remotion",
-        "component": "BeforeAfterScreen",
-        "props": {
-          "title": "自己紹介ページの成長",
-          "before": {
-            "label": "前回まで",
-            "points": [
-              "名前の見出し",
-              "自己紹介文",
-              "趣味のリスト"
-            ],
-            "color": "#94a3b8"
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
           },
-          "after": {
-            "label": "今日追加",
-            "points": [
-              "プロフィール写真",
-              "SNSリンク一覧",
-              "ウェブサイトらしい見た目"
-            ],
-            "color": "#10b981"
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h1>山田太郎</h1>\n<p>Web制作を勉強しています。</p>\n<ul><li>映画</li><li>カフェ巡り</li></ul>\n<img src=\"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600\" alt=\"コーヒーカップの写真\">\n<h2>SNS</h2>\n<ul><li><a href=\"https://x.com\" target=\"_blank\">X</a></li><li><a href=\"https://instagram.com\" target=\"_blank\">Instagram</a></li></ul>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 2500
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 6000
           }
-        }
+        ]
       }
     },
     {
