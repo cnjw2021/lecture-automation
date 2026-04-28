@@ -189,10 +189,16 @@
     {
       "scene_id": 6,
       "narration": "では、このリンクをHTMLでどう書くのか見ていきましょう。CodePenを開いてください。前回作った自己紹介ページがそのまま残っていますか？CodePenにログインしていれば、前回保存した'ぺ'んが残っているはずです。残っていれば、その続きから始めます。もし消えてしまった方がいたら、エイチワン'たぐ'で名前、ぴー'たぐ'で簡単な自己紹介文、そして趣味のリストだけ書いておいてくださいね。準備ができたら進めていきましょう。",
-      "durationSec": 38,
+      "durationSec": 33,
       "visual": {
         "type": "playwright",
         "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 6,
+            "phrase": "前回作った"
+          }
+        ],
         "action": [
           {
             "cmd": "goto",
@@ -378,6 +384,12 @@
       "visual": {
         "type": "playwright",
         "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 6,
+            "phrase": "ここに"
+          }
+        ],
         "action": [
           {
             "cmd": "goto",
@@ -670,6 +682,12 @@
       "visual": {
         "type": "playwright",
         "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 6,
+            "phrase": "画面で"
+          }
+        ],
         "action": [
           {
             "cmd": "goto",
@@ -754,10 +772,16 @@
     {
       "scene_id": 18,
       "narration": "そこで使うのが、「新しいタブで開く」という機能です。先ほどのYouTubeのリンクを、ターゲット属性付きの形に書き換えましょう。エイチレフの後ろに半角スペースを空けて、ターゲット属性にアンダーバーブランクを追加しました。ターゲット属性は「リンクをどこで開くか」を指定する属性です。ブランクは英語で「空白」という意味ですから、「空白の新しいタブで開く」という指定になります。これを付けると、リンクをクリックしたときに新しいタブが開いて、元のページはそのまま残ります。訪問者は外部サイトを見終わったら、タブを切り替えるだけで元のページに戻れるわけです。外部のサイトへリンクするときは、基本的にこのターゲット属性にアンダーバーブランクを指定しておくと親切ですね。一方、自分のサイト内で別のページに移動するだけのときは、付けなくても大丈夫です。では、Googleのリンクにもターゲット属性にアンダーバーブランクを追加して、2つの外部リンクを同じ形にそろえておきましょう。",
-      "durationSec": 84,
+      "durationSec": 70,
       "visual": {
         "type": "playwright",
         "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 14,
+            "phrase": "ターゲット属性は"
+          }
+        ],
         "action": [
           {
             "cmd": "goto",
@@ -953,6 +977,12 @@
       "visual": {
         "type": "playwright",
         "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 14,
+            "phrase": "今使っ"
+          }
+        ],
         "action": [
           {
             "cmd": "goto",
@@ -1142,7 +1172,7 @@
     {
       "scene_id": 32,
       "narration": "こんなふうに、見た人が画像の内容をイメージできるテキストを入れてあげてください。オルトを空っぽにしたり、そもそも書かなかったりするのは、できるだけ避けたいですね。",
-      "durationSec": 16,
+      "durationSec": 12,
       "visual": {
         "type": "playwright",
         "storageState": "config/auth/codepen.json",
@@ -1249,7 +1279,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 3000
+            "ms": 4699
           },
           {
             "cmd": "press",
@@ -1266,7 +1296,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 3000
+            "ms": 3881
           },
           {
             "cmd": "mouse_move",
@@ -1277,7 +1307,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 8000
+            "ms": 20485
           }
         ]
       }
@@ -1524,7 +1554,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 3000
+            "ms": 6297
           },
           {
             "cmd": "press",
@@ -1532,7 +1562,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 0
+            "ms": 5820
           },
           {
             "cmd": "type",
@@ -1541,7 +1571,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 4000
+            "ms": 4740
           },
           {
             "cmd": "mouse_move",
@@ -1552,7 +1582,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 12000
+            "ms": 28799
           }
         ]
       }
@@ -1596,6 +1626,12 @@
       "visual": {
         "type": "playwright",
         "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 6,
+            "phrase": "画像の下に、"
+          }
+        ],
         "action": [
           {
             "cmd": "goto",
@@ -1814,10 +1850,16 @@
     {
       "scene_id": 51,
       "narration": "最後に、完成形のコードを入れた状態でプレビューを見ましょう。「SNS」という見出しの下に、箇条書きの各項目が青いリンクになっていますよね。ターゲット属性にアンダーバーブランクを指定してあるので、クリックすると新しいタブで開きます。元の自己紹介ページはそのまま残りますから、訪問者がSNSを見た後もすぐ戻ってこられる。バッチリですね。さあ、ここで画面を上から順にゆっくり見てください。名前の見出しがあって、自己紹介の文章があって、趣味のリスト。そしてプロフィール写真。さらにSNSへのリンク一覧。テキストだけだった前回の状態と比べると、ずいぶんウェブサイトらしくなりましたよね。",
-      "durationSec": 54,
+      "durationSec": 47,
       "visual": {
         "type": "playwright",
         "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 28,
+            "phrase": "テキス"
+          }
+        ],
         "action": [
           {
             "cmd": "goto",
