@@ -1312,6 +1312,7 @@
       "durationSec": 90,
       "visual": {
         "type": "playwright",
+        "storageState": "config/auth/unsplash.json",
         "syncPoints": [
           {
             "actionIndex": 2,
