@@ -37,6 +37,34 @@
 
 ---
 
+### `prefill_codepen` — CodePen 사전 입력 콘텐츠로 신규 pen 생성·이동
+
+CodePen Prefill API ([공식 문서](https://blog.codepen.io/documentation/api/prefill/)) 를 사용해 HTML/CSS/JS 가 미리 입력된 신규 pen 페이지로 직접 이동합니다. `goto https://codepen.io/pen/` 가 빈 에디터를 먼저 노출시키는 것과 달리, 본 액션은 콘텐츠가 처음부터 에디터에 들어 있는 상태로 페이지가 로드되어 "저장된 pen 을 다시 연 느낌" 의 자연스러운 데모를 만듭니다.
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `html` | string | ⛔ | HTML 에디터 초기 콘텐츠 |
+| `css` | string | ⛔ | CSS 에디터 초기 콘텐츠 |
+| `js` | string | ⛔ | JS 에디터 초기 콘텐츠 |
+| `editors` | string | ⛔ | editors 표시 패턴 (예: `"100"` = HTML 만 보이기, `"111"` = 모두). 미지정 시 CodePen 기본값 |
+
+```json
+{
+  "cmd": "prefill_codepen",
+  "html": "<a href=\"https://www.google.com\" target=\"_blank\">Googleを開く</a>\n<a href=\"https://www.youtube.com\" target=\"_blank\">YouTubeを見る</a>\n"
+}
+```
+
+**용도**: 이전 씬에서 입력한 콘텐츠를 다음 씬의 초기 상태로 가져가야 하는데 shared session 이 부적합한 경우 (예: 씬 사이에 nontriv ial 시간차, narration 흐름이 isolated 가 자연스러운 경우). 재타이핑이 어색해 보이는 문제를 해결합니다.
+
+**제약**:
+- `goto` 의 대체로 사용 — 씬의 첫 번째 또는 두 번째 액션에 배치 권장
+- POST navigation 이라 `urlFromScene` 과 함께 사용 불가
+- 생성되는 pen 은 매번 새 URL 이며, 이전 pen 의 URL 을 재사용하지 않음 (사용자 계정에 저장하려면 이후 단계 필요)
+- shared session 에서는 사용 금지 (페이지 navigation 이 세션 상태를 파괴)
+
+---
+
 ### `wait` — 대기
 
 지정한 시간(ms) 동안 대기합니다. 나레이션 타이밍 조절에 사용합니다.

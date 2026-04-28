@@ -884,14 +884,15 @@
         "storageState": "config/auth/codepen.json",
         "syncPoints": [
           {
-            "actionIndex": 14,
+            "actionIndex": 11,
             "phrase": "今使っ"
           }
         ],
         "action": [
           {
-            "cmd": "goto",
-            "url": "https://codepen.io/pen/"
+            "cmd": "prefill_codepen",
+            "html": "<a href=\"https://www.google.com\" target=\"_blank\">Googleを開く</a>\n<a href=\"https://www.youtube.com\" target=\"_blank\">YouTubeを見る</a>",
+            "note": "前のシーンで入力した2つのリンクを初期値として表示 (再タイピング回避)"
           },
           {
             "cmd": "wait",
@@ -905,10 +906,6 @@
             ]
           },
           {
-            "cmd": "wait",
-            "ms": 0
-          },
-          {
             "cmd": "click",
             "selector": "#box-html .CodeMirror"
           },
@@ -917,13 +914,12 @@
             "ms": 0
           },
           {
-            "cmd": "type",
-            "selector": "#box-html .CodeMirror textarea",
-            "key": "<a href=\"https://www.google.com\" target=\"_blank\">Googleを開く</a>"
+            "cmd": "press",
+            "key": "End"
           },
           {
             "cmd": "wait",
-            "ms": 2982
+            "ms": 0
           },
           {
             "cmd": "press",
@@ -931,24 +927,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 2982
-          },
-          {
-            "cmd": "type",
-            "selector": "#box-html .CodeMirror textarea",
-            "key": "<a href=\"https://www.youtube.com\" target=\"_blank\">YouTubeを見る</a>"
-          },
-          {
-            "cmd": "wait",
-            "ms": 2982
-          },
-          {
-            "cmd": "press",
-            "key": "Enter"
-          },
-          {
-            "cmd": "wait",
-            "ms": 2982
+            "ms": 0
           },
           {
             "cmd": "type",
@@ -957,7 +936,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 1560
+            "ms": 0
           },
           {
             "cmd": "mouse_move",
@@ -968,7 +947,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 2080
+            "ms": 0
           }
         ]
       }

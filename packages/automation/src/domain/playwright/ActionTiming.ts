@@ -29,6 +29,7 @@ export const PLAYWRIGHT_TIMING = {
   waitForMs: 0,
   defaultGotoMs: 3000,
   codePenGotoMs: 4200,
+  prefillCodepenMs: 4500,
   yahooGotoMs: 7000,
   heavyGotoMs: 6000,
   setupFloorSlackMs: 1000,
@@ -52,6 +53,8 @@ export function estimatePlaywrightActionDurationMs(action: PlaywrightAction): Ac
       return { ms: Math.max(0, action.ms ?? 0), basis: 'wait ms' };
     case 'goto':
       return estimateGotoDurationMs(action);
+    case 'prefill_codepen':
+      return { ms: PLAYWRIGHT_TIMING.prefillCodepenMs, basis: 'CodePen Prefill POST + pen page load' };
     case 'type': {
       const charCount = action.key?.length ?? 0;
       return {

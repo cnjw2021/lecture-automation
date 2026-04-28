@@ -33,6 +33,7 @@ const VALID_CMDS = new Set([
   'enable_css',
   'render_code_block',
   'wait_for_claude_ready',
+  'prefill_codepen',
 ]);
 
 export const playwrightShapeRule: LintRule = {

@@ -25,7 +25,8 @@ export type PlaywrightCmd =
   | 'disable_css'  // 모든 스타일시트 비활성화
   | 'enable_css'   // 스타일시트 복원
   | 'render_code_block' // 페이지 내 마지막 코드 블록을 추출하여 새 탭에서 렌더
-  | 'wait_for_claude_ready'; // Claude 응답 완료까지 폴링 대기 (timeout 기본 180000ms)
+  | 'wait_for_claude_ready' // Claude 응답 완료까지 폴링 대기 (timeout 기본 180000ms)
+  | 'prefill_codepen';      // CodePen Prefill API 로 사전 입력된 콘텐츠로 신규 pen 생성·이동 (goto 대체)
 
 export interface PlaywrightAction {
   cmd: PlaywrightCmd;
@@ -51,6 +52,14 @@ export interface PlaywrightAction {
    * wait_for_claude_ready, 세션 재개 후 DOM 정착 wait 등 비결정적 대기에 사용.
    */
   offscreen?: boolean;
+  /** prefill_codepen: HTML 에디터 초기 콘텐츠 */
+  html?: string;
+  /** prefill_codepen: CSS 에디터 초기 콘텐츠 */
+  css?: string;
+  /** prefill_codepen: JS 에디터 초기 콘텐츠 */
+  js?: string;
+  /** prefill_codepen: editors 표시 패턴 (예: "100" = HTML 만 보이기, "111" = 모두). 미지정 시 CodePen 기본값 */
+  editors?: string;
 }
 
 /**

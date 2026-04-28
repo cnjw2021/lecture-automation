@@ -5,7 +5,7 @@ import { config } from '../config';
 import { IVisualProvider } from '../../domain/interfaces/IVisualProvider';
 import { Scene, PlaywrightVisual, PlaywrightAction } from '../../domain/entities/Lecture';
 import { executeEduDevtoolsAction, getEduDevtoolsActionDuration } from './playwrightEduDevtools';
-import { typeWithTimeout } from './playwrightBrowserUtils';
+import { typeWithTimeout, executeCodepenPrefill } from './playwrightBrowserUtils';
 
 /**
  * 액션 실패 시 즉시 파이프라인을 중단해야 하는 critical 액션 목록.
@@ -422,6 +422,17 @@ export class PlaywrightVisualProvider implements IVisualProvider {
               }
               await this.injectCursor(page);
             }
+            break;
+          }
+          case 'prefill_codepen': {
+            await executeCodepenPrefill(page, {
+              html: action.html,
+              css: action.css,
+              js: action.js,
+              editors: action.editors,
+            });
+            // CodePen pen 페이지 로드 후 커서 div 재주입 (goto 와 동일한 처리)
+            await this.injectCursor(page);
             break;
           }
           case 'wait':

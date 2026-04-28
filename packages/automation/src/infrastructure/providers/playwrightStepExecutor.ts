@@ -3,7 +3,8 @@ import * as path from 'path';
 import { PlaywrightAction } from '../../domain/entities/Lecture';
 import { StepData, CursorPosition } from '../../domain/entities/StepManifest';
 import { executeEduDevtoolsAction, getEduDevtoolsActionDuration } from './playwrightEduDevtools';
-import { typeWithTimeout } from './playwrightBrowserUtils';
+import { typeWithTimeout, executeCodepenPrefill } from './playwrightBrowserUtils';
+import { PLAYWRIGHT_TIMING } from '../../domain/playwright/ActionTiming';
 
 /**
  * Playwright 액션을 실행하고 그 결과를 합성 캡처용 StepData 로 환원한다.
@@ -48,6 +49,26 @@ export async function executeAndCaptureStep(
         cursorTo: cursorPos,
         scrollY: 0,
         durationMs: 1000,
+        note: action.note,
+      };
+    }
+
+    case 'prefill_codepen': {
+      await executeCodepenPrefill(page, {
+        html: action.html,
+        css: action.css,
+        js: action.js,
+        editors: action.editors,
+      });
+      await page.screenshot({ path: screenshotPath });
+      return {
+        index: stepIndex,
+        cmd: 'prefill_codepen',
+        screenshot: screenshotName,
+        cursorFrom: cursorPos,
+        cursorTo: cursorPos,
+        scrollY: 0,
+        durationMs: PLAYWRIGHT_TIMING.prefillCodepenMs,
         note: action.note,
       };
     }
@@ -348,6 +369,15 @@ export async function executeActionOffscreen(
       if (!action.url) return;
       // shared session 에서 goto 실패 = 페이지 상태 파괴 → 항상 throw
       await page.goto(action.url, { waitUntil: 'load', timeout: 20000 });
+      return;
+    }
+    case 'prefill_codepen': {
+      await executeCodepenPrefill(page, {
+        html: action.html,
+        css: action.css,
+        js: action.js,
+        editors: action.editors,
+      });
       return;
     }
     case 'wait':

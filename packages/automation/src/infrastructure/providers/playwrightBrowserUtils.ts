@@ -1,4 +1,4 @@
-import { chromium, LaunchOptions, Locator } from 'playwright';
+import { chromium, LaunchOptions, Locator, Page } from 'playwright';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { config } from '../config';
@@ -129,5 +129,64 @@ export async function preflightCloseSidebar(
     return updatedPath;
   } finally {
     await browser.close();
+  }
+}
+
+export interface PrefillCodepenInput {
+  html?: string;
+  css?: string;
+  js?: string;
+  editors?: string;
+  title?: string;
+}
+
+/**
+ * CodePen Prefill API (https://blog.codepen.io/documentation/api/prefill/) 로
+ * 사전 입력된 콘텐츠가 들어 있는 신규 pen 페이지를 생성·이동한다.
+ *
+ * 일반 `goto https://codepen.io/pen/` 가 빈 에디터를 먼저 노출시키는 것과 달리,
+ * 본 함수는 CodePen 서버가 콘텐츠를 포함해 렌더링한 페이지로 직접 navigation 하기 때문에
+ * "빈 에디터 → 콘텐츠 등장" 의 어색한 전환이 발생하지 않는다 (저장된 pen 을 다시 연 느낌).
+ *
+ * 동작 순서:
+ *   1. 현재 페이지가 about:blank 등 body 가 없는 상태면 minimal HTML 을 setContent
+ *   2. POST form 을 동적 주입해 codepen.io/pen/define 으로 제출
+ *   3. 브라우저가 새 pen URL 로 navigation, 콘텐츠가 처음부터 에디터에 표시됨
+ */
+export async function executeCodepenPrefill(
+  page: Page,
+  input: PrefillCodepenInput,
+): Promise<void> {
+  const data: Record<string, unknown> = {};
+  if (typeof input.html === 'string') data.html = input.html;
+  if (typeof input.css === 'string') data.css = input.css;
+  if (typeof input.js === 'string') data.js = input.js;
+  if (typeof input.editors === 'string') data.editors = input.editors;
+  if (typeof input.title === 'string') data.title = input.title;
+
+  const currentUrl = page.url();
+  if (!currentUrl || currentUrl === 'about:blank') {
+    await page.setContent('<!doctype html><html><body></body></html>');
+  }
+
+  await page.evaluate((prefillData) => {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://codepen.io/pen/define';
+    form.target = '_self';
+    const inputEl = document.createElement('input');
+    inputEl.type = 'hidden';
+    inputEl.name = 'data';
+    inputEl.value = JSON.stringify(prefillData);
+    form.appendChild(inputEl);
+    document.body.appendChild(form);
+    form.submit();
+  }, data);
+
+  try {
+    await page.waitForURL(/codepen\.io\/pen/, { timeout: 30000 });
+    await page.waitForLoadState('domcontentloaded', { timeout: 20000 });
+  } catch (err: any) {
+    console.warn(`  ⚠️ prefill_codepen 로드 타임아웃 (${err?.message ?? err}), 현재 상태로 계속 진행`);
   }
 }
