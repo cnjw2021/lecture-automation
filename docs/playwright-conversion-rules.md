@@ -38,6 +38,8 @@ Playwright 씬을 만들 때는 아래 순서대로 작성한다. 이 순서를 
 6. **저장 후 lint 와 sync 를 실행한다**
    - `make lint-fix LECTURE=lecture-XX.json`
    - `make lint LECTURE=lecture-XX.json STRICT=1`
+     - STRICT=1 일 때만 G-playwright-sync-coverage 룰의 휴리스틱 경고를 본다 (#141 옵션 A — 일반 lint 침묵)
+   - `make run` / `make run-lambda` 는 `sync-preview-gate` 도 prerequisite 으로 자동 실행 (#141 옵션 B). segment 경고 ≥ 1 이면 차단되므로 별도 호출은 불필요. 수동으로 미리 확인하려면 `make sync-preview LECTURE=lecture-XX.json` 사용.
    - Playwright 최종 wait 재계산은 TTS 생성 후 파이프라인 1.7b 또는 `make sync-playwright LECTURE=lecture-XX.json` 로 수행한다.
 
 ### 연속 실습 씬 통합 원칙 (라이브 몰입감)
