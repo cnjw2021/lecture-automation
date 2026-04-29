@@ -10,6 +10,15 @@
  *   node dist/presentation/cli/sync-preview.js LECTURE.json
  *   node dist/presentation/cli/sync-preview.js LECTURE.json 17
  *   node dist/presentation/cli/sync-preview.js LECTURE.json 15 17
+ *   node dist/presentation/cli/sync-preview.js LECTURE.json --gate
+ *
+ * Exit codes:
+ *   0 — segment 경고 없음 (휴리스틱 drift 만 있으면 zero)
+ *   1 — --gate 옵션에서 segment 경고 ≥ 1 검출 (구조적 sync 불가)
+ *
+ * #141 옵션 B: --gate 옵션은 make run/run-lambda 가 prerequisite 으로 호출할 때 사용.
+ * drift > 3s 는 narration topic 매칭 휴리스틱이므로 false positive 가능 — 정보성 표시만.
+ * segment 경고는 fixed action 시간이 narration budget 을 넘는 구조적 문제라 항상 차단.
  */
 
 import * as fs from 'fs-extra';
@@ -37,12 +46,14 @@ const EXPANDABLE_FIELDS: ('url' | 'selector' | 'key' | 'html' | 'css' | 'js')[] 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
   if (args.length < 1) {
-    console.error('Usage: sync-preview <lecture.json> [scene_id ...]');
-    process.exit(1);
+    console.error('Usage: sync-preview <lecture.json> [scene_id ...] [--gate]');
+    process.exit(2);
   }
 
-  const lectureFile = args[0];
-  const sceneIds = args.slice(1).map(s => Number.parseInt(s, 10)).filter(n => Number.isInteger(n) && n > 0);
+  const gateMode = args.includes('--gate');
+  const positionalArgs = args.filter(a => !a.startsWith('--'));
+  const lectureFile = positionalArgs[0];
+  const sceneIds = positionalArgs.slice(1).map(s => Number.parseInt(s, 10)).filter(n => Number.isInteger(n) && n > 0);
 
   const lecturePath = path.resolve(process.cwd(), 'data', lectureFile);
   if (!(await fs.pathExists(lecturePath))) {
@@ -111,6 +122,18 @@ async function main(): Promise<void> {
     console.log(`\n💡 drift 가 큰 액션은 syncPoint 추가/조정으로 narration 과 정렬 가능합니다.`);
   } else if (processedScenes > 0) {
     console.log(`\n✅ 명확한 drift/경고 없음`);
+  }
+
+  // #141 옵션 B: --gate 모드에서 segment 경고만 차단 사유.
+  // drift > 3s 는 narration topic 매칭 휴리스틱으로 false positive 가능성이 높아
+  // 정보성 표시만. segment 경고는 fixed action 시간 > narration budget 이라는
+  // 구조적 sync 불가 문제이므로 항상 차단.
+  if (gateMode && totalWarnings > 0) {
+    console.log(
+      `\n⛔ sync-preview gate 차단 — segment 경고 ${totalWarnings} 건 (구조적 sync 불가). ` +
+      `syncPoint 또는 액션을 조정 후 재시도하세요.`,
+    );
+    process.exit(1);
   }
 }
 
