@@ -1395,7 +1395,7 @@
           },
           {
             "cmd": "right_click",
-            "selector": "img[src*='images.unsplash.com/photo-']",
+            "selector": "figure img >> nth=0",
             "showContextMenu": {
               "items": [
                 "新しいタブで画像を開く",
@@ -1408,23 +1408,17 @@
                 "検証"
               ],
               "clickItem": "画像アドレスをコピー",
-              "highlightDelayMs": 500,
-              "clickDelayMs": 1200
+              "visibleMs": 11000
             },
             "captureFromTarget": {
               "attribute": "src",
-              "transform": {
-                "type": "regex",
-                "pattern": "(photo-[a-zA-Z0-9_-]+)",
-                "group": 1
-              },
-              "saveAs": "unsplash_photo_id"
+              "saveAs": "unsplash_image_url"
             },
-            "note": "사진 우클릭 → 가짜 컨텍스트 메뉴 + photo ID 캡처. 후속 씬 31 type 페이로드의 placeholder 로 사용"
+            "note": "메인 사진 우클릭 → 가짜 컨텍스트 메뉴 11초 표시. captureFromTarget 은 같은 img 의 src 전체 URL 을 그대로 저장 (Chrome '画像アドレスをコピー' 와 byte-faithful)"
           },
           {
             "cmd": "wait",
-            "ms": 18238
+            "ms": 15838
           }
         ]
       }
@@ -1482,7 +1476,7 @@
           {
             "cmd": "type",
             "selector": "#box-html .CodeMirror textarea",
-            "key": "<img src=\"https://images.unsplash.com/${capture:unsplash_photo_id}?w=600\" alt=\"コーヒーカップの写真\">"
+            "key": "<img src=\"${capture:unsplash_image_url}\" alt=\"コーヒーカップの写真\">"
           },
           {
             "cmd": "wait",
