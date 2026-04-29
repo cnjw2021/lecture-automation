@@ -1414,9 +1414,14 @@
             },
             "captureFromTarget": {
               "attribute": "src",
-              "saveAs": "unsplash_image_url"
+              "transform": {
+                "type": "regex",
+                "pattern": "(photo-[a-zA-Z0-9_-]+)",
+                "group": 1
+              },
+              "saveAs": "unsplash_photo_id"
             },
-            "note": "메인 사진 우클릭 → 가짜 컨텍스트 메뉴 11초 표시. captureFromTarget 은 같은 img 의 src 전체 URL 을 그대로 저장 (Chrome '画像アドレスをコピー' 와 byte-faithful)"
+            "note": "메인 사진 우클릭 → 가짜 컨텍스트 메뉴 11초 표시. img.src 에서 photo ID 만 추출. 씬 31 에서 ?w=600 wrapper 와 결합 — 나레이션 '完成形' 가 simplification cover"
           },
           {
             "cmd": "wait",
@@ -1478,7 +1483,7 @@
           {
             "cmd": "type",
             "selector": "#box-html .CodeMirror textarea",
-            "key": "<img src=\"${capture:unsplash_image_url}\" alt=\"コーヒーカップの写真\">"
+            "key": "<img src=\"https://images.unsplash.com/${capture:unsplash_photo_id}?w=600\" alt=\"コーヒーカップの写真\">"
           },
           {
             "cmd": "wait",
