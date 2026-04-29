@@ -1387,7 +1387,7 @@
           },
           {
             "cmd": "click",
-            "selector": "a[href^='/photos/'] >> nth=0"
+            "selector": "[data-testid='asset-grid-masonry-figure'] a >> nth=0"
           },
           {
             "cmd": "wait",
