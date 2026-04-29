@@ -26,6 +26,10 @@ export const PLAYWRIGHT_TIMING = {
   highlightMs: 1500,
   scrollMs: 500,
   cssToggleMs: 300,
+  /** right_click 의 기본 visible duration (mouse_move + 메뉴 표시) */
+  rightClickBaseMs: 1500,
+  /** right_click.showContextMenu.clickItem 사용 시 추가되는 highlight→click 연출 시간 */
+  rightClickItemDelayMs: 800,
   waitForMs: 0,
   defaultGotoMs: 3000,
   codePenGotoMs: 4200,
@@ -94,6 +98,18 @@ export function estimatePlaywrightActionDurationMs(action: PlaywrightAction): Ac
       };
     case 'render_code_block':
       return { ms: 0, basis: 'not timed for forward sync' };
+    case 'capture':
+      return { ms: 0, basis: 'capture has no visible effect' };
+    case 'right_click': {
+      const highlightDelay = action.showContextMenu?.highlightDelayMs ?? 0;
+      const clickItemDelay = action.showContextMenu?.clickItem
+        ? (action.showContextMenu.clickDelayMs ?? PLAYWRIGHT_TIMING.rightClickItemDelayMs)
+        : 0;
+      return {
+        ms: PLAYWRIGHT_TIMING.rightClickBaseMs + highlightDelay + clickItemDelay,
+        basis: 'right_click base + menu highlight delay + clickItem delay',
+      };
+    }
     default:
       return { ms: 0, basis: 'unknown action' };
   }
