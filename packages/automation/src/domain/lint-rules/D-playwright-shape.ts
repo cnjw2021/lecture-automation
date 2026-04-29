@@ -13,30 +13,13 @@
  */
 
 import { LintIssue, LintRule } from './types';
+import { getAllPlaywrightCmds } from '../playwright/PlaywrightCmdMetadata';
 
-const VALID_CMDS = new Set([
-  'goto',
-  'wait',
-  'wait_for',
-  'scroll',
-  'mouse_move',
-  'click',
-  'type',
-  'press',
-  'focus',
-  'mouse_drag',
-  'highlight',
-  'open_devtools',
-  'select_devtools_node',
-  'toggle_devtools_node',
-  'disable_css',
-  'enable_css',
-  'render_code_block',
-  'wait_for_claude_ready',
-  'prefill_codepen',
-  'right_click',
-  'capture',
-]);
+/**
+ * VALID_CMDS 는 PlaywrightCmdMetadata SSoT 에서 자동 도출 (#144 Phase 0e).
+ * 새 PlaywrightCmd 추가 = metadata 에 한 줄 + 핸들러 1 개. lint 는 자동으로 인식한다.
+ */
+const VALID_CMDS = new Set<string>(getAllPlaywrightCmds());
 
 export const playwrightShapeRule: LintRule = {
   id: 'D-playwright-shape',
