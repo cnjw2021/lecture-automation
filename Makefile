@@ -5,6 +5,7 @@
 
 # 기본 변수 설정
 LECTURE ?= lecture-01-01.json
+CHUNK_SIZE ?= 2000
 ENGINE_PATH = packages/automation/dist/presentation/cli/main.js
 ENGINE_RENDER_SCENE = packages/automation/dist/presentation/cli/render-scene.js
 ENGINE_RECORD_WEBM = packages/automation/dist/presentation/cli/record-webm.js
@@ -12,6 +13,10 @@ ENGINE_CONCAT_SCENES = packages/automation/dist/presentation/cli/concat-scenes.j
 REMOTION_PATH = packages/remotion
 OUTPUT_DIR = output
 RUN_ENV_VARS = $(if $(strip $(MODEL)),MODEL="$(MODEL)")
+
+# Lambda 씬 분할 크기 (단일 씬 재렌더 가속 시 CHUNK_SIZE=200 등으로 override)
+# 기본 2000 — 다중 씬 동시 렌더에 최적 (이슈 #109). 작을수록 씬 내부 병렬성 ↑
+export REMOTION_LAMBDA_FRAMES_PER_LAMBDA = $(CHUNK_SIZE)
 
 help:
 	@echo "🎓 Lecture Automation CLI"
@@ -70,6 +75,7 @@ help:
 	@echo "make render-scene LECTURE=xxx SCENE=5         - 특정 씬 클립만 렌더링"
 	@echo "make render-scene LECTURE=xxx SCENE='5 12'    - 여러 씬 클립 렌더링"
 	@echo "make render-scene-lambda LECTURE=xxx SCENE='5 12' - Lambda 로 씬 클립 병렬 렌더링"
+	@echo "  └─ CHUNK_SIZE=200 옵션 추가 시 단일 씬 내부를 더 잘게 분할 (기본 2000, 작을수록 씬 내부 병렬성 ↑)"
 	@echo "make record-webm LECTURE=xxx SCENE=17         - 특정 Playwright 씬 webm 재생성"
 	@echo "make record-webm LECTURE=xxx SCENE='17 18'    - 여러 Playwright 씬 webm 재생성"
 	@echo "make concat-scenes LECTURE=xxx                - 씬 클립 이어붙여 최종 MP4 생성"
