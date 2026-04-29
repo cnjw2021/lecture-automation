@@ -22,8 +22,17 @@ import {
   TimingMethod,
 } from '../../domain/playwright/PlaywrightSyncSimulator';
 import { isForwardSyncTarget, isIsolatedLiveDemoScene } from '../../domain/policies/LiveDemoScenePolicy';
+import { loadAllCapturesForLecture, expandWithMap } from '../../infrastructure/providers/playwrightCaptureStore';
 
 const DRIFT_WARN_MS = 3000;
+const EXPANDABLE_FIELDS: ('url' | 'selector' | 'key' | 'html' | 'css' | 'js')[] = [
+  'url',
+  'selector',
+  'key',
+  'html',
+  'css',
+  'js',
+];
 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
@@ -53,11 +62,18 @@ async function main(): Promise<void> {
 
   console.log(`\n🔍 sync-preview: ${lecture.lecture_id} (${targets.length} 씬)\n`);
 
+  // capture/mock 값을 1 회 로드 — placeholder 가 있는 type/url/selector/html/css/js 의 길이 추산을 보정
+  const captureMap = await loadAllCapturesForLecture(lecture.lecture_id);
+  if (Object.keys(captureMap).length > 0) {
+    console.log(`📦 capture/mock 값 ${Object.keys(captureMap).length} 개 로드 — placeholder 치환에 사용\n`);
+  }
+
   let totalDriftIssues = 0;
   let totalWarnings = 0;
   let processedScenes = 0;
 
-  for (const scene of targets) {
+  for (const sceneRaw of targets) {
+    const scene = expandSceneActions(sceneRaw, captureMap);
     if (scene.visual.type !== 'playwright') {
       if (sceneIds.length > 0) {
         console.log(`  ⏭  Scene ${scene.scene_id}: Playwright 씬 아님 (skip)`);
@@ -96,6 +112,30 @@ async function main(): Promise<void> {
   } else if (processedScenes > 0) {
     console.log(`\n✅ 명확한 drift/경고 없음`);
   }
+}
+
+function expandSceneActions(scene: Scene, captureMap: Record<string, string>): Scene {
+  if (scene.visual.type !== 'playwright') return scene;
+  const visual = scene.visual as PlaywrightVisual;
+  const actions = visual.action ?? [];
+  let changed = false;
+  const nextActions = actions.map((a) => {
+    let nextAction = a;
+    for (const field of EXPANDABLE_FIELDS) {
+      const v = a[field];
+      if (typeof v === 'string' && v.includes('${capture:')) {
+        const expanded = expandWithMap(v, captureMap);
+        if (expanded !== v) {
+          if (nextAction === a) nextAction = { ...a };
+          (nextAction as any)[field] = expanded;
+          changed = true;
+        }
+      }
+    }
+    return nextAction;
+  });
+  if (!changed) return scene;
+  return { ...scene, visual: { ...visual, action: nextActions } };
 }
 
 async function buildSimulationOptions(scene: Scene, lectureId: string): Promise<SimulationOptions> {

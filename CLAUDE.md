@@ -69,7 +69,8 @@ packages/automation/src/
 type PlaywrightCmd = 'goto' | 'wait' | 'wait_for' | 'mouse_move' | 'click' | 'type' |
   'press' | 'focus' | 'mouse_drag' | 'highlight' | 'open_devtools' |
   'select_devtools_node' | 'toggle_devtools_node' |
-  'disable_css' | 'enable_css' | 'scroll' | 'render_code_block';
+  'disable_css' | 'enable_css' | 'scroll' | 'render_code_block' |
+  'right_click' | 'capture';
 ```
 
 강의 JSON 작성 시 반드시 `{"cmd": "goto", "url": "..."}` 형식 사용.

@@ -3,6 +3,7 @@ import { symbolViolationsRule } from './B-symbol-violations';
 import { playwrightShapeRule } from './D-playwright-shape';
 import { narrationLengthRule } from './E-narration-length';
 import { playwrightTimingRule } from './F-playwright-timing';
+import { captureePlaceholderRule } from './H-capture-placeholder';
 import { allRules } from './index';
 
 function makeLecture(narrations: string[]) {
@@ -593,6 +594,150 @@ describe('F-playwright-timing', () => {
     expect(issues.some(i =>
       i.severity === 'error' && i.message.includes('render_code_block')
     )).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// H — capture placeholder
+// ---------------------------------------------------------------------------
+
+describe('H-capture-placeholder', () => {
+  function makePlaywrightLecture(scenes: any[]) {
+    return {
+      lecture_id: 'test-h',
+      sequence: scenes.map((s, i) => ({
+        scene_id: i + 1,
+        narration: s.narration ?? 'narration',
+        visual: s.visual ?? { type: 'remotion', component: 'TitleScreen', props: {} },
+      })),
+    };
+  }
+
+  it('passes when ${capture:key} 가 더 앞 씬의 capture 로 정의되어 있다', () => {
+    const lec = makePlaywrightLecture([
+      {
+        narration: 'まずキャプチャ',
+        visual: {
+          type: 'playwright',
+          action: [
+            { cmd: 'goto', url: 'https://example.com' },
+            { cmd: 'capture', selector: 'meta[property="og:image"]', attribute: 'content', saveAs: 'photo_id' },
+          ],
+        },
+      },
+      {
+        narration: 'プレースホルダー使用',
+        visual: {
+          type: 'playwright',
+          action: [
+            { cmd: 'goto', url: 'https://codepen.io' },
+            { cmd: 'click', selector: '#box-html .CodeMirror' },
+            { cmd: 'type', selector: '#box-html .CodeMirror textarea', key: 'src="${capture:photo_id}"' },
+          ],
+        },
+      },
+    ]);
+    const issues = captureePlaceholderRule.run(lec);
+    expect(issues).toEqual([]);
+  });
+
+  it('detects undefined ${capture:key}', () => {
+    const lec = makePlaywrightLecture([
+      {
+        narration: 'プレースホルダー',
+        visual: {
+          type: 'playwright',
+          action: [
+            { cmd: 'type', selector: 'input', key: '${capture:nonexistent}' },
+          ],
+        },
+      },
+    ]);
+    const issues = captureePlaceholderRule.run(lec);
+    expect(issues).toHaveLength(1);
+    expect(issues[0].message).toContain('nonexistent');
+  });
+
+  it('detects placeholder used before saveAs (later scene)', () => {
+    const lec = makePlaywrightLecture([
+      {
+        narration: '前の씬',
+        visual: {
+          type: 'playwright',
+          action: [
+            { cmd: 'type', selector: 'input', key: '${capture:photo_id}' },
+          ],
+        },
+      },
+      {
+        narration: '後の씬에서 saveAs',
+        visual: {
+          type: 'playwright',
+          action: [
+            { cmd: 'capture', selector: 'meta', attribute: 'content', saveAs: 'photo_id' },
+          ],
+        },
+      },
+    ]);
+    const issues = captureePlaceholderRule.run(lec);
+    expect(issues.length).toBeGreaterThan(0);
+    expect(issues[0].message).toContain('saveAs 정의가 뒤에');
+  });
+
+  it('detects placeholder in non-expandable field', () => {
+    const lec = makePlaywrightLecture([
+      {
+        narration: 'バツノート',
+        visual: {
+          type: 'playwright',
+          action: [
+            { cmd: 'capture', selector: 'meta', attribute: 'content', saveAs: 'foo' },
+          ],
+        },
+      },
+      {
+        narration: 'プレースホルダー',
+        visual: {
+          type: 'playwright',
+          action: [
+            { cmd: 'type', selector: 'input', key: 'ok', note: 'use ${capture:foo}' },
+          ],
+        },
+      },
+    ]);
+    const issues = captureePlaceholderRule.run(lec);
+    expect(issues.length).toBeGreaterThan(0);
+    expect(issues[0].message).toContain('placeholder 치환 대상 필드가 아닙니다');
+  });
+
+  it('right_click.captureFromTarget 의 saveAs 도 정의로 인정한다', () => {
+    const lec = makePlaywrightLecture([
+      {
+        narration: 'right_click 으로 saveAs',
+        visual: {
+          type: 'playwright',
+          action: [
+            { cmd: 'goto', url: 'https://unsplash.com' },
+            {
+              cmd: 'right_click',
+              selector: 'img',
+              captureFromTarget: { attribute: 'src', saveAs: 'photo_url' },
+            },
+          ],
+        },
+      },
+      {
+        narration: '使う',
+        visual: {
+          type: 'playwright',
+          action: [
+            { cmd: 'type', selector: 'input', key: '${capture:photo_url}' },
+          ],
+        },
+      },
+    ]);
+    const issues = captureePlaceholderRule.run(lec);
+    expect(issues).toEqual([]);
   });
 });
 

@@ -26,6 +26,7 @@ const TEACHING_CMDS = new Set<string>([
   'open_devtools',
   'select_devtools_node',
   'toggle_devtools_node',
+  'right_click',
 ]);
 
 /** teaching action 으로부터 ±N action 이내에 syncPoint 가 있으면 anchor 로 인정 */

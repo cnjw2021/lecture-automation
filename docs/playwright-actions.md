@@ -297,6 +297,94 @@ CSS 셀렉터로 지정한 요소에 분홍색 아웃라인(`5px solid #ff007a`)
 
 ---
 
+### `right_click` — 우클릭 + 가짜 컨텍스트 메뉴 오버레이 (+ 선택적 capture)
+
+지정한 selector 위치로 커서를 이동시킨 뒤, ja-JP Chrome 풍의 **가짜 컨텍스트 메뉴 오버레이**를 페이지에 주입합니다. 네이티브 브라우저 컨텍스트 메뉴는 Playwright 가 제어할 수 없으므로 시각적으로 동일한 모양의 div 를 오버레이해 "右クリック → メニュー表示 → 항목 강조" 효과를 낸다. 실제 클립보드 복사는 일어나지 않으며, 동일 액션 안에서 `captureFromTarget` 으로 attribute 값을 추출해 디스크에 저장하면 후속 씬에서 `${capture:key}` 로 참조할 수 있다.
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `selector` | string | ✅ | 우클릭 대상 요소의 CSS 셀렉터 |
+| `showContextMenu.items` | array | ⛔ | 메뉴 항목 배열. 문자열 또는 `{label, highlighted, separator}` 객체 |
+| `showContextMenu.clickItem` | string | ⛔ | 지정한 label 항목을 자동 highlight (예: `"画像アドレスをコピー"`) |
+| `showContextMenu.highlightDelayMs` | number | ⛔ | 메뉴 표시 후 highlight 적용까지 지연 (기본 0) |
+| `showContextMenu.clickDelayMs` | number | ⛔ | clickItem highlight 부터 클릭 효과까지 지연 (기본 800) |
+| `captureFromTarget.attribute` | string | ⛔ | 우클릭 대상에서 추출할 attribute (기본 `"src"`) |
+| `captureFromTarget.transform` | object | ⛔ | regex 변환 `{ "type": "regex", "pattern": "...", "group": 1 }` |
+| `captureFromTarget.saveAs` | string | ✅ (captureFromTarget 사용 시) | 캡처 저장소 키 — 후속 씬에서 `${capture:saveAs}` 로 참조 |
+
+```json
+{
+  "cmd": "right_click",
+  "selector": "img[src^='https://images.unsplash.com/']",
+  "showContextMenu": {
+    "items": [
+      "新しいタブで画像を開く",
+      "名前を付けて画像を保存…",
+      "画像をコピー",
+      "画像アドレスをコピー",
+      "この画像の QR コードを作成",
+      "Google レンズでこの画像を検索する",
+      { "separator": true },
+      "検証"
+    ],
+    "clickItem": "画像アドレスをコピー"
+  },
+  "captureFromTarget": {
+    "attribute": "src",
+    "transform": { "type": "regex", "pattern": "(photo-[a-zA-Z0-9_-]+)", "group": 1 },
+    "saveAs": "unsplash_photo_id"
+  }
+}
+```
+
+**제약**:
+- 가짜 메뉴이므로 항목 클릭 자체에 효과는 없음. 클립보드 복사 등 실제 동작은 `captureFromTarget` 으로 대체
+- 브라우저 확장 (Microsoft Copilot, Google Workspace 등) 항목은 환경 의존이라 권장하지 않음 — 표준 Chrome 항목만 사용
+- 메뉴 div 는 액션 종료 시 즉시 제거되며, 화면에는 단일 스크린샷이 `1500ms + highlightDelay + clickDelay` 만큼 노출됨
+
+---
+
+### `capture` — 페이지 상태 추출 → 디스크 저장 (placeholder 용)
+
+selector 의 attribute 또는 페이지 URL 을 추출해 `tmp/playwright-captures/{lectureId}/{saveAs}.json` 에 저장한다. 후속 씬에서 `${capture:saveAs}` placeholder 로 참조해 `goto.url`, `type.key`, `prefill_codepen.html`, `click.selector` 등에 동적 값을 흘려 보낼 수 있다. 시각 효과 없음 (`durationMs = 0`).
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `selector` | string | △ | 추출 대상 요소의 CSS 셀렉터 (`fromUrl` 사용 시 무시) |
+| `attribute` | string | ⛔ | 추출할 attribute 이름 (기본 `"src"`) |
+| `fromUrl` | boolean | ⛔ | true 이면 selector 무시하고 `page.url()` 을 캡처 |
+| `transform` | object | ⛔ | regex 변환 `{ "type": "regex", "pattern": "...", "group": 1 }` |
+| `saveAs` | string | ✅ | 캡처 저장소 키 |
+
+```json
+{
+  "cmd": "capture",
+  "selector": "meta[property='og:image']",
+  "attribute": "content",
+  "transform": { "type": "regex", "pattern": "(photo-[a-zA-Z0-9_-]+)", "group": 1 },
+  "saveAs": "unsplash_photo_id"
+}
+```
+
+**placeholder 사용 예** (후속 씬):
+```json
+{
+  "cmd": "type",
+  "selector": "#box-html .CodeMirror textarea",
+  "key": "<img src=\"https://images.unsplash.com/${capture:unsplash_photo_id}?w=600\" alt=\"...\">"
+}
+```
+
+**제약**:
+- placeholder 치환 대상 필드: `url`, `selector`, `key`, `html`, `css`, `js` 만. `note` 등 기타 필드는 치환되지 않음
+- 같은 씬 내 또는 더 앞 씬에서 동일 키의 `saveAs` 가 정의되어 있어야 함 (lint H-rule 이 사전 검증)
+- sync-preview / sync-playwright 단계에서 placeholder 길이 추산을 보정하려면 `tmp/playwright-captures/{lectureId}/.mock.json` 에 mock 값을 두면 됨:
+  ```json
+  { "unsplash_photo_id": "photo-1495474472287-4d71bcdd2085" }
+  ```
+
+---
+
 ### `wait_for` — 셀렉터 조건 대기
 
 지정한 셀렉터가 특정 상태가 될 때까지 대기합니다. AI 라이브 데모 씬에서 streaming 완료 감지에 사용합니다.

@@ -26,7 +26,9 @@ export type PlaywrightCmd =
   | 'enable_css'   // 스타일시트 복원
   | 'render_code_block' // 페이지 내 마지막 코드 블록을 추출하여 새 탭에서 렌더
   | 'wait_for_claude_ready' // Claude 응답 완료까지 폴링 대기 (timeout 기본 180000ms)
-  | 'prefill_codepen';      // CodePen Prefill API 로 사전 입력된 콘텐츠로 신규 pen 생성·이동 (goto 대체)
+  | 'prefill_codepen'      // CodePen Prefill API 로 사전 입력된 콘텐츠로 신규 pen 생성·이동 (goto 대체)
+  | 'right_click'          // 우클릭 + 가짜 컨텍스트 메뉴 오버레이 + 선택적 capture
+  | 'capture';             // 페이지 상태(요소 attribute 또는 URL) 추출하여 디스크 저장 → 후속 씬에서 ${capture:key} 로 사용
 
 export interface PlaywrightAction {
   cmd: PlaywrightCmd;
@@ -60,6 +62,59 @@ export interface PlaywrightAction {
   js?: string;
   /** prefill_codepen: editors 표시 패턴 (예: "100" = HTML 만 보이기, "111" = 모두). 미지정 시 CodePen 기본값 */
   editors?: string;
+  /** right_click: 가짜 컨텍스트 메뉴 오버레이 설정. 생략 시 우클릭만 수행하고 메뉴는 표시되지 않음 */
+  showContextMenu?: ContextMenuConfig;
+  /** right_click: 우클릭 대상 요소에서 attribute 추출하여 캡처 저장소에 저장 */
+  captureFromTarget?: CaptureFromTargetConfig;
+  /** capture: 추출 대상 attribute (생략 시 'src') */
+  attribute?: string;
+  /** capture: 추출 후 적용할 변환. 현재는 regex 만 지원 */
+  transform?: CaptureTransform;
+  /** capture: 캡처 저장소 키 이름. ${capture:saveAs} 로 후속 씬에서 참조 */
+  saveAs?: string;
+  /** capture: true 이면 selector 무시하고 page.url() 을 캡처 대상으로 사용 */
+  fromUrl?: boolean;
+}
+
+/** right_click 의 가짜 컨텍스트 메뉴 항목. 문자열 단축 표기 또는 객체 표기 */
+export type ContextMenuItem =
+  | string
+  | {
+      label?: string;
+      /** true 이면 메뉴 표시 직후 파란색 highlight 스타일 적용 */
+      highlighted?: boolean;
+      /** true 이면 항목 대신 구분선 렌더 (label 무시) */
+      separator?: boolean;
+    };
+
+export interface ContextMenuConfig {
+  items: ContextMenuItem[];
+  /** 메뉴 표시 후 highlight 적용까지의 지연 (기본 0). 시각적 자연스러움을 위해 사용 */
+  highlightDelayMs?: number;
+  /** 지정 시 해당 label 항목을 highlight 후 클릭 효과 → 메뉴 닫힘 (예: "画像アドレスをコピー") */
+  clickItem?: string;
+  /** clickItem highlight 부터 클릭까지의 지연 (기본 800ms) */
+  clickDelayMs?: number;
+  /**
+   * 메뉴가 화면에 표시되는 총 시간 (ms) override.
+   * 지정 시 highlightDelayMs / clickDelayMs 합산을 무시하고 이 값만큼 메뉴를 유지한다.
+   * narration 길이에 맞춰 메뉴 표시 시간을 직접 제어할 때 사용.
+   */
+  visibleMs?: number;
+}
+
+export interface CaptureTransform {
+  type: 'regex';
+  pattern: string;
+  /** match 그룹 인덱스 (기본 1). 0 이면 전체 매치 */
+  group?: number;
+}
+
+export interface CaptureFromTargetConfig {
+  /** 우클릭 대상 요소에서 추출할 attribute 이름 (기본 'src') */
+  attribute?: string;
+  transform?: CaptureTransform;
+  saveAs: string;
 }
 
 /**

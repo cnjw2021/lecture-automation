@@ -30,4 +30,10 @@ list-models.js
 memory/
 
 # 임시
-tmp/
+tmp/*
+# Playwright capture mock 값은 강의별로 안정적인 fixture 이므로 git 으로 공유한다
+!tmp/playwright-captures/
+tmp/playwright-captures/*
+!tmp/playwright-captures/*/
+tmp/playwright-captures/*/*
+!tmp/playwright-captures/*/.mock.json
