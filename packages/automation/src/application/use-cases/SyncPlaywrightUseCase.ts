@@ -16,6 +16,7 @@ import { Lecture, Scene, PlaywrightVisual, PlaywrightAction, PlaywrightSyncPoint
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
 import { isForwardSyncTarget, isIsolatedLiveDemoScene } from '../../domain/policies/LiveDemoScenePolicy';
 import { estimateFixedActionDurationMs } from '../../domain/playwright/ActionTiming';
+import { loadAllCapturesForLecture, expandWithMap } from '../../infrastructure/providers/playwrightCaptureStore';
 
 /**
  * forward sync 단계에서 visible 로 두면 budget 추정이 깨지는 cmd.
@@ -27,6 +28,37 @@ const FORWARD_SYNC_VISIBLE_FORBIDDEN_CMDS = new Set<string>([
   'wait_for_claude_ready',
   'render_code_block',
 ]);
+
+const PLACEHOLDER_EXPANDABLE_FIELDS: ('url' | 'selector' | 'key' | 'html' | 'css' | 'js')[] = [
+  'url',
+  'selector',
+  'key',
+  'html',
+  'css',
+  'js',
+];
+
+/**
+ * action 의 string 필드에서 ${capture:key} 를 captureMap 으로 치환한 새 action 을 반환한다.
+ * 추정 단계에서만 사용 — 원본 lecture JSON 은 변경하지 않는다.
+ */
+function expandActionForEstimation(
+  action: PlaywrightAction,
+  captureMap: Record<string, string>,
+): PlaywrightAction {
+  let next: PlaywrightAction | null = null;
+  for (const field of PLACEHOLDER_EXPANDABLE_FIELDS) {
+    const v = action[field];
+    if (typeof v === 'string' && v.includes('${capture:')) {
+      const expanded = expandWithMap(v, captureMap);
+      if (expanded !== v) {
+        next = next ?? { ...action };
+        (next as any)[field] = expanded;
+      }
+    }
+  }
+  return next ?? action;
+}
 
 // ---------------------------------------------------------------------------
 // Use Case
@@ -47,6 +79,10 @@ export class SyncPlaywrightUseCase {
     const changedSceneIds: number[] = [];
     const targetSceneIds = options.sceneIds;
 
+    // ${capture:key} placeholder 가 있는 type/url/html 등의 길이 추산을 보정하기 위해
+    // capture/mock 값을 1 회 로드. 실제 lecture JSON 은 변경하지 않으며, 추정 단계에서만 사용.
+    const captureMap = await loadAllCapturesForLecture(lecture.lecture_id);
+
     for (let i = 0; i < updatedSequence.length; i++) {
       const scene = updatedSequence[i];
       if (targetSceneIds && !targetSceneIds.includes(scene.scene_id)) continue;
@@ -60,7 +96,7 @@ export class SyncPlaywrightUseCase {
       console.log(`\n[Sync] Scene ${scene.scene_id} 처리 중...`);
 
       try {
-        const updatedActions = await this.syncScene(scene, visual, lecture.lecture_id);
+        const updatedActions = await this.syncScene(scene, visual, lecture.lecture_id, captureMap);
         updatedSequence[i] = {
           ...scene,
           visual: { ...visual, action: updatedActions },
@@ -81,7 +117,12 @@ export class SyncPlaywrightUseCase {
   // Private
   // ---------------------------------------------------------------------------
 
-  private async syncScene(scene: Scene, visual: PlaywrightVisual, lectureId: string): Promise<PlaywrightAction[]> {
+  private async syncScene(
+    scene: Scene,
+    visual: PlaywrightVisual,
+    lectureId: string,
+    captureMap: Record<string, string> = {},
+  ): Promise<PlaywrightAction[]> {
     const { syncPoints, action: actions } = visual;
     if (!syncPoints || syncPoints.length === 0) return actions;
 
@@ -132,7 +173,8 @@ export class SyncPlaywrightUseCase {
               `isolated 역방향 싱크 씬으로 분리해야 함. 'make lint LECTURE=... STRICT=1' 로 사전 검증 권장`
             );
           }
-          fixedMs += estimateFixedActionDurationMs(actions[j]).ms;
+          const expanded = expandActionForEstimation(actions[j], captureMap);
+          fixedMs += estimateFixedActionDurationMs(expanded).ms;
         }
       }
 
