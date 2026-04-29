@@ -1450,7 +1450,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 5000
+            "ms": 6594
           },
           {
             "cmd": "mouse_move",
@@ -1465,7 +1465,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 3000
+            "ms": 3957
           },
           {
             "cmd": "press",
@@ -1473,7 +1473,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 500
+            "ms": 1331
           },
           {
             "cmd": "type",
@@ -1483,7 +1483,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 5000
+            "ms": 13305
           },
           {
             "cmd": "press",
@@ -1491,7 +1491,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 200
+            "ms": 532
           },
           {
             "cmd": "press",
@@ -1499,7 +1499,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 200
+            "ms": 532
           },
           {
             "cmd": "type",
@@ -1509,7 +1509,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 3000
+            "ms": 3077
           },
           {
             "cmd": "mouse_move",
@@ -1520,7 +1520,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 30000
+            "ms": 30766
           }
         ]
       }
@@ -1568,6 +1568,14 @@
           {
             "actionIndex": 9,
             "phrase": "プロフィール画像の下に"
+          },
+          {
+            "actionIndex": 17,
+            "phrase": "前回学んだユーエル"
+          },
+          {
+            "actionIndex": 29,
+            "phrase": "エーたぐが入っている"
           }
         ],
         "action": [
@@ -1648,7 +1656,7 @@
           {
             "cmd": "type",
             "selector": "#box-html .CodeMirror textarea",
-            "key": "<li><a href=\"https://x.com\" target=\"_blank\">X</a></li>"
+            "key": "<li><a href=\"https://x.com\">X</a></li>"
           },
           {
             "cmd": "wait",
@@ -1665,7 +1673,7 @@
           {
             "cmd": "type",
             "selector": "#box-html .CodeMirror textarea",
-            "key": "<li><a href=\"https://instagram.com\" target=\"_blank\">Instagram</a></li>"
+            "key": "<li><a href=\"https://instagram.com\">Instagram</a></li>"
           },
           {
             "cmd": "wait",
@@ -1682,7 +1690,7 @@
           {
             "cmd": "type",
             "selector": "#box-html .CodeMirror textarea",
-            "key": "<li><a href=\"https://youtube.com\" target=\"_blank\">YouTube</a></li>"
+            "key": "<li><a href=\"https://youtube.com\">YouTube</a></li>"
           },
           {
             "cmd": "wait",
