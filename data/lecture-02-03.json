@@ -1394,11 +1394,33 @@
             "ms": 6540
           },
           {
-            "cmd": "mouse_move",
-            "to": [
-              960,
-              500
-            ]
+            "cmd": "right_click",
+            "selector": "img[src*='images.unsplash.com/photo-']",
+            "showContextMenu": {
+              "items": [
+                "新しいタブで画像を開く",
+                "名前を付けて画像を保存…",
+                "画像をコピー",
+                "画像アドレスをコピー",
+                "この画像の QR コードを作成",
+                "Google レンズでこの画像を検索する",
+                { "separator": true },
+                "検証"
+              ],
+              "clickItem": "画像アドレスをコピー",
+              "highlightDelayMs": 500,
+              "clickDelayMs": 1200
+            },
+            "captureFromTarget": {
+              "attribute": "src",
+              "transform": {
+                "type": "regex",
+                "pattern": "(photo-[a-zA-Z0-9_-]+)",
+                "group": 1
+              },
+              "saveAs": "unsplash_photo_id"
+            },
+            "note": "사진 우클릭 → 가짜 컨텍스트 메뉴 + photo ID 캡처. 후속 씬 31 type 페이로드의 placeholder 로 사용"
           },
           {
             "cmd": "wait",
@@ -1460,7 +1482,7 @@
           {
             "cmd": "type",
             "selector": "#box-html .CodeMirror textarea",
-            "key": "<img src=\"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600\" alt=\"コーヒーカップの写真\">"
+            "key": "<img src=\"https://images.unsplash.com/${capture:unsplash_photo_id}?w=600\" alt=\"コーヒーカップの写真\">"
           },
           {
             "cmd": "wait",
