@@ -1,10 +1,11 @@
 import { Page } from 'playwright';
 import * as path from 'path';
-import { PlaywrightAction } from '../../domain/entities/Lecture';
+import { PlaywrightAction, ContextMenuItem, CaptureTransform } from '../../domain/entities/Lecture';
 import { StepData, CursorPosition } from '../../domain/entities/StepManifest';
 import { executeEduDevtoolsAction, getEduDevtoolsActionDuration } from './playwrightEduDevtools';
 import { typeWithTimeout, executeCodepenPrefill } from './playwrightBrowserUtils';
 import { PLAYWRIGHT_TIMING } from '../../domain/playwright/ActionTiming';
+import { expandCapturePlaceholders, saveCapture } from './playwrightCaptureStore';
 
 /**
  * Playwright 액션을 실행하고 그 결과를 합성 캡처용 StepData 로 환원한다.
@@ -21,13 +22,189 @@ export interface StepCaptureContext {
   stepIndex: number;
   outputDir: string;
   cursorPos: CursorPosition;
+  /**
+   * ${capture:key} placeholder 치환 및 capture/right_click 액션의 saveAs 저장에 사용.
+   * 빈 문자열 또는 미지정이면 placeholder 가 있을 경우 strict 모드로 throw.
+   */
+  lectureId?: string;
+  /** capture 액션 실행 시 saveAs 메타에 기록될 sceneId */
+  sceneId?: number;
+}
+
+const CONTEXT_MENU_ELEMENT_ID = '__playwright_context_menu__';
+
+interface ContextMenuRenderItem {
+  label: string;
+  highlighted: boolean;
+  separator: boolean;
+}
+
+function normalizeContextMenuItems(
+  items: ContextMenuItem[],
+  clickItem: string | undefined,
+): ContextMenuRenderItem[] {
+  return items.map((item) => {
+    if (typeof item === 'string') {
+      return { label: item, highlighted: clickItem !== undefined && item === clickItem, separator: false };
+    }
+    if (item.separator) {
+      return { label: '', highlighted: false, separator: true };
+    }
+    const label = item.label ?? '';
+    const explicit = item.highlighted === true;
+    const isClickTarget = clickItem !== undefined && label === clickItem;
+    return { label, highlighted: explicit || isClickTarget, separator: false };
+  });
+}
+
+async function injectContextMenu(
+  page: Page,
+  position: { x: number; y: number },
+  renderItems: ContextMenuRenderItem[],
+): Promise<void> {
+  await page.evaluate(
+    ({ position, renderItems, elementId }) => {
+      document.getElementById(elementId)?.remove();
+      const menu = document.createElement('div');
+      menu.id = elementId;
+      menu.style.cssText = [
+        'position: fixed',
+        `left: ${position.x}px`,
+        `top: ${position.y}px`,
+        'background: #ffffff',
+        'border: 1px solid #cccccc',
+        'border-radius: 8px',
+        'box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15)',
+        'padding: 6px 0',
+        "font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif",
+        'font-size: 14px',
+        'color: #202124',
+        'z-index: 2147483647',
+        'min-width: 280px',
+        'pointer-events: none',
+      ].join(';');
+      renderItems.forEach((item) => {
+        if (item.separator) {
+          const sep = document.createElement('div');
+          sep.style.cssText = 'height: 1px; background: #e0e0e0; margin: 4px 8px;';
+          menu.appendChild(sep);
+          return;
+        }
+        const row = document.createElement('div');
+        row.textContent = item.label;
+        const base = 'padding: 6px 16px; white-space: nowrap;';
+        const accent = item.highlighted ? ' background: #1a73e8; color: #ffffff;' : '';
+        row.style.cssText = base + accent;
+        menu.appendChild(row);
+      });
+      document.body.appendChild(menu);
+      const rect = menu.getBoundingClientRect();
+      if (rect.right > window.innerWidth) {
+        menu.style.left = `${Math.max(0, window.innerWidth - rect.width - 8)}px`;
+      }
+      if (rect.bottom > window.innerHeight) {
+        menu.style.top = `${Math.max(0, window.innerHeight - rect.height - 8)}px`;
+      }
+    },
+    { position, renderItems, elementId: CONTEXT_MENU_ELEMENT_ID },
+  );
+}
+
+async function removeContextMenu(page: Page): Promise<void> {
+  await page.evaluate((elementId) => {
+    document.getElementById(elementId)?.remove();
+  }, CONTEXT_MENU_ELEMENT_ID);
+}
+
+function applyCaptureTransform(raw: string, transform: CaptureTransform | undefined): string {
+  if (!transform) return raw;
+  if (transform.type === 'regex') {
+    const re = new RegExp(transform.pattern);
+    const m = raw.match(re);
+    if (!m) {
+      throw new Error(
+        `capture transform regex 매치 실패: pattern=${transform.pattern}, raw=${raw.slice(0, 200)}`,
+      );
+    }
+    const group = transform.group ?? 1;
+    return m[group] ?? m[0];
+  }
+  return raw;
+}
+
+async function readCaptureSourceValue(
+  page: Page,
+  options: { selector?: string; attribute?: string; fromUrl?: boolean },
+): Promise<string> {
+  if (options.fromUrl) {
+    return page.url();
+  }
+  if (!options.selector) {
+    throw new Error('capture: selector 또는 fromUrl 중 하나가 필요합니다');
+  }
+  const attr = options.attribute ?? 'src';
+  const loc = page.locator(options.selector);
+  await loc.waitFor({ state: 'attached', timeout: 10000 });
+  const value = await loc.getAttribute(attr);
+  if (value === null) {
+    throw new Error(
+      `capture: selector ${options.selector} 의 ${attr} attribute 가 null 입니다`,
+    );
+  }
+  return value;
+}
+
+const CAPTURE_EXPANDABLE_FIELDS: (keyof PlaywrightAction)[] = [
+  'url',
+  'selector',
+  'key',
+  'html',
+  'css',
+  'js',
+];
+
+/**
+ * 액션의 string 필드에서 ${capture:key} placeholder 를 디스크 저장값으로 치환한 새 액션을 반환한다.
+ * lectureId 가 비어 있고 placeholder 도 없으면 원본을 그대로 반환.
+ */
+async function expandActionPlaceholders(
+  action: PlaywrightAction,
+  lectureId: string | undefined,
+): Promise<PlaywrightAction> {
+  if (!lectureId) {
+    // placeholder 가 있는데 lectureId 가 없으면 명시적으로 실패
+    for (const field of CAPTURE_EXPANDABLE_FIELDS) {
+      const v = action[field];
+      if (typeof v === 'string' && v.includes('${capture:')) {
+        throw new Error(
+          `expandActionPlaceholders: '${action.cmd}' 액션의 ${String(field)} 에 \${capture:...} 가 있지만 ` +
+            `lectureId 가 전달되지 않았습니다. PlaywrightStateCaptureProvider 호출자에서 lectureId 를 전달하세요.`,
+        );
+      }
+    }
+    return action;
+  }
+  const next: PlaywrightAction = { ...action };
+  let changed = false;
+  for (const field of CAPTURE_EXPANDABLE_FIELDS) {
+    const v = next[field];
+    if (typeof v === 'string' && v.includes('${capture:')) {
+      const expanded = await expandCapturePlaceholders(lectureId, v);
+      if (expanded !== v) {
+        (next as any)[field] = expanded;
+        changed = true;
+      }
+    }
+  }
+  return changed ? next : action;
 }
 
 export async function executeAndCaptureStep(
   page: Page,
-  action: PlaywrightAction,
+  rawAction: PlaywrightAction,
   ctx: StepCaptureContext,
 ): Promise<StepData | null> {
+  const action = await expandActionPlaceholders(rawAction, ctx.lectureId);
   const screenshotName = `step-${ctx.stepIndex}.png`;
   const screenshotPath = path.join(ctx.outputDir, screenshotName);
   const { cursorPos, stepIndex } = ctx;
@@ -350,6 +527,103 @@ export async function executeAndCaptureStep(
       };
     }
 
+    case 'capture': {
+      if (!action.saveAs) {
+        console.warn(`  ⚠️ capture 액션에 saveAs 가 없습니다 (스킵)`);
+        return null;
+      }
+      if (!ctx.lectureId) {
+        throw new Error(
+          `capture 액션 실행에는 lectureId 가 필요합니다 (saveAs=${action.saveAs}, sceneId=${ctx.sceneId ?? '?'})`,
+        );
+      }
+      const raw = await readCaptureSourceValue(page, {
+        selector: action.selector,
+        attribute: action.attribute,
+        fromUrl: action.fromUrl,
+      });
+      const transformed = applyCaptureTransform(raw, action.transform);
+      await saveCapture(ctx.lectureId, action.saveAs, transformed, {
+        sceneId: ctx.sceneId,
+        sourceCmd: 'capture',
+      });
+      // capture 는 시각 효과가 없으므로 manifest step 을 만들지 않는다.
+      return null;
+    }
+
+    case 'right_click': {
+      if (!action.selector) return null;
+      const rcLoc = page.locator(action.selector);
+      await rcLoc.waitFor({ state: 'visible', timeout: 10000 });
+      const rcBox = await rcLoc.boundingBox();
+      const rcTarget: CursorPosition = rcBox
+        ? { x: rcBox.x + rcBox.width / 2, y: rcBox.y + rcBox.height / 2 }
+        : cursorPos;
+
+      await page.mouse.move(rcTarget.x, rcTarget.y, { steps: 30 });
+
+      // captureFromTarget: 메뉴 표시 전에 attribute 추출 (메뉴 div 가 selector 매칭에 영향 주지 않도록)
+      if (action.captureFromTarget) {
+        if (!ctx.lectureId) {
+          throw new Error(
+            `right_click.captureFromTarget 실행에는 lectureId 가 필요합니다 ` +
+              `(saveAs=${action.captureFromTarget.saveAs}, sceneId=${ctx.sceneId ?? '?'})`,
+          );
+        }
+        const attr = action.captureFromTarget.attribute ?? 'src';
+        const value = await rcLoc.getAttribute(attr);
+        if (value === null) {
+          throw new Error(
+            `right_click.captureFromTarget: selector ${action.selector} 의 ${attr} attribute 가 null 입니다`,
+          );
+        }
+        const transformed = applyCaptureTransform(value, action.captureFromTarget.transform);
+        await saveCapture(
+          ctx.lectureId,
+          action.captureFromTarget.saveAs,
+          transformed,
+          { sceneId: ctx.sceneId, sourceCmd: 'right_click' },
+        );
+      }
+
+      let durationMs = PLAYWRIGHT_TIMING.rightClickBaseMs;
+      if (action.showContextMenu) {
+        const renderItems = normalizeContextMenuItems(
+          action.showContextMenu.items,
+          action.showContextMenu.clickItem,
+        );
+        await injectContextMenu(page, rcTarget, renderItems);
+        const highlightDelay = action.showContextMenu.highlightDelayMs ?? 0;
+        const clickDelay = action.showContextMenu.clickItem
+          ? (action.showContextMenu.clickDelayMs ?? PLAYWRIGHT_TIMING.rightClickItemDelayMs)
+          : 0;
+        if (highlightDelay > 0) {
+          await page.waitForTimeout(Math.min(highlightDelay, 200));
+        }
+        durationMs = PLAYWRIGHT_TIMING.rightClickBaseMs + highlightDelay + clickDelay;
+      }
+
+      await page.screenshot({ path: screenshotPath });
+
+      if (action.showContextMenu) {
+        await removeContextMenu(page);
+      }
+
+      return {
+        index: stepIndex,
+        cmd: 'right_click',
+        screenshot: screenshotName,
+        cursorFrom: cursorPos,
+        cursorTo: rcTarget,
+        targetBox: rcBox
+          ? { x: rcBox.x, y: rcBox.y, width: rcBox.width, height: rcBox.height }
+          : undefined,
+        durationMs,
+        isClick: true,
+        note: action.note,
+      };
+    }
+
     default:
       console.warn(`  ⚠️ 미지원 Action '${action.cmd}' (건너뜀)`);
       return null;
@@ -360,10 +634,17 @@ export async function executeAndCaptureStep(
  * offscreen 액션: 실제 세션에서 실행만 하고 캡처 step 은 생성하지 않는다.
  * 공유 세션(P-D)에서 LLM 응답 대기 등 가변 지연을 씬 바깥으로 밀어낼 때 사용.
  */
+export interface OffscreenContext {
+  lectureId?: string;
+  sceneId?: number;
+}
+
 export async function executeActionOffscreen(
   page: Page,
-  action: PlaywrightAction,
+  rawAction: PlaywrightAction,
+  ctx: OffscreenContext = {},
 ): Promise<void> {
+  const action = await expandActionPlaceholders(rawAction, ctx.lectureId);
   switch (action.cmd) {
     case 'goto': {
       if (!action.url) return;
@@ -471,6 +752,52 @@ export async function executeActionOffscreen(
     case 'render_code_block':
       // 순수 시각 효과, 페이지 상태에 영향 없음 → no-op
       return;
+    case 'capture': {
+      // 페이지 상태 추출은 offscreen 에서도 동일하게 수행 (시각 효과 없음)
+      if (!action.saveAs) return;
+      if (!ctx.lectureId) {
+        throw new Error(
+          `capture 액션 실행에는 lectureId 가 필요합니다 (saveAs=${action.saveAs})`,
+        );
+      }
+      const raw = await readCaptureSourceValue(page, {
+        selector: action.selector,
+        attribute: action.attribute,
+        fromUrl: action.fromUrl,
+      });
+      const transformed = applyCaptureTransform(raw, action.transform);
+      await saveCapture(ctx.lectureId, action.saveAs, transformed, {
+        sceneId: ctx.sceneId,
+        sourceCmd: 'capture',
+      });
+      return;
+    }
+    case 'right_click': {
+      // offscreen 에서는 시각 효과(컨텍스트 메뉴 오버레이) 를 생략하고 captureFromTarget 만 수행
+      if (!action.captureFromTarget || !action.selector) return;
+      if (!ctx.lectureId) {
+        throw new Error(
+          `right_click.captureFromTarget 실행에는 lectureId 가 필요합니다 (saveAs=${action.captureFromTarget.saveAs})`,
+        );
+      }
+      const attr = action.captureFromTarget.attribute ?? 'src';
+      const loc = page.locator(action.selector);
+      await loc.waitFor({ state: 'attached', timeout: 10000 });
+      const value = await loc.getAttribute(attr);
+      if (value === null) {
+        throw new Error(
+          `right_click.captureFromTarget: selector ${action.selector} 의 ${attr} attribute 가 null 입니다`,
+        );
+      }
+      const transformed = applyCaptureTransform(value, action.captureFromTarget.transform);
+      await saveCapture(
+        ctx.lectureId,
+        action.captureFromTarget.saveAs,
+        transformed,
+        { sceneId: ctx.sceneId, sourceCmd: 'right_click' },
+      );
+      return;
+    }
     default:
       console.warn(`  ⚠️ offscreen 미지원 Action '${action.cmd}' (건너뜀)`);
       return;

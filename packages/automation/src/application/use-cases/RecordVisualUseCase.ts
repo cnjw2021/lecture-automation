@@ -55,7 +55,7 @@ export class RecordVisualUseCase {
         }
 
         try {
-          const manifest = await this.stateCaptureProvider.capture(scene, captureDir);
+          const manifest = await this.stateCaptureProvider.capture(scene, captureDir, lecture.lecture_id);
           if (manifest) {
             // lectureId를 매니페스트에 설정
             manifest.lectureId = lecture.lecture_id;

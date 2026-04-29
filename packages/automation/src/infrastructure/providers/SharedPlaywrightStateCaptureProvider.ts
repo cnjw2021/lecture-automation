@@ -125,7 +125,10 @@ export class SharedPlaywrightStateCaptureProvider implements ISharedVisualSessio
               } catch (_) {}
             }
 
-            await executeActionOffscreen(session.page, action);
+            await executeActionOffscreen(session.page, action, {
+              lectureId: session.plan.lectureId,
+              sceneId: scene.scene_id,
+            });
 
             if (action.cmd === 'mouse_move' && action.to) {
               session.cursorPos = { x: action.to[0], y: action.to[1] };
@@ -140,6 +143,8 @@ export class SharedPlaywrightStateCaptureProvider implements ISharedVisualSessio
             stepIndex,
             outputDir,
             cursorPos: session.cursorPos,
+            lectureId: session.plan.lectureId,
+            sceneId: scene.scene_id,
           });
           if (!stepData) continue;
           steps.push(stepData);

@@ -11,7 +11,7 @@ import { executeAndCaptureStep } from './playwrightStepExecutor';
  * 씬마다 독립 컨텍스트를 열고 닫는다. 공유 세션(P-D)은 SharedPlaywrightStateCaptureProvider 참조.
  */
 export class PlaywrightStateCaptureProvider {
-  async capture(scene: Scene, outputDir: string): Promise<SceneManifest | null> {
+  async capture(scene: Scene, outputDir: string, lectureId?: string): Promise<SceneManifest | null> {
     if (scene.visual.type !== 'playwright') return null;
 
     const visualConfig = scene.visual as PlaywrightVisual;
@@ -44,6 +44,8 @@ export class PlaywrightStateCaptureProvider {
             stepIndex,
             outputDir,
             cursorPos,
+            lectureId,
+            sceneId: scene.scene_id,
           });
 
           if (stepData) {
@@ -73,7 +75,7 @@ export class PlaywrightStateCaptureProvider {
 
       const manifest: SceneManifest = {
         sceneId: scene.scene_id,
-        lectureId: '',
+        lectureId: lectureId ?? '',
         totalSteps: steps.length,
         totalDurationMs,
         viewport: { width, height },
