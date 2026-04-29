@@ -21,19 +21,24 @@ import {
 } from '../playwright/ActionTiming';
 import { LintIssue, LintRule } from './types';
 
+import {
+  getForwardSyncPivotForbiddenCmds,
+  getVisibleForwardSyncForbiddenCmds,
+} from '../playwright/PlaywrightCmdMetadata';
+
 const CHARS_PER_SEC = 5.5;
-const FORWARD_SYNC_FORBIDDEN_CMDS = new Set<string>(['goto', 'wait', 'wait_for', 'wait_for_claude_ready']);
+
 /**
- * forward sync 씬에서 visible(offscreen 아님) 로 두면 budget 추정이 깨지는 cmd.
- * - wait_for / wait_for_claude_ready: 비결정적 대기. ActionTiming 에서 0ms 로 처리되므로
- *   visible 로 두면 실제 수 초~수 분 지연이 budget 에서 빠짐. shared session 은 offscreen 으로 밀어야 함.
- * - render_code_block: Artifact iframe 폴링으로 최대 30s. visible budget 에 포함시킬 수 없음.
+ * #144 Phase 0e: cmd set 들은 PlaywrightCmdMetadata SSoT 에서 자동 도출.
+ *
+ * - FORWARD_SYNC_FORBIDDEN_CMDS:
+ *     forward sync 씬에서 syncPoint pivot 으로 두면 안 되는 cmd
+ *     (대기/이동 액션 — phrase 가 시각 효과 없는 액션에 anchor 됨)
+ * - FORWARD_SYNC_VISIBLE_FORBIDDEN_CMDS:
+ *     visible(offscreen 아님) 로 두면 budget 추정이 깨지는 cmd. 비결정적 대기 / 폴링.
  */
-const FORWARD_SYNC_VISIBLE_FORBIDDEN_CMDS = new Set<string>([
-  'wait_for',
-  'wait_for_claude_ready',
-  'render_code_block',
-]);
+const FORWARD_SYNC_FORBIDDEN_CMDS = new Set<string>(getForwardSyncPivotForbiddenCmds());
+const FORWARD_SYNC_VISIBLE_FORBIDDEN_CMDS = new Set<string>(getVisibleForwardSyncForbiddenCmds());
 
 export const playwrightTimingRule: LintRule = {
   id: 'F-playwright-timing',

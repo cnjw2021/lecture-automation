@@ -13,21 +13,16 @@
 import { LintIssue, LintRule } from './types';
 import { isForwardSyncTarget } from '../policies/LiveDemoScenePolicy';
 import { estimateFixedActionDurationMs } from '../playwright/ActionTiming';
+import { getTeachingCmds } from '../playwright/PlaywrightCmdMetadata';
 
 /**
  * 학습 효과를 직접 만드는 visible 액션. 본 액션의 발화 시점이 narration 과 어긋나면
  * 시청자가 즉시 이상함을 느낀다. syncPoint 로 anchor 되어 있어야 함.
+ *
+ * #144 Phase 0e: PlaywrightCmdMetadata SSoT 에서 자동 도출. 새 teaching cmd 를
+ * metadata 에 추가하면 G-rule 이 자동으로 검출 대상에 포함시킨다.
  */
-const TEACHING_CMDS = new Set<string>([
-  'type',
-  'highlight',
-  'prefill_codepen',
-  'mouse_drag',
-  'open_devtools',
-  'select_devtools_node',
-  'toggle_devtools_node',
-  'right_click',
-]);
+const TEACHING_CMDS = new Set<string>(getTeachingCmds());
 
 /** teaching action 으로부터 ±N action 이내에 syncPoint 가 있으면 anchor 로 인정 */
 const NEAR_SYNCPOINT_TOLERANCE = 2;

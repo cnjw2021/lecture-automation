@@ -5,11 +5,13 @@ import {
   saveCapture,
   loadCapture,
   expandCapturePlaceholders,
+  expandActionPlaceholders,
   hasCapturePlaceholder,
   extractCaptureKeys,
   loadAllCapturesForLecture,
   expandWithMap,
 } from './playwrightCaptureStore';
+import { PlaywrightAction } from '../../domain/entities/Lecture';
 
 describe('playwrightCaptureStore', () => {
   let tmpRoot: string;
@@ -97,5 +99,45 @@ describe('playwrightCaptureStore', () => {
     expect(
       expandWithMap('src="${capture:missing}"', map, (k) => `[${k}]`),
     ).toBe('src="[missing]"');
+  });
+
+  describe('expandActionPlaceholders', () => {
+    it('replaces placeholders in url field', async () => {
+      await saveCapture('lec-01', 'photo_id', 'photo-9999', {}, { projectRoot: tmpRoot });
+      const action: PlaywrightAction = {
+        cmd: 'goto',
+        url: 'https://example.com/${capture:photo_id}?w=600',
+      };
+      const expanded = await expandActionPlaceholders(action, 'lec-01', { projectRoot: tmpRoot });
+      expect(expanded.url).toBe('https://example.com/photo-9999?w=600');
+    });
+
+    it('returns identical reference when no placeholder present', async () => {
+      const action: PlaywrightAction = { cmd: 'wait', ms: 500 };
+      const expanded = await expandActionPlaceholders(action, 'lec-01', { projectRoot: tmpRoot });
+      expect(expanded).toBe(action);
+    });
+
+    it('throws when lectureId missing but placeholder present', async () => {
+      const action: PlaywrightAction = {
+        cmd: 'goto',
+        url: 'https://example.com/${capture:photo_id}',
+      };
+      await expect(
+        expandActionPlaceholders(action, undefined, { projectRoot: tmpRoot }),
+      ).rejects.toThrow(/lectureId 가 전달되지 않았습니다/);
+    });
+
+    it('expands placeholders in selector/key/html/css/js fields', async () => {
+      await saveCapture('lec-01', 'token', 'XYZ', {}, { projectRoot: tmpRoot });
+      const action: PlaywrightAction = {
+        cmd: 'type',
+        selector: '#input-${capture:token}',
+        key: 'value-${capture:token}',
+      };
+      const expanded = await expandActionPlaceholders(action, 'lec-01', { projectRoot: tmpRoot });
+      expect(expanded.selector).toBe('#input-XYZ');
+      expect(expanded.key).toBe('value-XYZ');
+    });
   });
 });

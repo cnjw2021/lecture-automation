@@ -7,13 +7,11 @@ import {
   Scene,
   PlaywrightVisual,
   PlaywrightAction,
-  ContextMenuItem,
-  CaptureTransform,
 } from '../../domain/entities/Lecture';
-import { executeEduDevtoolsAction, getEduDevtoolsActionDuration } from './playwrightEduDevtools';
-import { typeWithTimeout, executeCodepenPrefill } from './playwrightBrowserUtils';
-import { expandCapturePlaceholders, saveCapture } from './playwrightCaptureStore';
-import { PLAYWRIGHT_TIMING } from '../../domain/playwright/ActionTiming';
+import { expandActionPlaceholders } from './playwrightCaptureStore';
+import { getActionHandler } from './handlers';
+import { RecordContext } from '../../domain/playwright/PlaywrightActionHandler';
+import { waitForClaudeReady } from './playwrightClaudeWaiter';
 
 /**
  * 액션 실패 시 즉시 파이프라인을 중단해야 하는 critical 액션 목록.
@@ -52,141 +50,6 @@ export interface RecordingManifest {
   actionTimestamps: RecordingActionTimestamp[];
   /** Claude 등 대화형 AI 씬에서 프롬프트 전송 후 생성된 대화 URL. 후속 씬이 urlFromScene으로 참조. */
   conversationUrl?: string;
-}
-
-const CONTEXT_MENU_ELEMENT_ID = '__playwright_context_menu__';
-const CAPTURE_EXPANDABLE_FIELDS: (keyof PlaywrightAction)[] = [
-  'url',
-  'selector',
-  'key',
-  'html',
-  'css',
-  'js',
-];
-
-interface ContextMenuRenderItem {
-  label: string;
-  highlighted: boolean;
-  separator: boolean;
-}
-
-function normalizeContextMenuItems(
-  items: ContextMenuItem[],
-  clickItem: string | undefined,
-): ContextMenuRenderItem[] {
-  return items.map((item) => {
-    if (typeof item === 'string') {
-      return {
-        label: item,
-        highlighted: clickItem !== undefined && item === clickItem,
-        separator: false,
-      };
-    }
-    if (item.separator) {
-      return { label: '', highlighted: false, separator: true };
-    }
-    const label = item.label ?? '';
-    const explicit = item.highlighted === true;
-    const isClickTarget = clickItem !== undefined && label === clickItem;
-    return { label, highlighted: explicit || isClickTarget, separator: false };
-  });
-}
-
-async function injectContextMenuOverlay(
-  page: Page,
-  position: { x: number; y: number },
-  renderItems: ContextMenuRenderItem[],
-): Promise<void> {
-  await page.evaluate(
-    ({ position, renderItems, elementId }) => {
-      document.getElementById(elementId)?.remove();
-      const menu = document.createElement('div');
-      menu.id = elementId;
-      menu.style.cssText = [
-        'position: fixed',
-        `left: ${position.x}px`,
-        `top: ${position.y}px`,
-        'background: #ffffff',
-        'border: 1px solid #cccccc',
-        'border-radius: 8px',
-        'box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15)',
-        'padding: 6px 0',
-        "font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif",
-        'font-size: 14px',
-        'color: #202124',
-        'z-index: 2147483647',
-        'min-width: 280px',
-        'pointer-events: none',
-      ].join(';');
-      renderItems.forEach((item) => {
-        if (item.separator) {
-          const sep = document.createElement('div');
-          sep.style.cssText = 'height: 1px; background: #e0e0e0; margin: 4px 8px;';
-          menu.appendChild(sep);
-          return;
-        }
-        const row = document.createElement('div');
-        row.textContent = item.label;
-        const base = 'padding: 6px 16px; white-space: nowrap;';
-        const accent = item.highlighted ? ' background: #1a73e8; color: #ffffff;' : '';
-        row.style.cssText = base + accent;
-        menu.appendChild(row);
-      });
-      document.body.appendChild(menu);
-      const rect = menu.getBoundingClientRect();
-      if (rect.right > window.innerWidth) {
-        menu.style.left = `${Math.max(0, window.innerWidth - rect.width - 8)}px`;
-      }
-      if (rect.bottom > window.innerHeight) {
-        menu.style.top = `${Math.max(0, window.innerHeight - rect.height - 8)}px`;
-      }
-    },
-    { position, renderItems, elementId: CONTEXT_MENU_ELEMENT_ID },
-  );
-}
-
-async function removeContextMenuOverlay(page: Page): Promise<void> {
-  await page.evaluate((elementId) => {
-    document.getElementById(elementId)?.remove();
-  }, CONTEXT_MENU_ELEMENT_ID);
-}
-
-function applyCaptureTransform(raw: string, transform: CaptureTransform | undefined): string {
-  if (!transform) return raw;
-  if (transform.type === 'regex') {
-    const re = new RegExp(transform.pattern);
-    const m = raw.match(re);
-    if (!m) {
-      throw new Error(
-        `capture transform regex 매치 실패: pattern=${transform.pattern}, raw=${raw.slice(0, 200)}`,
-      );
-    }
-    const group = transform.group ?? 1;
-    return m[group] ?? m[0];
-  }
-  return raw;
-}
-
-async function readCaptureSourceValue(
-  page: Page,
-  options: { selector?: string; attribute?: string; fromUrl?: boolean },
-): Promise<string> {
-  if (options.fromUrl) {
-    return page.url();
-  }
-  if (!options.selector) {
-    throw new Error('capture: selector 또는 fromUrl 중 하나가 필요합니다');
-  }
-  const attr = options.attribute ?? 'src';
-  const loc = page.locator(options.selector);
-  await loc.waitFor({ state: 'attached', timeout: 10000 });
-  const value = await loc.getAttribute(attr);
-  if (value === null) {
-    throw new Error(
-      `capture: selector ${options.selector} 의 ${attr} attribute 가 null 입니다`,
-    );
-  }
-  return value;
 }
 
 export class PlaywrightVisualProvider implements IVisualProvider {
@@ -393,56 +256,8 @@ export class PlaywrightVisualProvider implements IVisualProvider {
    * 10초 간격 폴링, 기본 타임아웃 180초.
    */
   private async waitForClaudeReady(page: Page, timeoutMs = 180000): Promise<void> {
-    const startedAt = Date.now();
-    const deadline = startedAt + timeoutMs;
-    const hints = [
-      'Claude 응답 대기 중...',
-      '시간이 조금 걸리고 있습니다...',
-      '조금 더 기다려 봅시다...',
-      '곧 응답이 돌아올 것 같습니다...',
-      '응답 생성이 계속되고 있습니다, 잠시만요...',
-    ];
-    let attempt = 0;
-
-    while (Date.now() < deadline) {
-      const state = await page.evaluate(() => {
-        const streamingTrue = document.querySelector('[data-is-streaming="true"]');
-        if (streamingTrue) return 'streaming';
-
-        const emptyGreeting = Array.from(document.querySelectorAll('h1, h2, p, div'))
-          .find(el => {
-            const t = (el.textContent || '').trim();
-            return t === '本日はどのようなお手伝いができますか？'
-              || t === 'How can I help you today?'
-              || t.startsWith('本日はどのような');
-          });
-        if (emptyGreeting) return 'empty';
-
-        const streamingFalse = document.querySelector('[data-is-streaming="false"]');
-        if (streamingFalse) return 'ready';
-
-        const hasArtifact = !!document.querySelector(
-          '[aria-label*="artifact" i], [class*="artifact-block" i], button[aria-label*="アーティファクト"]'
-        );
-        const hasProse = document.querySelectorAll('.prose, [class*="message-"]').length > 0;
-        if (hasArtifact || hasProse) return 'ready';
-
-        return 'unknown';
-      }).catch(() => 'unknown');
-
-      if (state === 'ready') {
-        const elapsed = Math.round((Date.now() - startedAt) / 1000);
-        console.log(`  > Claude 응답 준비 완료 (경과: ${elapsed}s)`);
-        return;
-      }
-
-      const hint = hints[Math.min(attempt, hints.length - 1)];
-      const elapsed = Math.round((Date.now() - startedAt) / 1000);
-      console.log(`  > ${hint} (상태: ${state}, 경과: ${elapsed}s)`);
-      attempt++;
-      await page.waitForTimeout(10000);
-    }
-    console.warn(`  ⚠️ Claude 응답 대기 타임아웃 (${timeoutMs}ms) — 계속 진행`);
+    // 녹화 모드: timeout 시 warn + 계속 진행. SSoT 는 playwrightClaudeWaiter.
+    await waitForClaudeReady(page, timeoutMs, { onTimeout: 'warn' });
   }
 
   /**
@@ -539,293 +354,31 @@ export class PlaywrightVisualProvider implements IVisualProvider {
     const timestamps: RecordingActionTimestamp[] = [];
     const recordingStart = Date.now();
     const lectureId = options.lectureId;
+    const outputPath = options.outputPath;
+
+    const recordCtx: RecordContext = {
+      sceneId,
+      lectureId,
+      outputPath,
+      hasStorageState: options.hasStorageState,
+      injectCursor: () => this.injectCursor(page),
+      resolveUrlFromScene: (targetSceneId: number) =>
+        outputPath ? this.resolveUrlFromScene(targetSceneId, outputPath) : undefined,
+      checkSessionExpired: (originalUrl: string) => this.checkSessionExpired(page, originalUrl),
+      waitForClaudeReady: (timeoutMs: number) => this.waitForClaudeReady(page, timeoutMs),
+    };
 
     for (let i = 0; i < actions.length; i++) {
       const rawAction = actions[i];
-      const action = await this.expandActionPlaceholders(rawAction, lectureId);
+      const action = await expandActionPlaceholders(rawAction, lectureId);
       const startMs = Date.now() - recordingStart;
 
       try {
-        switch (action.cmd) {
-          case 'goto': {
-            let targetUrl: string | undefined = action.url;
-            if (action.urlFromScene !== undefined && options.outputPath) {
-              const resolved = this.resolveUrlFromScene(action.urlFromScene, options.outputPath);
-              if (resolved) {
-                targetUrl = resolved;
-                console.log(`  > goto urlFromScene=${action.urlFromScene}: ${resolved}`);
-              } else if (!targetUrl) {
-                console.warn(`  ⚠️ goto urlFromScene=${action.urlFromScene} 실패 + url fallback 없음 (건너뜀)`);
-                break;
-              }
-            }
-            if (targetUrl) {
-              try {
-                await page.goto(targetUrl, { waitUntil: 'load', timeout: 20000 });
-              } catch (_) {
-                console.warn(`  ⚠️ goto 타임아웃, 현재 상태로 계속 진행`);
-              }
-              // storageState 사용 씬: 세션 만료 조기 감지
-              if (options.hasStorageState) {
-                this.checkSessionExpired(page, targetUrl);
-              }
-              await this.injectCursor(page);
-            }
-            break;
-          }
-          case 'prefill_codepen': {
-            await executeCodepenPrefill(page, {
-              html: action.html,
-              css: action.css,
-              js: action.js,
-              editors: action.editors,
-            });
-            // CodePen pen 페이지 로드 후 커서 div 재주입 (goto 와 동일한 처리)
-            await this.injectCursor(page);
-            break;
-          }
-          case 'wait':
-            if (action.ms) await page.waitForTimeout(action.ms);
-            break;
-          case 'wait_for':
-            if (action.selector) {
-              const state = action.state ?? 'visible';
-              const timeout = action.timeout ?? 30000;
-              console.log(`  > wait_for: "${action.selector}" (${state}, ${timeout}ms)`);
-              await page.locator(action.selector).waitFor({ state, timeout });
-            }
-            break;
-          case 'wait_for_claude_ready':
-            await this.waitForClaudeReady(page, action.timeout ?? 180000);
-            break;
-          case 'scroll': {
-            const deltaY = action.deltaY ?? 300;
-            await page.mouse.wheel(0, deltaY);
-            await page.waitForTimeout(300);
-            break;
-          }
-          case 'type':
-            if (action.selector && action.key) {
-              const typeLoc = page.locator(action.selector);
-              await typeLoc.waitFor({ state: 'visible', timeout: 10000 });
-              await typeWithTimeout(typeLoc, action.key, {
-                delay: 100,
-                selector: action.selector,
-              });
-            }
-            break;
-          case 'click':
-            if (action.selector) {
-              await page.locator(action.selector).click({ timeout: 10000 });
-            }
-            break;
-          case 'focus':
-            if (action.selector) {
-              const focusLoc = page.locator(action.selector);
-              await focusLoc.waitFor({ state: 'visible', timeout: 10000 });
-              await focusLoc.focus();
-            }
-            break;
-          case 'mouse_drag':
-            if (action.from && action.to) {
-              await page.mouse.move(action.from[0], action.from[1]);
-              await page.mouse.down();
-              await page.mouse.move(action.to[0], action.to[1], { steps: 10 });
-              await page.mouse.up();
-            }
-            break;
-          case 'mouse_move':
-            if (action.to) {
-              await page.mouse.move(action.to[0], action.to[1], { steps: 30 });
-              await page.waitForTimeout(200);
-            }
-            break;
-          case 'press':
-            if (action.key) await page.keyboard.press(action.key);
-            break;
-          case 'disable_css':
-            await page.evaluate(() => {
-              Array.from(document.styleSheets).forEach(sheet => {
-                try {
-                  const owner = sheet.ownerNode as Element | null;
-                  if (owner?.id?.startsWith('__edu')) return;
-                  if (owner?.closest?.('#__edu_devtools__')) return;
-                  sheet.disabled = true;
-                } catch (_) {}
-              });
-            });
-            await page.waitForTimeout(300);
-            break;
-          case 'enable_css':
-            await page.evaluate(() => {
-              Array.from(document.styleSheets).forEach(sheet => {
-                try { sheet.disabled = false; } catch (_) {}
-              });
-            });
-            await page.waitForTimeout(300);
-            break;
-          case 'open_devtools':
-          case 'select_devtools_node':
-          case 'toggle_devtools_node': {
-            const result = await executeEduDevtoolsAction(page, action);
-            if (!result?.ok) {
-              throw new Error(result?.reason || `DevTools action failed: ${action.cmd}`);
-            }
-            const settleMs = getEduDevtoolsActionDuration(action.cmd) ?? 0;
-            if (settleMs > 0) {
-              await page.waitForTimeout(settleMs);
-            }
-            break;
-          }
-          case 'highlight':
-            if (action.selector) {
-              const highlightLoc = page.locator(action.selector);
-              await highlightLoc.waitFor({ state: 'attached', timeout: 10000 });
-              await highlightLoc.evaluate((el: HTMLElement) => {
-                el.style.outline = '5px solid #ff007a';
-              });
-              await page.waitForTimeout(1500);
-            }
-            break;
-          case 'render_code_block': {
-            // Artifact iframe을 폴링하여 HTML 추출 (최대 30초 대기)
-            // 폴백: <pre> 코드 블록에서 가장 긴 텍스트 추출
-            let extractedHtml: string | null = null;
-
-            const maxRetries = 15; // 2초 간격 × 15회 = 최대 30초
-            for (let attempt = 0; attempt < maxRetries; attempt++) {
-              const artifactFrame = page.frames().find(f => {
-                const url = f.url();
-                return url.includes('claudemcpcontent.com') || url.includes('isolated-segment');
-              });
-              if (artifactFrame) {
-                extractedHtml = await artifactFrame.evaluate(() => {
-                  const inner = document.querySelector('iframe');
-                  if (inner?.contentDocument?.documentElement) {
-                    return inner.contentDocument.documentElement.outerHTML;
-                  }
-                  return document.documentElement.outerHTML;
-                }).catch(() => null);
-              }
-              if (extractedHtml && extractedHtml.length > 100) {
-                console.log(`  > render_code_block: Artifact iframe 발견 (${attempt + 1}회 시도)`);
-                break;
-              }
-              extractedHtml = null;
-              if (attempt < maxRetries - 1) {
-                console.log(`  > render_code_block: Artifact iframe 대기 중... (${attempt + 1}/${maxRetries})`);
-                await page.waitForTimeout(2000);
-              }
-            }
-
-            // Artifact 없으면 <pre> 코드 블록 폴백
-            if (!extractedHtml) {
-              console.log('  > render_code_block: Artifact 미발견, <pre> 폴백 시도');
-              extractedHtml = await page.evaluate(() => {
-                const pres = document.querySelectorAll('pre');
-                let longest = '';
-                pres.forEach(pre => {
-                  const text = pre.textContent || '';
-                  if (text.length > longest.length) longest = text;
-                });
-                return longest || null;
-              });
-            }
-
-            if (extractedHtml) {
-              console.log(`  > render_code_block: ${extractedHtml.length}자 HTML 추출 → 렌더`);
-              await page.goto('about:blank');
-              await page.setContent(extractedHtml, { waitUntil: 'load' });
-              await page.waitForTimeout(1000);
-            } else {
-              console.warn('  ⚠️ render_code_block: 코드 블록/Artifact를 찾을 수 없음');
-            }
-            break;
-          }
-          case 'right_click': {
-            if (!action.selector) break;
-            const rcLoc = page.locator(action.selector);
-            await rcLoc.waitFor({ state: 'visible', timeout: 10000 });
-            const rcBox = await rcLoc.boundingBox();
-            const rcTarget = rcBox
-              ? { x: rcBox.x + rcBox.width / 2, y: rcBox.y + rcBox.height / 2 }
-              : { x: 0, y: 0 };
-            // 커서를 대상 위로 이동 (실제 커서 div 도 따라감)
-            await page.mouse.move(rcTarget.x, rcTarget.y, { steps: 30 });
-            await page.waitForTimeout(200);
-
-            // captureFromTarget: 메뉴 표시 전에 attribute 추출 (메뉴 div 가 selector 매칭에 영향 주지 않도록)
-            if (action.captureFromTarget) {
-              if (!lectureId) {
-                throw new Error(
-                  `right_click.captureFromTarget 실행에는 lectureId 가 필요합니다 (saveAs=${action.captureFromTarget.saveAs})`,
-                );
-              }
-              const attr = action.captureFromTarget.attribute ?? 'src';
-              const value = await rcLoc.getAttribute(attr);
-              if (value === null) {
-                throw new Error(
-                  `right_click.captureFromTarget: selector ${action.selector} 의 ${attr} attribute 가 null 입니다`,
-                );
-              }
-              const transformed = applyCaptureTransform(value, action.captureFromTarget.transform);
-              await saveCapture(
-                lectureId,
-                action.captureFromTarget.saveAs,
-                transformed,
-                { sceneId, sourceCmd: 'right_click' },
-              );
-              console.log(`  > right_click capture: ${action.captureFromTarget.saveAs} = ${transformed.slice(0, 80)}`);
-            }
-
-            if (action.showContextMenu) {
-              const renderItems = normalizeContextMenuItems(
-                action.showContextMenu.items,
-                action.showContextMenu.clickItem,
-              );
-              await injectContextMenuOverlay(page, rcTarget, renderItems);
-              let totalVisibleMs: number;
-              if (action.showContextMenu.visibleMs !== undefined) {
-                totalVisibleMs = PLAYWRIGHT_TIMING.rightClickBaseMs + action.showContextMenu.visibleMs;
-              } else {
-                const highlightDelay = action.showContextMenu.highlightDelayMs ?? 0;
-                const clickDelay = action.showContextMenu.clickItem
-                  ? (action.showContextMenu.clickDelayMs ?? PLAYWRIGHT_TIMING.rightClickItemDelayMs)
-                  : 0;
-                totalVisibleMs = PLAYWRIGHT_TIMING.rightClickBaseMs + highlightDelay + clickDelay;
-              }
-              await page.waitForTimeout(totalVisibleMs);
-              await removeContextMenuOverlay(page);
-            } else {
-              await page.waitForTimeout(PLAYWRIGHT_TIMING.rightClickBaseMs);
-            }
-            break;
-          }
-          case 'capture': {
-            if (!action.saveAs) {
-              console.warn(`  ⚠️ capture 액션에 saveAs 가 없습니다 (스킵)`);
-              break;
-            }
-            if (!lectureId) {
-              throw new Error(
-                `capture 액션 실행에는 lectureId 가 필요합니다 (saveAs=${action.saveAs}, sceneId=${sceneId})`,
-              );
-            }
-            const raw = await readCaptureSourceValue(page, {
-              selector: action.selector,
-              attribute: action.attribute,
-              fromUrl: action.fromUrl,
-            });
-            const transformed = applyCaptureTransform(raw, action.transform);
-            await saveCapture(lectureId, action.saveAs, transformed, {
-              sceneId,
-              sourceCmd: 'capture',
-            });
-            console.log(`  > capture: ${action.saveAs} = ${transformed.slice(0, 80)}`);
-            break;
-          }
-          default:
-            console.warn(`  ⚠️ 알려지지 않거나 미구현된 Action '${action.cmd}' (건너뜀)`);
+        const handler = getActionHandler(action.cmd);
+        if (!handler) {
+          console.warn(`  ⚠️ 알려지지 않거나 미구현된 Action '${action.cmd}' (건너뜀)`);
+        } else {
+          await handler.executeForRecording(page, action, recordCtx);
         }
       } catch (actionError: any) {
         if (CRITICAL_ACTION_CMDS.has(action.cmd)) {
@@ -845,38 +398,4 @@ export class PlaywrightVisualProvider implements IVisualProvider {
     return { timestamps, totalDurationMs: Date.now() - recordingStart };
   }
 
-  /**
-   * action 의 string 필드(url/selector/key/html/css/js)에서 ${capture:key} 를
-   * 디스크 저장값으로 치환한 새 action 을 반환한다. lectureId 가 비어 있는데
-   * placeholder 가 있으면 명시적 에러로 차단 (silent typing 방지).
-   */
-  private async expandActionPlaceholders(
-    action: PlaywrightAction,
-    lectureId: string | undefined,
-  ): Promise<PlaywrightAction> {
-    if (!lectureId) {
-      for (const field of CAPTURE_EXPANDABLE_FIELDS) {
-        const v = action[field];
-        if (typeof v === 'string' && v.includes('${capture:')) {
-          throw new Error(
-            `expandActionPlaceholders: '${action.cmd}' 액션의 ${String(field)} 에 \${capture:...} 가 있지만 ` +
-              `lectureId 가 전달되지 않았습니다. RecordVisualUseCase 에서 lectureId 를 전달하세요.`,
-          );
-        }
-      }
-      return action;
-    }
-    let next: PlaywrightAction | null = null;
-    for (const field of CAPTURE_EXPANDABLE_FIELDS) {
-      const v = action[field];
-      if (typeof v === 'string' && v.includes('${capture:')) {
-        const expanded = await expandCapturePlaceholders(lectureId, v);
-        if (expanded !== v) {
-          next = next ?? { ...action };
-          (next as any)[field] = expanded;
-        }
-      }
-    }
-    return next ?? action;
-  }
 }
