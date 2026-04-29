@@ -76,7 +76,7 @@ export class RecordVisualUseCase {
         // 단일 씬 녹화 실패는 fail-fast — 부분 녹화 webm 으로 후속 렌더가
         // 진행되면 결과 영상이 garbage 가 되고 Lambda 비용·시간만 낭비된다.
         // 사용자가 JSON 또는 환경을 고친 뒤 재시작하면 캐시된 정상 씬은 재사용된다.
-        await this.visualProvider.record(scene, outputPath);
+        await this.visualProvider.record(scene, outputPath, lecture.lecture_id);
       }
     }
   }
