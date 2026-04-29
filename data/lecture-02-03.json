@@ -1414,14 +1414,9 @@
             },
             "captureFromTarget": {
               "attribute": "src",
-              "transform": {
-                "type": "regex",
-                "pattern": "(photo-[a-zA-Z0-9_-]+)",
-                "group": 1
-              },
-              "saveAs": "unsplash_photo_id"
+              "saveAs": "unsplash_image_url"
             },
-            "note": "메인 사진 우클릭 → 가짜 컨텍스트 메뉴 11초 표시. img.src 에서 photo ID 만 추출. 씬 31 에서 ?w=600 wrapper 와 결합 — 나레이션 '完成形' 가 simplification cover"
+            "note": "메인 사진 우클릭 → 가짜 컨텍스트 메뉴 11초 표시. img.src 전체 URL 그대로 저장 (Chrome '画像アドレスをコピー' 와 byte-faithful). 씬 31 에서 paste 직후 width=600 추가 시연으로 사이즈 문제 해결"
           },
           {
             "cmd": "wait",
@@ -1432,8 +1427,8 @@
     },
     {
       "scene_id": 31,
-      "narration": "CodePenに戻りましょう。先ほど書いたイメージたぐを、今コピーしたURLを使った形に書き換えます。実際の作業ではソースのイコールの後ろの引用符の中身を一度消して、そこに貼り付けてください。画面では、イメージたぐ全体を完成形に置き換えて確認します。オルトにも、選んだ画像の内容に合ったテキストを入れてくださいね。コーヒーの写真を選んだなら「コーヒーカップの写真」、自然の風景なら「山と湖の風景」といった具合です。プレビューにUnsplashの写真が表示されましたか？先ほどのテスト用画像と比べると、一気に本格的な見た目になりましたよね。もちろん、ご自身の写真を使いたい場合もあると思いますが、今の段階ではUnsplashやPexelsの写真で十分です。写真の選び方に迷ったら、自分の趣味や好きなものに関連する写真を選んでみてください。自己紹介ページですから、自分らしさが伝わる写真がいいですよね。",
-      "durationSec": 67,
+      "narration": "CodePenに戻りましょう。先ほど書いたイメージたぐを、今コピーしたURLを使った形に書き換えます。実際の作業ではソースのイコールの後ろの引用符の中身を一度消して、そこに貼り付けてください。画面では、イメージたぐ全体を完成形に置き換えて確認します。オルトにも、選んだ画像の内容に合ったテキストを入れてくださいね。コーヒーの写真を選んだなら「コーヒーカップの写真」、自然の風景なら「山と湖の風景」といった具合です。プレビューにUnsplashの写真が表示されましたか？先ほどのテスト用画像と比べると、一気に本格的な見た目になりましたよね。ただ、画像がとても大きく表示されてしまっていますね。少し先取りになりますが、img 'たぐ'に width=\"600\" と書き加えると、ぴったりのサイズに収まります。サイズの細かい指定方法はパートスリーで詳しく学びますが、今は画像のサイズも一行で整えられる、ということを覚えておいてください。もちろん、ご自身の写真を使いたい場合もあると思いますが、今の段階ではUnsplashやPexelsの写真で十分です。写真の選び方に迷ったら、自分の趣味や好きなものに関連する写真を選んでみてください。自己紹介ページですから、自分らしさが伝わる写真がいいですよね。",
+      "durationSec": 95,
       "visual": {
         "type": "playwright",
         "storageState": "config/auth/codepen.json",
@@ -1443,8 +1438,8 @@
             "phrase": "画面では"
           },
           {
-            "actionIndex": 9,
-            "phrase": "プレビューに"
+            "actionIndex": 13,
+            "phrase": "少し先取りに"
           }
         ],
         "action": [
@@ -1455,7 +1450,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 5699
+            "ms": 5000
           },
           {
             "cmd": "mouse_move",
@@ -1470,7 +1465,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 5699
+            "ms": 3000
           },
           {
             "cmd": "press",
@@ -1478,16 +1473,43 @@
           },
           {
             "cmd": "wait",
-            "ms": 680
+            "ms": 500
           },
           {
             "cmd": "type",
             "selector": "#box-html .CodeMirror textarea",
-            "key": "<img src=\"https://images.unsplash.com/${capture:unsplash_photo_id}?w=600\" alt=\"コーヒーカップの写真\">"
+            "key": "<img src=\"${capture:unsplash_image_url}\" alt=\"コーヒーカップの写真\">",
+            "note": "byte-faithful: 학생 clipboard 와 동일한 전체 URL"
           },
           {
             "cmd": "wait",
-            "ms": 680
+            "ms": 5000
+          },
+          {
+            "cmd": "press",
+            "key": "End"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": " width=\"600\"",
+            "note": "img 태그 닫기 > 직전에 width 속성 삽입 시연 (PART 3 CSS 미리보기)"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3000
           },
           {
             "cmd": "mouse_move",
@@ -1498,7 +1520,7 @@
           },
           {
             "cmd": "wait",
-            "ms": 59752
+            "ms": 30000
           }
         ]
       }
