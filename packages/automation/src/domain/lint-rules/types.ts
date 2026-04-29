@@ -23,6 +23,15 @@ export interface LintIssue {
 export interface LintRule {
   id: string;
   description: string;
+  /**
+   * STRICT 모드 전용 룰. true 면 일반 `make lint` 에서는 침묵하고,
+   * `make lint STRICT=1` 에서만 실행된다. 휴리스틱 경고가 많아 진짜 문제 시그널을
+   * 묻을 위험이 있는 룰을 격리하는 용도.
+   *
+   * #141 옵션 A: G-playwright-sync-coverage 가 첫 적용 사례. 진짜 sync 검증은
+   * sync-preview 가 담당하므로 G-rule 은 보조 용도로 격하.
+   */
+  strictOnly?: boolean;
   run(lecture: any): LintIssue[];
 }
 
