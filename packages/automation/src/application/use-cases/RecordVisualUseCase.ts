@@ -1,8 +1,9 @@
-import { Lecture } from '../../domain/entities/Lecture';
+import { Lecture, Scene } from '../../domain/entities/Lecture';
 import { IVisualProvider } from '../../domain/interfaces/IVisualProvider';
 import { IStateCaptureProvider } from '../../domain/interfaces/IStateCaptureProvider';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
-import { computePreRecordingSceneIds, isSharedSessionScene } from '../../domain/policies/LiveDemoScenePolicy';
+import { IAudioDurationProbe } from '../../domain/interfaces/IAudioDurationProbe';
+import { computePreRecordingSceneIds, isForwardSyncTarget, isSharedSessionScene } from '../../domain/policies/LiveDemoScenePolicy';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 
@@ -15,11 +16,22 @@ export interface RecordVisualUseCaseOptions {
   scenes?: number[];
 }
 
+/**
+ * #141 F-2: post-recording 검증 임계값.
+ *
+ * 순방향 싱크 씬은 sync-playwright 가 wait 액션을 audio 길이에 맞춰 재분배하므로
+ * 정상 케이스에서 webm 과 audio 의 차이는 0~1초 범위. 1초 초과는 calibration 편향
+ * 또는 sync-playwright 미실행을 의미.
+ */
+const DURATION_DIFF_WARN_MS = 500;
+const DURATION_DIFF_ERROR_MS = 1000;
+
 export class RecordVisualUseCase {
   constructor(
     private readonly visualProvider: IVisualProvider,
     private readonly lectureRepository: ILectureRepository,
-    private readonly stateCaptureProvider?: IStateCaptureProvider
+    private readonly stateCaptureProvider?: IStateCaptureProvider,
+    private readonly audioDurationProbe?: IAudioDurationProbe,
   ) {}
 
   async execute(lecture: Lecture, options: RecordVisualUseCaseOptions = {}): Promise<void> {
@@ -77,8 +89,61 @@ export class RecordVisualUseCase {
         // 진행되면 결과 영상이 garbage 가 되고 Lambda 비용·시간만 낭비된다.
         // 사용자가 JSON 또는 환경을 고친 뒤 재시작하면 캐시된 정상 씬은 재사용된다.
         await this.visualProvider.record(scene, outputPath, lecture.lecture_id);
+
+        // #141 F-2: capture 직후 manifest 와 audio 길이 비교.
+        // 순방향 싱크 대상 씬에서 1초 이상 어긋나면 calibration 편향 또는
+        // sync-playwright 미실행 가능성이 높다.
+        await this.validateRecordingDuration(lecture.lecture_id, scene, outputPath);
       }
     }
+  }
+
+  private async validateRecordingDuration(
+    lectureId: string,
+    scene: Scene,
+    capturePath: string,
+  ): Promise<void> {
+    if (!this.audioDurationProbe) return;
+    if (!isForwardSyncTarget(scene)) return;
+
+    const manifestPath = capturePath.replace(/\.\w+$/, '.manifest.json');
+    if (!await fs.pathExists(manifestPath)) return;
+
+    let manifestDurationMs: number;
+    try {
+      const manifest = await fs.readJson(manifestPath);
+      if (typeof manifest.totalDurationMs !== 'number') return;
+      manifestDurationMs = manifest.totalDurationMs;
+    } catch {
+      return;
+    }
+
+    const audioPath = this.lectureRepository.getAudioPath(lectureId, scene.scene_id);
+    const audioDurationMs = await this.audioDurationProbe.probeDurationMs(audioPath);
+    if (audioDurationMs === null) {
+      // audio 가 아직 없는 단계는 정상 (TTS 전 사전 녹화 등). 검증 생략.
+      return;
+    }
+
+    const diffMs = manifestDurationMs - audioDurationMs;
+    const absMs = Math.abs(diffMs);
+    if (absMs <= DURATION_DIFF_WARN_MS) return;
+
+    const sign = diffMs >= 0 ? '+' : '-';
+    const absSec = (absMs / 1000).toFixed(2);
+    const manifestSec = (manifestDurationMs / 1000).toFixed(2);
+    const audioSec = (audioDurationMs / 1000).toFixed(2);
+    const direction = diffMs >= 0
+      ? 'webm 이 audio 보다 길게 끝남 (후반 무음/타이핑 꼬리 위험)'
+      : 'webm 이 audio 보다 짧게 끝남 (마지막 narration 이 잘릴 위험)';
+    const severity = absMs >= DURATION_DIFF_ERROR_MS ? '⛔' : '⚠️';
+    const tag = absMs >= DURATION_DIFF_ERROR_MS ? '[F-2 critical]' : '[F-2 warning]';
+
+    console.warn(
+      `  ${severity} ${tag} Scene ${scene.scene_id}: webm ${manifestSec}s vs audio ${audioSec}s ` +
+      `(${sign}${absSec}s) — ${direction}. ` +
+      `sync-playwright 재실행 또는 ActionTiming calibration 점검 필요.`,
+    );
   }
 
   private getStateCaptureDir(lectureId: string, sceneId: number): string {

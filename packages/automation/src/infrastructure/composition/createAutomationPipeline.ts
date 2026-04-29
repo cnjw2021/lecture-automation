@@ -21,6 +21,7 @@ import { PlaywrightVisualProvider } from '../providers/PlaywrightVisualProvider'
 import { SharedPlaywrightStateCaptureProvider } from '../providers/SharedPlaywrightStateCaptureProvider';
 import { RemotionLambdaSceneClipRenderProvider } from '../providers/RemotionLambdaSceneClipRenderProvider';
 import { RemotionSceneClipRenderProvider } from '../providers/RemotionSceneClipRenderProvider';
+import { WavAudioDurationProbe } from '../providers/WavAudioDurationProbe';
 import { FileClipRepository } from '../repositories/FileClipRepository';
 import { FileLectureRepository } from '../repositories/FileLectureRepository';
 import { ConfiguredNarrationAudioPreparationService } from '../services/ConfiguredNarrationAudioPreparationService';
@@ -50,6 +51,7 @@ export function createAutomationPipeline(): RunAutomationPipelineUseCase {
     new PlaywrightVisualProvider(),
     lectureRepository,
     new PlaywrightStateCaptureProvider(),
+    new WavAudioDurationProbe(),
   );
   const captureSharedLiveDemoSessionsUseCase = new CaptureSharedLiveDemoSessionsUseCase(
     new SharedPlaywrightStateCaptureProvider(),

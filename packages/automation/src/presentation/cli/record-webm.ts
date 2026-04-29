@@ -11,6 +11,7 @@ import { RecordVisualUseCase } from '../../application/use-cases/RecordVisualUse
 import { ValidateLectureUseCase } from '../../application/use-cases/ValidateLectureUseCase';
 import { config } from '../../infrastructure/config';
 import { PlaywrightVisualProvider } from '../../infrastructure/providers/PlaywrightVisualProvider';
+import { WavAudioDurationProbe } from '../../infrastructure/providers/WavAudioDurationProbe';
 import { FileLectureRepository } from '../../infrastructure/repositories/FileLectureRepository';
 import { isSharedSessionScene } from '../../domain/policies/LiveDemoScenePolicy';
 
@@ -60,7 +61,12 @@ async function runRecordWebm(jsonFileName: string, sceneIds: number[]) {
 
   const lectureRepository = new FileLectureRepository();
   const visualProvider = new PlaywrightVisualProvider();
-  const recordVisualUseCase = new RecordVisualUseCase(visualProvider, lectureRepository);
+  const recordVisualUseCase = new RecordVisualUseCase(
+    visualProvider,
+    lectureRepository,
+    undefined,
+    new WavAudioDurationProbe(),
+  );
 
   await recordVisualUseCase.execute(filteredLecture, { force: true, useSynthCapture: false });
 
