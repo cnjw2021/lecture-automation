@@ -96,7 +96,7 @@ describe('executeAndCaptureStep golden output (21 cmds)', () => {
       cursorFrom: { x: 100, y: 100 },
       cursorTo: { x: 100, y: 100 },
       scrollY: 0,
-      durationMs: 4500,
+      durationMs: 5000,
       note: 'pen',
     });
   });
