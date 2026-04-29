@@ -593,14 +593,21 @@ export async function executeAndCaptureStep(
           action.showContextMenu.clickItem,
         );
         await injectContextMenu(page, rcTarget, renderItems);
-        const highlightDelay = action.showContextMenu.highlightDelayMs ?? 0;
-        const clickDelay = action.showContextMenu.clickItem
-          ? (action.showContextMenu.clickDelayMs ?? PLAYWRIGHT_TIMING.rightClickItemDelayMs)
-          : 0;
-        if (highlightDelay > 0) {
-          await page.waitForTimeout(Math.min(highlightDelay, 200));
+        if (action.showContextMenu.visibleMs !== undefined) {
+          if (action.showContextMenu.visibleMs > 0) {
+            await page.waitForTimeout(Math.min(action.showContextMenu.visibleMs, 200));
+          }
+          durationMs = PLAYWRIGHT_TIMING.rightClickBaseMs + action.showContextMenu.visibleMs;
+        } else {
+          const highlightDelay = action.showContextMenu.highlightDelayMs ?? 0;
+          const clickDelay = action.showContextMenu.clickItem
+            ? (action.showContextMenu.clickDelayMs ?? PLAYWRIGHT_TIMING.rightClickItemDelayMs)
+            : 0;
+          if (highlightDelay > 0) {
+            await page.waitForTimeout(Math.min(highlightDelay, 200));
+          }
+          durationMs = PLAYWRIGHT_TIMING.rightClickBaseMs + highlightDelay + clickDelay;
         }
-        durationMs = PLAYWRIGHT_TIMING.rightClickBaseMs + highlightDelay + clickDelay;
       }
 
       await page.screenshot({ path: screenshotPath });

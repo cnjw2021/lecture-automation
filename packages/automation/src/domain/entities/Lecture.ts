@@ -95,6 +95,12 @@ export interface ContextMenuConfig {
   clickItem?: string;
   /** clickItem highlight 부터 클릭까지의 지연 (기본 800ms) */
   clickDelayMs?: number;
+  /**
+   * 메뉴가 화면에 표시되는 총 시간 (ms) override.
+   * 지정 시 highlightDelayMs / clickDelayMs 합산을 무시하고 이 값만큼 메뉴를 유지한다.
+   * narration 길이에 맞춰 메뉴 표시 시간을 직접 제어할 때 사용.
+   */
+  visibleMs?: number;
 }
 
 export interface CaptureTransform {

@@ -101,6 +101,13 @@ export function estimatePlaywrightActionDurationMs(action: PlaywrightAction): Ac
     case 'capture':
       return { ms: 0, basis: 'capture has no visible effect' };
     case 'right_click': {
+      // visibleMs 가 있으면 highlight/click delay 합산 대신 그대로 사용
+      if (action.showContextMenu?.visibleMs !== undefined) {
+        return {
+          ms: PLAYWRIGHT_TIMING.rightClickBaseMs + action.showContextMenu.visibleMs,
+          basis: 'right_click base + visibleMs override',
+        };
+      }
       const highlightDelay = action.showContextMenu?.highlightDelayMs ?? 0;
       const clickItemDelay = action.showContextMenu?.clickItem
         ? (action.showContextMenu.clickDelayMs ?? PLAYWRIGHT_TIMING.rightClickItemDelayMs)

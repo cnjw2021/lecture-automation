@@ -32,6 +32,10 @@ const CRITICAL_ACTION_CMDS = new Set([
   'open_devtools',
   'select_devtools_node',
   'toggle_devtools_node',
+  // right_click / capture: 실패 시 후속 씬의 ${capture:key} placeholder 가 mock 또는
+  // 깨진 값으로 채워져 결과 씬이 garbage 가 된다. silent skip 대신 fail-fast.
+  'right_click',
+  'capture',
 ]);
 
 /** 녹화 매니페스트: 각 액션의 실행 타임스탬프를 기록 */
@@ -780,12 +784,17 @@ export class PlaywrightVisualProvider implements IVisualProvider {
                 action.showContextMenu.clickItem,
               );
               await injectContextMenuOverlay(page, rcTarget, renderItems);
-              const highlightDelay = action.showContextMenu.highlightDelayMs ?? 0;
-              const clickDelay = action.showContextMenu.clickItem
-                ? (action.showContextMenu.clickDelayMs ?? PLAYWRIGHT_TIMING.rightClickItemDelayMs)
-                : 0;
-              const visibleMs = PLAYWRIGHT_TIMING.rightClickBaseMs + highlightDelay + clickDelay;
-              await page.waitForTimeout(visibleMs);
+              let totalVisibleMs: number;
+              if (action.showContextMenu.visibleMs !== undefined) {
+                totalVisibleMs = PLAYWRIGHT_TIMING.rightClickBaseMs + action.showContextMenu.visibleMs;
+              } else {
+                const highlightDelay = action.showContextMenu.highlightDelayMs ?? 0;
+                const clickDelay = action.showContextMenu.clickItem
+                  ? (action.showContextMenu.clickDelayMs ?? PLAYWRIGHT_TIMING.rightClickItemDelayMs)
+                  : 0;
+                totalVisibleMs = PLAYWRIGHT_TIMING.rightClickBaseMs + highlightDelay + clickDelay;
+              }
+              await page.waitForTimeout(totalVisibleMs);
               await removeContextMenuOverlay(page);
             } else {
               await page.waitForTimeout(PLAYWRIGHT_TIMING.rightClickBaseMs);
