@@ -1,11 +1,17 @@
 import { Page } from 'playwright';
 import * as path from 'path';
-import { PlaywrightAction, ContextMenuItem, CaptureTransform } from '../../domain/entities/Lecture';
+import { PlaywrightAction } from '../../domain/entities/Lecture';
 import { StepData, CursorPosition } from '../../domain/entities/StepManifest';
 import { executeEduDevtoolsAction, getEduDevtoolsActionDuration } from './playwrightEduDevtools';
 import { typeWithTimeout, executeCodepenPrefill } from './playwrightBrowserUtils';
 import { PLAYWRIGHT_TIMING } from '../../domain/playwright/ActionTiming';
-import { expandCapturePlaceholders, saveCapture } from './playwrightCaptureStore';
+import { expandActionPlaceholders, saveCapture } from './playwrightCaptureStore';
+import {
+  normalizeContextMenuItems,
+  injectContextMenu,
+  removeContextMenu,
+} from './playwrightContextMenu';
+import { applyCaptureTransform, readCaptureSourceValue } from './playwrightCaptureExtractor';
 
 /**
  * Playwright 액션을 실행하고 그 결과를 합성 캡처용 StepData 로 환원한다.
@@ -29,174 +35,6 @@ export interface StepCaptureContext {
   lectureId?: string;
   /** capture 액션 실행 시 saveAs 메타에 기록될 sceneId */
   sceneId?: number;
-}
-
-const CONTEXT_MENU_ELEMENT_ID = '__playwright_context_menu__';
-
-interface ContextMenuRenderItem {
-  label: string;
-  highlighted: boolean;
-  separator: boolean;
-}
-
-function normalizeContextMenuItems(
-  items: ContextMenuItem[],
-  clickItem: string | undefined,
-): ContextMenuRenderItem[] {
-  return items.map((item) => {
-    if (typeof item === 'string') {
-      return { label: item, highlighted: clickItem !== undefined && item === clickItem, separator: false };
-    }
-    if (item.separator) {
-      return { label: '', highlighted: false, separator: true };
-    }
-    const label = item.label ?? '';
-    const explicit = item.highlighted === true;
-    const isClickTarget = clickItem !== undefined && label === clickItem;
-    return { label, highlighted: explicit || isClickTarget, separator: false };
-  });
-}
-
-async function injectContextMenu(
-  page: Page,
-  position: { x: number; y: number },
-  renderItems: ContextMenuRenderItem[],
-): Promise<void> {
-  await page.evaluate(
-    ({ position, renderItems, elementId }) => {
-      document.getElementById(elementId)?.remove();
-      const menu = document.createElement('div');
-      menu.id = elementId;
-      menu.style.cssText = [
-        'position: fixed',
-        `left: ${position.x}px`,
-        `top: ${position.y}px`,
-        'background: #ffffff',
-        'border: 1px solid #cccccc',
-        'border-radius: 8px',
-        'box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15)',
-        'padding: 6px 0',
-        "font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif",
-        'font-size: 14px',
-        'color: #202124',
-        'z-index: 2147483647',
-        'min-width: 280px',
-        'pointer-events: none',
-      ].join(';');
-      renderItems.forEach((item) => {
-        if (item.separator) {
-          const sep = document.createElement('div');
-          sep.style.cssText = 'height: 1px; background: #e0e0e0; margin: 4px 8px;';
-          menu.appendChild(sep);
-          return;
-        }
-        const row = document.createElement('div');
-        row.textContent = item.label;
-        const base = 'padding: 6px 16px; white-space: nowrap;';
-        const accent = item.highlighted ? ' background: #1a73e8; color: #ffffff;' : '';
-        row.style.cssText = base + accent;
-        menu.appendChild(row);
-      });
-      document.body.appendChild(menu);
-      const rect = menu.getBoundingClientRect();
-      if (rect.right > window.innerWidth) {
-        menu.style.left = `${Math.max(0, window.innerWidth - rect.width - 8)}px`;
-      }
-      if (rect.bottom > window.innerHeight) {
-        menu.style.top = `${Math.max(0, window.innerHeight - rect.height - 8)}px`;
-      }
-    },
-    { position, renderItems, elementId: CONTEXT_MENU_ELEMENT_ID },
-  );
-}
-
-async function removeContextMenu(page: Page): Promise<void> {
-  await page.evaluate((elementId) => {
-    document.getElementById(elementId)?.remove();
-  }, CONTEXT_MENU_ELEMENT_ID);
-}
-
-function applyCaptureTransform(raw: string, transform: CaptureTransform | undefined): string {
-  if (!transform) return raw;
-  if (transform.type === 'regex') {
-    const re = new RegExp(transform.pattern);
-    const m = raw.match(re);
-    if (!m) {
-      throw new Error(
-        `capture transform regex 매치 실패: pattern=${transform.pattern}, raw=${raw.slice(0, 200)}`,
-      );
-    }
-    const group = transform.group ?? 1;
-    return m[group] ?? m[0];
-  }
-  return raw;
-}
-
-async function readCaptureSourceValue(
-  page: Page,
-  options: { selector?: string; attribute?: string; fromUrl?: boolean },
-): Promise<string> {
-  if (options.fromUrl) {
-    return page.url();
-  }
-  if (!options.selector) {
-    throw new Error('capture: selector 또는 fromUrl 중 하나가 필요합니다');
-  }
-  const attr = options.attribute ?? 'src';
-  const loc = page.locator(options.selector);
-  await loc.waitFor({ state: 'attached', timeout: 10000 });
-  const value = await loc.getAttribute(attr);
-  if (value === null) {
-    throw new Error(
-      `capture: selector ${options.selector} 의 ${attr} attribute 가 null 입니다`,
-    );
-  }
-  return value;
-}
-
-const CAPTURE_EXPANDABLE_FIELDS: (keyof PlaywrightAction)[] = [
-  'url',
-  'selector',
-  'key',
-  'html',
-  'css',
-  'js',
-];
-
-/**
- * 액션의 string 필드에서 ${capture:key} placeholder 를 디스크 저장값으로 치환한 새 액션을 반환한다.
- * lectureId 가 비어 있고 placeholder 도 없으면 원본을 그대로 반환.
- */
-async function expandActionPlaceholders(
-  action: PlaywrightAction,
-  lectureId: string | undefined,
-): Promise<PlaywrightAction> {
-  if (!lectureId) {
-    // placeholder 가 있는데 lectureId 가 없으면 명시적으로 실패
-    for (const field of CAPTURE_EXPANDABLE_FIELDS) {
-      const v = action[field];
-      if (typeof v === 'string' && v.includes('${capture:')) {
-        throw new Error(
-          `expandActionPlaceholders: '${action.cmd}' 액션의 ${String(field)} 에 \${capture:...} 가 있지만 ` +
-            `lectureId 가 전달되지 않았습니다. PlaywrightStateCaptureProvider 호출자에서 lectureId 를 전달하세요.`,
-        );
-      }
-    }
-    return action;
-  }
-  const next: PlaywrightAction = { ...action };
-  let changed = false;
-  for (const field of CAPTURE_EXPANDABLE_FIELDS) {
-    const v = next[field];
-    if (typeof v === 'string' && v.includes('${capture:')) {
-      const expanded = await expandCapturePlaceholders(lectureId, v);
-      if (expanded !== v) {
-        (next as any)[field] = expanded;
-        changed = true;
-      }
-    }
-  }
-  return changed ? next : action;
 }
 
 export async function executeAndCaptureStep(

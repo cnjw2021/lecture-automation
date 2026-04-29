@@ -1,5 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
+import { PlaywrightAction } from '../../domain/entities/Lecture';
 
 /**
  * Playwright `right_click` / `capture` 액션이 추출한 페이지 상태(요소 attribute, URL 등)를
@@ -143,6 +144,54 @@ export function hasCapturePlaceholder(text: string | undefined | null): boolean 
   if (!text) return false;
   PLACEHOLDER_PATTERN.lastIndex = 0;
   return PLACEHOLDER_PATTERN.test(text);
+}
+
+/**
+ * 액션의 string 필드(url/selector/key/html/css/js)에서 ${capture:key} placeholder 를
+ * 디스크 저장값으로 치환한 새 액션을 반환한다. lectureId 가 비어 있는데 placeholder 가
+ * 있으면 명시적 에러로 차단 (silent typing 방지).
+ *
+ * StepExecutor (state-capture 모드) 와 PlaywrightVisualProvider (raw video 모드)
+ * 양쪽이 동일한 치환 결과를 갖도록 SSoT 로 둔다.
+ */
+const ACTION_EXPANDABLE_FIELDS: (keyof PlaywrightAction)[] = [
+  'url',
+  'selector',
+  'key',
+  'html',
+  'css',
+  'js',
+];
+
+export async function expandActionPlaceholders(
+  action: PlaywrightAction,
+  lectureId: string | undefined,
+  options: ExpandOptions = {},
+): Promise<PlaywrightAction> {
+  if (!lectureId) {
+    for (const field of ACTION_EXPANDABLE_FIELDS) {
+      const v = action[field];
+      if (typeof v === 'string' && v.includes('${capture:')) {
+        throw new Error(
+          `expandActionPlaceholders: '${action.cmd}' 액션의 ${String(field)} 에 \${capture:...} 가 있지만 ` +
+            `lectureId 가 전달되지 않았습니다. 호출자에서 lectureId 를 전달하세요.`,
+        );
+      }
+    }
+    return action;
+  }
+  let next: PlaywrightAction | null = null;
+  for (const field of ACTION_EXPANDABLE_FIELDS) {
+    const v = action[field];
+    if (typeof v === 'string' && v.includes('${capture:')) {
+      const expanded = await expandCapturePlaceholders(lectureId, v, options);
+      if (expanded !== v) {
+        next = next ?? { ...action };
+        (next as any)[field] = expanded;
+      }
+    }
+  }
+  return next ?? action;
 }
 
 /** 텍스트에서 모든 placeholder 키를 추출 (lint 용) */
