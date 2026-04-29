@@ -26,6 +26,19 @@ export interface LintRule {
   run(lecture: any): LintIssue[];
 }
 
+/**
+ * 외부 자원(파일 시스템 등)을 읽어야 하는 비동기 룰. lint-lecture CLI 가
+ * 동기 룰 다음에 실행한다. 룰이 동기일 수 있는지 비동기일 수 있는지는 호출자가
+ * 인식할 수 있도록 두 인터페이스를 분리.
+ *
+ * 예: I-audio-narration-coherence 는 alignment.json 을 읽어 narration 과 비교.
+ */
+export interface AsyncLintRule {
+  id: string;
+  description: string;
+  run(lecture: any): Promise<LintIssue[]>;
+}
+
 export interface LintResult {
   issues: LintIssue[];
   fixedCount: number;
