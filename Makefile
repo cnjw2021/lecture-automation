@@ -1,7 +1,7 @@
 # Lecture Automation Makefile
 
 .PHONY: help install build run run-lambda run-force run-force-lambda regen-scene regen-scene-lambda regen-visual regen-visual-lambda run-tts-only run-tts-chunk apply-tts apply-tts-lambda apply-tts-chunk apply-tts-chunk-lambda list-chunks find-chunk run-render-only run-render-only-lambda render-scene render-scene-lambda record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
-        sync-playwright sync-preview save-auth validate-schema lint lint-fix audit deploy-lambda
+        sync-playwright sync-preview sync-preview-gate save-auth validate-schema lint lint-fix audit deploy-lambda
 
 # 기본 변수 설정
 LECTURE ?= lecture-01-01.json
@@ -98,6 +98,7 @@ help:
 	@echo "make sync-playwright LECTURE=xxx SCENE=17     - 특정 씬만 싱크 조정"
 	@echo "make sync-preview LECTURE=xxx                 - 녹화 전 sync 결과 시뮬레이션 (drift 사전 점검)"
 	@echo "make sync-preview LECTURE=xxx SCENE=17        - 특정 씬만 시뮬레이션"
+	@echo "                                                run / run-lambda 가 prerequisite 으로 자동 실행 (--gate)"
 	@echo "make save-auth SERVICE=claude                 - 브라우저 인증 상태 저장 (Claude/ChatGPT 등)"
 	@echo ""
 	@echo "--------------------------------------------------"
@@ -121,19 +122,19 @@ build:
 	@echo "🔨 automation 패키지 빌드 중..."
 	npm run build -w packages/automation
 
-run: lint build
+run: lint sync-preview-gate build
 	@echo "🚀 강의 자동화 파이프라인 시작: $(LECTURE)"
 	env $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
-run-lambda: lint build
+run-lambda: lint sync-preview-gate build
 	@echo "☁️  Remotion Lambda 모드로 파이프라인 시작: $(LECTURE)"
 	env REMOTION_RENDER_MODE=lambda $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
-run-force: lint build
+run-force: lint sync-preview-gate build
 	@echo "🔄 강제 재생성 모드로 파이프라인 시작: $(LECTURE)"
 	env FORCE=1 $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
-run-force-lambda: lint build
+run-force-lambda: lint sync-preview-gate build
 	@echo "☁️🔄 Remotion Lambda + 강제 재생성 모드로 파이프라인 시작: $(LECTURE)"
 	env FORCE=1 REMOTION_RENDER_MODE=lambda $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
@@ -399,6 +400,17 @@ sync-preview:
 	else \
 		npx tsx packages/automation/src/presentation/cli/sync-preview.ts $(LECTURE); \
 	fi
+
+# #141 옵션 B: run / run-lambda 직전 sync-preview 게이트.
+# Playwright 씬이 없는 강의는 sync-preview 가 자동으로 정상 종료한다.
+# segment 경고 ≥ 1 또는 drift > 3s 의심 액션이 있으면 exit 1 로 차단.
+sync-preview-gate:
+	@if [ -z "$(LECTURE)" ]; then \
+		echo "❌ LECTURE 값을 지정해 주세요."; exit 1; \
+	fi
+	@echo "🚦 sync-preview gate: $(LECTURE)"
+	@npx tsx packages/automation/src/presentation/cli/sync-preview.ts $(LECTURE) --gate || \
+		(echo ""; echo "⛔ sync-preview gate 차단 — syncPoint/액션을 조정 후 재시도하세요. 'make sync-preview LECTURE=$(LECTURE)' 로 상세 확인."; exit 1)
 
 save-auth:
 	@echo "🔐 브라우저 인증 상태 저장: $(SERVICE)"

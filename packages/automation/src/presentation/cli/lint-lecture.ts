@@ -21,7 +21,7 @@
 
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { allRules, LintIssue, LintResult } from '../../domain/lint-rules';
+import { allRules, asyncRules, LintIssue, LintResult } from '../../domain/lint-rules';
 import { config } from '../../infrastructure/config';
 
 interface CliOptions {
@@ -53,7 +53,7 @@ async function main() {
   console.log(`\n🔍 Lint: ${jsonFileName}${options.fix ? ' (--fix)' : ''}${options.strict ? ' (--strict)' : ''}`);
 
   // 1차 lint
-  let result = runAllRules(lecture);
+  let result = await runAllRules(lecture, options);
   printIssues(result.issues, '1차 검사');
 
   // --fix 모드: 자동 수정 가능 이슈 적용
@@ -73,7 +73,7 @@ async function main() {
     console.log(`✅ ${jsonFileName} 저장 완료`);
 
     // 2차 lint (재검사)
-    result = runAllRules(lecture);
+    result = await runAllRules(lecture, options);
     printIssues(result.issues, '2차 검사 (수정 후)');
   }
 
@@ -100,10 +100,17 @@ async function main() {
   console.log('\n✅ 검사 통과');
 }
 
-function runAllRules(lecture: any): LintResult {
+async function runAllRules(lecture: any, options: CliOptions): Promise<LintResult> {
   const issues: LintIssue[] = [];
   for (const rule of allRules) {
+    // STRICT 모드 전용 룰 (예: G-playwright-sync-coverage) 은 일반 lint 에서 침묵.
+    // 진짜 sync 게이트는 sync-preview 가 담당하므로 G-rule 의 휴리스틱 노이즈는
+    // STRICT 옵션을 명시한 사용자만 노출 받도록 격리 (#141 옵션 A).
+    if (rule.strictOnly && !options.strict) continue;
     issues.push(...rule.run(lecture));
+  }
+  for (const rule of asyncRules) {
+    issues.push(...await rule.run(lecture));
   }
   // scene_id 오름차순, 동일 씬은 ruleId 순으로 정렬
   issues.sort((a, b) => {

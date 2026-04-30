@@ -1,13 +1,19 @@
 /**
  * 카테고리 G — Playwright forward-sync 씬의 syncPoint 커버리지 검증.
  *
- * 검출 대상 (모두 warning):
- *   G-1. teaching action (type / highlight / prefill_codepen / mouse_drag / DevTools 조작) 이 있는데
- *        그 action 또는 인접 action 을 가리키는 syncPoint 가 없음 (narration 과 drift 위험)
- *   G-2. under-anchored: syncPoint ≤ 1 개 + action ≥ 5 개 + fixed action 시간이 씬 길이의 30% 이상
- *        → wait 가 균등 분배되어 teaching action 이 narration 보다 한참 늦게 발화될 가능성 높음
+ * #141 옵션 A + D 적용 (2026-04-29):
+ *   - STRICT 모드 전용 룰로 강등 (`strictOnly: true`). 일반 `make lint` 에서는 침묵.
+ *   - 출력 압축: 씬당 최대 1 개의 metric 경고만 노출. 개별 type/highlight action 마다
+ *     중복 경고를 발생시키던 G-1 은 카운트 메트릭으로 통합.
  *
- * 본 룰은 사전 차단이 목적. 실제 drift 시각 측정은 `make sync-preview` 시뮬레이터로.
+ * 진짜 sync 검증은 `make sync-preview` 가 담당한다. 본 룰은 정적 휴리스틱이므로
+ * "syncPoint 가 더 있는 편이 좋다" 는 권유 수준이며, 실제 drift 가 발생하는지는
+ * alignment.json/문자수 기반 시뮬레이션으로만 확정 가능.
+ *
+ * 검출 메트릭 (씬 단위, warning):
+ *   - unanchoredTeachingActions: 인접 syncPoint 가 없는 teaching action 개수
+ *   - underAnchored: syncPoint ≤ 1 + action ≥ 5 + fixed 비율 ≥ 30%
+ *   둘 중 하나라도 양수면 단일 압축 경고를 발행.
  */
 
 import { LintIssue, LintRule } from './types';
@@ -15,26 +21,16 @@ import { isForwardSyncTarget } from '../policies/LiveDemoScenePolicy';
 import { estimateFixedActionDurationMs } from '../playwright/ActionTiming';
 import { getTeachingCmds } from '../playwright/PlaywrightCmdMetadata';
 
-/**
- * 학습 효과를 직접 만드는 visible 액션. 본 액션의 발화 시점이 narration 과 어긋나면
- * 시청자가 즉시 이상함을 느낀다. syncPoint 로 anchor 되어 있어야 함.
- *
- * #144 Phase 0e: PlaywrightCmdMetadata SSoT 에서 자동 도출. 새 teaching cmd 를
- * metadata 에 추가하면 G-rule 이 자동으로 검출 대상에 포함시킨다.
- */
 const TEACHING_CMDS = new Set<string>(getTeachingCmds());
-
-/** teaching action 으로부터 ±N action 이내에 syncPoint 가 있으면 anchor 로 인정 */
 const NEAR_SYNCPOINT_TOLERANCE = 2;
-
-/** under-anchored 판정 임계값 */
 const UNDER_ANCHORED_MIN_ACTIONS = 5;
 const UNDER_ANCHORED_MAX_SYNCPOINTS = 1;
 const UNDER_ANCHORED_FIXED_RATIO_THRESHOLD = 0.3;
 
 export const playwrightSyncCoverageRule: LintRule = {
   id: 'G-playwright-sync-coverage',
-  description: 'Playwright forward-sync 씬의 syncPoint 커버리지 검증',
+  description: 'Playwright forward-sync 씬의 syncPoint 커버리지 검증 (STRICT 전용)',
+  strictOnly: true,
 
   run(lecture: any): LintIssue[] {
     const issues: LintIssue[] = [];
@@ -52,56 +48,60 @@ export const playwrightSyncCoverageRule: LintRule = {
         .filter((i: any) => Number.isInteger(i));
       const syncedSet = new Set<number>(syncedActionIndices);
 
-      // G-1: 각 teaching action 에 인접 syncPoint 가 있는지 확인
+      let unanchoredCount = 0;
       for (let i = 0; i < actions.length; i++) {
         const a = actions[i];
         if (!a || typeof a !== 'object') continue;
         if (a.offscreen) continue;
         if (!TEACHING_CMDS.has(a.cmd)) continue;
         if (syncedSet.has(i)) continue;
-
         const hasNearby = syncedActionIndices.some(
           (idx) => Math.abs(idx - i) <= NEAR_SYNCPOINT_TOLERANCE,
         );
-        if (!hasNearby) {
-          issues.push({
-            ruleId: this.id,
-            sceneId,
-            severity: 'warning',
-            message:
-              `action[${i}] cmd=${a.cmd} 가 teaching action 인데 인접 syncPoint 없음 — ` +
-              `narration 과 drift 위험. 'make sync-preview LECTURE=... SCENE=${sceneId}' 로 실제 drift 확인 후 syncPoint 추가 권장`,
-          });
-        }
+        if (!hasNearby) unanchoredCount++;
       }
 
-      // G-2: under-anchored 검출
+      let underAnchored = false;
+      let fixedMs = 0;
+      let fixedRatio = 0;
+      const sceneMs = (scene.durationSec ?? 0) * 1000;
       if (
         syncPoints.length <= UNDER_ANCHORED_MAX_SYNCPOINTS &&
-        actions.length >= UNDER_ANCHORED_MIN_ACTIONS
+        actions.length >= UNDER_ANCHORED_MIN_ACTIONS &&
+        sceneMs > 0
       ) {
-        let fixedMs = 0;
         for (const a of actions) {
           if (!a || typeof a !== 'object') continue;
           if (a.offscreen || a.cmd === 'wait') continue;
           fixedMs += estimateFixedActionDurationMs(a).ms;
         }
-        const sceneMs = (scene.durationSec ?? 0) * 1000;
-        if (sceneMs > 0) {
-          const ratio = fixedMs / sceneMs;
-          if (ratio >= UNDER_ANCHORED_FIXED_RATIO_THRESHOLD) {
-            issues.push({
-              ruleId: this.id,
-              sceneId,
-              severity: 'warning',
-              message:
-                `under-anchored: syncPoint ${syncPoints.length}개 / action ${actions.length}개 / ` +
-                `fixed=${fixedMs}ms (${(ratio * 100).toFixed(0)}% of ${sceneMs}ms 씬) — ` +
-                `wait 균등 분배로 teaching action 이 narration 보다 한참 늦을 가능성. teaching action 마다 syncPoint 추가 권장`,
-            });
-          }
+        fixedRatio = fixedMs / sceneMs;
+        if (fixedRatio >= UNDER_ANCHORED_FIXED_RATIO_THRESHOLD) {
+          underAnchored = true;
         }
       }
+
+      if (unanchoredCount === 0 && !underAnchored) continue;
+
+      const parts: string[] = [];
+      if (unanchoredCount > 0) {
+        parts.push(`unanchored teaching action ${unanchoredCount} 개`);
+      }
+      if (underAnchored) {
+        parts.push(
+          `under-anchored (syncPoint ${syncPoints.length}/${actions.length} action, ` +
+          `fixed ${(fixedRatio * 100).toFixed(0)}%)`,
+        );
+      }
+      issues.push({
+        ruleId: 'G-playwright-sync-coverage',
+        sceneId,
+        severity: 'warning',
+        message:
+          `${parts.join(' + ')} — ` +
+          `'make sync-preview LECTURE=... SCENE=${sceneId}' 로 실제 drift 확인 후 ` +
+          `필요하면 syncPoint 추가`,
+      });
     }
 
     return issues;

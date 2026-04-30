@@ -17,7 +17,14 @@ import { EDU_DEVTOOLS_ACTION_DURATION_MS } from '../constants/EduDevtoolsActionD
  * 다른 액션도 같은 원칙: provider 의 명시적 waitForTimeout 이 아니라 실제 녹화 길이에 맞춤.
  */
 export const PLAYWRIGHT_TIMING = {
-  typeDelayMsPerChar: 100,
+  /**
+   * #141 F-1 calibration (2026-04-29):
+   * lecture-02-03 씬 6/8/13/15/17/23/30/31/34/37 의 webm vs audio 측정 결과
+   * 모든 type 액션이 일관되게 추정보다 길게 실행됨 (실측 평균 ~110ms/char).
+   * CodeMirror auto-close-tag 처리 + per-char render + CDP 디스패치 오버헤드.
+   * 기존 100 → 110 으로 상향해 underestimate 편향을 줄인다.
+   */
+  typeDelayMsPerChar: 110,
   mouseMoveMs: 800,
   clickMs: 500,
   pressMs: 100,
@@ -33,7 +40,11 @@ export const PLAYWRIGHT_TIMING = {
   waitForMs: 0,
   defaultGotoMs: 3000,
   codePenGotoMs: 4200,
-  prefillCodepenMs: 4500,
+  /**
+   * #141 F-1 calibration (2026-04-29):
+   * 실측 ~4761ms (POST + pen page load + CodeMirror 초기화). 4500 → 5000 으로 상향.
+   */
+  prefillCodepenMs: 5000,
   yahooGotoMs: 7000,
   heavyGotoMs: 6000,
   setupFloorSlackMs: 1000,
