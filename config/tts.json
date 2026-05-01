@@ -41,6 +41,10 @@
       "tailPadding": {
         "enabled": true,
         "paddingMs": 150
+      },
+      "headPadding": {
+        "enabled": true,
+        "paddingMs": 80
       }
     }
   }

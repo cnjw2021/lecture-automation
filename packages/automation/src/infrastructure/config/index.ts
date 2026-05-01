@@ -130,6 +130,17 @@ export const config = {
     };
   },
 
+  getHeadPaddingConfig: () => {
+    const tts = getTtsJson();
+    const activeProvider = tts.activeProvider;
+    const providerConfig = tts.providers?.[activeProvider];
+    const hp = providerConfig?.headPadding;
+    return {
+      enabled: hp?.enabled ?? false,
+      paddingMs: typeof hp?.paddingMs === 'number' ? hp.paddingMs : 0,
+    };
+  },
+
   getAuditConfig: () => {
     const auditConfigPath = path.join(ROOT_DIR, 'config/audit.json');
     if (!fs.existsSync(auditConfigPath)) {

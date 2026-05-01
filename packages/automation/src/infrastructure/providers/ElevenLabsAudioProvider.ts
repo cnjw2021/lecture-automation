@@ -20,6 +20,11 @@ interface TailPaddingConfig {
   paddingMs: number;
 }
 
+interface HeadPaddingConfig {
+  enabled: boolean;
+  paddingMs: number;
+}
+
 export class ElevenLabsAudioProvider implements IAudioProvider {
   private readonly withTimestampsUrl = 'https://api.elevenlabs.io/v1/text-to-speech';
 
@@ -98,6 +103,7 @@ export class ElevenLabsAudioProvider implements IAudioProvider {
     private readonly audioConfig: AudioConfig,
     private readonly warmupPadding: WarmupPaddingConfig = { enabled: false, text: '', trimGuardMs: 0 },
     private readonly tailPadding: TailPaddingConfig = { enabled: true, paddingMs: 150 },
+    private readonly headPadding: HeadPaddingConfig = { enabled: false, paddingMs: 0 },
   ) {}
 
   private async sleep(ms: number): Promise<void> {
@@ -277,6 +283,27 @@ export class ElevenLabsAudioProvider implements IAudioProvider {
                 console.log(`  ✂️  tail trim: ${removedSec.toFixed(3)}초 (${removedBytes}bytes) 제거 (last speech char '${lastChar}' end ${lastEndSec.toFixed(3)}s + padding ${this.tailPadding.paddingMs}ms, 꼬리 구두점 ${trimmedTailChars}자 제거)`);
               }
             }
+          }
+        }
+
+        if (this.headPadding.enabled && this.headPadding.paddingMs > 0) {
+          const { sampleRate, channels, bitDepth } = this.audioConfig;
+          const bytesPerFrame = channels * (bitDepth / 8);
+          const bytesPerSec = sampleRate * bytesPerFrame;
+          const rawPadBytes = Math.floor((this.headPadding.paddingMs / 1000) * bytesPerSec);
+          const padBytes = Math.floor(rawPadBytes / bytesPerFrame) * bytesPerFrame;
+          if (padBytes > 0) {
+            const silence = Buffer.alloc(padBytes);
+            pcmBuffer = Buffer.concat([silence, pcmBuffer]);
+            const shiftSec = padBytes / bytesPerSec;
+            if (alignment) {
+              alignment = {
+                characters: alignment.characters,
+                character_start_times_seconds: alignment.character_start_times_seconds.map(t => t + shiftSec),
+                character_end_times_seconds: alignment.character_end_times_seconds.map(t => t + shiftSec),
+              };
+            }
+            console.log(`  ➕ head padding: ${shiftSec.toFixed(3)}초 (${padBytes}bytes) 무음 prepend`);
           }
         }
 
