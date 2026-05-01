@@ -1,7 +1,8 @@
 # Lecture Automation Makefile
 
 .PHONY: help install build run run-lambda run-force run-force-lambda regen-scene regen-scene-lambda regen-visual regen-visual-lambda run-tts-only run-tts-chunk apply-tts apply-tts-lambda apply-tts-chunk apply-tts-chunk-lambda list-chunks find-chunk run-render-only run-render-only-lambda render-scene render-scene-lambda record-webm concat-scenes clean preview preview-motion icon-coverage tts-sample \
-        sync-playwright sync-preview sync-preview-gate save-auth validate-schema lint lint-fix audit deploy-lambda
+        sync-playwright sync-preview sync-preview-gate save-auth validate-schema lint lint-fix audit deploy-lambda \
+        tts-bootstrap-kokoro tts-bootstrap-xtts tts-bootstrap-gpt-sovits tts-bootstrap-fish-speech tts-check-uv
 
 # 기본 변수 설정
 LECTURE ?= lecture-01-01.json
@@ -108,6 +109,14 @@ help:
 	@echo "make lint-fix LECTURE=xxx                     - lint + 자동 수정 가능 항목 적용"
 	@echo "make audit LECTURE=xxx                        - TTS 오독 자동 감사 (Gemini 2.5 Flash STT 대조)"
 	@echo "make audit LECTURE=xxx SCENE='5 31'           - 특정 씬만 감사"
+	@echo ""
+	@echo "--------------------------------------------------"
+	@echo "🧪 로컬 TTS PoC (Issue #151, CPU-only)"
+	@echo "--------------------------------------------------"
+	@echo "make tts-bootstrap-kokoro                     - Kokoro-82M venv + ONNX 모델 다운로드"
+	@echo "make tts-bootstrap-xtts                       - XTTS-v2 venv (CPML 동의 필요)"
+	@echo "make tts-bootstrap-gpt-sovits                 - GPT-SoVITS clone + venv (모델 수동 다운로드)"
+	@echo "make tts-bootstrap-fish-speech                - Fish Speech clone + venv (FARL 동의 필요)"
 	@echo ""
 	@echo "--------------------------------------------------"
 	@echo "🗑️  정리"
@@ -464,3 +473,112 @@ clean:
 	rm -rf $(OUTPUT_DIR)/clips
 	rm -rf $(OUTPUT_DIR)/*.mp4
 	@echo "✅ 정리가 완료되었습니다."
+
+# ─────────────────────────────────────────────────────────────────────────
+# 로컬 TTS PoC (Issue #151) — Intel Mac CPU-only 환경
+# 각 엔진은 tools/tts/python/{engine}/ 에 격리된 venv 를 사용한다.
+# ─────────────────────────────────────────────────────────────────────────
+
+tts-check-uv:
+	@if ! command -v uv >/dev/null 2>&1; then \
+		echo "❌ uv 가 설치되어 있지 않습니다."; \
+		echo "   설치: curl -LsSf https://astral.sh/uv/install.sh | sh"; \
+		echo "   참고: https://docs.astral.sh/uv/getting-started/installation/"; \
+		exit 1; \
+	fi
+
+tts-bootstrap-kokoro: tts-check-uv
+	@echo "📦 Kokoro-82M 부트스트랩 (CPU-only)"
+	cd tools/tts/python/kokoro && uv sync
+	@mkdir -p tools/tts/python/kokoro/models
+	@if [ ! -f tools/tts/python/kokoro/models/kokoro-v1.0.onnx ]; then \
+		echo "⬇️  Kokoro 모델 다운로드..."; \
+		curl -L --fail -o tools/tts/python/kokoro/models/kokoro-v1.0.onnx \
+			https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx; \
+	else \
+		echo "✓ kokoro-v1.0.onnx 이미 존재"; \
+	fi
+	@if [ ! -f tools/tts/python/kokoro/models/voices-v1.0.bin ]; then \
+		echo "⬇️  Kokoro 보이스 파일 다운로드..."; \
+		curl -L --fail -o tools/tts/python/kokoro/models/voices-v1.0.bin \
+			https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin; \
+	else \
+		echo "✓ voices-v1.0.bin 이미 존재"; \
+	fi
+	@echo "✅ Kokoro 부트스트랩 완료"
+	@echo "   다음: config/tts.json 의 activeProvider 를 \"kokoro\" 로 변경 후"
+	@echo "   make run-tts-only LECTURE=lecture-XX.json SCENE='1 2 3' 으로 검증"
+
+tts-bootstrap-xtts: tts-check-uv
+	@echo "📦 XTTS-v2 부트스트랩 (CPU-only)"
+	@echo ""
+	@echo "⚠️  라이선스 주의: XTTS-v2 는 Coqui Public Model License 하에 배포됩니다."
+	@echo "    https://coqui.ai/cpml 에서 전문을 확인하고 본인의 사용 범위가 허용되는지"
+	@echo "    직접 검토하세요. 모델 가중치는 첫 합성 시 자동 다운로드됩니다."
+	@echo ""
+	cd tools/tts/python/xtts && uv sync
+	@mkdir -p tools/tts/python/xtts/models
+	@if [ ! -f tools/tts/python/xtts/models/speaker.wav ]; then \
+		echo ""; \
+		echo "⚠️  voice cloning 참조 음성이 없습니다:"; \
+		echo "    tools/tts/python/xtts/models/speaker.wav"; \
+		echo "    본인 권리를 가진 6~30초 mono WAV 를 위 경로에 배치하세요."; \
+		echo ""; \
+	fi
+	@echo "✅ XTTS-v2 부트스트랩 완료 (의존성)"
+	@echo "   라이선스 동의: export COQUI_TOS_AGREED=1"
+	@echo "   speaker.wav 배치 후 make run-tts-only 로 검증"
+
+tts-bootstrap-gpt-sovits: tts-check-uv
+	@echo "📦 GPT-SoVITS 부트스트랩 (CPU-only)"
+	@echo ""
+	@echo "⚠️  GPT-SoVITS 는 PyPI 안정 배포가 없어 git clone 방식으로 설치합니다."
+	@echo "    사전학습 모델은 라이선스 확인 후 수동 다운로드가 필요합니다."
+	@echo ""
+	cd tools/tts/python/gpt-sovits && uv sync
+	@mkdir -p tools/tts/python/gpt-sovits/models
+	@if [ ! -d tools/tts/python/gpt-sovits/models/GPT-SoVITS ]; then \
+		echo "⬇️  GPT-SoVITS 클론..."; \
+		git clone --depth 1 https://github.com/RVC-Boss/GPT-SoVITS \
+			tools/tts/python/gpt-sovits/models/GPT-SoVITS; \
+	else \
+		echo "✓ GPT-SoVITS 클론 이미 존재"; \
+	fi
+	@echo ""
+	@echo "✅ GPT-SoVITS 클론 완료"
+	@echo ""
+	@echo "다음 수동 단계:"
+	@echo "  1. 사전학습 모델 다운로드 (HuggingFace lj1995/GPT-SoVITS):"
+	@echo "     tools/tts/python/gpt-sovits/models/GPT-SoVITS/GPT_SoVITS/pretrained_models/"
+	@echo "  2. 참조 음성 (3~10초 mono WAV) 준비 + 전사 텍스트 작성"
+	@echo "  3. config/tts.json 의 providers.gpt_sovits 경로 입력"
+	@echo "  4. activeProvider 를 \"gpt_sovits\" 로 변경 후 make run-tts-only"
+
+tts-bootstrap-fish-speech: tts-check-uv
+	@echo "📦 Fish Speech 부트스트랩 (CPU-only)"
+	@echo ""
+	@echo "⚠️  라이선스 주의: Fish Audio Research License."
+	@echo "    https://github.com/fishaudio/fish-speech/blob/main/LICENSE 에서"
+	@echo "    사용 시점의 라이선스를 확인하세요. 모델 가중치는 별도 다운로드입니다."
+	@echo ""
+	cd tools/tts/python/fish-speech && uv sync
+	@mkdir -p tools/tts/python/fish-speech/models
+	@if [ ! -d tools/tts/python/fish-speech/models/fish-speech ]; then \
+		echo "⬇️  fish-speech 클론..."; \
+		git clone --depth 1 https://github.com/fishaudio/fish-speech \
+			tools/tts/python/fish-speech/models/fish-speech; \
+	else \
+		echo "✓ fish-speech 클론 이미 존재"; \
+	fi
+	@echo "📌 fish-speech editable install 시도..."
+	cd tools/tts/python/fish-speech && \
+		uv pip install -e models/fish-speech || \
+		echo "⚠️  editable install 실패 — fish-speech 의 setup 요구사항을 README 에서 확인하세요"
+	@echo ""
+	@echo "✅ Fish Speech 클론 완료"
+	@echo ""
+	@echo "다음 수동 단계:"
+	@echo "  1. https://huggingface.co/fishaudio/fish-speech-1.5 에서 라이선스 동의 후 가중치 다운로드"
+	@echo "  2. tools/tts/python/fish-speech/models/fish-speech/checkpoints/fish-speech-1.5/ 에 배치"
+	@echo "  3. config/tts.json 의 providers.fish_speech.checkpointDir 경로 입력"
+	@echo "  4. activeProvider 를 \"fish_speech\" 로 변경 후 make run-tts-only"

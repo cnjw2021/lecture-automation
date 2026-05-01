@@ -11,9 +11,13 @@ import { ValidateLectureUseCase } from '../../application/use-cases/ValidateLect
 import { SyncPointNarrationChunker } from '../../domain/services/NarrationChunker';
 import { ConfiguredAudioProviderFactory } from '../factories/ConfiguredAudioProviderFactory';
 import { ElevenLabsConfiguredAudioProviderBuilder } from '../factories/ElevenLabsConfiguredAudioProviderBuilder';
+import { FishSpeechConfiguredAudioProviderBuilder } from '../factories/FishSpeechConfiguredAudioProviderBuilder';
 import { GeminiCloudTtsConfiguredAudioProviderBuilder } from '../factories/GeminiCloudTtsConfiguredAudioProviderBuilder';
 import { GeminiConfiguredAudioProviderBuilder } from '../factories/GeminiConfiguredAudioProviderBuilder';
 import { GoogleCloudTtsConfiguredAudioProviderBuilder } from '../factories/GoogleCloudTtsConfiguredAudioProviderBuilder';
+import { GptSoVitsConfiguredAudioProviderBuilder } from '../factories/GptSoVitsConfiguredAudioProviderBuilder';
+import { KokoroConfiguredAudioProviderBuilder } from '../factories/KokoroConfiguredAudioProviderBuilder';
+import { XttsConfiguredAudioProviderBuilder } from '../factories/XttsConfiguredAudioProviderBuilder';
 import { FfmpegConcatProvider } from '../providers/FfmpegConcatProvider';
 import { PlaywrightScreenshotProvider } from '../providers/PlaywrightScreenshotProvider';
 import { PlaywrightStateCaptureProvider } from '../providers/PlaywrightStateCaptureProvider';
@@ -34,6 +38,10 @@ export function createAutomationPipeline(): RunAutomationPipelineUseCase {
     new GoogleCloudTtsConfiguredAudioProviderBuilder(),
     new GeminiCloudTtsConfiguredAudioProviderBuilder(),
     new ElevenLabsConfiguredAudioProviderBuilder(),
+    new KokoroConfiguredAudioProviderBuilder(),
+    new XttsConfiguredAudioProviderBuilder(),
+    new GptSoVitsConfiguredAudioProviderBuilder(),
+    new FishSpeechConfiguredAudioProviderBuilder(),
   ]);
   const narrationChunker = new SyncPointNarrationChunker();
   const narrationAudioPreparationService = new ConfiguredNarrationAudioPreparationService(
