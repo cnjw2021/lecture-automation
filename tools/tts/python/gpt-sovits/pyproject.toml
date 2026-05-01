@@ -7,8 +7,9 @@ dependencies = [
     # GPT-SoVITS 자체는 PyPI 의 안정 패키지가 없다. 본 PoC 는 git 클론을
     # tools/tts/python/gpt-sovits/models/GPT-SoVITS/ 에 받아 sys.path 에 추가하는 방식.
     # 아래는 그 추론 코드가 import 하는 공통 의존성.
-    "torch>=2.0,<2.5",
-    "torchaudio>=2.0,<2.5",
+    # torch 2.3+ 은 macOS x86_64 휠을 제공하지 않음 (Apple Silicon 전용).
+    "torch>=2.0,<2.3",
+    "torchaudio>=2.0,<2.3",
     "numpy>=1.24,<2.0",
     "scipy>=1.10",
     "librosa>=0.10",
