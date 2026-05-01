@@ -43,11 +43,17 @@ export class ConfiguredNarrationAudioPreparationService implements INarrationAud
       speechRate: ttsConfig.speechRate || 0.85,
     };
 
+    const headPadding = config.getHeadPaddingConfig();
+    const assembleOptions = headPadding.enabled && headPadding.paddingMs > 0
+      ? { headPaddingMs: headPadding.paddingMs }
+      : {};
+
     const generateAudioUseCase = new GenerateAudioUseCase(
       provider,
       this.lectureRepository,
       this.narrationChunker,
       audioConfig,
+      assembleOptions,
     );
     await generateAudioUseCase.execute(targetLecture, {
       force: params.forceRegenerate,
