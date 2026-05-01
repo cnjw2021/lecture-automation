@@ -525,6 +525,13 @@ tts-bootstrap-xtts: tts-check-uv
 	@echo ""
 	cd tools/tts/python/xtts && uv sync
 	@mkdir -p tools/tts/python/xtts/models
+	@UNIDIC_RC=$$(find tools/tts/python/xtts/.venv -path '*/unidic/dicdir/mecabrc' 2>/dev/null | head -1); \
+	if [ -z "$$UNIDIC_RC" ]; then \
+		echo "📚 unidic 사전 다운로드 (cutlet/fugashi 일본어 토크나이저 의존성, ~250MB)..."; \
+		cd tools/tts/python/xtts && .venv/bin/python -m unidic download; \
+	else \
+		echo "✓ unidic 사전 이미 존재"; \
+	fi
 	@if [ ! -f tools/tts/python/xtts/models/speaker.wav ]; then \
 		echo ""; \
 		echo "⚠️  voice cloning 참조 음성이 없습니다:"; \
