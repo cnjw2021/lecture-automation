@@ -11,6 +11,7 @@ import { ValidateLectureUseCase } from '../../application/use-cases/ValidateLect
 import { SyncPointNarrationChunker } from '../../domain/services/NarrationChunker';
 import { ConfiguredAudioProviderFactory } from '../factories/ConfiguredAudioProviderFactory';
 import { ElevenLabsConfiguredAudioProviderBuilder } from '../factories/ElevenLabsConfiguredAudioProviderBuilder';
+import { FishAudioApiConfiguredAudioProviderBuilder } from '../factories/FishAudioApiConfiguredAudioProviderBuilder';
 import { FishSpeechConfiguredAudioProviderBuilder } from '../factories/FishSpeechConfiguredAudioProviderBuilder';
 import { GeminiCloudTtsConfiguredAudioProviderBuilder } from '../factories/GeminiCloudTtsConfiguredAudioProviderBuilder';
 import { GeminiConfiguredAudioProviderBuilder } from '../factories/GeminiConfiguredAudioProviderBuilder';
@@ -42,6 +43,7 @@ export function createAutomationPipeline(): RunAutomationPipelineUseCase {
     new XttsConfiguredAudioProviderBuilder(),
     new GptSoVitsConfiguredAudioProviderBuilder(),
     new FishSpeechConfiguredAudioProviderBuilder(),
+    new FishAudioApiConfiguredAudioProviderBuilder(),
   ]);
   const narrationChunker = new SyncPointNarrationChunker();
   const narrationAudioPreparationService = new ConfiguredNarrationAudioPreparationService(

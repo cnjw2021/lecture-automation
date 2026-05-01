@@ -106,6 +106,15 @@ export const config = {
         temperature: typeof tts.providers?.fish_speech?.temperature === 'number' ? tts.providers.fish_speech.temperature : 0.7,
         topP: typeof tts.providers?.fish_speech?.topP === 'number' ? tts.providers.fish_speech.topP : 0.7,
       },
+      fish_audio_api: {
+        apiKey: process.env.FISH_AUDIO_API_KEY || '',
+        modelName: tts.providers?.fish_audio_api?.modelName ?? 's1-mini',
+        voiceId: tts.providers?.fish_audio_api?.voiceId ?? '',
+        temperature: typeof tts.providers?.fish_audio_api?.temperature === 'number' ? tts.providers.fish_audio_api.temperature : 0.7,
+        topP: typeof tts.providers?.fish_audio_api?.topP === 'number' ? tts.providers.fish_audio_api.topP : 0.7,
+        speed: typeof tts.providers?.fish_audio_api?.speed === 'number' ? tts.providers.fish_audio_api.speed : 1.0,
+        normalize: tts.providers?.fish_audio_api?.normalize ?? true,
+      },
     };
   },
 

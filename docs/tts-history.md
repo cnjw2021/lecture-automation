@@ -94,11 +94,41 @@
 - **결론**: architecture 한계라 추가 튜닝 무의미. CPU + voice cloning 조합에서 음질 만족도가 production 강의용 기준선 미달. 다음 음성 클로닝 후보 (Fish Speech / GPT-SoVITS) 로 이동.
 - **교훈**: XTTS-v2 의 metallic artifact 는 알려진 한계. CPU 환경에서는 더 두드러진다. voice cloning 후보 평가는 "음색 모방" 여부보다 "원샘플 품질" 을 먼저 확인해야 한다.
 
+### 8. `Fish Speech 1.5` self-host (HuggingFace 오픈 가중치)
+
+- **실패일**: 2026-05-01 (이슈 #151 PoC, 브랜치 `feat/local-tts-poc`)
+- **접근**: fishaudio/fish-speech-1.5 HuggingFace 오픈 가중치를 받아 Intel Mac CPU 로컬 합성 시도 예정.
+- **라이선스**: **`cc-by-nc-sa-4.0`** (Creative Commons Attribution-NonCommercial-ShareAlike 4.0).
+- **실패 모드**: 합성 전 라이선스 단계에서 사용 불가 판정. 본 프로젝트는 일본 정부 보조금 기반 기업 사원 교육 강의 → **상업 사용에 해당** → NC 조항 위반 위험. self-host 로는 사용 불가.
+- **대안 분리 평가**: fish.audio 의 유료 API (Plus $15 / Pro $100 / Max $999) 는 **「商用利用可能」** 명시. 음질·오독률은 fish.audio 웹 데모 청취 결과 ElevenLabs v3 보다 **오독률 ↓ 실측 확인**. 클라우드 API 경로로 전환 — 본 #8 기각은 **"OSS 가중치 self-host 경로"** 한정.
+- **교훈**: 라이선스 검증을 합성 시도 **전** 단계로 게이트화. CC-NC 모델은 정부 보조금/사원 교육/유료 강의 등 상업 시나리오와 양립 불가. fishaudio 의 OSS↔API 분리 모델은 흔한 패턴 — 다른 비슷한 후보 평가 시 동일 패턴 가정.
+
+---
+
+## ⏸️ 미검증 보류 후보
+
+본 섹션은 **합성 시도 자체를 하지 않은** 후보를 기록한다. "재추천 금지" 가 아니라 "현 시점 우선순위 밀림" 이다. 향후 환경/요구가 바뀌면 재검토 가능.
+
+### A. `GPT-SoVITS` (RVC-Boss/GPT-SoVITS)
+
+- **보류일**: 2026-05-01 (이슈 #151 PoC, 브랜치 `feat/local-tts-poc`)
+- **상태**: PoC 코드 골격 (`tools/tts/python/gpt-sovits/` + `GptSoVitsAudioProvider`) 만 작성. 합성 검증 미수행.
+- **보류 사유**:
+  1. **상위 후보 (Fish Audio API) 가 이미 검증 통과**. 동일 검증 세트로 fish.audio 데모 청취에서 오독률 ↓ 확인됨. GPT-SoVITS 가 Fish Audio 의 상업 모델 품질을 넘을 가능성은 낮다 (회사가 OSS↔API 분리하는 비즈니스 패턴상 API 가 더 좋음).
+  2. **셋업 비용 높음**. 우리 PoC docs 에서 4개 후보 중 가장 fragile. PyPI 안정 배포 없어 git clone + 모델 수동 다운로드 + import 경로/CUDA 강제 패치 가능성 → 수 시간 추가 시간 투자.
+  3. **본 프로젝트 우선순위 (오독 0 + 강의 생성 시간 단축) 와 미스매치**. 셋업 시간이 오히려 시간 단축 목표를 거스른다.
+  4. **CPU + voice cloning 조합의 metallic artifact 우려**. XTTS 와 같은 architecture 카테고리라 동일 문제 재현 가능성 배제 못 함.
+- **재시도 조건 (가설)**:
+  - Fish Audio API 가 어떤 이유로든 운영 불가가 되거나 (가격 인상, 서비스 중단, 라이선스 변경 등)
+  - 사용자 환경이 GPU 머신으로 변경되어 CPU 한계가 사라지거나
+  - GPT-SoVITS 의 일본어 평이 객관적으로 Fish Audio API 를 넘는다는 벤치마크가 등장
+- **참고**: PoC 골격 코드는 `feat/local-tts-poc` 브랜치에 보존되어 있어 재시도 시 처음부터 만들 필요 없음.
+
 ---
 
 ## ✅ 최종 채택 조합
 
-### `eleven_v3` + 프로젝트 고정 보이스(`6wdSVG3CMjPfAthsnMv9`) + **개별 씬 단위 생성** + 시작 톤 안정화 전략
+### `eleven_v3` + 프로젝트 고정 보이스 `Makoto -Japanese male` (`6wdSVG3CMjPfAthsnMv9`) + **개별 씬 단위 생성** + 시작 톤 안정화 전략
 
 - **기본 설정** (`config/tts.json`):
   - stability 0.85
