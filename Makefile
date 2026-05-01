@@ -228,9 +228,11 @@ run-tts-only: build
 	@echo "🔊 TTS만 생성: $(LECTURE) / Scene $(SCENE)"
 	@LECTURE_ID=$$(node -e "const d=require('./data/$(LECTURE)'); console.log(d.lecture_id)"); \
 	for scene in $(SCENE); do \
-		echo "  🗑️  scene-$$scene.wav 삭제 중..."; \
+		echo "  🗑️  scene-$$scene.wav / 청크 삭제 중..."; \
 		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene.wav; \
 		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene.alignment.json; \
+		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene-chunk-*.wav; \
+		rm -f packages/remotion/public/audio/$$LECTURE_ID/scene-$$scene-chunk-*.alignment.json; \
 	done
 	env TTS_ONLY=1 TARGET_SCENES="$(SCENE)" $(RUN_ENV_VARS) node $(ENGINE_PATH) $(LECTURE)
 
