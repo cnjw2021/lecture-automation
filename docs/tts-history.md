@@ -78,6 +78,22 @@
 - **결론**: 코드로 보정 불가능한 모델 한계. 비용 0 매력에도 불구하고 강의 나레이션 기준선 미달로 기각.
 - **교훈**: ONNX 로컬 모델은 영어 위주로 평가되는 경향. 일본어 강의 나레이션처럼 timbre 자체가 결정적인 용도에서는 학습 데이터 다양성을 사전에 확인해야 한다. 음성 클로닝 가능 모델 (XTTS-v2 / GPT-SoVITS / Fish Speech) 로 이동.
 
+### 7. `XTTS-v2 (Coqui)` 일본어 + ElevenLabs voice cloning
+
+- **실패일**: 2026-05-01 (이슈 #151 PoC, 브랜치 `feat/local-tts-poc`)
+- **환경**: Intel Mac (2020 MBP i5), CPU-only, Python 3.10 venv. ElevenLabs 합성 결과 (15→25초 mono) 를 참조 음성으로 사용.
+- **라이선스**: Coqui Public Model License (CPML).
+- **접근**: voice cloning 으로 ElevenLabs 의 차분한 강사 톤 음색을 모방. coqui-tts 0.26 + torch 2.2 + transformers 4.46 (Intel Mac wheel 호환 핀).
+- **실패 모드**:
+  - **쇳소리·잡음 (metallic artifact)** 이 합성 결과 전체에 일관되게 발생. 음색 클로닝 자체는 부분 성공 (애니메이션 톤은 아님) 했지만 IT 강의 나레이션 용도로 받아들일 수 없는 수준.
+  - 원인 추정: XTTS-v2 의 diffusion-style vocoder + 짧은 참조 음성 + CPU 추론의 결합 한계.
+- **시도한 튜닝 (모두 metallic 잔존)**:
+  - 참조 음성 15초 → 25초 길이 증가
+  - 22050Hz → 24000Hz 샘플레이트 상향
+  - temperature 0.7 → 0.5 인하
+- **결론**: architecture 한계라 추가 튜닝 무의미. CPU + voice cloning 조합에서 음질 만족도가 production 강의용 기준선 미달. 다음 음성 클로닝 후보 (Fish Speech / GPT-SoVITS) 로 이동.
+- **교훈**: XTTS-v2 의 metallic artifact 는 알려진 한계. CPU 환경에서는 더 두드러진다. voice cloning 후보 평가는 "음색 모방" 여부보다 "원샘플 품질" 을 먼저 확인해야 한다.
+
 ---
 
 ## ✅ 최종 채택 조합
