@@ -17,4 +17,7 @@ dependencies = [
     # numba/llvmlite 의 prebuilt macOS x86_64 wheel 마지막 버전 핀.
     "numba<0.61",
     "llvmlite<0.44",
+    # transformers 4.50+ 는 torch >= 2.4 를 요구해 우리 torch 2.2 와 충돌.
+    # coqui-tts 가 transformers 상한을 명시 안 해서 최신이 들어오므로 직접 핀.
+    "transformers>=4.40,<4.50",
 ]
