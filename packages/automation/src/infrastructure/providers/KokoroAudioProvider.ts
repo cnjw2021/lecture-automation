@@ -1,3 +1,4 @@
+import * as path from 'path';
 import {
   AudioConfig,
   AudioGenerateResult,
@@ -20,13 +21,18 @@ export class KokoroAudioProvider implements IAudioProvider {
   constructor(
     private readonly providerConfig: KokoroProviderConfig,
     audioConfig: AudioConfig,
-    workspaceRoot: string,
+    private readonly workspaceRoot: string,
   ) {
     this.bridge = new PythonTtsBridge({
       engine: 'kokoro',
       workspaceRoot,
       audioConfig,
     });
+  }
+
+  /** config/tts.json 의 상대경로는 프로젝트 루트 기준이므로 synth.py 에 절대경로로 전달한다. */
+  private toAbsolute(p: string): string {
+    return path.isAbsolute(p) ? p : path.resolve(this.workspaceRoot, p);
   }
 
   async generate(text: string, options: GenerateAudioOptions = {}): Promise<AudioGenerateResult> {
@@ -36,8 +42,8 @@ export class KokoroAudioProvider implements IAudioProvider {
       text,
       voice: this.providerConfig.voice,
       engineParams: {
-        modelPath: this.providerConfig.modelPath,
-        voicesPath: this.providerConfig.voicesPath,
+        modelPath: this.toAbsolute(this.providerConfig.modelPath),
+        voicesPath: this.toAbsolute(this.providerConfig.voicesPath),
         speed: this.providerConfig.speed,
         g2pMode: this.providerConfig.g2pMode,
       },

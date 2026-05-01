@@ -1,3 +1,4 @@
+import * as path from 'path';
 import {
   AudioConfig,
   AudioGenerateResult,
@@ -21,7 +22,7 @@ export class FishSpeechAudioProvider implements IAudioProvider {
   constructor(
     private readonly providerConfig: FishSpeechProviderConfig,
     audioConfig: AudioConfig,
-    workspaceRoot: string,
+    private readonly workspaceRoot: string,
   ) {
     this.bridge = new PythonTtsBridge({
       engine: 'fish-speech',
@@ -31,16 +32,23 @@ export class FishSpeechAudioProvider implements IAudioProvider {
     });
   }
 
+  private toAbsolute(p: string): string {
+    return path.isAbsolute(p) ? p : path.resolve(this.workspaceRoot, p);
+  }
+
   async generate(text: string, options: GenerateAudioOptions = {}): Promise<AudioGenerateResult> {
     const sceneLabel = options.scene_id ?? 'unknown';
     console.log(`[Fish Speech] Scene ${sceneLabel} 음성 생성 (checkpoint=${this.providerConfig.checkpointDir})...`);
+    const referenceAudioAbs = this.providerConfig.referenceAudioPath
+      ? this.toAbsolute(this.providerConfig.referenceAudioPath)
+      : '';
     const result = await this.bridge.synthesize({
       text,
-      voice: this.providerConfig.referenceAudioPath || 'default',
+      voice: referenceAudioAbs || 'default',
       engineParams: {
-        repoPath: this.providerConfig.repoPath,
-        checkpointDir: this.providerConfig.checkpointDir,
-        referenceAudioPath: this.providerConfig.referenceAudioPath,
+        repoPath: this.toAbsolute(this.providerConfig.repoPath),
+        checkpointDir: this.toAbsolute(this.providerConfig.checkpointDir),
+        referenceAudioPath: referenceAudioAbs,
         referenceText: this.providerConfig.referenceText,
         temperature: this.providerConfig.temperature,
         topP: this.providerConfig.topP,

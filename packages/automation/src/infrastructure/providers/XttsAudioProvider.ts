@@ -1,3 +1,4 @@
+import * as path from 'path';
 import {
   AudioConfig,
   AudioGenerateResult,
@@ -20,7 +21,7 @@ export class XttsAudioProvider implements IAudioProvider {
   constructor(
     private readonly providerConfig: XttsProviderConfig,
     audioConfig: AudioConfig,
-    workspaceRoot: string,
+    private readonly workspaceRoot: string,
   ) {
     this.bridge = new PythonTtsBridge({
       engine: 'xtts',
@@ -31,15 +32,20 @@ export class XttsAudioProvider implements IAudioProvider {
     });
   }
 
+  private toAbsolute(p: string): string {
+    return path.isAbsolute(p) ? p : path.resolve(this.workspaceRoot, p);
+  }
+
   async generate(text: string, options: GenerateAudioOptions = {}): Promise<AudioGenerateResult> {
     const sceneLabel = options.scene_id ?? 'unknown';
     console.log(`[XTTS-v2] Scene ${sceneLabel} 음성 생성 (lang=${this.providerConfig.language})...`);
+    const speakerWavAbs = this.toAbsolute(this.providerConfig.speakerWavPath);
     const result = await this.bridge.synthesize({
       text,
-      voice: this.providerConfig.speakerWavPath,
+      voice: speakerWavAbs,
       engineParams: {
         modelName: this.providerConfig.modelName,
-        speakerWavPath: this.providerConfig.speakerWavPath,
+        speakerWavPath: speakerWavAbs,
         language: this.providerConfig.language,
         temperature: this.providerConfig.temperature,
         length_penalty: this.providerConfig.lengthPenalty,

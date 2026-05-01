@@ -101,28 +101,32 @@ export class PythonTtsBridge {
       child.on('close', code => {
         clearTimeout(timer);
 
+        // synth.py 는 에러 시 stdout 에 JSON 으로 진단을 쓰고 exit 1 한다.
+        // exit code 와 무관하게 stdout 의 JSON 부터 확인해야 진단 메시지가 보존된다.
+        const response = this.parseResponse(stdoutBuf);
+
+        if (response && !response.ok) {
+          cleanupTmp();
+          reject(new Error(`[${this.options.engine}] 합성 실패: ${response.error ?? 'unknown'}`));
+          return;
+        }
+
         if (code !== 0) {
           cleanupTmp();
           reject(new Error(
             `[${this.options.engine}] Python 프로세스 비정상 종료 (exit ${code})\n` +
-            `stderr 전체 출력:\n${stderrBuf}`,
+            `stdout:\n${stdoutBuf}\n` +
+            `stderr:\n${stderrBuf}`,
           ));
           return;
         }
 
-        const response = this.parseResponse(stdoutBuf);
         if (!response) {
           cleanupTmp();
           reject(new Error(
             `[${this.options.engine}] stdout 에서 JSON 응답을 찾을 수 없습니다.\n` +
             `stdout:\n${stdoutBuf}\nstderr:\n${stderrBuf}`,
           ));
-          return;
-        }
-
-        if (!response.ok) {
-          cleanupTmp();
-          reject(new Error(`[${this.options.engine}] 합성 실패: ${response.error ?? 'unknown'}`));
           return;
         }
 

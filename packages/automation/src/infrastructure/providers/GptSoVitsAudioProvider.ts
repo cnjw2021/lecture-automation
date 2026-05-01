@@ -1,3 +1,4 @@
+import * as path from 'path';
 import {
   AudioConfig,
   AudioGenerateResult,
@@ -26,7 +27,7 @@ export class GptSoVitsAudioProvider implements IAudioProvider {
   constructor(
     private readonly providerConfig: GptSoVitsProviderConfig,
     audioConfig: AudioConfig,
-    workspaceRoot: string,
+    private readonly workspaceRoot: string,
   ) {
     this.bridge = new PythonTtsBridge({
       engine: 'gpt-sovits',
@@ -36,17 +37,22 @@ export class GptSoVitsAudioProvider implements IAudioProvider {
     });
   }
 
+  private toAbsolute(p: string): string {
+    return path.isAbsolute(p) ? p : path.resolve(this.workspaceRoot, p);
+  }
+
   async generate(text: string, options: GenerateAudioOptions = {}): Promise<AudioGenerateResult> {
     const sceneLabel = options.scene_id ?? 'unknown';
     console.log(`[GPT-SoVITS] Scene ${sceneLabel} 음성 생성 (target=${this.providerConfig.targetLanguage})...`);
+    const refWavAbs = this.toAbsolute(this.providerConfig.refWavPath);
     const result = await this.bridge.synthesize({
       text,
-      voice: this.providerConfig.refWavPath,
+      voice: refWavAbs,
       engineParams: {
-        repoPath: this.providerConfig.repoPath,
-        gptModelPath: this.providerConfig.gptModelPath,
-        sovitsModelPath: this.providerConfig.sovitsModelPath,
-        refWavPath: this.providerConfig.refWavPath,
+        repoPath: this.toAbsolute(this.providerConfig.repoPath),
+        gptModelPath: this.toAbsolute(this.providerConfig.gptModelPath),
+        sovitsModelPath: this.toAbsolute(this.providerConfig.sovitsModelPath),
+        refWavPath: refWavAbs,
         refText: this.providerConfig.refText,
         refLanguage: this.providerConfig.refLanguage,
         targetLanguage: this.providerConfig.targetLanguage,
