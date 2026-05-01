@@ -18,7 +18,6 @@ export class ElevenLabsConfiguredAudioProviderBuilder implements ConfiguredAudio
 
     const warmupPadding = config.getWarmupPaddingConfig();
     const tailPadding = config.getTailPaddingConfig();
-    const headPadding = config.getHeadPaddingConfig();
 
     return {
       providerName: this.providerName,
@@ -32,7 +31,6 @@ export class ElevenLabsConfiguredAudioProviderBuilder implements ConfiguredAudio
         audioConfig,
         warmupPadding,
         tailPadding,
-        headPadding,
       ),
     };
   }

@@ -344,6 +344,56 @@ describe('assembleSceneAudio — 경계 gap (호흡 삽입)', () => {
     expect(result.durationSec).toBeCloseTo(1.0 + DEFAULT_BOUNDARY_GAP_MS / 1000, 3);
   });
 
+  it('headPaddingMs > 0 이면 씬 시작부에 무음이 prepend 되고 duration 이 늘어난다', () => {
+    const chunk = makeWavWithSilence(0, 0.4, 0, 8000); // 모두 loud
+    const result = assembleSceneAudio([{ buffer: chunk }], audioConfig, {
+      crossfadeMs: 0,
+      trimSilence: false,
+      boundaryGapMs: 0,
+      headPaddingMs: 80,
+    });
+    expect(result.durationSec).toBeCloseTo(0.48, 3);
+    // 첫 80ms 는 무음이어야 한다
+    const pcm = result.buffer.subarray(44);
+    const headFrames = Math.floor(0.08 * audioConfig.sampleRate);
+    for (let f = 0; f < headFrames; f++) {
+      expect(pcm.readInt16LE(f * 2)).toBe(0);
+    }
+    // 그 다음 프레임은 amplitude 8000
+    expect(pcm.readInt16LE(headFrames * 2)).toBe(8000);
+  });
+
+  it('headPaddingMs 가 첫 청크 trim 이후의 시작부에 적용되고 alignment 도 시프트된다', () => {
+    const chunk = makeWavWithSilence(0.05, 0.3, 0.05, 8000); // 50ms head silence
+    const align: AudioAlignment = {
+      characters: ['あ'],
+      character_start_times_seconds: [0.05], // loud 시작 직후
+      character_end_times_seconds: [0.15],
+    };
+    const result = assembleSceneAudio([{ buffer: chunk, alignment: align }], audioConfig, {
+      crossfadeMs: 0,
+      trimSilence: true,
+      boundaryGapMs: 0,
+      headPaddingMs: 80,
+    });
+    // trim 후 길이 0.3 + headPadding 0.08 = 0.38
+    expect(result.durationSec).toBeCloseTo(0.38, 2);
+    // 'あ' alignment: 원래 0.05 - head trim 0.05 + headPadding 0.08 = 0.08
+    expect(result.alignment!.character_start_times_seconds[0]).toBeCloseTo(0.08, 2);
+  });
+
+  it('headPaddingMs 기본값 0 이면 시작부 추가 무음 없음 (회귀 안전장치)', () => {
+    const chunk = makeWav(0.5, 8000);
+    const result = assembleSceneAudio([{ buffer: chunk }], audioConfig, {
+      crossfadeMs: 0,
+      trimSilence: false,
+      boundaryGapMs: 0,
+    });
+    expect(result.durationSec).toBeCloseTo(0.5, 3);
+    // 첫 프레임이 amplitude (head padding 없음)
+    expect(result.buffer.subarray(44).readInt16LE(0)).toBe(8000);
+  });
+
   it('trim + gap 조합: alignment 는 trim + gap 반영해 offset', () => {
     const chunkA = makeWavWithSilence(0.1, 0.3, 0.2, 8000); // trim → 0.3s
     const chunkB = makeWavWithSilence(0.05, 0.4, 0.15, 8000); // trim → 0.4s

@@ -2,7 +2,7 @@ import { Lecture, Scene, PlaywrightSyncPoint } from '../../domain/entities/Lectu
 import { AudioAlignment, AudioConfig, IAudioProvider } from '../../domain/interfaces/IAudioProvider';
 import { ILectureRepository } from '../../domain/interfaces/ILectureRepository';
 import { INarrationChunker, NarrationChunk } from '../../domain/services/NarrationChunker';
-import { assembleSceneAudio, WavChunkInput } from '../../domain/utils/WavChunkAssembler';
+import { assembleSceneAudio, AssembleSceneAudioOptions, WavChunkInput } from '../../domain/utils/WavChunkAssembler';
 
 export interface GenerateAudioUseCaseOptions {
   force?: boolean;
@@ -30,6 +30,7 @@ export class GenerateAudioUseCase {
     private readonly lectureRepository: ILectureRepository,
     private readonly narrationChunker: INarrationChunker,
     private readonly audioConfig: AudioConfig,
+    private readonly assembleOptions: AssembleSceneAudioOptions = {},
   ) {}
 
   private async sleep(ms: number): Promise<void> {
@@ -228,7 +229,7 @@ export class GenerateAudioUseCase {
       const alignment = await this.lectureRepository.getAudioChunkAlignment(lectureId, sceneId, chunk.index);
       inputs.push({ buffer, alignment: alignment ?? undefined });
     }
-    return assembleSceneAudio(inputs, this.audioConfig);
+    return assembleSceneAudio(inputs, this.audioConfig, this.assembleOptions);
   }
 
   /**

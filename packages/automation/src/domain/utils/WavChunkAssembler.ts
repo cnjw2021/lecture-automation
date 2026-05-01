@@ -50,6 +50,13 @@ export interface AssembleSceneAudioOptions {
    * 기본 660. 0 이면 경계 gap 없음 (crossfadeMs 만 적용).
    */
   boundaryGapMs?: number;
+  /**
+   * 씬 최종 PCM 시작부에 추가로 prepend 할 무음 길이 (ms).
+   * trimSilence 가 첫 청크 head 의 자연 무음을 제거한 뒤 적용되므로,
+   * v3 의 onset 검출 분산과 무관하게 첫 음 잘림을 결정적으로 방지한다.
+   * 기본 0 (옵트인).
+   */
+  headPaddingMs?: number;
 }
 
 export function assembleSceneAudio(
@@ -66,6 +73,7 @@ export function assembleSceneAudio(
     trimSilence = true,
     silenceThresholdInt16 = DEFAULT_SILENCE_THRESHOLD_INT16,
     boundaryGapMs = DEFAULT_BOUNDARY_GAP_MS,
+    headPaddingMs = 0,
   } = options;
 
   const { sampleRate, channels, bitDepth } = audioConfig;
@@ -160,14 +168,23 @@ export function assembleSceneAudio(
     }
   }
 
-  const buffer = buildWav(outPcm, sampleRate, channels, bitDepth);
-  const durationSec = totalFrames / sampleRate;
+  // 5) 씬 시작부 head padding (옵트인). trimEdgeSilence 가 첫 청크의 자연 무음을
+  //    제거한 뒤 적용되므로, TTS 의 onset 검출 분산과 무관하게 결정적인 마진을 부여한다.
+  const headPadFrames = Math.max(0, Math.floor((headPaddingMs / 1000) * sampleRate));
+  const finalPcm = headPadFrames > 0
+    ? Buffer.concat([Buffer.alloc(headPadFrames * bytesPerFrame, 0), outPcm])
+    : outPcm;
+  const finalTotalFrames = totalFrames + headPadFrames;
 
+  const buffer = buildWav(finalPcm, sampleRate, channels, bitDepth);
+  const durationSec = finalTotalFrames / sampleRate;
+
+  const headPadSec = headPadFrames / sampleRate;
   const alignment = mergeAlignments(
     chunks,
     processed.map((p, i) => ({
       headTrimSec: p.headTrimSec,
-      startSec: chunkStartFrames[i] / sampleRate,
+      startSec: chunkStartFrames[i] / sampleRate + headPadSec,
     })),
   );
 
