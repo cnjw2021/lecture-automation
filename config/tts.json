@@ -27,7 +27,7 @@
       "modelId": "eleven_v3",
       "voiceId": "6wdSVG3CMjPfAthsnMv9",
       "languageCode": "ja",
-      "seed": 42,
+      "seed": 7,
       "stability": 0.85,
       "similarity_boost": 0.9,
       "style": 0,
