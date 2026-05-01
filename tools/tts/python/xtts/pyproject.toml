@@ -1,0 +1,29 @@
+[project]
+name = "lecture-tts-xtts"
+version = "0.1.0"
+description = "XTTS-v2 (Coqui) TTS provider for lecture-automation. Coqui Public Model License."
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    # 메인테인드 community fork. 원본 idiap/coqui-ai-TTS.
+    # 모델 가중치는 별도 라이선스 (Coqui Public Model License).
+    # 0.27+ 은 numba 0.61+ 를 요구하며 그 numba 는 llvmlite 0.44+ 를 끌어오는데
+    # llvmlite 0.44+ 는 macOS x86_64 prebuilt wheel 이 없어 LLVM source build 가
+    # 필요해진다. Intel Mac 호환을 위해 0.26 까지로 제한.
+    "coqui-tts>=0.24,<0.27",
+    "numpy>=1.24,<2.0",
+    # torch 2.3+ 은 macOS x86_64 휠을 제공하지 않음 (Apple Silicon 전용).
+    "torch>=2.0,<2.3",
+    "torchaudio>=2.0,<2.3",
+    # numba/llvmlite 의 prebuilt macOS x86_64 wheel 마지막 버전 핀.
+    "numba<0.61",
+    "llvmlite<0.44",
+    # transformers 4.50+ 는 torch >= 2.4 를 요구해 우리 torch 2.2 와 충돌.
+    # coqui-tts 가 transformers 상한을 명시 안 해서 최신이 들어오므로 직접 핀.
+    "transformers>=4.40,<4.50",
+    # XTTS-v2 의 일본어 토크나이저가 cutlet 을 사용하지만 coqui-tts 가
+    # optional 로 두어 자동 설치되지 않음. 일본어 합성에 필수.
+    "cutlet>=0.3",
+    "fugashi>=1.3",
+    "unidic-lite>=1.0",
+    "unidic>=1.1",
+]

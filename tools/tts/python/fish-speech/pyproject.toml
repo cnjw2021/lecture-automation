@@ -1,0 +1,18 @@
+[project]
+name = "lecture-tts-fish-speech"
+version = "0.1.0"
+description = "Fish Speech TTS provider for lecture-automation. Fish Audio Research License."
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    # Fish Speech 본체는 PyPI 안정 배포가 없어 git clone 후 editable install.
+    # bootstrap 스크립트가 models/fish-speech/ 에 클론하고 uv pip install -e 로 등록.
+    # 아래는 추가로 필요한 공통 의존성.
+    # torch 2.3+ 은 macOS x86_64 휠을 제공하지 않음 (Apple Silicon 전용).
+    "torch>=2.0,<2.3",
+    "torchaudio>=2.0,<2.3",
+    "numpy>=1.24,<2.0",
+    "soundfile>=0.12",
+    "transformers>=4.40,<4.46",
+    "huggingface-hub>=0.20",
+    "pyyaml>=6.0",
+]

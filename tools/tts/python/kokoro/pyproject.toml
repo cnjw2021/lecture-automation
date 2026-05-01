@@ -1,0 +1,14 @@
+[project]
+name = "lecture-tts-kokoro"
+version = "0.1.0"
+description = "Kokoro-82M TTS provider for lecture-automation (CPU-only Intel Mac)"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "kokoro-onnx>=0.4.0",
+    "misaki[ja]>=0.7.0",
+    "numpy>=2.0",
+    "soundfile>=0.12",
+    # onnxruntime 1.21+ 은 macOS x86_64 휠을 제공하지 않음 (Apple Silicon 전용).
+    # Intel Mac 호환을 위해 1.20.x 까지로 제한.
+    "onnxruntime>=1.18,<1.21",
+]

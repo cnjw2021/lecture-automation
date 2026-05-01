@@ -64,11 +64,71 @@
 - **결론**: alignment 타임스탬프의 정밀도 한계 + v3가 요청 단위로 prosody를 연속적으로 생성하는 특성이 결합 → **경계 leak은 완전 해결 불가능**으로 판정.
 - **교훈**: v3 청크 → 씬 분할 경로는 막다른 길. 씬 간 톤 일관성을 위해 청크로 묶더라도, 경계 품질이 전체 영상 몰입을 해친다.
 
+### 6. `Kokoro-82M v1.0` (kokoro-onnx + misaki[ja])
+
+- **실패일**: 2026-05-01 (이슈 #151 PoC, 브랜치 `feat/local-tts-poc`)
+- **환경**: Intel Mac (2020 MBP i5), CPU-only, Python 3.12 venv
+- **접근**: 비용 0 의 로컬 대안. Apache-2.0 라이선스. ONNX 추론으로 CPU 합성 가능.
+- **실패 모드**:
+  - **애니메이션 톤 timbre**. Kokoro 의 일본어 학습 데이터가 애니메 음성 위주라 강의 나레이션 용도의 차분한 강사 톤 불가.
+  - **억양 단조**. 작은 모델(82M) + 얇은 일본어 데이터 조합의 한계.
+  - **문장 사이 호흡 없음**. 합성 단위가 phoneme 시퀀스 전체라 자연스러운 휴지 미생성. 후처리로 무음 삽입은 가능하지만 timbre 한계가 더 본질적이라 무의미.
+  - **510 phoneme 한계**. 강의 나레이션은 보통 150자 이상이라 한 호출로 처리 불가, 문장 분할 + concat 필요. 이는 코드로 해결 가능하지만 기각 사유와 무관하게 별개 작업.
+- **시도한 보이스**: `jf_alpha`, `jf_gongitsune`, `jf_nezumi`, `jf_tebukuro`, `jm_kumo` — 5종 모두 동일 timbre 한계 (학습 데이터 자체가 애니메 톤).
+- **결론**: 코드로 보정 불가능한 모델 한계. 비용 0 매력에도 불구하고 강의 나레이션 기준선 미달로 기각.
+- **교훈**: ONNX 로컬 모델은 영어 위주로 평가되는 경향. 일본어 강의 나레이션처럼 timbre 자체가 결정적인 용도에서는 학습 데이터 다양성을 사전에 확인해야 한다. 음성 클로닝 가능 모델 (XTTS-v2 / GPT-SoVITS / Fish Speech) 로 이동.
+
+### 7. `XTTS-v2 (Coqui)` 일본어 + ElevenLabs voice cloning
+
+- **실패일**: 2026-05-01 (이슈 #151 PoC, 브랜치 `feat/local-tts-poc`)
+- **환경**: Intel Mac (2020 MBP i5), CPU-only, Python 3.10 venv. ElevenLabs 합성 결과 (15→25초 mono) 를 참조 음성으로 사용.
+- **라이선스**: Coqui Public Model License (CPML).
+- **접근**: voice cloning 으로 ElevenLabs 의 차분한 강사 톤 음색을 모방. coqui-tts 0.26 + torch 2.2 + transformers 4.46 (Intel Mac wheel 호환 핀).
+- **실패 모드**:
+  - **쇳소리·잡음 (metallic artifact)** 이 합성 결과 전체에 일관되게 발생. 음색 클로닝 자체는 부분 성공 (애니메이션 톤은 아님) 했지만 IT 강의 나레이션 용도로 받아들일 수 없는 수준.
+  - 원인 추정: XTTS-v2 의 diffusion-style vocoder + 짧은 참조 음성 + CPU 추론의 결합 한계.
+- **시도한 튜닝 (모두 metallic 잔존)**:
+  - 참조 음성 15초 → 25초 길이 증가
+  - 22050Hz → 24000Hz 샘플레이트 상향
+  - temperature 0.7 → 0.5 인하
+- **결론**: architecture 한계라 추가 튜닝 무의미. CPU + voice cloning 조합에서 음질 만족도가 production 강의용 기준선 미달. 다음 음성 클로닝 후보 (Fish Speech / GPT-SoVITS) 로 이동.
+- **교훈**: XTTS-v2 의 metallic artifact 는 알려진 한계. CPU 환경에서는 더 두드러진다. voice cloning 후보 평가는 "음색 모방" 여부보다 "원샘플 품질" 을 먼저 확인해야 한다.
+
+### 8. `Fish Speech 1.5` self-host (HuggingFace 오픈 가중치)
+
+- **실패일**: 2026-05-01 (이슈 #151 PoC, 브랜치 `feat/local-tts-poc`)
+- **접근**: fishaudio/fish-speech-1.5 HuggingFace 오픈 가중치를 받아 Intel Mac CPU 로컬 합성 시도 예정.
+- **라이선스**: **`cc-by-nc-sa-4.0`** (Creative Commons Attribution-NonCommercial-ShareAlike 4.0).
+- **실패 모드**: 합성 전 라이선스 단계에서 사용 불가 판정. 본 프로젝트는 일본 정부 보조금 기반 기업 사원 교육 강의 → **상업 사용에 해당** → NC 조항 위반 위험. self-host 로는 사용 불가.
+- **대안 분리 평가**: fish.audio 의 유료 API (Plus $15 / Pro $100 / Max $999) 는 **「商用利用可能」** 명시. 음질·오독률은 fish.audio 웹 데모 청취 결과 ElevenLabs v3 보다 **오독률 ↓ 실측 확인**. 클라우드 API 경로로 전환 — 본 #8 기각은 **"OSS 가중치 self-host 경로"** 한정.
+- **교훈**: 라이선스 검증을 합성 시도 **전** 단계로 게이트화. CC-NC 모델은 정부 보조금/사원 교육/유료 강의 등 상업 시나리오와 양립 불가. fishaudio 의 OSS↔API 분리 모델은 흔한 패턴 — 다른 비슷한 후보 평가 시 동일 패턴 가정.
+
+---
+
+## ⏸️ 미검증 보류 후보
+
+본 섹션은 **합성 시도 자체를 하지 않은** 후보를 기록한다. "재추천 금지" 가 아니라 "현 시점 우선순위 밀림" 이다. 향후 환경/요구가 바뀌면 재검토 가능.
+
+### A. `GPT-SoVITS` (RVC-Boss/GPT-SoVITS)
+
+- **보류일**: 2026-05-01 (이슈 #151 PoC, 브랜치 `feat/local-tts-poc`)
+- **상태**: PoC 코드 골격 (`tools/tts/python/gpt-sovits/` + `GptSoVitsAudioProvider`) 만 작성. 합성 검증 미수행.
+- **보류 사유**:
+  1. **상위 후보 (Fish Audio API) 가 이미 검증 통과**. 동일 검증 세트로 fish.audio 데모 청취에서 오독률 ↓ 확인됨. GPT-SoVITS 가 Fish Audio 의 상업 모델 품질을 넘을 가능성은 낮다 (회사가 OSS↔API 분리하는 비즈니스 패턴상 API 가 더 좋음).
+  2. **셋업 비용 높음**. 우리 PoC docs 에서 4개 후보 중 가장 fragile. PyPI 안정 배포 없어 git clone + 모델 수동 다운로드 + import 경로/CUDA 강제 패치 가능성 → 수 시간 추가 시간 투자.
+  3. **본 프로젝트 우선순위 (오독 0 + 강의 생성 시간 단축) 와 미스매치**. 셋업 시간이 오히려 시간 단축 목표를 거스른다.
+  4. **CPU + voice cloning 조합의 metallic artifact 우려**. XTTS 와 같은 architecture 카테고리라 동일 문제 재현 가능성 배제 못 함.
+- **재시도 조건 (가설)**:
+  - Fish Audio API 가 어떤 이유로든 운영 불가가 되거나 (가격 인상, 서비스 중단, 라이선스 변경 등)
+  - 사용자 환경이 GPU 머신으로 변경되어 CPU 한계가 사라지거나
+  - GPT-SoVITS 의 일본어 평이 객관적으로 Fish Audio API 를 넘는다는 벤치마크가 등장
+- **참고**: PoC 골격 코드는 `feat/local-tts-poc` 브랜치에 보존되어 있어 재시도 시 처음부터 만들 필요 없음.
+
 ---
 
 ## ✅ 최종 채택 조합
 
-### `eleven_v3` + 프로젝트 고정 보이스(`6wdSVG3CMjPfAthsnMv9`) + **개별 씬 단위 생성** + 시작 톤 안정화 전략
+### `eleven_v3` + 프로젝트 고정 보이스 `Makoto -Japanese male` (`6wdSVG3CMjPfAthsnMv9`) + **개별 씬 단위 생성** + 시작 톤 안정화 전략
 
 - **기본 설정** (`config/tts.json`):
   - stability 0.85
