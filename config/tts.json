@@ -1,9 +1,9 @@
 {
-  "activeProvider": "elevenlabs",
+  "activeProvider": "kokoro",
   "pauseBetweenSentences": "short",
   "providers": {
     "gemini": {
-      "speechRate": 1.0,
+      "speechRate": 1,
       "modelName": "gemini-2.5-pro-preview-tts",
       "voice": "Puck",
       "language": "Japanese",
@@ -12,12 +12,12 @@
       "prompt": "日本のIT入門講座のナレーションとして、落ち着いた講師トーンで一定の調子を保って読んでください。感情表現や演技は加えず、抑揚の変化を小さくし、標準的な日本語で入力文をそのまま読んでください。"
     },
     "google_cloud_tts": {
-      "speechRate": 1.0,
+      "speechRate": 1,
       "voiceName": "ja-JP-Chirp3-HD-Charon",
       "languageCode": "ja-JP"
     },
     "gemini_cloud_tts": {
-      "speechRate": 1.0,
+      "speechRate": 1,
       "modelName": "gemini-2.5-pro-tts",
       "voiceName": "Puck",
       "languageCode": "ja-JP",
@@ -32,7 +32,7 @@
       "similarity_boost": 0.9,
       "style": 0,
       "use_speaker_boost": true,
-      "speed": 1.0,
+      "speed": 1,
       "warmupPadding": {
         "enabled": true,
         "text": "これからお話しします。",
@@ -51,15 +51,15 @@
       "voice": "jf_alpha",
       "modelPath": "tools/tts/python/kokoro/models/kokoro-v1.0.onnx",
       "voicesPath": "tools/tts/python/kokoro/models/voices-v1.0.bin",
-      "speed": 1.0,
-      "g2pMode": "auto"
+      "speed": 1,
+      "g2pMode": "phoneme"
     },
     "xtts": {
       "modelName": "tts_models/multilingual/multi-dataset/xtts_v2",
       "speakerWavPath": "tools/tts/python/xtts/models/speaker.wav",
       "language": "ja",
       "temperature": 0.7,
-      "length_penalty": 1.0
+      "length_penalty": 1
     },
     "gpt_sovits": {
       "repoPath": "tools/tts/python/gpt-sovits/models/GPT-SoVITS",
@@ -70,9 +70,9 @@
       "refLanguage": "ja",
       "targetLanguage": "ja",
       "topK": 5,
-      "topP": 1.0,
-      "temperature": 1.0,
-      "speed": 1.0
+      "topP": 1,
+      "temperature": 1,
+      "speed": 1
     },
     "fish_speech": {
       "repoPath": "tools/tts/python/fish-speech/models/fish-speech",

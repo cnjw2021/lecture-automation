@@ -505,6 +505,13 @@ tts-bootstrap-kokoro: tts-check-uv
 	else \
 		echo "✓ voices-v1.0.bin 이미 존재"; \
 	fi
+	@UNIDIC_RC=$$(find tools/tts/python/kokoro/.venv -path '*/unidic/dicdir/mecabrc' 2>/dev/null | head -1); \
+	if [ -z "$$UNIDIC_RC" ]; then \
+		echo "📚 unidic 사전 다운로드 (misaki[ja] G2P 의존성, ~250MB)..."; \
+		cd tools/tts/python/kokoro && .venv/bin/python -m unidic download; \
+	else \
+		echo "✓ unidic 사전 이미 존재"; \
+	fi
 	@echo "✅ Kokoro 부트스트랩 완료"
 	@echo "   다음: config/tts.json 의 activeProvider 를 \"kokoro\" 로 변경 후"
 	@echo "   make run-tts-only LECTURE=lecture-XX.json SCENE='1 2 3' 으로 검증"
