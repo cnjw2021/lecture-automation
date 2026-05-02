@@ -130,6 +130,24 @@ export class FishAudioApiProvider implements IAudioProvider {
   /**
    * Fish Audio 응답을 프로젝트 표준 (24kHz mono 16-bit PCM WAV) 으로 ffmpeg 정규화.
    * 입력이 이미 동일 형식이어도 무해하게 통과한다.
+   *
+   * 표준 WAV 헤더 보장 (`-map_metadata -1` + `-bitexact`):
+   *   ffmpeg 는 기본적으로 fmt 와 data 사이에 LIST/INFO 청크 (인코더 정보 등) 를
+   *   삽입한다. 이 메타데이터 청크가 들어가면 헤더가 44 바이트를 초과해 후속
+   *   WavChunkAssembler 가 `subarray(44)` 로 PCM 만 추출한다는 가정과 어긋나
+   *   LIST 바이트가 audio 로 새어 들어가 씬 경계에서 노이즈가 발생한다.
+   *   ElevenLabs / Gemini 의 AudioUtils.pcmToWav 는 표준 44 바이트 헤더만 쓰므로
+   *   문제 없음. Fish Audio 도 동일 contract 를 따르도록 두 플래그 모두 적용:
+   *   - `-map_metadata -1`: 입력측 메타데이터 mapping 비활성
+   *   - `-bitexact`: WAV muxer 의 인코더 자동 삽입 LIST 청크 차단
+   *
+   * Click 방지: 시작과 끝 모두 15ms 선형 램프 적용.
+   * - 시작 fade-in: 단독 재생 시 첫 샘플 비제로로 인한 click 제거
+   * - 끝 fade-out: 씬 concat 시 boundary 의 amplitude 단차 제거
+   *   (씬 N 의 마지막 비제로 샘플 → 씬 N+1 의 fade-in 시작 0 사이의 step click)
+   *
+   * areverse 트릭: 시작 fade-in 적용 → 반전 → 다시 시작 fade-in (반전 상태에선 끝)
+   * → 다시 반전. 단일 ffmpeg 패스로 양쪽 fade 처리 가능. 입력 길이를 미리 알 필요 없음.
    */
   private async normalizeAudio(input: Buffer): Promise<Buffer> {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'fish-audio-'));
@@ -144,8 +162,11 @@ export class FishAudioApiProvider implements IAudioProvider {
           '-y',
           '-loglevel', 'error',
           '-i', inPath,
+          '-map_metadata', '-1',
+          '-bitexact',
           '-ar', String(this.audioConfig.sampleRate),
           '-ac', String(this.audioConfig.channels),
+          '-af', 'afade=t=in:st=0:d=0.015,areverse,afade=t=in:st=0:d=0.015,areverse',
           '-acodec', 'pcm_s16le',
           outPath,
         ]);
