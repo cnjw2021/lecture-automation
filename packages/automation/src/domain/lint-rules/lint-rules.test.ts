@@ -1,4 +1,10 @@
-import { ttsLandminesRule } from './A-tts-landmines';
+import { ttsLandminesRule, makeTtsLandminesRule } from './A-tts-landmines';
+
+// 활성 provider (config/tts.json) 와 무관하게 동작해야 하는 테스트는
+// provider 를 명시한 룰을 사용한다. 공통 사전 확인 = 'elevenlabs' 또는 'fish_audio_api' 둘 다 OK.
+// EL-only / Fish-only 패턴은 해당 provider 룰을 명시.
+const elRule = makeTtsLandminesRule('elevenlabs');
+const fishRule = makeTtsLandminesRule('fish_audio_api');
 import { symbolViolationsRule } from './B-symbol-violations';
 import { playwrightShapeRule } from './D-playwright-shape';
 import { narrationLengthRule } from './E-narration-length';
@@ -80,19 +86,19 @@ describe('A-tts-landmines', () => {
     expect(issues[0].fixDescription).toBe('「Authorize」→「オーソライズ」');
   });
 
-  it('detects HTML 見出しタグ h1~h6', () => {
+  it('detects HTML 見出しタグ h1~h6 (공통 사전)', () => {
     const lec = makeLecture([
-      'この「h1」というのは見出しタグです',
+      'この「h1」というのは見出しの目印です',
       'h2 と h3 は小見出し',
       'h6 が一番小さい',
     ]);
-    const fixDescs = ttsLandminesRule.run(lec).map(i => i.fixDescription).sort();
+    // h1~h6 은 공통 사전이므로 EL/Fish 어느 룰로 실행해도 동일하게 검출되어야 한다.
+    const fixDescs = elRule.run(lec).map(i => i.fixDescription).sort();
     expect(fixDescs).toEqual([
       '「h1」→「エイチワン」',
       '「h2」→「エイチツー」',
       '「h3」→「エイチスリー」',
       '「h6」→「エイチシックス」',
-      "「タグ」→「'たぐ'」",
     ]);
   });
 
@@ -101,33 +107,106 @@ describe('A-tts-landmines', () => {
       'highlight を押すと選択されます',
       'ph1losophy のような假想単語',
     ]);
-    expect(ttsLandminesRule.run(lec)).toHaveLength(0);
+    // 공통 사전은 양 provider 모두에서 동일.
+    expect(elRule.run(lec)).toHaveLength(0);
   });
 
-  it("detects standalone 'p' but not inside larger words", () => {
+  it("EL: detects standalone 'p' but not inside larger words", () => {
     const lec = makeLecture([
       "2つの'たぐ'のpたぐが入れ子になっている",
-      'help や spider のような単語は除外',
+      'help や spider のような単語は除외',
     ]);
-    const fixDescs = ttsLandminesRule.run(lec).map(i => i.fixDescription).sort();
+    const fixDescs = elRule.run(lec).map(i => i.fixDescription).sort();
     expect(fixDescs).toEqual(["「p」→「ぴー」"]);
   });
 
-  it('detects てみ 連接 patterns (てみま / てみて)', () => {
+  it('EL: detects てみ 連接 patterns (てみま / てみて)', () => {
     const lec = makeLecture([
       '見てみましょう、上から順に',
       'プレビューを見てみてください',
     ]);
-    const fixDescs = ttsLandminesRule.run(lec).map(i => i.fixDescription).sort();
+    const fixDescs = elRule.run(lec).map(i => i.fixDescription).sort();
     expect(fixDescs).toContain('「てみま」→「ま」');
     expect(fixDescs).toContain('「てみて」→「て」');
   });
 
-  it('てみ fix preserves meaning', () => {
+  it('EL: てみ fix preserves meaning', () => {
     const lec = makeLecture(['見てみましょう、上から順に']);
-    const issues = ttsLandminesRule.run(lec);
+    const issues = elRule.run(lec);
     issues.find(i => i.fixDescription === '「てみま」→「ま」')!.fix!(lec);
     expect(lec.sequence[0].narration).toBe('見ましょう、上から順に');
+  });
+
+  it('Fish: detects HTML element names (header/footer/article/div/img/input/button)', () => {
+    const lec = makeLecture([
+      'header と footer で囲みます',
+      'article は独立した記事に使います',
+      'div で見た目を整えます',
+      'img で画像を表示',
+      'input と button でフォームを作ります',
+    ]);
+    const fixDescs = fishRule.run(lec).map(i => i.fixDescription).sort();
+    expect(fixDescs).toContain('「header」→「ヘッダー」');
+    expect(fixDescs).toContain('「footer」→「フッター」');
+    expect(fixDescs).toContain('「article」→「アーティクル」');
+    expect(fixDescs).toContain('「div」→「ディブ」');
+    expect(fixDescs).toContain('「img」→「アイエムジー」');
+    expect(fixDescs).toContain('「input」→「インプット」');
+    expect(fixDescs).toContain('「button」→「ボタン」');
+  });
+
+  it('Fish: HTML element names do not match inside larger English words', () => {
+    const lec = makeLecture([
+      'spaniard や headerless のような単語は除외',
+      'imager や buttonhole も別単語',
+    ]);
+    // 단어 경계로 보호 — 사전 미적용.
+    expect(fishRule.run(lec)).toHaveLength(0);
+  });
+
+  it("Fish: detects single-letter 'a' but not inside English words", () => {
+    const lec = makeLecture([
+      "リンクを作るには a タグを使います",
+      'apple や about は対象外 (about は별도 룰로 처리)',
+    ]);
+    const issues = fishRule.run(lec);
+    const aIssues = issues.filter(i => i.fixDescription === '「a」→「エー」');
+    expect(aIssues.length).toBeGreaterThan(0);
+  });
+
+  it('Fish: detects # / &copy; / @ symbols', () => {
+    const lec = makeLecture([
+      '「#about」というリンク',
+      '「&copy;」はコピーライト記号',
+      'メールアドレスの @ 記号',
+    ]);
+    const fixDescs = fishRule.run(lec).map(i => i.fixDescription);
+    expect(fixDescs).toContain('「#」→「シャープ」');
+    expect(fixDescs).toContain('「&copy;」→「アンドコピーセミコロン」');
+    expect(fixDescs).toContain('「@」→「アット」');
+  });
+
+  it('Fish: detects URL fragment values (about/hobby/links)', () => {
+    const lec = makeLecture([
+      'id="about" と #about が対応',
+      'hobby セクション と links セクション',
+    ]);
+    const fixDescs = fishRule.run(lec).map(i => i.fixDescription);
+    expect(fixDescs).toContain('「about」→「アバウト」');
+    expect(fixDescs).toContain('「hobby」→「ホビー」');
+    expect(fixDescs).toContain('「links」→「リンクス」');
+  });
+
+  it('EL pattern (タグ→\'たぐ\') does NOT apply when fish provider active', () => {
+    const lec = makeLecture(['HTMLのタグについて学びます']);
+    const fixDescs = fishRule.run(lec).map(i => i.fixDescription);
+    expect(fixDescs).not.toContain("「タグ」→「'たぐ'」");
+  });
+
+  it('Fish pattern (header→ヘッダー) does NOT apply when EL provider active', () => {
+    const lec = makeLecture(['header タグの使い方']);
+    const fixDescs = elRule.run(lec).map(i => i.fixDescription);
+    expect(fixDescs).not.toContain('「header」→「ヘッダー」');
   });
 
   it('fix function applies correctly and removes the issue', () => {
