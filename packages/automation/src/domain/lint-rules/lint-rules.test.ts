@@ -174,15 +174,17 @@ describe('A-tts-landmines', () => {
     expect(aIssues.length).toBeGreaterThan(0);
   });
 
-  it('Fish: detects # / &copy; / @ symbols', () => {
+  it('Fish: detects # / &copy; / © / @ symbols', () => {
     const lec = makeLecture([
       '「#about」というリンク',
       '「&copy;」はコピーライト記号',
+      'ブラウザでは「©」の記号として表示されます',
       'メールアドレスの @ 記号',
     ]);
     const fixDescs = fishRule.run(lec).map(i => i.fixDescription);
     expect(fixDescs).toContain('「#」→「シャープ」');
     expect(fixDescs).toContain('「&copy;」→「アンドコピーセミコロン」');
+    expect(fixDescs).toContain('「©」→「マルシー」');
     expect(fixDescs).toContain('「@」→「アット」');
   });
 
