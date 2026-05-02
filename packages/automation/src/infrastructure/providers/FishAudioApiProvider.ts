@@ -38,6 +38,12 @@ export interface FishAudioApiProviderConfig {
 export class FishAudioApiProvider implements IAudioProvider {
   private readonly endpoint = 'https://api.fish.audio/v1/tts';
 
+  /**
+   * preflight 는 본 강의 (provider 인스턴스 lifetime) 당 1 회만 호출되어야 한다.
+   * 씬 1 이 여러 청크로 분할되면 generate() 가 청크 수만큼 호출되므로 플래그로 가드.
+   */
+  private preflightDone = false;
+
   constructor(
     private readonly providerConfig: FishAudioApiProviderConfig,
     private readonly audioConfig: AudioConfig,
@@ -124,8 +130,14 @@ export class FishAudioApiProvider implements IAudioProvider {
     // 본 요청을 보낸다. Fish Audio 의 cross-scene timbre 일관성 관찰 (씬 2~ 가 안정적)
     // 으로 미루어 첫 요청이 일종의 warm-up 역할을 하고 있다는 가설 기반.
     // 실패해도 본 요청은 계속 진행 (best-effort).
-    if (this.providerConfig.preflight.enabled && options.scene_id === 1) {
+    // 씬 1 이 multi-chunk 일 때 청크마다 중복 호출되지 않도록 preflightDone 플래그 가드.
+    if (
+      this.providerConfig.preflight.enabled
+      && options.scene_id === 1
+      && !this.preflightDone
+    ) {
       await this.runPreflight();
+      this.preflightDone = true;
     }
 
     const payload = {
