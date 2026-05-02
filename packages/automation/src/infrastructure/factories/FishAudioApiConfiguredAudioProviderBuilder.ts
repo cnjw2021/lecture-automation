@@ -33,6 +33,7 @@ export class FishAudioApiConfiguredAudioProviderBuilder implements ConfiguredAud
           topP: c.topP,
           speed: c.speed,
           normalize: c.normalize,
+          preflight: c.preflight,
         },
         audioConfig,
       ),
