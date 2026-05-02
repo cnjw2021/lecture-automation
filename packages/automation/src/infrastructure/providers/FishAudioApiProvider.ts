@@ -130,11 +130,6 @@ export class FishAudioApiProvider implements IAudioProvider {
   /**
    * Fish Audio 응답을 프로젝트 표준 (24kHz mono 16-bit PCM WAV) 으로 ffmpeg 정규화.
    * 입력이 이미 동일 형식이어도 무해하게 통과한다.
-   *
-   * 시작 click 방지: AudioUtils.pcmToWav 와 동일하게 15ms 페이드인을 적용한다.
-   * Fish Audio 출력 WAV 는 첫 샘플이 0 이 아닌 값으로 시작해 재생 시 "딸깍" 잡음이
-   * 발생하므로 afade 필터로 선형 램프업 처리. ElevenLabs / Gemini 경로 (pcmToWav)
-   * 와 같은 첫 15ms 처리를 보장한다.
    */
   private async normalizeAudio(input: Buffer): Promise<Buffer> {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'fish-audio-'));
@@ -151,7 +146,6 @@ export class FishAudioApiProvider implements IAudioProvider {
           '-i', inPath,
           '-ar', String(this.audioConfig.sampleRate),
           '-ac', String(this.audioConfig.channels),
-          '-af', 'afade=t=in:st=0:d=0.015',
           '-acodec', 'pcm_s16le',
           outPath,
         ]);
