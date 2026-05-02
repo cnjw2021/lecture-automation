@@ -264,3 +264,4 @@ make run-tts-only LECTURE=lecture-XX-YY.json SCENE='N'
 - 2026-04-18: 문서 최초 작성. `eleven_multilingual_v2 + Hinata` 실패를 계기로 과거 탐색 전체를 정리하고 `eleven_v3 + 개별 씬 + 시작 톤 안정화 전략` 으로 최종 결정.
 - 2026-04-18: 전략 C를 "오프닝 사전 생성 재사용(미구현)"에서 **"Warmup Padding + Trim(구현·검증 완료)"**으로 교체. Phase 1 A/B 청취로 효과 확인, `enabled: true` 확정.
 - 2026-05-01: lecture-02-03 씬 7 의 `リ` 잘림 인시던트를 계기로 **"첫 음 잘림 대응 플레이북"** 섹션 신설. seed 를 42 → 7 로 변경 (옵션 A 적용, 검증 완료). 머지 단계의 `assembleSceneAudio.headPaddingMs` 옵션도 안전망으로 신설 (#149).
+- 2026-05-02: **lint-lecture 카테고리 A (TTS 지뢰) 사전을 provider별로 분리**. 단일 `A-tts-landmines.ts` 였던 사전을 `-common.ts` (엔진 무관 표기 정규화) + `-elevenlabs.ts` (Hinata 자소 오독) + `-fish.ts` (Fish Audio 영문 발음 오독) 3개로 분리. 디스패처는 `config/tts.json` 의 `activeProvider` 를 읽어 공통 + provider 별 사전을 동적 결합. lecture-02-04 의 Fish Audio 첫 생성에서 footer/article/div/img/input/button/# 등 영문·기호 영어식 오독이 다수 검출된 것을 계기로 분리. 메모리: `project_tts_landmines.md` (EL+공통) / `project_tts_landmines_fish.md` (Fish).
