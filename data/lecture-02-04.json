@@ -173,7 +173,7 @@
           "term": "セマンティックタグ",
           "reading": "Semantic Tag",
           "definition": "「意味を持ったタグ」のこと。各部分の役割をHTML上で明示する。",
-          "example": "header（上部）、main（本文）、footer（末尾）など"
+          "example": "header(上部)、main(本文)、footer(末尾)など"
         },
         "transition": {
           "enter": "slide-left"
@@ -206,7 +206,7 @@
           "title": "名札を貼るだけで変わること",
           "left": {
             "title": "変わらないもの",
-            "body": "部屋の中身（コンテンツ）はそのまま。見た目も変わらない。",
+            "body": "部屋の中身(コンテンツ)はそのまま。見た目も変わらない。",
             "icon": "🔒",
             "color": "#94a3b8"
           },
@@ -619,7 +619,7 @@
         "props": {
           "type": "tip",
           "title": "divとセマンティックタグの使い分け",
-          "body": "意味がある部分はセマンティックタグ（header/main/footerなど）。見た目の都合だけならdiv。これがベストプラクティスです。"
+          "body": "意味がある部分はセマンティックタグ(header/main/footerなど)。見た目の都合だけならdiv。これがベストプラクティスです。"
         }
       }
     },
@@ -661,16 +661,105 @@
       "narration": "では、上から順番にやっていきましょう。まず、ページの一番上です。エイチワンの見出しを、header'たぐ'で囲みましょう。コードの先頭にheaderの開始'たぐ'を書いて、エイチワンの下にheaderの閉じ'たぐ'を書きます。headerの開始'たぐ'と閉じ'たぐ'で、エイチワンをサンドイッチにするイメージですね。エイチワン'たぐ'の前に半角スペースを2つ入れて字下げしましょう。字下げをすると、「エイチワンがheaderの中に入っている」ということがコードの見た目でもわかりやすくなります。できましたか？プレビューを見てください。見た目は変わっていませんよね。それで正解なんです。セマンティック'たぐ'は見た目を変えるためのものではありませんから。",
       "durationSec": 62,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<header>\n  <h1>田中太郎のページ</h1>\n</header>",
-          "language": "html",
-          "title": "STEP 1: headerで囲む"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 6,
+            "phrase": "コードの先頭にheaderの開始"
+          },
+          {
+            "actionIndex": 14,
+            "phrase": "headerの閉じ'たぐ'を書きます"
+          },
+          {
+            "actionIndex": 16,
+            "phrase": "プレビューを見てください"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<header>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h1>田中太郎のページ</h1>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</header>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
@@ -678,86 +767,750 @@
       "narration": "次に、headerの中にnav'たぐ'を追加しましょう。ページ内の各セクションへのナビゲーションリンクを作ります。エイチワンの下、headerの閉じ'たぐ'の前に、こう書いてください。nav'たぐ'の中に、a'たぐ'でリンクを3つ並べました。リンク先が「#about」のようにシャープ記号で始まっていますね。これは「ページ内リンク」と言って、同じページの中の特定の場所に飛ぶためのリンクです。シャープ記号のあとの名前は、飛び先の目印になります。飛び先の設定はこのあとやりますので、今はリンクだけ先に書いておきましょう。プレビューを見ると、「自己紹介」「趣味」「リンク」というテキストリンクが表示されていると思います。",
       "durationSec": 63,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<header>\n  <h1>田中太郎のページ</h1>\n  <nav>\n    <a href=\"#about\">自己紹介</a>\n    <a href=\"#hobby\">趣味</a>\n    <a href=\"#links\">リンク</a>\n  </nav>\n</header>",
-          "language": "html",
-          "title": "STEP 2: navを追加"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 14,
+            "phrase": "こう書いてください"
+          },
+          {
+            "actionIndex": 30,
+            "phrase": "今はリンクだけ先に書いておきましょう"
+          },
+          {
+            "actionIndex": 36,
+            "phrase": "プレビューを見ると"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<header>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h1>田中太郎のページ</h1>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<nav>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"#about\">自己紹介</a>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"#hobby\">趣味</a>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"#links\">リンク</a>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</nav>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</header>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
       "scene_id": 34,
-      "narration": "続いて、main'たぐ'です。ヘッダーの下からフッターの手前まで、ページの中心的な内容をすべてmainで囲みます。headerの閉じ'たぐ'のすぐ下の行にmainの開始'たぐ'を書きます。そして、コピーライト表示の手前にmainの閉じ'たぐ'を書きましょう。headerとfooterの間にある内容が、すべてmainの中に入る形ですね。ここまでで、ページ全体に3つの大きな区画ができました。header、main、footer。これだけでも、ページの骨組みとしてはかなりわかりやすくなっています。では次に、mainの中身をさらにsectionで区切っていきましょう。自己紹介の部分、趣味の部分、リンクの部分。この3つのまとまりを、それぞれsection'たぐ'で囲んでいきます。",
-      "durationSec": 61,
+      "narration": "続いて、main'たぐ'です。ヘッダーの下からフッターの手前まで、ページの中心的な内容をすべてmainで囲みます。headerの閉じ'たぐ'のすぐ下の行にmainの開始'たぐ'を書きます。そして、コピーライト表示の手前にmainの閉じ'たぐ'を書きましょう。headerとfooterの間にある内容が、すべてmainの中に入る形ですね。ここまでで、ページ全体に3つの大きな区画ができました。header、main、footer。これだけでも、ページの骨組みとしてはかなりわかりやすくなっています。では次に、mainの中身をさらにsectionで区切っていきましょう。自己紹介の部分、趣味の部分、リンクの部分。この3つのまとまりを、それぞれsection'たぐ'で囲んでいきます。まず、自己紹介のセクションです。エイチツーの「自己紹介」見出しから、関連するだんらくや画像までをsectionで囲みます。sectionの開始'たぐ'に「id=\"about\"」と書きました。このidが、先ほどnavで作った「#about」リンクの飛び先になります。ナビゲーションで「自己紹介」をクリックすると、このsectionまでスクロールしてくれるわけです。これでページ内リンクの仕組みが完成しますね。同じ要領で、趣味のセクションも囲みましょう。idは「hobby」にしました。navの「#hobby」リンクと対応していますね。そしてリンクのセクションです。3つのsectionがmainの中に並びました。本の3つの章が1冊の本に収まっているイメージです。sectionの数は皆さんのページの内容に合わせて増やしても大丈夫ですよ。",
+      "durationSec": 139,
       "visual": {
-        "type": "remotion",
-        "component": "CalloutScreen",
-        "props": {
-          "type": "info",
-          "icon": "📐",
-          "title": "STEP 3: mainで全体を囲む",
-          "body": "headerの下からfooterの手前まで、すべてをmainタグで囲みます。header・main・footerの3区画が完成します。"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 18,
+            "phrase": "mainの開始'たぐ'を書きます"
+          },
+          {
+            "actionIndex": 22,
+            "phrase": "まず、自己紹介のセクション"
+          },
+          {
+            "actionIndex": 38,
+            "phrase": "同じ要領で、趣味のセクション"
+          },
+          {
+            "actionIndex": 62,
+            "phrase": "そしてリンクのセクション"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<header>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h1>田中太郎のページ</h1>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</header>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<main>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<section id=\"about\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>自己紹介</h2>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>ネイルサロン「Bloom」を経営して5年目です。</p>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</section>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<section id=\"hobby\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>趣味</h2>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<ul>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<li>映画鑑賞</li>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</ul>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</section>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<section id=\"links\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>リンク</h2>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"https://instagram.com/bloom_nail\" target=\"_blank\">Instagram</a>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</section>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</main>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
       "scene_id": 35,
-      "narration": "まず、自己紹介のセクションです。エイチツーの「自己紹介」見出しから、関連するだんらくや画像までをsectionで囲みます。sectionの開始'たぐ'に「id=\"about\"」と書きました。このidが、先ほどnavで作った「#about」リンクの飛び先になります。ナビゲーションで「自己紹介」をクリックすると、このsectionまでスクロールしてくれるわけです。これでページ内リンクの仕組みが完成しますね。",
-      "durationSec": 42,
+      "narration": "最後に、ページの一番下にfooterを作ります。コピーライト表示やお問い合わせ情報をfooterで囲みましょう。footerはmainの閉じ'たぐ'の下に書きます。mainの中ではなく、外側ですよ。メインコンテンツとフッターは別のまとまりですからね。お店でいうと、売り場を出てから出口の案内板がある、という配置です。ここで一つお伝えしておきたいことがあります。今、CodePenでは1つのHTMLペインにすべてのコードを書いていますが、実際のウェブサイトでは、このコード全体が「index.html」という1つのファイルの中身になります。パートフォーでファイルを使った開発環境に進んだとき、今日書いた構造がそのままファイルの中の構造になりますので、この感覚を覚えておいてくださいね。",
+      "durationSec": 67,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "  <section id=\"about\">\n    <h2>自己紹介</h2>\n    <p>ネイルサロン「Bloom」を経営して5年目です。</p>\n    <img src=\"https://images.unsplash.com/photo-example\" alt=\"サロンの写真\">\n  </section>",
-          "language": "html",
-          "title": "STEP 4a: section id=\"about\""
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 22,
+            "phrase": "footerはmainの閉じ'たぐ'の下に書きます"
+          },
+          {
+            "actionIndex": 26,
+            "phrase": "メインコンテンツとフッターは別"
+          },
+          {
+            "actionIndex": 32,
+            "phrase": "ここで一つお伝えしておきたい"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "goto",
+            "url": "https://codepen.io/pen/"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<header>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</header>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<main>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</main>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<footer>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>&copy; 2024 田中太郎</p>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</footer>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
       "scene_id": 36,
-      "narration": "同じ要領で、趣味のセクションも囲みましょう。idは「hobby」にしました。navの「#hobby」リンクと対応していますね。そしてリンクのセクションです。3つのsectionがmainの中に並びました。本の3つの章が1冊の本に収まっているイメージです。sectionの数は皆さんのページの内容に合わせて増やしても大丈夫ですよ。",
-      "durationSec": 36,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "  <section id=\"hobby\">\n    <h2>趣味</h2>\n    <ul>\n      <li>映画鑑賞</li>\n      <li>カフェ巡り</li>\n      <li>ヨガ</li>\n    </ul>\n  </section>\n\n  <section id=\"links\">\n    <h2>リンク</h2>\n    <a href=\"https://instagram.com/bloom_nail\" target=\"_blank\">Instagram</a>\n  </section>",
-          "language": "html",
-          "title": "STEP 4b: section hobby と links"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 37,
-      "narration": "最後に、ページの一番下にfooterを作ります。コピーライト表示やお問い合わせ情報をfooterで囲みましょう。footerはmainの閉じ'たぐ'の下に書きます。mainの中ではなく、外側ですよ。メインコンテンツとフッターは別のまとまりですからね。お店でいうと、売り場を出てから出口の案内板がある、という配置です。ここで一つお伝えしておきたいことがあります。今、CodePenでは1つのHTMLペインにすべてのコードを書いていますが、実際のウェブサイトでは、このコード全体が「index.html」という1つのファイルの中身になります。パートフォーでファイルを使った開発環境に進んだとき、今日書いた構造がそのままファイルの中の構造になりますので、この感覚を覚えておいてくださいね。",
-      "durationSec": 67,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<footer>\n  <p>&copy; 2024 田中太郎</p>\n</footer>",
-          "language": "html",
-          "title": "STEP 5: footerで締める"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 38,
       "narration": "では、ここまでのコード全体を確認しましょう。皆さんのコードもこのような形になっているか、見比べてください。名前やリンク先はそれぞれ違うと思いますが、構造は同じになっているはずです。headerの中にエイチワンとnav。mainの中にsectionが3つ。そして最後にfooter。ページの間取り図が完成しましたね。navの中のリンクをクリックしてください。ページ内の対応するsectionにスクロールするはずです。もしうまく動かない場合は、navのリンク先の「#about」と、sectionのid「about」が一致しているか確認してください。",
       "durationSec": 54,
       "visual": {
@@ -774,7 +1527,7 @@
             21,
             25
           ],
-          "caption": "header・main（3つのsection）・footerの構造"
+          "caption": "header・main(3つのsection)・footerの構造"
         },
         "transition": {
           "enter": "slide-up"
@@ -782,7 +1535,7 @@
       }
     },
     {
-      "scene_id": 39,
+      "scene_id": 37,
       "narration": "ここで、リファクタリングの前と後を見比べましょう。まず、変更前のコードを思い出してください。エイチワン、ぴー、エイチツー、ul、img、aといった'たぐ'が、ただ上から順番に並んでいるだけでした。'たぐ'と'たぐ'の間に区切りがないので、コードを読む機械にとっては「ここからここまでが1つのまとまり」という情報が一切ありません。言ってみれば、仕切りのない倉庫に荷物が並んでいるような状態です。",
       "durationSec": 43,
       "visual": {
@@ -815,7 +1568,7 @@
       }
     },
     {
-      "scene_id": 40,
+      "scene_id": 38,
       "narration": "一方、変更後のコードを見てください。headerがあって、mainがあって、その中にsectionが3つ並んで、最後にfooterがある。コードをざっと眺めただけで、ページの構成がひと目で把握できますよね。プレビューを見比べてください。見た目にはほとんど違いがありません。navのリンクが増えた程度で、全体のレイアウトや文字の大きさは何も変わっていないはずです。でも、意味はまったく違います。変更前のコードは「'たぐ'が上から順に並んでいるだけ」のページ。変更後のコードは「意味のある構造を持ったページ」です。見た目は同じでも、中身の質がまるで違うんです。",
       "durationSec": 58,
       "visual": {
@@ -830,7 +1583,7 @@
       }
     },
     {
-      "scene_id": 41,
+      "scene_id": 39,
       "narration": "これは、整理整頓されていない部屋と、きちんと収納された部屋の違いに似ています。どちらも同じ物が置いてあるんですが、片付いた部屋のほうが、どこに何があるかすぐにわかりますよね。来客があったときにも、整理された部屋のほうが好印象です。ウェブページにとっての「来客」が、検索エンジンやエーアイなわけです。実際のところ、世の中のウェブサイトを見てみると、プロが作ったサイトにはほぼ必ずセマンティック'たぐ'が使われています。パートツーの最後の講義で、エーアイにHTMLを作ってもらう実習をしますが、そのときにエーアイが出力したコードを見て、「ここにheader'たぐ'がないな」「mainの中をsectionで分けたほうが読みやすいな」と自分で判断できるかどうか。今日学んだことが、まさにその力の土台になります。",
       "durationSec": 64,
       "visual": {
@@ -854,7 +1607,7 @@
       }
     },
     {
-      "scene_id": 42,
+      "scene_id": 40,
       "narration": "今日のポイントを振り返りましょう。1つ目。セマンティック'たぐ'は、ウェブページに「間取り図」を作るための'たぐ'です。headerがページの顔、navがナビゲーション、mainがメインコンテンツ、sectionがまとまり、articleが独立した記事、footerがページの末尾。この6つの名前と役割を、なんとなくでいいので頭に入れておいてください。2つ目。div'たぐ'は「意味のない箱」です。セマンティック'たぐ'で表現できる部分にはセマンティック'たぐ'を使い、見た目の都合でまとめたいだけのときにdivを使う。この使い分けがポイントでした。3つ目。セマンティック'たぐ'を入れても見た目はほとんど変わりません。でも、検索エンジンやエーアイにとっては大きな違いがあります。「見た目は同じだが意味が違う」。今日いちばん大切なメッセージはこれです。",
       "durationSec": 71,
       "visual": {
@@ -875,7 +1628,7 @@
       }
     },
     {
-      "scene_id": 43,
+      "scene_id": 41,
       "narration": "'たぐ'の名前を全部暗記する必要はありません。何を検索すべきかを知っていれば、それで十分なんです。「ページの上部にはheaderっていう'たぐ'があったな」「まとまりをつけるのはsectionだったな」くらいの記憶があれば、あとはいつでも調べられます。今日リファクタリングした自己紹介ページは、CodePenに保存されています。次の講義までに、もう一度コードを開いて、header、main、section、footerの構造をざっと眺めてください。2回目に見ると、構造がよりすっきりと頭に入ってくると思います。さて、次の講義では「フォーム」を学びます。お問い合わせフォームのように、ユーザーが文字を入力したり、選択肢を選んだりできる仕組みです。input'たぐ'やbutton'たぐ'など、新しい'たぐ'がいくつか登場しますが、どれもウェブサイトでよく見かけるおなじみのパーツです。今日の自己紹介ページに、お問い合わせフォームを追加しましょう。それでは、お疲れ様でした。次の講義でお会いしましょう。",
       "durationSec": 76,
       "visual": {
