@@ -9,6 +9,11 @@ import {
   IAudioProvider,
 } from '../../domain/interfaces/IAudioProvider';
 
+export interface FishAudioPreflightConfig {
+  enabled: boolean;
+  text: string;
+}
+
 export interface FishAudioApiProviderConfig {
   apiKey: string;
   voiceId: string;
@@ -17,6 +22,7 @@ export interface FishAudioApiProviderConfig {
   topP: number;
   speed: number;
   normalize: boolean;
+  preflight: FishAudioPreflightConfig;
 }
 
 /**
@@ -32,6 +38,12 @@ export interface FishAudioApiProviderConfig {
 export class FishAudioApiProvider implements IAudioProvider {
   private readonly endpoint = 'https://api.fish.audio/v1/tts';
 
+  /**
+   * preflight 는 본 강의 (provider 인스턴스 lifetime) 당 1 회만 호출되어야 한다.
+   * 씬 1 이 여러 청크로 분할되면 generate() 가 청크 수만큼 호출되므로 플래그로 가드.
+   */
+  private preflightDone = false;
+
   constructor(
     private readonly providerConfig: FishAudioApiProviderConfig,
     private readonly audioConfig: AudioConfig,
@@ -39,6 +51,60 @@ export class FishAudioApiProvider implements IAudioProvider {
 
   private async sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Fish Audio 의 첫 generation prosody drift 우회용 워밍업 호출.
+   * 동일 voice 로 짧은 텍스트를 합성 요청하고 응답은 폐기한다.
+   * 네트워크 에러·서버 에러도 throw 하지 않고 경고만 — 본 요청 흐름을 막지 않는다.
+   * 응답 body 는 명시적으로 소비해 connection 누수 방지.
+   */
+  private async runPreflight(): Promise<void> {
+    const text = this.providerConfig.preflight.text;
+    if (!text) return;
+
+    const startedAt = Date.now();
+    console.log(`[Fish Audio API] Scene 1 preflight (워밍업, 응답 폐기)...`);
+
+    const payload = {
+      text,
+      reference_id: this.providerConfig.voiceId,
+      format: 'wav',
+      normalize: this.providerConfig.normalize,
+      latency: 'normal',
+      temperature: this.providerConfig.temperature,
+      top_p: this.providerConfig.topP,
+      prosody: {
+        speed: this.providerConfig.speed,
+        volume: 0,
+      },
+    };
+
+    try {
+      const response = await fetch(this.endpoint, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${this.providerConfig.apiKey}`,
+          'Content-Type': 'application/json',
+          model: this.providerConfig.modelName,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const status = response.status;
+        // 본문 소비 (connection release)
+        try { await response.arrayBuffer(); } catch { /* noop */ }
+        console.warn(`  ⚠️ preflight 응답 ${status} — 본 요청 계속 진행`);
+        return;
+      }
+      // 워밍업 목적이므로 응답 audio 는 폐기. 단 connection release 위해 본문은 소비.
+      await response.arrayBuffer();
+      const elapsed = Date.now() - startedAt;
+      console.log(`  ✅ preflight 완료 (${elapsed}ms)`);
+    } catch (err) {
+      console.warn(`  ⚠️ preflight 네트워크 에러 — 본 요청 계속 진행: ${(err as Error).message}`);
+    }
   }
 
   private isRetryableError(err: unknown): boolean {
@@ -58,6 +124,21 @@ export class FishAudioApiProvider implements IAudioProvider {
     const sceneLabel = options.scene_id ?? 'unknown';
     const maxRetries = 3;
     const baseDelayMs = 2000;
+
+    // 강의 첫 씬 (scene_id === 1) 의 prosody drift (영미권 억양) 완화:
+    // 같은 voice 로 가짜 요청을 한 번 보내 서버측 캐시·embedding 을 워밍업한 뒤
+    // 본 요청을 보낸다. Fish Audio 의 cross-scene timbre 일관성 관찰 (씬 2~ 가 안정적)
+    // 으로 미루어 첫 요청이 일종의 warm-up 역할을 하고 있다는 가설 기반.
+    // 실패해도 본 요청은 계속 진행 (best-effort).
+    // 씬 1 이 multi-chunk 일 때 청크마다 중복 호출되지 않도록 preflightDone 플래그 가드.
+    if (
+      this.providerConfig.preflight.enabled
+      && options.scene_id === 1
+      && !this.preflightDone
+    ) {
+      await this.runPreflight();
+      this.preflightDone = true;
+    }
 
     const payload = {
       text,

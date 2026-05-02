@@ -114,6 +114,12 @@ export const config = {
         topP: typeof tts.providers?.fish_audio_api?.topP === 'number' ? tts.providers.fish_audio_api.topP : 0.7,
         speed: typeof tts.providers?.fish_audio_api?.speed === 'number' ? tts.providers.fish_audio_api.speed : 1.0,
         normalize: tts.providers?.fish_audio_api?.normalize ?? true,
+        preflight: {
+          enabled: tts.providers?.fish_audio_api?.preflight?.enabled ?? false,
+          text: typeof tts.providers?.fish_audio_api?.preflight?.text === 'string'
+            ? tts.providers.fish_audio_api.preflight.text
+            : 'これからお話しします。',
+        },
       },
     };
   },
