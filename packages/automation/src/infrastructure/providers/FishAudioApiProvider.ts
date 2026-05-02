@@ -131,10 +131,13 @@ export class FishAudioApiProvider implements IAudioProvider {
    * Fish Audio 응답을 프로젝트 표준 (24kHz mono 16-bit PCM WAV) 으로 ffmpeg 정규화.
    * 입력이 이미 동일 형식이어도 무해하게 통과한다.
    *
-   * 시작 click 방지: AudioUtils.pcmToWav 와 동일하게 15ms 페이드인을 적용한다.
-   * Fish Audio 출력 WAV 는 첫 샘플이 0 이 아닌 값으로 시작해 재생 시 "딸깍" 잡음이
-   * 발생하므로 afade 필터로 선형 램프업 처리. ElevenLabs / Gemini 경로 (pcmToWav)
-   * 와 같은 첫 15ms 처리를 보장한다.
+   * Click 방지: 시작과 끝 모두 15ms 선형 램프 적용.
+   * - 시작 fade-in: 단독 재생 시 첫 샘플 비제로로 인한 click 제거
+   * - 끝 fade-out: 씬 concat 시 boundary 의 amplitude 단차 제거
+   *   (씬 N 의 마지막 비제로 샘플 → 씬 N+1 의 fade-in 시작 0 사이의 step click)
+   *
+   * areverse 트릭: 시작 fade-in 적용 → 반전 → 다시 시작 fade-in (반전 상태에선 끝)
+   * → 다시 반전. 단일 ffmpeg 패스로 양쪽 fade 처리 가능. 입력 길이를 미리 알 필요 없음.
    */
   private async normalizeAudio(input: Buffer): Promise<Buffer> {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'fish-audio-'));
@@ -151,7 +154,7 @@ export class FishAudioApiProvider implements IAudioProvider {
           '-i', inPath,
           '-ar', String(this.audioConfig.sampleRate),
           '-ac', String(this.audioConfig.channels),
-          '-af', 'afade=t=in:st=0:d=0.015',
+          '-af', 'afade=t=in:st=0:d=0.015,areverse,afade=t=in:st=0:d=0.015,areverse',
           '-acodec', 'pcm_s16le',
           outPath,
         ]);
