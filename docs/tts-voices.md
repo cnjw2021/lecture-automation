@@ -49,6 +49,38 @@
 
 ---
 
+## Fish Audio API — s1-mini (일본어 voice cloning)
+
+상업 사용 가능 유료 API. Plus / Pro / Max 모든 티어가 「商用利用可能」을 명시. voice cloning 으로 reference 음성의 음색·prosody 를 따라가게 할 수 있음. self-host 의 OSS Fish Speech 1.5 는 `cc-by-nc-sa-4.0` (NC 조항) 으로 본 프로젝트 (정부 보조금 기반 기업 사원 교육 강의) 에선 사용 불가 (`docs/tts-history.md` #8).
+
+### 채택 보이스
+
+| 이름 | 소유자 | Voice ID | 톤 | 강의 적합도 |
+|---|---|---|---|---|
+| `キラ｜やや落ち着きトーク` | `@Koh Kira` | `bfa248a6698e4986864f70791270032f` | 약간 차분한 강사 톤 | ⭐⭐⭐⭐⭐ (검증 진행 중, PR #155) |
+
+### 현재 운영 설정
+
+- `modelName`: `s1-mini` (속도/비용 균형. `s1` / `speech-1.6` 도 선택 가능)
+- `temperature`, `topP`: 낮을수록 차분, 변동성 ↓ (강의 나레이션 검증값 0.2)
+- `speed`: 1.0
+- `normalize`: true
+
+### Preflight 워밍업
+
+씬 1 의 prosody drift (영미권 억양) 완화 목적. `preflight.enabled === true` 면 강의의 첫 씬 직전에 동일 voice 로 가짜 합성 1회 호출 → 응답 폐기. provider 인스턴스당 1회만 발동 (multi-chunk 안전).
+
+`preflight.text` 는 약 30초 분량의 차분한 일본어 나레이션을 권장. warmup generation 자체의 길이가 길수록 서버측 워밍업 효과가 커진다는 가설 기반.
+
+### 알려진 제약
+
+- alignment (문자 단위 타임스탬프) 미지원 — sync-playwright 워크플로 일부 비호환.
+- API 잔고는 구독 크레딧과 별개 (`従量課金制`). pay-as-you-go 충전 필요.
+
+설정 위치: `config/tts.json` → `providers.fish_audio_api`
+
+---
+
 ## 샘플 생성
 
 ```bash
