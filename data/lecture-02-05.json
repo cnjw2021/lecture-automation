@@ -328,23 +328,59 @@
       "narration": "二つの新しい'たぐ'が出てきましたね。一つずつ見ていきましょう。まず、ラベル'たぐ'。これは入力欄の「名前札」のようなものです。「お名前」と書いてあれば、ユーザーは「ああ、ここに名前を入れるんだな」とわかりますよね。この名前札がないと、何を入力すればいいのかユーザーに伝わりません。フォームを作るときは、必ず入力欄の前にラベルを書く癖をつけておきましょう。そして、インプット'たぐ'。これが実際の入力欄です。プレビューを見てください。「お名前」という文字の横に、小さなテキストボックスが表示されていますよね。ここにユーザーが文字を入力できるようになっています。試しにプレビューのテキストボックスをクリックして、何か文字を入力してください。自分の名前でも、好きな言葉でも構いません。",
       "durationSec": 69,
       "visual": {
-        "type": "remotion",
-        "component": "TwoColumnScreen",
-        "props": {
-          "title": "ラベルとインプットの役割",
-          "left": {
-            "title": "<label>タグ",
-            "body": "入力欄の「名前札」。何を入力するか伝える。フォームには必須。",
-            "icon": "🏷️",
-            "color": "#ef4444"
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 4,
+            "phrase": "試しにプレビューのテキストボックスをクリック"
           },
-          "right": {
-            "title": "<input>タグ",
-            "body": "実際の入力欄。プレビューでテキストボックスが表示される。",
-            "icon": "✍️",
-            "color": "#ef4444"
+          {
+            "actionIndex": 6,
+            "phrase": "何か文字を入力してください"
           }
-        }
+        ],
+        "action": [
+          {
+            "cmd": "prefill_codepen",
+            "html": "<form>\n  <label>お名前</label>\n  <input type=\"text\">\n</form>",
+            "editors": "100"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              700
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "input[type='text']",
+            "iframe": "iframe.result-iframe"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "input[type='text']",
+            "key": "山田",
+            "iframe": "iframe.result-iframe"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
@@ -387,6 +423,10 @@
           {
             "actionIndex": 12,
             "phrase": "インプット'たぐ'の下に"
+          },
+          {
+            "actionIndex": 16,
+            "phrase": "もう一組追加してください"
           }
         ],
         "action": [
@@ -497,6 +537,10 @@
           {
             "actionIndex": 12,
             "phrase": "フォームに電話番号の入力欄を追加しましょう"
+          },
+          {
+            "actionIndex": 16,
+            "phrase": "ラベルとインプットの'ぺ'あを追加します"
           }
         ],
         "action": [
@@ -696,41 +740,45 @@
       "narration": "プレビューで確認してください。新しい入力欄が追加されていますね。この入力欄をクリックすると、年月日を選べるカレンダーが開きますよね。日付を選ぶためのインターフェースが、自動的に表示されるんです。自分でカレンダーの仕組みをプログラミングする必要はまったくなくて、タイプにデイトと書くだけでブラウザが用意してくれます。これだけで、予約日の入力が簡単にできるようになるんですね。ここまでで、テキスト、イーメール、テル、デイトの4つのタイプを見てきました。実はインプット'たぐ'のタイプは他にもたくさんあるんです。でも、全部覚える必要はまったくありません。今日紹介した4つが基本中の基本です。他に必要になったときは「HTMLインプットタイプ一覧」で検索すれば、すぐに見つかります。何を検索すべきかを知っていれば、それで十分です。",
       "durationSec": 58,
       "visual": {
-        "type": "remotion",
-        "component": "FeatureGridScreen",
-        "props": {
-          "title": "インプットタグの4つのタイプ",
-          "features": [
-            {
-              "icon": "✍️",
-              "title": "type=\"text\"",
-              "description": "一行テキスト入力",
-              "color": "#ef4444"
-            },
-            {
-              "icon": "📧",
-              "title": "type=\"email\"",
-              "description": "メールアドレス・形式チェック",
-              "color": "#ef4444"
-            },
-            {
-              "icon": "📱",
-              "title": "type=\"tel\"",
-              "description": "電話番号・数字キーパッド",
-              "color": "#ef4444"
-            },
-            {
-              "icon": "📅",
-              "title": "type=\"date\"",
-              "description": "日付選択・カレンダーUI",
-              "color": "#ef4444"
-            }
-          ],
-          "columns": 2
-        },
-        "transition": {
-          "enter": "slide-left"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 4,
+            "phrase": "カレンダーが開きますよね"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "prefill_codepen",
+            "html": "<form>\n  <label>お名前</label>\n  <input type=\"text\">\n  <label>メールアドレス</label>\n  <input type=\"email\">\n  <label>電話番号</label>\n  <input type=\"tel\">\n  <label>ご予約日</label>\n  <input type=\"date\">\n</form>",
+            "editors": "100"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              700
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "input[type='date']",
+            "iframe": "iframe.result-iframe"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
@@ -847,8 +895,8 @@
     },
     {
       "scene_id": 21,
-      "narration": "プレビューを見てください。今までの入力欄より大きな、複数行入力できるテキストボックスが表示されていますよね。右下の角をマウスでドラッグすると、テキストエリアのサイズを変えることもできます。試してください。お問い合わせ内容やコメントなど、まとまった文章を書いてもらいたいときにぴったりの部品です。",
-      "durationSec": 33,
+      "narration": "テキストエリア'たぐ'は、複数行のテキストを自由に入力できる入力欄です。長い文章を書くときに便利で、必要に応じてサイズを変えることもできます。お問い合わせ内容やコメントなど、まとまった文章を書いてもらいたいときにぴったりの部品です。",
+      "durationSec": 22,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -1048,14 +1096,45 @@
       "narration": "セレクト'たぐ'の中に、オプション'たぐ'が3つ並んでいますね。一つのオプション'たぐ'が、ドロップダウンの一つの選択肢に対応しています。プレビューで実際にクリックしてください。「ご予約」「ご質問」「その他」の3つの選択肢が表示されて、そこから一つを選べるようになっていますよね。選択肢を増やしたいときは、オプション'たぐ'を追加するだけです。5個でも10個でも、必要なだけ並べられます。たとえば美容室のサイトなら「カット」「カラー」「パーマ」「トリートメント」といった施術メニューをオプションに並べればいいわけですね。とてもシンプルです。",
       "durationSec": 53,
       "visual": {
-        "type": "remotion",
-        "component": "KeyPointScreen",
-        "props": {
-          "icon": "📋",
-          "headline": "<select>タグ",
-          "detail": "ドロップダウンメニュー。<option>タグで選択肢を並べる。",
-          "color": "#ef4444"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 4,
+            "phrase": "プレビューで実際にクリックしてください"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "prefill_codepen",
+            "html": "<form>\n  <label>お名前</label>\n  <input type=\"text\">\n  <label>メールアドレス</label>\n  <input type=\"email\">\n  <label>電話番号</label>\n  <input type=\"tel\">\n  <label>ご予約日</label>\n  <input type=\"date\">\n  <label>お問い合わせ種別</label>\n  <select>\n    <option>ご予約</option>\n    <option>ご質問</option>\n    <option>その他</option>\n  </select>\n  <label>メッセージ</label>\n  <textarea></textarea>\n</form>",
+            "editors": "100"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              700
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "select",
+            "iframe": "iframe.result-iframe"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
@@ -1161,14 +1240,55 @@
       "narration": "タイプの後に、半角スペースを空けて「プレースホルダー イコール 山田太郎」と追加しました。プレビューを見てください。入力欄の中にうっすらと「山田太郎」と表示されていますね。この薄いグレーの文字がプレースホルダーです。プレースホルダーの役割は、「ここにはこういう形式で情報を入力してくださいね」という見本を、入力欄の中に表示することです。ユーザーがその入力欄をクリックして、実際に文字を入力し始めると、プレースホルダーの文字は自動的に消えます。あくまでもヒントなので、入力の邪魔にはなりません。試しにクリックして何か入力してください。薄い文字が消えますよね。",
       "durationSec": 56,
       "visual": {
-        "type": "remotion",
-        "component": "KeyPointScreen",
-        "props": {
-          "icon": "💡",
-          "headline": "placeholder属性",
-          "detail": "入力欄に薄く表示されるヒント文字。クリックすると自動的に消える。",
-          "color": "#ef4444"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 4,
+            "phrase": "試しにクリックして何か入力してください"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "prefill_codepen",
+            "html": "<form>\n  <label>お名前</label>\n  <input type=\"text\" placeholder=\"山田太郎\">\n  <label>メールアドレス</label>\n  <input type=\"email\">\n  <label>電話番号</label>\n  <input type=\"tel\">\n  <label>ご予約日</label>\n  <input type=\"date\">\n  <label>お問い合わせ種別</label>\n  <select>\n    <option>ご予約</option>\n    <option>ご質問</option>\n    <option>その他</option>\n  </select>\n  <label>メッセージ</label>\n  <textarea></textarea>\n</form>",
+            "editors": "100"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              700
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "input[type='text']",
+            "iframe": "iframe.result-iframe"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "input[type='text']",
+            "key": "テスト",
+            "iframe": "iframe.result-iframe"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
@@ -1184,11 +1304,11 @@
             "phrase": "メールアドレスの欄にはこう書きます"
           },
           {
-            "actionIndex": 25,
+            "actionIndex": 20,
             "phrase": "電話番号の欄にも、同じように"
           },
           {
-            "actionIndex": 57,
+            "actionIndex": 37,
             "phrase": "テキストエリアにもプレースホルダーは使えます"
           }
         ],
@@ -1260,26 +1380,6 @@
           },
           {
             "cmd": "press",
-            "key": "Meta+Home"
-          },
-          {
-            "cmd": "press",
-            "key": "ArrowDown"
-          },
-          {
-            "cmd": "press",
-            "key": "ArrowDown"
-          },
-          {
-            "cmd": "press",
-            "key": "ArrowDown"
-          },
-          {
-            "cmd": "press",
-            "key": "ArrowDown"
-          },
-          {
-            "cmd": "press",
             "key": "ArrowDown"
           },
           {
@@ -1305,71 +1405,11 @@
           },
           {
             "cmd": "press",
-            "key": "Meta+Home"
+            "key": "Meta+End"
           },
           {
             "cmd": "press",
-            "key": "ArrowDown"
-          },
-          {
-            "cmd": "press",
-            "key": "ArrowDown"
-          },
-          {
-            "cmd": "press",
-            "key": "ArrowDown"
-          },
-          {
-            "cmd": "press",
-            "key": "ArrowDown"
-          },
-          {
-            "cmd": "press",
-            "key": "ArrowDown"
-          },
-          {
-            "cmd": "press",
-            "key": "ArrowDown"
-          },
-          {
-            "cmd": "press",
-            "key": "ArrowDown"
-          },
-          {
-            "cmd": "press",
-            "key": "ArrowDown"
-          },
-          {
-            "cmd": "press",
-            "key": "ArrowDown"
-          },
-          {
-            "cmd": "press",
-            "key": "ArrowDown"
-          },
-          {
-            "cmd": "press",
-            "key": "ArrowDown"
-          },
-          {
-            "cmd": "press",
-            "key": "ArrowDown"
-          },
-          {
-            "cmd": "press",
-            "key": "ArrowDown"
-          },
-          {
-            "cmd": "press",
-            "key": "ArrowDown"
-          },
-          {
-            "cmd": "press",
-            "key": "ArrowDown"
-          },
-          {
-            "cmd": "press",
-            "key": "ArrowDown"
+            "key": "ArrowUp"
           },
           {
             "cmd": "press",
@@ -1705,8 +1745,8 @@
     },
     {
       "scene_id": 32,
-      "narration": "プレビューにボタンが表示されましたね。「送信する」と書かれたボタンです。ボタン'たぐ'は、開始'たぐ'と終了'たぐ'の間に書いた文字がボタンの表示テキストになります。「送信する」でも「送信」でも、「お問い合わせを送る」でも、好きな文字を入れられます。ボタン'たぐ'の書き方は、他の'たぐ'と同じですよね。開始'たぐ'と閉じ'たぐ'で文字を囲む。パラグラフ'たぐ'や見出し'たぐ'と同じ構造です。HTMLのパターンが少しずつ体に染みてきた感じがしませんか。新しい'たぐ'が出てきても、「ああ、開始'たぐ'と閉じ'たぐ'で囲むんだな」と予測できるようになっていれば、もう立派にHTMLが読める状態に近づいています。",
-      "durationSec": 58,
+      "narration": "これでフォームの送信ボタンができましたね。ボタン'たぐ'は、開始'たぐ'と終了'たぐ'の間に書いた文字がボタンの表示テキストになります。「送信する」でも「送信」でも、「お問い合わせを送る」でも、好きな文字を入れられます。ボタン'たぐ'の書き方は、他の'たぐ'と同じですよね。開始'たぐ'と閉じ'たぐ'で文字を囲む。パラグラフ'たぐ'や見出し'たぐ'と同じ構造です。HTMLのパターンが少しずつ体に染みてきた感じがしませんか。新しい'たぐ'が出てきても、「ああ、開始'たぐ'と閉じ'たぐ'で囲むんだな」と予測できるようになっていれば、もう立派にHTMLが読める状態に近づいています。",
+      "durationSec": 53,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -1727,11 +1767,11 @@
         "storageState": "config/auth/codepen.json",
         "syncPoints": [
           {
-            "actionIndex": 6,
+            "actionIndex": 10,
             "phrase": "何か起きましたか"
           },
           {
-            "actionIndex": 8,
+            "actionIndex": 12,
             "phrase": "お名前の欄を空のまま"
           }
         ],
@@ -1758,6 +1798,25 @@
             "cmd": "type",
             "selector": "input[type='text']",
             "key": "山田太郎",
+            "iframe": "iframe.result-iframe"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "input[type='email']",
+            "iframe": "iframe.result-iframe"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "input[type='email']",
+            "key": "test@example.com",
             "iframe": "iframe.result-iframe"
           },
           {
