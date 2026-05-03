@@ -598,19 +598,97 @@
     },
     {
       "scene_id": 17,
-      "narration": "もう一つ、タイプがデイトの場合です。お問い合わせフォームに予約日の入力欄も追加しましょう。電話番号の後に書き足してください。",
-      "durationSec": 14,
+      "narration": "もう一つ、タイプがデイトの場合です。日付を入力するための入力欄ですね。お問い合わせフォームに予約日の入力欄も追加しましょう。電話番号の後に、ラベルとインプットを書き足してください。",
+      "durationSec": 17,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<form>\n  <label>お名前</label>\n  <input type=\"text\">\n\n  <label>メールアドレス</label>\n  <input type=\"email\">\n\n  <label>電話番号</label>\n  <input type=\"tel\">\n\n  <label>ご予約日</label>\n  <input type=\"date\">\n</form>",
-          "language": "html",
-          "title": "type=\"date\"を追加"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 12,
+            "phrase": "電話番号の後に、ラベルとインプット"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "prefill_codepen",
+            "html": "<form>\n  <label>お名前</label>\n  <input type=\"text\">\n  <label>メールアドレス</label>\n  <input type=\"email\">\n  <label>電話番号</label>\n  <input type=\"tel\">\n</form>",
+            "editors": "100"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+End"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowUp"
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+ArrowRight"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<label>ご予約日</label>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<input type=\"date\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
@@ -784,19 +862,185 @@
     },
     {
       "scene_id": 22,
-      "narration": "では次に、二つ目の部品、セレクト'たぐ'を見ましょう。セレクト'たぐ'は、ドロップダウンメニューとも呼ばれます。いくつかの選択肢の中から一つを選んでもらいたいときに使います。たとえば、お問い合わせの種類を「予約」「質問」「その他」から選んでもらう、といった場面ですね。お問い合わせの種別を選べるようにしましょう。ご予約日の入力欄の後、メッセージの欄の前に追加します。",
-      "durationSec": 41,
+      "narration": "では次に、二つ目の部品、セレクト'たぐ'を見ましょう。セレクト'たぐ'は、ドロップダウンメニューとも呼ばれます。いくつかの選択肢の中から一つを選んでもらいたいときに使う、便利な部品ですね。たとえば、お問い合わせの種類を「予約」「質問」「その他」から選んでもらう、といった場面です。お問い合わせの種別を選べるようにしましょう。ご予約日の入力欄の後、メッセージの欄の前に追加していきますね。まず、ラベル'たぐ'でお問い合わせ種別と書きます。つづいて、セレクト'たぐ'の開始タグです。そのなかに、オプション'たぐ'で選択肢を一つずつ並べていきましょう。一つ目はご予約、二つ目はご質問、三つ目はその他です。最後に、セレクト'たぐ'の閉じタグで全体を締めくくります。",
+      "durationSec": 60,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "  <label>お問い合わせ種別</label>\n  <select>\n    <option>ご予約</option>\n    <option>ご質問</option>\n    <option>その他</option>\n  </select>",
-          "language": "html",
-          "title": "セレクトタグを追加"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 14,
+            "phrase": "まず、ラベル'たぐ'でお問い合わせ種別と書きます"
+          },
+          {
+            "actionIndex": 18,
+            "phrase": "つづいて、セレクト'たぐ'の開始タグです"
+          },
+          {
+            "actionIndex": 22,
+            "phrase": "そのなかに、オプション'たぐ'で選択肢を一つずつ並べていきましょう"
+          },
+          {
+            "actionIndex": 34,
+            "phrase": "最後に、セレクト'たぐ'の閉じタグで"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "prefill_codepen",
+            "html": "<form>\n  <label>お名前</label>\n  <input type=\"text\">\n  <label>メールアドレス</label>\n  <input type=\"email\">\n  <label>電話番号</label>\n  <input type=\"tel\">\n  <label>ご予約日</label>\n  <input type=\"date\">\n  <label>メッセージ</label>\n  <textarea></textarea>\n</form>",
+            "editors": "100"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+End"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowUp"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowUp"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowUp"
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+ArrowRight"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<label>お問い合わせ種別</label>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<select>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<option>ご予約</option>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<option>ご質問</option>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<option>その他</option>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</select>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
@@ -929,19 +1173,270 @@
     },
     {
       "scene_id": 27,
-      "narration": "では、他の入力欄にもプレースホルダーを追加していきましょう。メールアドレスの欄にはこう書きます。電話番号の欄にも追加しましょう。テキストエリアにもプレースホルダーは使えます。それぞれの入力欄に、薄い文字で入力の見本やヒントが表示されるようになりましたね。ユーザーにとって、何を入力すればいいのかがひと目でわかるようになりました。ちょっとした工夫ですが、フォームの使いやすさがぐっと上がります。プロが作ったウェブサイトのフォームにも、ほぼ必ずプレースホルダーが設定されていますよ。",
-      "durationSec": 50,
+      "narration": "では、他の入力欄にもプレースホルダーを追加していきましょう。それぞれの入力欄に合ったヒントを入れてあげると、ぐっと使いやすくなります。メールアドレスの欄にはこう書きます。タイプ属性の後ろに、プレースホルダーを書き足してください。電話番号の欄にも、同じようにプレースホルダーを追加しましょう。番号の例として、09012345678と書いておきますね。テキストエリアにもプレースホルダーは使えます。お問い合わせ内容のヒントを入れておきましょう。それぞれの入力欄に、薄い文字で入力の見本やヒントが表示されるようになりましたね。ユーザーにとって、何を入力すればいいのかがひと目でわかるようになりました。ちょっとした工夫ですが、フォームの使いやすさがぐっと上がります。プロが作ったウェブサイトのフォームにも、ほぼ必ずプレースホルダーが設定されていますよ。",
+      "durationSec": 68,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "  <input type=\"email\" placeholder=\"example@mail.com\">\n\n  <input type=\"tel\" placeholder=\"09012345678\">\n\n  <textarea placeholder=\"お問い合わせ内容をご記入ください\"></textarea>",
-          "language": "html",
-          "title": "全入力欄にplaceholderを設定"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 14,
+            "phrase": "メールアドレスの欄にはこう書きます"
+          },
+          {
+            "actionIndex": 25,
+            "phrase": "電話番号の欄にも、同じように"
+          },
+          {
+            "actionIndex": 57,
+            "phrase": "テキストエリアにもプレースホルダーは使えます"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "prefill_codepen",
+            "html": "<form>\n  <label>お名前</label>\n  <input type=\"text\" placeholder=\"山田太郎\">\n  <label>メールアドレス</label>\n  <input type=\"email\">\n  <label>電話番号</label>\n  <input type=\"tel\">\n  <label>ご予約日</label>\n  <input type=\"date\">\n  <label>お問い合わせ種別</label>\n  <select>\n    <option>ご予約</option>\n    <option>ご質問</option>\n    <option>その他</option>\n  </select>\n  <label>メッセージ</label>\n  <textarea></textarea>\n</form>",
+            "editors": "100"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+Home"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+ArrowRight"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": " placeholder=\"example@mail.com\""
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+Home"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+ArrowRight"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": " placeholder=\"09012345678\""
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+Home"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+ArrowRight"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": " placeholder=\"お問い合わせ内容をご記入ください\""
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
@@ -1038,19 +1533,88 @@
     },
     {
       "scene_id": 30,
-      "narration": "メールアドレスの欄にもリクワイアドを追加しておきましょう。お名前とメールアドレスは必須、電話番号や予約日は任意、という形にしました。実際のお問い合わせフォームでもよくあるパターンですよね。必須項目と任意項目をリクワイアドで簡単に分けることができます。",
-      "durationSec": 28,
+      "narration": "つづいて、メールアドレスの欄にもリクワイアドを追加していきましょう。お名前と同じく、メールも必須項目にしておきますね。メールアドレスのインプットタグの末尾に、リクワイアドを書き足してください。お名前とメールアドレスは必須、電話番号や予約日は任意、という形にしました。実際のお問い合わせフォームでもよくあるパターンですよね。必須項目と任意項目をリクワイアドで簡単に分けることができます。",
+      "durationSec": 35,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "  <input type=\"email\" placeholder=\"example@mail.com\" required>",
-          "language": "html",
-          "title": "メールアドレスにもrequired"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 14,
+            "phrase": "メールアドレスのインプットタグの末尾に"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "prefill_codepen",
+            "html": "<form>\n  <label>お名前</label>\n  <input type=\"text\" placeholder=\"山田太郎\" required>\n  <label>メールアドレス</label>\n  <input type=\"email\" placeholder=\"example@mail.com\">\n  <label>電話番号</label>\n  <input type=\"tel\" placeholder=\"09012345678\">\n  <label>ご予約日</label>\n  <input type=\"date\">\n  <label>お問い合わせ種別</label>\n  <select>\n    <option>ご予約</option>\n    <option>ご質問</option>\n    <option>その他</option>\n  </select>\n  <label>メッセージ</label>\n  <textarea placeholder=\"お問い合わせ内容をご記入ください\"></textarea>\n</form>",
+            "editors": "100"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+Home"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowDown"
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+ArrowRight"
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowLeft"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": " required"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          }
+        ]
       }
     },
     {
@@ -1159,13 +1723,66 @@
       "narration": "さて、それでは試しにボタンをクリックしましょう。プレビューで「送信する」ボタンを押してください。何か起きましたか？ページが一瞬ちらっとしたかもしれませんが、特に変化はないですよね。送信ボタンを押したのに、何も起きない。これはなぜなのか、後ほどお話しします。ここで先ほどのリクワイアドの動作も確認しましょう。お名前の欄を空のまま、送信ボタンを押してください。「このフィールドを入力してください」のようなメッセージがお名前の入力欄のそばに表示されましたよね。これがリクワイアド属性の効果です。ブラウザが自動的に「必須項目が空ですよ」と教えてくれているんです。これならユーザーが入力を忘れたまま送信してしまうことを防げますね。",
       "durationSec": 64,
       "visual": {
-        "type": "remotion",
-        "component": "CalloutScreen",
-        "props": {
-          "type": "tip",
-          "title": "required属性の動作確認",
-          "body": "空欄のまま送信ボタンを押すと、ブラウザが自動的に「このフィールドを入力してください」と表示する。コードを書かなくてもブラウザが守ってくれる。"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 6,
+            "phrase": "何か起きましたか"
+          },
+          {
+            "actionIndex": 8,
+            "phrase": "お名前の欄を空のまま"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "prefill_codepen",
+            "html": "<form>\n  <label>お名前</label>\n  <input type=\"text\" placeholder=\"山田太郎\" required>\n  <label>メールアドレス</label>\n  <input type=\"email\" placeholder=\"example@mail.com\" required>\n  <label>電話番号</label>\n  <input type=\"tel\" placeholder=\"09012345678\">\n  <label>ご予約日</label>\n  <input type=\"date\">\n  <label>お問い合わせ種別</label>\n  <select>\n    <option>ご予約</option>\n    <option>ご質問</option>\n    <option>その他</option>\n  </select>\n  <label>メッセージ</label>\n  <textarea placeholder=\"お問い合わせ内容をご記入ください\"></textarea>\n  <button>送信する</button>\n</form>",
+            "editors": "100"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "input[type='text']",
+            "iframe": "iframe.result-iframe"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "input[type='text']",
+            "key": "山田太郎",
+            "iframe": "iframe.result-iframe"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "button",
+            "iframe": "iframe.result-iframe"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3000
+          },
+          {
+            "cmd": "click",
+            "selector": "button",
+            "iframe": "iframe.result-iframe"
+          },
+          {
+            "cmd": "wait",
+            "ms": 5000
+          }
+        ]
       }
     },
     {

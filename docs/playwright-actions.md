@@ -204,10 +204,19 @@ CSS 셀렉터로 지정한 요소에 분홍색 아웃라인(`5px solid #ff007a`)
 | 파라미터 | 타입 | 필수 | 설명 |
 |---------|------|------|------|
 | `selector` | string | ✅ | CSS 셀렉터 |
+| `iframe` | string | ❌ | 메인 페이지가 아닌 iframe 내부 요소를 대상으로 할 때 iframe 자체의 CSS 셀렉터 |
 
 ```json
 { "cmd": "click", "selector": "#submit-btn" }
 ```
+
+**iframe 내부 클릭** (예: CodePen preview iframe 안의 form 버튼):
+```json
+{ "cmd": "click", "iframe": "iframe.result-iframe", "selector": "button" }
+```
+
+`iframe` 지정 시 내부적으로 `page.frameLocator(iframe).locator(selector)` 패턴으로 실행됩니다.
+`selector` 는 iframe 내부 DOM 기준으로 작성합니다.
 
 ---
 
@@ -219,9 +228,15 @@ CSS 셀렉터로 지정한 요소에 분홍색 아웃라인(`5px solid #ff007a`)
 |---------|------|------|------|
 | `selector` | string | ✅ | 입력 요소 CSS 셀렉터 |
 | `key` | string | ✅ | 입력할 텍스트 |
+| `iframe` | string | ❌ | 메인 페이지가 아닌 iframe 내부 입력 요소를 대상으로 할 때 iframe 자체의 CSS 셀렉터 |
 
 ```json
 { "cmd": "type", "selector": "#search-input", "key": "HTML とは" }
+```
+
+**iframe 내부 입력** (예: CodePen preview iframe 안의 input):
+```json
+{ "cmd": "type", "iframe": "iframe.result-iframe", "selector": "input[type='text']", "key": "山田太郎" }
 ```
 
 ---

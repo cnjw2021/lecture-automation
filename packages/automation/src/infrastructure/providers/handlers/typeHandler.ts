@@ -12,6 +12,18 @@ const TYPE_LOCATOR_TIMEOUT_MS = 10000;
 const TYPE_DELAY_MS = 100;
 const STEP_DURATION_MS_PER_CHAR = 120;
 
+/**
+ * action.iframe 이 지정된 경우 page.frameLocator(iframe).locator(selector) 를,
+ * 지정되지 않은 경우 page.locator(selector) 를 반환한다.
+ * iframe 내부 input/textarea 에 입력해야 하는 경우 (CodePen preview 폼 등) 에 사용.
+ */
+function resolveLocator(page: any, action: any) {
+  if (action.iframe) {
+    return page.frameLocator(action.iframe).locator(action.selector);
+  }
+  return page.locator(action.selector);
+}
+
 export const typeHandler: PlaywrightActionHandler = {
   cmd: 'type',
   estimateDurationMs: estimatePlaywrightActionDurationMs,
@@ -20,7 +32,7 @@ export const typeHandler: PlaywrightActionHandler = {
     if (!action.selector || !action.key) return null;
     const screenshotName = `step-${ctx.stepIndex}.png`;
     const screenshotPath = path.join(ctx.outputDir, screenshotName);
-    const loc = page.locator(action.selector);
+    const loc = resolveLocator(page, action);
     await loc.waitFor({ state: 'visible', timeout: TYPE_LOCATOR_TIMEOUT_MS });
     const box = await loc.boundingBox();
     // 타이핑 완료 후 스크린샷: Remotion 의 monospace 오버레이가 실제 입력창 폰트/래핑과
@@ -48,7 +60,7 @@ export const typeHandler: PlaywrightActionHandler = {
 
   async executeForRecording(page, action, _ctx: RecordContext) {
     if (!action.selector || !action.key) return;
-    const loc = page.locator(action.selector);
+    const loc = resolveLocator(page, action);
     await loc.waitFor({ state: 'visible', timeout: TYPE_LOCATOR_TIMEOUT_MS });
     await typeWithTimeout(loc, action.key, {
       delay: TYPE_DELAY_MS,
@@ -58,7 +70,7 @@ export const typeHandler: PlaywrightActionHandler = {
 
   async executeOffscreen(page, action, _ctx: OffscreenContext) {
     if (!action.selector || !action.key) return;
-    const loc = page.locator(action.selector);
+    const loc = resolveLocator(page, action);
     await loc.waitFor({ state: 'visible', timeout: TYPE_LOCATOR_TIMEOUT_MS });
     await typeWithTimeout(loc, action.key, {
       delay: TYPE_DELAY_MS,
