@@ -993,7 +993,11 @@
             "cmd": "wait",
             "ms": 0
           }
-        ]
+        ],
+        "session": {
+          "mode": "shared",
+          "groupId": "codepen-fix"
+        }
       }
     },
     {
@@ -1003,56 +1007,36 @@
       "visual": {
         "type": "playwright",
         "storageState": "config/auth/codepen.json",
+        "session": {
+          "mode": "shared",
+          "groupId": "codepen-fix"
+        },
         "syncPoints": [
           {
-            "actionIndex": 24,
+            "actionIndex": 1,
+            "phrase": "具体的な説明に書き換えます"
+          },
+          {
+            "actionIndex": 5,
             "phrase": "サロン外観写真なら"
           },
           {
-            "actionIndex": 32,
+            "actionIndex": 9,
+            "phrase": "最後に、不要なネストの整理です"
+          },
+          {
+            "actionIndex": 13,
             "phrase": "外側のディブを取り除いても表示が変わらないなら"
           },
           {
-            "actionIndex": 34,
+            "actionIndex": 15,
             "phrase": "修正したら、必ずプレビューで確認"
           }
         ],
         "action": [
           {
-            "cmd": "goto",
-            "url": "https://codepen.io/pen/"
-          },
-          {
             "cmd": "wait",
             "ms": 0
-          },
-          {
-            "cmd": "mouse_move",
-            "to": [
-              400,
-              250
-            ]
-          },
-          {
-            "cmd": "wait",
-            "ms": 0
-          },
-          {
-            "cmd": "click",
-            "selector": "#box-html .CodeMirror"
-          },
-          {
-            "cmd": "wait",
-            "ms": 0
-          },
-          {
-            "cmd": "type",
-            "selector": "#box-html .CodeMirror textarea",
-            "key": "<img src=\"salon.jpg\" alt=\"\">"
-          },
-          {
-            "cmd": "wait",
-            "ms": 200
           },
           {
             "cmd": "press",
@@ -1063,59 +1047,8 @@
             "ms": 200
           },
           {
-            "cmd": "type",
-            "selector": "#box-html .CodeMirror textarea",
-            "key": "<div class=\"item\">"
-          },
-          {
-            "cmd": "wait",
-            "ms": 200
-          },
-          {
             "cmd": "press",
             "key": "Enter"
-          },
-          {
-            "cmd": "wait",
-            "ms": 200
-          },
-          {
-            "cmd": "type",
-            "selector": "#box-html .CodeMirror textarea",
-            "key": "<p>5,000円</p>"
-          },
-          {
-            "cmd": "wait",
-            "ms": 200
-          },
-          {
-            "cmd": "press",
-            "key": "Enter"
-          },
-          {
-            "cmd": "wait",
-            "ms": 200
-          },
-          {
-            "cmd": "type",
-            "selector": "#box-html .CodeMirror textarea",
-            "key": "</div>"
-          },
-          {
-            "cmd": "wait",
-            "ms": 0
-          },
-          {
-            "cmd": "press",
-            "key": "Control+a"
-          },
-          {
-            "cmd": "wait",
-            "ms": 200
-          },
-          {
-            "cmd": "press",
-            "key": "Backspace"
           },
           {
             "cmd": "wait",
