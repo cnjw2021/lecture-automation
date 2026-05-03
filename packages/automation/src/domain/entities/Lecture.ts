@@ -74,6 +74,13 @@ export interface PlaywrightAction {
   saveAs?: string;
   /** capture: true 이면 selector 무시하고 page.url() 을 캡처 대상으로 사용 */
   fromUrl?: boolean;
+  /**
+   * click / type: 메인 페이지가 아니라 페이지 안에 임베드된 iframe 내부 요소를 대상으로 한다.
+   * 값은 iframe 자체를 가리키는 CSS 셀렉터 (예: `iframe.result-iframe`).
+   * 지정 시 page.frameLocator(iframe).locator(selector) 패턴으로 실행된다.
+   * 예: CodePen preview iframe 내부의 form 요소 클릭/입력
+   */
+  iframe?: string;
 }
 
 /** right_click 의 가짜 컨텍스트 메뉴 항목. 문자열 단축 표기 또는 객체 표기 */
