@@ -2,11 +2,11 @@
   "lecture_id": "02-04",
   "title": "構造を組み立てるタグ",
   "part": 2,
-  "totalDurationSec": 1756,
+  "totalDurationSec": 1747,
   "sequence": [
     {
       "scene_id": 1,
-      "narration": "皆さん、こんにちは。前回の講義では、リンクと画像を学びましたね。a'たぐ'でページ同士をつなぎ、img'たぐ'で画像を表示できるようになりました。Unsplashから持ってきた写真や、SNSへのリンクも入って、皆さんの自己紹介ページはだいぶウェブページらしくなってきたのではないでしょうか。",
+      "narration": "皆さん、こんにちは。前回の講義では、リンクと画像を学びましたね。エー'たぐ'でページ同士をつなぎ、アイエムジー'たぐ'で画像を表示できるようになりました。Unsplashから持ってきた写真や、SNSへのリンクも入って、皆さんの自己紹介ページはだいぶウェブページらしくなってきたのではないでしょうか。",
       "durationSec": 21,
       "visual": {
         "type": "remotion",
@@ -22,7 +22,7 @@
     },
     {
       "scene_id": 2,
-      "narration": "さて、今日のテーマは「構造を組み立てる'たぐ'」です。ここまでの講義を通じて、皆さんはいくつもの'たぐ'を学んできました。エイチワンで見出し、ぴーでだんらく、ulでリスト、aでリンク、imgで画像。一つひとつの'たぐ'の使い方はわかるようになりましたよね。",
+      "narration": "さて、今日のテーマは「構造を組み立てる'たぐ'」です。ここまでの講義を通じて、皆さんはいくつもの'たぐ'を学んできました。エイチワンで見出し、ぴーでだんらく、ulでリスト、エーでリンク、アイエムジーで画像。一つひとつの'たぐ'の使い方はわかるようになりましたよね。",
       "durationSec": 22,
       "visual": {
         "type": "remotion",
@@ -77,38 +77,33 @@
     },
     {
       "scene_id": 5,
-      "narration": "今日は、ページ全体に意味のある構造を持たせるための特別な'たぐ'を学びます。この'たぐ'を使うと、人間にも機械にも読みやすいウェブページになります。まず前半でスライドを使って考え方を学んでから、後半でCodePenの自己紹介ページを実際に書き換えていきましょう。",
-      "durationSec": 26,
+      "narration": "今日は、ページ全体に意味のある構造を持たせるための特別な'たぐ'を学びます。今回のスタイルは少しいつもと違いますよ。スライドで概念を聞いて、すぐCodePenで一つ書いてみる、また次の'たぐ'を聞いて、また書いてみる。この流れで6つの'たぐ'を順番に体に染み込ませていきます。最後に、自己紹介ページを意味のある構造にまとめあげましょう。",
+      "durationSec": 32,
       "visual": {
         "type": "remotion",
         "component": "AgendaScreen",
         "props": {
-          "title": "今日やること",
+          "title": "今日の流れ",
           "items": [
             {
               "title": "セマンティックタグとは",
               "icon": "📖",
-              "duration": "4分"
+              "duration": "3分"
             },
             {
-              "title": "6つのタグを覚える",
-              "icon": "🏷️",
-              "duration": "6分"
+              "title": "6つのタグを書きながら覚える",
+              "icon": "✏️",
+              "duration": "12分"
             },
             {
-              "title": "divタグの使い分け",
+              "title": "divとセマンティックタグの使い分け",
               "icon": "📦",
-              "duration": "2.5分"
+              "duration": "3分"
             },
             {
-              "title": "CodePenでリファクタリング",
-              "icon": "💻",
-              "duration": "8分"
-            },
-            {
-              "title": "前後比較",
+              "title": "完成コードと前後比較",
               "icon": "🔄",
-              "duration": "2.5分"
+              "duration": "3分"
             }
           ]
         }
@@ -164,8 +159,8 @@
     },
     {
       "scene_id": 8,
-      "narration": "ここで登場するのが「セマンティック'たぐ'」です。「セマンティック」というのは、英語で「意味を持った」という意味です。つまりセマンティック'たぐ'とは「意味を持った'たぐ'」のことですね。",
-      "durationSec": 19,
+      "narration": "ここで登場するのが「セマンティック'たぐ'」です。「セマンティック」というのは、英語で「意味を持った」という意味です。つまりセマンティック'たぐ'とは「意味を持った'たぐ'」のことですね。今までのエイチワンやぴーは、見出しやだんらくといった「文章の役割」を表す'たぐ'でした。セマンティック'たぐ'は、もっと大きく「ページ全体の中の役割」を表す'たぐ'です。",
+      "durationSec": 30,
       "visual": {
         "type": "remotion",
         "component": "DefinitionScreen",
@@ -173,7 +168,7 @@
           "term": "セマンティックタグ",
           "reading": "Semantic Tag",
           "definition": "「意味を持ったタグ」のこと。各部分の役割をHTML上で明示する。",
-          "example": "header（上部）、main（本文）、footer（末尾）など"
+          "example": "header(上部)、main(本文)、footer(末尾)など"
         },
         "transition": {
           "enter": "slide-left"
@@ -182,7 +177,7 @@
     },
     {
       "scene_id": 9,
-      "narration": "もう少し具体的に言うと、こういうことです。たとえば、ページの一番上の部分をheaderという'たぐ'で囲む。headerは英語で「ヘッダー」、つまり「上部」「冒頭」という意味ですよね。この'たぐ'で囲むことで、エーアイも検索エンジンも「ああ、ここはこのページの冒頭部分なんだな」と理解できるようになります。",
+      "narration": "もう少し具体的に言うと、こういうことです。たとえば、ページの一番上の部分をヘッダーという'たぐ'で囲む。ヘッダーは英語で「ヘッダー」、つまり「上部」「冒頭」という意味ですよね。この'たぐ'で囲むことで、エーアイも検索エンジンも「ああ、ここはこのページの冒頭部分なんだな」と理解できるようになります。",
       "durationSec": 28,
       "visual": {
         "type": "remotion",
@@ -197,8 +192,8 @@
     },
     {
       "scene_id": 10,
-      "narration": "同じように、ページの一番下をfooter'たぐ'で囲めば、「ここがページの末尾のフッター情報だ」とわかります。先ほどの間取り図のたとえに戻ると、セマンティック'たぐ'は各部屋に「リビング」「キッチン」と名札を貼るようなものです。名札を貼っても部屋の中身は変わりませんが、誰が見てもどの部屋が何なのかわかるようになります。",
-      "durationSec": 30,
+      "narration": "先ほどの間取り図のたとえに戻ると、セマンティック'たぐ'は各部屋に「リビング」「キッチン」と名札を貼るようなものです。名札を貼っても、部屋の中身も、家具の配置も、壁紙の色も、何も変わりません。でも、誰が訪れても「この部屋はキッチンだ」「ここはリビングだ」と一目でわかるようになります。HTMLにとっての「訪問者」は、検索エンジンやエーアイのような機械です。名札があるかないかで、機械から見たページの理解度がまるで変わってくるんですね。",
+      "durationSec": 36,
       "visual": {
         "type": "remotion",
         "component": "TwoColumnScreen",
@@ -206,7 +201,7 @@
           "title": "名札を貼るだけで変わること",
           "left": {
             "title": "変わらないもの",
-            "body": "部屋の中身（コンテンツ）はそのまま。見た目も変わらない。",
+            "body": "部屋の中身(コンテンツ)はそのまま。見た目も変わらない。",
             "icon": "🔒",
             "color": "#94a3b8"
           },
@@ -221,24 +216,8 @@
     },
     {
       "scene_id": 11,
-      "narration": "「でも、見た目が変わらないなら、わざわざ使う意味があるんですか？」と思いますよね。実は、セマンティック'たぐ'が大事な理由は大きく2つあります。",
-      "durationSec": 15,
-      "visual": {
-        "type": "remotion",
-        "component": "QnAScreen",
-        "props": {
-          "question": "見た目が変わらないなら、使う意味はあるの？",
-          "answer": "セマンティックタグが大事な理由は大きく2つあります。"
-        },
-        "transition": {
-          "enter": "slide-left"
-        }
-      }
-    },
-    {
-      "scene_id": 12,
-      "narration": "1つ目は、検索エンジンへの影響です。Googleの検索エンジンは、ウェブページの中身を自動的に読んで、「このページは何について書かれているか」を判断しています。セマンティック'たぐ'で構造がきちんと整理されていると、検索エンジンがページの内容を正しく理解しやすくなるんです。つまり、検索結果に正しく表示されやすくなるということですね。",
-      "durationSec": 36,
+      "narration": "「でも、見た目が変わらないなら、わざわざ使う意味があるんですか？」と思いますよね。実は、セマンティック'たぐ'が大事な理由は大きく2つあります。1つ目は、検索エンジンへの影響です。Googleの検索エンジンは、ウェブページの中身を自動的に読んで、「このページは何について書かれているか」を判断しています。セマンティック'たぐ'で構造がきちんと整理されていると、検索エンジンがページの内容を正しく理解しやすくなるんです。",
+      "durationSec": 39,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -251,9 +230,9 @@
       }
     },
     {
-      "scene_id": 13,
-      "narration": "2つ目は、エーアイとの連携です。この講座のパートツーの最後の講義で、エーアイにHTMLを生成してもらう実習をします。そのとき、エーアイが作ったコードを見て「ここにはheader'たぐ'を使うべきだな」「main'たぐ'が抜けているな」と判断できる力が必要になります。セマンティック'たぐ'の構造を知っていれば、エーアイの出力を的確にチェックできるようになるんです。",
-      "durationSec": 40,
+      "scene_id": 12,
+      "narration": "2つ目は、エーアイとの連携です。この講座のパートツーの最後の講義で、エーアイにHTMLを生成してもらう実習をします。そのとき、エーアイが作ったコードを見て「ここにはヘッダー'たぐ'を使うべきだな」「メイン'たぐ'が抜けているな」と判断できる力が必要になります。セマンティック'たぐ'の構造を知っていれば、エーアイの出力を的確にチェックできるようになるんです。",
+      "durationSec": 38,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -266,9 +245,9 @@
       }
     },
     {
-      "scene_id": 14,
-      "narration": "もちろん、今日学ぶ'たぐ'の名前を全部暗記する必要はありません。何を検索すべきかを知っていれば、それで十分です。「ページの上部には何かheaderっていう'たぐ'があったな」と覚えていれば、あとは調べられますから。",
-      "durationSec": 22,
+      "scene_id": 13,
+      "narration": "もちろん、今日学ぶ'たぐ'の名前を全部暗記する必要はありません。何を検索すべきかを知っていれば、それで十分です。「ページの上部には何かヘッダーっていう'たぐ'があったな」「まとまりを表すのはセクションだったな」と、おぼろげに覚えていれば、あとはいつでも調べられます。プロのエンジニアでも、たぐの細かい仕様までは毎回検索しています。覚えるより、思い出せる引き出しを作る、という意識でいきましょう。",
+      "durationSec": 36,
       "visual": {
         "type": "remotion",
         "component": "CalloutScreen",
@@ -280,9 +259,9 @@
       }
     },
     {
-      "scene_id": 15,
-      "narration": "では、代表的なセマンティック'たぐ'を見ていきましょう。全部で6つあります。6つと聞くと多く感じるかもしれませんが、どれもウェブページの「どの部分か」を表しているだけです。しかも、'たぐ'の名前がそのまま英語の意味になっているので、名前から役割が想像しやすいものばかりです。構えなくて大丈夫ですよ。一つずつ順番に見ていきましょう。",
-      "durationSec": 32,
+      "scene_id": 14,
+      "narration": "では、代表的なセマンティック'たぐ'を見ていきましょう。全部で6つあります。6つと聞くと多く感じるかもしれませんが、どれもウェブページの「どの部分か」を表しているだけです。しかも、'たぐ'の名前がそのまま英語の意味になっているので、名前から役割が想像しやすいものばかりです。今日は、一つ説明したらすぐCodePenで書いてみる、というリズムで進めていきましょう。手で書いてみると、頭で覚えるよりずっと早く体に入ってきますよ。",
+      "durationSec": 38,
       "visual": {
         "type": "remotion",
         "component": "FeatureGridScreen",
@@ -334,9 +313,9 @@
       }
     },
     {
-      "scene_id": 16,
-      "narration": "まず1つ目、header'たぐ'です。これはページの一番上に来る「ヘッダー」部分です。ページの顔、と言ってもいいですね。サイトのタイトルやロゴ、ナビゲーションメニューなど、ページを開いたときに最初に目に入る情報を入れます。お店でいえば、入り口の上に掲げてある看板にあたる部分です。書き方はこうなります。",
-      "durationSec": 32,
+      "scene_id": 15,
+      "narration": "まず1つ目、ヘッダー'たぐ'です。これはページの一番上に来る「ヘッダー」部分です。ページの顔、と言ってもいいですね。サイトのタイトルやロゴ、ナビゲーションメニューなど、ページを開いたときに最初に目に入る情報をいれます。お店でいえば、入り口の上に掲げてある看板にあたる部分です。書き方は、ヘッダーの開始'たぐ'と閉じ'たぐ'で、エイチワンの見出しを挟むだけ。早速、実際にCodePenで書いてみましょう。",
+      "durationSec": 36,
       "visual": {
         "type": "remotion",
         "component": "DefinitionScreen",
@@ -352,26 +331,120 @@
       }
     },
     {
-      "scene_id": 17,
-      "narration": "headerの開始'たぐ'と閉じ'たぐ'の間に、エイチワンの見出しを入れています。これだけで、「この見出しはページのヘッダーに属している」という意味が加わるんです。",
-      "durationSec": 20,
+      "scene_id": 16,
+      "narration": "今、新しいCodePenが開いている画面です。HTMLの編集エリアをクリックして、ここに書き始めていきます。最初に書くのは、ヘッダーの開始'たぐ'です。半角の山括弧でヘッダーと書きました。これでヘッダーの始まりです。続いて、エイチワンの見出しをいれていきましょう。文字は「田中太郎のページ」、皆さんは自分の名前に置き換えてくださいね。最後に、ヘッダーの閉じ'たぐ'を書いて、サンドイッチの形にします。これでヘッダーの中にエイチワンが入った状態になりました。プレビューを見てください。見出しが大きく表示されていますね。「あれ、ヘッダーで囲む前と見た目が同じじゃないか」と思った方、その感覚で正解です。セマンティック'たぐ'は見た目を変えるためのものではありません。",
+      "durationSec": 65,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<header>\n  <h1>田中太郎のページ</h1>\n</header>",
-          "language": "html",
-          "title": "headerタグの書き方"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 6,
+            "phrase": "最初に書くのは、ヘッダーの開始"
+          },
+          {
+            "actionIndex": 10,
+            "phrase": "続いて、エイチワンの見出し"
+          },
+          {
+            "actionIndex": 14,
+            "phrase": "最後に、ヘッダーの閉じ"
+          },
+          {
+            "actionIndex": 16,
+            "phrase": "プレビューを見てください"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "prefill_codepen",
+            "html": "",
+            "editors": "100"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1233
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 1233
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1233
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<header>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 7660
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 7660
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h1>田中太郎のページ</h1>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3395
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3395
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</header>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4210
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 10267
+          }
+        ]
       }
     },
     {
-      "scene_id": 18,
-      "narration": "2つ目はnav'たぐ'です。これは「ナビゲーション」の略で、ページ内の移動メニューを入れる場所です。ウェブサイトでよく見る、「ホーム」「会社概要」「お問い合わせ」みたいなメニューバー、ありますよね。あれを入れるための'たぐ'です。ショッピングモールの入り口にある案内板をイメージしてください。「1階は食品、2階はファッション、3階はレストラン」と書いてある、あの案内板です。",
-      "durationSec": 38,
+      "scene_id": 17,
+      "narration": "2つ目はナビ'たぐ'です。これは「ナビゲーション」の略で、ページ内の移動メニューをいれる場所です。ウェブサイトでよく見る、「ホーム」「会社概要」「お問い合わせ」みたいなメニュー項目が横並びになった部分、ありますよね。あれをいれるための'たぐ'です。ショッピングモールの入り口にある案内板をイメージしてください。「1階は食品、2階はファッション、3階はレストラン」と書いてある、あの案内板です。ナビ'たぐ'はヘッダーの中にいれることが多いです。お店の看板のすぐ下に案内板がある、という配置をイメージしてください。それでは、さっき書いたヘッダーの中にナビを追加してみましょう。",
+      "durationSec": 51,
       "visual": {
         "type": "remotion",
         "component": "DefinitionScreen",
@@ -387,26 +460,194 @@
       }
     },
     {
-      "scene_id": 19,
-      "narration": "nav'たぐ'の中にリンクを並べています。リンク先の「#about」という書き方は、前回学んだa'たぐ'の応用です。シャープ記号のあとに名前を書くと、同じページ内の特定の場所にジャンプするリンクになります。これについてはライブコーディングのときに詳しくやりますね。ちなみに、nav'たぐ'はheaderの中に入れることが多いです。お店の看板のすぐ下に案内板がある、という配置をイメージしてください。",
-      "durationSec": 42,
+      "scene_id": 18,
+      "narration": "さっき書いたヘッダーの中、エイチワンの下にナビを書いていきます。エイチワンのぎょうの末尾でかいぎょうして、ナビの開始'たぐ'を書きます。その中に、エー'たぐ'でリンクを3つ並べていきましょう。1つ目は「シャープアバウトで自己紹介」、これがアバウトのリンクですね。続いて2つ目「シャープホビーで趣味」、これは趣味へ飛びます。最後の3つ目に「シャープリンクスでリンク」と書きます。リンク先がシャープ記号で始まっていますね。これは「ページ内リンク」と言って、同じページの中の特定の場所に飛ぶための書き方です。シャープ記号のあとの名前は飛び先の目印になります。飛び先はあとで作りますので、今はリンクだけ書いておきましょう。最後にナビの閉じ'たぐ'を書いて締めます。ヘッダーは最初から閉じられているので、ナビがその中にきれいに収まりましたね。プレビューを見ると、見出しの下に3つのリンクが並んで出てきましたね。",
+      "durationSec": 92,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<nav>\n  <a href=\"#about\">自己紹介</a>\n  <a href=\"#hobby\">趣味</a>\n</nav>",
-          "language": "html",
-          "title": "navタグの書き方"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 14,
+            "phrase": "ナビの開始'たぐ'を書きます"
+          },
+          {
+            "actionIndex": 18,
+            "phrase": "シャープアバウトで自己紹介"
+          },
+          {
+            "actionIndex": 22,
+            "phrase": "シャープホビーで趣味"
+          },
+          {
+            "actionIndex": 26,
+            "phrase": "シャープリンクスでリンク"
+          },
+          {
+            "actionIndex": 30,
+            "phrase": "ナビの閉じ'たぐ'を書いて"
+          },
+          {
+            "actionIndex": 32,
+            "phrase": "プレビューを見ると"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "prefill_codepen",
+            "html": "<header>\n  <h1>田中太郎のページ</h1>\n</header>",
+            "editors": "100"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 27
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+End"
+          },
+          {
+            "cmd": "wait",
+            "ms": 100
+          },
+          {
+            "cmd": "press",
+            "key": "ArrowUp"
+          },
+          {
+            "cmd": "wait",
+            "ms": 14
+          },
+          {
+            "cmd": "press",
+            "key": "End"
+          },
+          {
+            "cmd": "wait",
+            "ms": 14
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1922
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<nav>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3035
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3035
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"#about\">自己紹介</a>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 359
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 359
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"#hobby\">趣味</a>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 296
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 296
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<a href=\"#links\">リンク</a>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 12775
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 12775
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</nav>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 8283
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 2477
+          }
+        ]
       }
     },
     {
-      "scene_id": 20,
-      "narration": "3つ目はmain'たぐ'です。これはページのメインコンテンツ、つまりそのページでいちばん伝えたい中心的な内容を入れる場所です。ヘッダーでもフッターでもない、ページの本体部分ですね。お店でいえば売り場そのもの、新聞でいえば記事本文にあたります。main'たぐ'には一つだけルールがあります。ページの中で1回しか使えません。考えてみれば当然ですよね。メインの内容が2つも3つもあったら、どれがメインなのかわからなくなってしまいます。",
-      "durationSec": 46,
+      "scene_id": 19,
+      "narration": "3つ目はメイン'たぐ'です。これはページのメインコンテンツ、つまりそのページでいちばん伝えたい中心的な内容をいれる場所です。ヘッダーでもフッターでもない、ページの本体部分ですね。お店でいえば売り場そのもの、新聞でいえば記事本文にあたります。メイン'たぐ'には一つだけルールがあります。ページの中で1回しか使えません。考えてみれば当然ですよね。メインの内容が2つも3つもあったら、どれがメインなのかわからなくなってしまいます。では、ヘッダーの下にメインを置いてみましょう。",
+      "durationSec": 47,
       "visual": {
         "type": "remotion",
         "component": "DefinitionScreen",
@@ -422,9 +663,115 @@
       }
     },
     {
+      "scene_id": 20,
+      "narration": "メイン'たぐ'はとてもシンプルですよ。書き方は開始と閉じの2つだけです。ヘッダーの閉じ'たぐ'の下の行に、メインの開始'たぐ'を書きます。中身はあとでいれるので、今はすぐ下に閉じ'たぐ'を書きましょう。これで、ヘッダーの下にメインの空っぽの箱ができました。プレビューを見ても、見た目はさっきとまったく同じです。中身をいれていないので当然ですね。でも、これで「ここからここまでがメインコンテンツです」という宣言が機械にも伝わるようになりました。あとはこの箱の中身を、次のセクションで詰めていけばいいわけです。",
+      "durationSec": 47,
+      "visual": {
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 10,
+            "phrase": "メインの開始'たぐ'を書きます"
+          },
+          {
+            "actionIndex": 14,
+            "phrase": "今はすぐ下に閉じ"
+          },
+          {
+            "actionIndex": 16,
+            "phrase": "プレビューを見ても"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "prefill_codepen",
+            "html": "<header>\n  <h1>田中太郎のページ</h1>\n  <nav>\n    <a href=\"#about\">自己紹介</a>\n    <a href=\"#hobby\">趣味</a>\n    <a href=\"#links\">リンク</a>\n  </nav>\n</header>",
+            "editors": "100"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+End"
+          },
+          {
+            "cmd": "wait",
+            "ms": 100
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 6850
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<main>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1712
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1712
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</main>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 5957
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 14818
+          }
+        ]
+      }
+    },
+    {
       "scene_id": 21,
-      "narration": "4つ目はsection'たぐ'です。mainの中身をさらに細かく分けるときに使います。自己紹介ページなら、「プロフィール」「趣味」「連絡先」という3つのまとまりがありますよね。それぞれをsectionで囲んで、「ここからここまでが一つのまとまりですよ」と示すわけです。本の「章」をイメージしてください。1冊の本に複数の章があるように、mainの中に複数のsectionを入れることができます。",
-      "durationSec": 43,
+      "narration": "4つ目はセクション'たぐ'です。メインの中身をさらに細かく分けるときに使います。自己紹介ページなら、「プロフィール」「趣味」「連絡先」という3つのまとまりがありますよね。それぞれをセクションで囲んで、「ここからここまでが一つのまとまりですよ」と示すわけです。本の「章」をイメージしてください。1冊の本に複数の章があるように、メインの中に複数のセクションをいれることができます。セクションの中にはエイチツーの見出しをいれるのが一般的です。各章にタイトルがあるのと同じですね。それでは、さっきのメインの中にセクションを1つ書いてみましょう。",
+      "durationSec": 50,
       "visual": {
         "type": "remotion",
         "component": "DefinitionScreen",
@@ -441,25 +788,173 @@
     },
     {
       "scene_id": 22,
-      "narration": "このように、sectionの中にはエイチツーの見出しを入れるのが一般的です。各章にタイトルがあるのと同じですね。",
-      "durationSec": 20,
+      "narration": "ここからは、メインの中身を作っていきます。まずは、自己紹介のセクションを1つ書いていきましょう。セクションの開始'たぐ'を書きます。「id イコール アバウト」と書きました。このidが、最初にナビで作ったシャープアバウトのリンクの飛び先になるんです。ナビゲーションで「自己紹介」をクリックしたとき、このセクションまでスクロールしてくれるわけですね。中にエイチツーの見出しをいれます。続けて、ぴーで紹介文をいれましょう。「ネイルサロン Bloom を経営して5年目です」と書きました。最後にセクションの閉じ'たぐ'、そしてメインの閉じ'たぐ'で全体を締めます。プレビューを見ると、見出しと紹介文が表示されていますね。実際の自己紹介ページでは、これと同じ要領で「趣味」「リンク」のセクションも追加していきます。",
+      "durationSec": 78,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<main>\n  <section>\n    <h2>自己紹介</h2>\n    <p>ネイルサロンを経営しています。</p>\n  </section>\n  <section>\n    <h2>趣味</h2>\n    <ul>\n      <li>映画鑑賞</li>\n    </ul>\n  </section>\n</main>",
-          "language": "html",
-          "title": "sectionタグの書き方"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 10,
+            "phrase": "セクションの開始'たぐ'を書きます"
+          },
+          {
+            "actionIndex": 14,
+            "phrase": "中にエイチツーの見出し"
+          },
+          {
+            "actionIndex": 18,
+            "phrase": "続けて、ぴーで紹介文"
+          },
+          {
+            "actionIndex": 22,
+            "phrase": "最後にセクションの閉じ"
+          },
+          {
+            "actionIndex": 26,
+            "phrase": "プレビューを見ると"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "prefill_codepen",
+            "html": "<header>\n  <h1>田中太郎のページ</h1>\n  <nav>\n    <a href=\"#about\">自己紹介</a>\n    <a href=\"#hobby\">趣味</a>\n    <a href=\"#links\">リンク</a>\n  </nav>\n</header>\n<main>",
+            "editors": "100"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+End"
+          },
+          {
+            "cmd": "wait",
+            "ms": 100
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 3820
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<section id=\"about\">"
+          },
+          {
+            "cmd": "wait",
+            "ms": 8510
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 8510
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>自己紹介</h2>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>ネイルサロン「Bloom」を経営して5年目です。</p>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4635
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4635
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</section>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 200
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</main>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4511
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 4511
+          }
+        ]
       }
     },
     {
       "scene_id": 23,
-      "narration": "5つ目はarticle'たぐ'です。「アーティクル」、つまり「記事」という意味ですね。ブログの投稿やニュース記事のように、それだけで独立した内容のまとまりに使います。sectionとの違いが少しわかりにくいかもしれませんが、ポイントは「それだけを切り出しても意味が通じるかどうか」です。ブログの記事は、その記事だけを別のサイトに貼り付けても読めますよね。そういう独立したコンテンツにarticleを使います。今日の自己紹介ページでは使いませんが、ブログやニュースサイトを見るとよく使われています。名前と「独立した記事に使う」という役割だけ覚えておいてくださいね。",
-      "durationSec": 56,
+      "narration": "5つ目はアーティクル'たぐ'です。「アーティクル」、つまり「記事」という意味ですね。ブログの投稿やニュース記事のように、それだけで独立した内容のまとまりに使います。セクションとの違いが少しわかりにくいかもしれませんが、ポイントは「それだけを切り出しても意味が通じるかどうか」です。ブログの記事は、その記事だけを別のサイトに貼り付けても読めますよね。そういう独立したコンテンツにアーティクルを使います。今日の自己紹介ページでは使いませんが、せっかくなのでブログ風の短い例を1つだけ書いてみましょう。本物のブログを作るときの感覚をつかんでおくと、あとでアーティクルの出番が来たときにすぐ思い出せますよ。",
+      "durationSec": 55,
       "visual": {
         "type": "remotion",
         "component": "DefinitionScreen",
@@ -476,8 +971,140 @@
     },
     {
       "scene_id": 24,
-      "narration": "最後に6つ目、footer'たぐ'です。ページの一番下にくるフッター部分です。著作権表示や、お問い合わせ先のメールアドレス、プライバシーポリシーへのリンクなど、ページの補足的な情報を入れます。お店でいえば、出口付近にある営業時間や住所の案内板ですね。",
-      "durationSec": 30,
+      "narration": "新しいCodePenが開いています。今回は自己紹介ページとは別に、ブログ記事のサンプルを1つだけ書いてみます。まず、アーティクルの開始'たぐ'を書きます。中にエイチツーで記事のタイトルを書きましょう。「今日のネイル日記」といれておきます。続けて、ぴーで本文を1だんらく書きます。「新作デザインを試してみました」と書いてみました。最後にアーティクルの閉じ'たぐ'。これだけで「独立した1つの記事」を表せます。プレビューを見てください。タイトルと本文が並んで、1つの記事カードになっていますね。本物のブログだったら、このアーティクルがページの中にいくつも並ぶ形になります。",
+      "durationSec": 60,
+      "visual": {
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 6,
+            "phrase": "アーティクルの開始'たぐ'を書きます"
+          },
+          {
+            "actionIndex": 10,
+            "phrase": "中にエイチツーで記事のタイトル"
+          },
+          {
+            "actionIndex": 14,
+            "phrase": "続けて、ぴーで本文"
+          },
+          {
+            "actionIndex": 18,
+            "phrase": "最後にアーティクルの閉じ"
+          },
+          {
+            "actionIndex": 20,
+            "phrase": "プレビューを見てください"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "prefill_codepen",
+            "html": "",
+            "editors": "100"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1227
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 1227
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1227
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<article>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 725
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 725
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<h2>今日のネイル日記</h2>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1805
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1805
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>新作デザインを試してみました。</p>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4870
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4870
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</article>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 7000
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 8242
+          }
+        ]
+      }
+    },
+    {
+      "scene_id": 25,
+      "narration": "最後に6つ目、フッター'たぐ'です。ページの一番下にくるフッター部分です。著作権表示や、お問い合わせ先のメールアドレス、プライバシーポリシーへのリンクなど、ページの補足的な情報をいれます。お店でいえば、出口付近にある営業時間や住所の案内板ですね。本物のお店も、出口に「営業時間」「お問い合わせ番号」が書いてあると、後から思い出して連絡したくなりますよね。ウェブも同じで、フッターは「閉じの挨拶」のような役割を持っています。それでは、自己紹介ページに戻って、最後の仕上げにフッターを足してみましょう。",
+      "durationSec": 45,
       "visual": {
         "type": "remotion",
         "component": "DefinitionScreen",
@@ -493,26 +1120,136 @@
       }
     },
     {
-      "scene_id": 25,
-      "narration": "ちなみに、ここに出てくる「&copy;」はコピーライトマークを表示するための特殊な書き方です。ブラウザでは「©」の記号として表示されます。",
-      "durationSec": 22,
+      "scene_id": 26,
+      "narration": "実際のページにはセクションを3つ書いて、ここまで完成しています。今からは、メインの閉じ'たぐ'のすぐ下、つまりメインの外側にフッターを書きます。フッターはメインの中ではなく、外側に置くんですよ。メインコンテンツとフッターは別のまとまりですからね。お店でいうと、売り場を出てから出口の案内板がある、という配置です。フッターの開始'たぐ'を書きました。中にぴー'たぐ'でコピーライト表示をいれます。「アンドコピーセミコロン」というのは、「マルシー」の記号を表示するための特殊な書き方です。最後にフッターの閉じ'たぐ'。これでページ全体に「上から下まで意味のある構造」がそろいました。プレビューには、いちばん下にコピーライト表示が出ていますね。",
+      "durationSec": 70,
       "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<footer>\n  <p>お問い合わせ: info@example.com</p>\n  <p>&copy; 2024 田中太郎</p>\n</footer>",
-          "language": "html",
-          "title": "footerタグの書き方"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 10,
+            "phrase": "フッターの開始'たぐ'を書きました"
+          },
+          {
+            "actionIndex": 14,
+            "phrase": "中にぴー'たぐ'でコピーライト"
+          },
+          {
+            "actionIndex": 18,
+            "phrase": "最後にフッターの閉じ"
+          },
+          {
+            "actionIndex": 20,
+            "phrase": "プレビューには、いちばん下"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "prefill_codepen",
+            "html": "<header>\n  <h1>田中太郎のページ</h1>\n  <nav>\n    <a href=\"#about\">自己紹介</a>\n    <a href=\"#hobby\">趣味</a>\n    <a href=\"#links\">リンク</a>\n  </nav>\n</header>\n<main>\n  <section id=\"about\">\n    <h2>自己紹介</h2>\n    <p>ネイルサロン「Bloom」を経営して5年目です。</p>\n  </section>\n  <section id=\"hobby\">\n    <h2>趣味</h2>\n    <ul>\n      <li>映画鑑賞</li>\n    </ul>\n  </section>\n  <section id=\"links\">\n    <h2>リンク</h2>\n    <a href=\"https://instagram.com/bloom_nail\">Instagram</a>\n  </section>\n</main>",
+            "editors": "100"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              250
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "click",
+            "selector": "#box-html .CodeMirror"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+End"
+          },
+          {
+            "cmd": "wait",
+            "ms": 100
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 20160
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<footer>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1050
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1050
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "<p>&copy; 2024 田中太郎</p>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4105
+          },
+          {
+            "cmd": "press",
+            "key": "Enter"
+          },
+          {
+            "cmd": "wait",
+            "ms": 4105
+          },
+          {
+            "cmd": "type",
+            "selector": "#box-html .CodeMirror textarea",
+            "key": "</footer>"
+          },
+          {
+            "cmd": "wait",
+            "ms": 7270
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 3050
+          }
+        ]
       }
     },
     {
-      "scene_id": 26,
-      "narration": "では、ここまでの6つの'たぐ'を整理しましょう。headerがページの顔、看板。navが案内板。mainが売り場、つまりメインの内容。sectionが売り場の中の各コーナー。articleが独立した記事。footerが出口の案内板。こうして見ると、ウェブページの間取り図ができあがるわけです。headerが玄関、mainがリビング、footerが勝手口、と考えてもいいですね。6つ全部を一度に覚える必要はありませんから、まずはheader、main、footerの3つだけしっかり押さえておけば、このあとのライブコーディングもスムーズに進められると思います。",
-      "durationSec": 51,
+      "scene_id": 27,
+      "narration": "ここまでで、6つの'たぐ'を実際に手で書いて確認しました。いったん整理しましょう。ヘッダーがページの顔、看板。ナビが案内板。メインが売り場、つまりメインの内容。セクションが売り場の中の各コーナー。アーティクルが独立した記事。フッターが出口の案内板。こうして見ると、ウェブページの間取り図ができあがるわけです。ヘッダーが玄関、メインがリビング、フッターが勝手口、と考えてもいいですね。今日全部を完璧に覚えなくても大丈夫です。手で1回書いた感触があれば、次に出てきたときに「ああ、あのとき書いたやつだ」とすぐ思い出せます。むしろ、自分でゼロから組み立てるよりも、エーアイが出力したコードを見て「ここはヘッダーかな、ここはメインかな」と判断できるようになることが、これから大事になってきます。それで十分なんです。",
+      "durationSec": 63,
       "visual": {
         "type": "remotion",
         "component": "IconListScreen",
@@ -563,9 +1300,9 @@
       }
     },
     {
-      "scene_id": 27,
-      "narration": "さて、セマンティック'たぐ'の仲間として、もう1つ覚えてほしい'たぐ'があります。div'たぐ'です。div'たぐ'は「ディビジョン」、つまり「仕切り」「区画」という意味です。これは先ほどの6つのセマンティック'たぐ'とは少し性格が違います。headerやmainには「ここはヘッダーです」「ここはメインです」という明確な意味がありました。「この部屋はリビングです」と名札が貼ってあるのと同じですね。",
-      "durationSec": 40,
+      "scene_id": 28,
+      "narration": "さて、セマンティック'たぐ'の仲間として、もう1つ覚えてほしい'たぐ'があります。ディブ'たぐ'です。ディブは「ディビジョン」、つまり「仕切り」「区画」という意味です。先ほどの6つの'たぐ'とは性格が違って、ディブには「ここがヘッダーです」のような明確な意味がありません。「この範囲をひとまとめにしますよ」という、名札のない箱だと考えてください。じゃあ何のために使うのかというと、CSSでスタイルを当てるときの足場です。CSSはパートスリーで学びますが、複数の要素にまとめて背景色をつけたいとか、横並びにレイアウトしたいとか、「見た目の都合でグループ化したい」場面で活躍します。",
+      "durationSec": 50,
       "visual": {
         "type": "remotion",
         "component": "DefinitionScreen",
@@ -581,185 +1318,129 @@
       }
     },
     {
-      "scene_id": 28,
-      "narration": "ところがdivには、そういった意味がありません。部屋に名札を貼らない。ただ「この範囲をひとまとめにしますよ」という箱でしかないんです。いわば、名前のない仕切り板です。では、何に使うのかというと、たとえばCSSでスタイルを当てたいときです。CSSはパートスリーで学びますが、複数の要素にまとめて背景色をつけたいとか、横並びにレイアウトしたいとか、そういう「見た目の都合でグループ化したい」場面で使います。意味ではなく、見た目の理由で囲みたいときの道具ですね。",
-      "durationSec": 50,
+      "scene_id": 29,
+      "narration": "実は、HTMLの歴史の中で、セマンティック'たぐ'が登場する前は、ウェブページの構造をすべてディブで作っていた時代がありました。ちょっと、その「ディブだらけ」のコードを見てみましょう。CodePenに、自己紹介ページをぜんぶディブで組んだバージョンを開いておきました。コードを見てください。ディブ、ディブ、ディブ、ディブ、と同じ'たぐ'ばかりが並んでいますよね。これだと、コードを開いた人にとっても、機械にとっても、「どこが何の部分なのか」がわかりません。プレビューだけ見ると、ちゃんとページとして表示されています。見た目は普通のページに見えますよね。でも、構造としては「名札のないマンション」と同じ状態なんです。これがセマンティック'たぐ'が生まれる前の世界でした。",
+      "durationSec": 60,
       "visual": {
-        "type": "remotion",
-        "component": "ComparisonScreen",
-        "props": {
-          "left": {
-            "title": "セマンティックタグ",
-            "points": [
-              "意味を持つ",
-              "「ここが何か」を伝える",
-              "header/main/footerなど"
-            ],
-            "color": "#ef4444"
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 2,
+            "phrase": "コードを見てください"
           },
-          "right": {
-            "title": "divタグ",
-            "points": [
-              "意味を持たない",
-              "見た目の都合でまとめる",
-              "CSSでスタイルを当てるとき"
-            ],
-            "color": "#f59e0b"
+          {
+            "actionIndex": 4,
+            "phrase": "プレビューだけ見ると"
           }
-        }
+        ],
+        "action": [
+          {
+            "cmd": "prefill_codepen",
+            "html": "<div>\n  <div>田中太郎のページ</div>\n  <div>\n    <div><a href=\"#about\">自己紹介</a></div>\n    <div><a href=\"#hobby\">趣味</a></div>\n    <div><a href=\"#links\">リンク</a></div>\n  </div>\n</div>\n<div>\n  <div>\n    <div>自己紹介</div>\n    <div>ネイルサロン「Bloom」を経営して5年目です。</div>\n  </div>\n  <div>\n    <div>趣味</div>\n    <div>映画鑑賞</div>\n  </div>\n  <div>\n    <div>リンク</div>\n    <div><a href=\"https://instagram.com/bloom_nail\">Instagram</a></div>\n  </div>\n</div>\n<div>\n  <div>&copy; 2024 田中太郎</div>\n</div>",
+            "css": "body { font-family: sans-serif; padding: 20px; }\ndiv > div:first-child { font-weight: bold; margin-top: 12px; }",
+            "editors": "110"
+          },
+          {
+            "cmd": "wait",
+            "ms": 14140
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              400
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 6300
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 19854
+          }
+        ]
       }
     },
     {
-      "scene_id": 29,
-      "narration": "ですから、使い分けのルールはとてもシンプルです。意味がはっきりしている部分にはセマンティック'たぐ'を使う。意味はないけど見た目の都合でまとめたいときにはdivを使う。divは便利な'たぐ'なので、つい何でもdivで囲みたくなりがちです。実はHTMLの歴史の中で、セマンティック'たぐ'が登場する前は、ウェブページの構造をすべてdivで作っていた時代がありました。でもそれだと、コードを見てもdivだらけで、どこが何なのかさっぱりわからない。機械にとっては間取り図のないマンションと同じです。そこで、header、main、footerといったセマンティック'たぐ'が生まれたんですね。ですから、今のベストプラクティスは「意味のある箱にはセマンティック'たぐ'、それ以外はdiv」。このバランス感覚を持っておくと、きれいなHTMLが書けるようになります。",
-      "durationSec": 55,
+      "scene_id": 30,
+      "narration": "それでは、同じページをセマンティック'たぐ'で組み直したバージョンを開きましょう。コードを見てください。さっきはディブだらけだったのが、ヘッダー、ナビ、メイン、セクション、フッターと、それぞれの役割がコードからすぐに読み取れるようになっていますよね。1行目のヘッダーで「ここからページの上部」、メイン'たぐ'で「ここがコンテンツの本体」、フッターで「ここがページの末尾」、と機械にも人にも明確に伝わります。プレビューを見比べてください。見た目はさっきのディブだらけのバージョンとほとんど同じですね。色もレイアウトも変わっていません。でも、コードの「読みやすさ」と「機械への伝わり方」がまったく違います。これが、見た目を変えずに意味だけを変える、セマンティック'たぐ'の本当の力なんです。",
+      "durationSec": 65,
+      "visual": {
+        "type": "playwright",
+        "storageState": "config/auth/codepen.json",
+        "syncPoints": [
+          {
+            "actionIndex": 2,
+            "phrase": "コードを見てください"
+          },
+          {
+            "actionIndex": 4,
+            "phrase": "プレビューを見比べてください"
+          }
+        ],
+        "action": [
+          {
+            "cmd": "prefill_codepen",
+            "html": "<header>\n  <h1>田中太郎のページ</h1>\n  <nav>\n    <a href=\"#about\">自己紹介</a>\n    <a href=\"#hobby\">趣味</a>\n    <a href=\"#links\">リンク</a>\n  </nav>\n</header>\n<main>\n  <section id=\"about\">\n    <h2>自己紹介</h2>\n    <p>ネイルサロン「Bloom」を経営して5年目です。</p>\n  </section>\n  <section id=\"hobby\">\n    <h2>趣味</h2>\n    <p>映画鑑賞</p>\n  </section>\n  <section id=\"links\">\n    <h2>リンク</h2>\n    <a href=\"https://instagram.com/bloom_nail\">Instagram</a>\n  </section>\n</main>\n<footer>\n  <p>&copy; 2024 田中太郎</p>\n</footer>",
+            "css": "body { font-family: sans-serif; padding: 20px; }\nh2 { margin-top: 12px; }",
+            "editors": "110"
+          },
+          {
+            "cmd": "wait",
+            "ms": 1960
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              400,
+              400
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 23160
+          },
+          {
+            "cmd": "mouse_move",
+            "to": [
+              960,
+              800
+            ]
+          },
+          {
+            "cmd": "wait",
+            "ms": 17599
+          }
+        ]
+      }
+    },
+    {
+      "scene_id": 31,
+      "narration": "ここまで見てきたように、ディブとセマンティック'たぐ'の使い分けはとてもシンプルです。意味がはっきりしている部分にはセマンティック'たぐ'を使う。意味はないけど見た目の都合でまとめたいときにはディブを使う。ディブは便利なので、つい何でもディブで囲みたくなりがちですが、まずは「ここに名前をつけられないかな」と考えてみる癖をつけてください。それがプロのHTMLに近づく第一歩です。",
+      "durationSec": 33,
       "visual": {
         "type": "remotion",
         "component": "CalloutScreen",
         "props": {
           "type": "tip",
           "title": "divとセマンティックタグの使い分け",
-          "body": "意味がある部分はセマンティックタグ（header/main/footerなど）。見た目の都合だけならdiv。これがベストプラクティスです。"
-        }
-      }
-    },
-    {
-      "scene_id": 30,
-      "narration": "さあ、ここからはライブコーディングです。今まで作ってきた自己紹介ページを、セマンティック'たぐ'で構造化していきましょう。まず、CodePenを開いてください。前回までに作った自己紹介ページの'ぺ'んを開きます。皆さんのコードは、名前や内容は違っていても、おおよそこんな構成になっていると思います。エイチワンで名前の見出し、ぴーで自己紹介文、エイチツーでセクションの見出し、ulで趣味のリスト、imgで写真、aでSNSリンク。そしてページの最後にコピーライト表示。上から下に'たぐ'が並んでいるだけの状態ですね。",
-      "durationSec": 52,
-      "visual": {
-        "type": "remotion",
-        "component": "CalloutScreen",
-        "props": {
-          "type": "info",
-          "icon": "💻",
-          "title": "ライブコーディング開始",
-          "body": "既存の自己紹介ページをセマンティックタグで構造化します。コードの中身は変えず、外側から「囲む」だけです。"
-        },
-        "transition": {
-          "enter": "slide-left"
-        }
-      }
-    },
-    {
-      "scene_id": 31,
-      "narration": "今からやることは、この既存のコードの中身は一切変えずに、セマンティック'たぐ'で「囲む」だけです。テキストも、リンクも、画像も、そのまま残します。外側に構造だけを追加する。これを「リファクタリング」と言います。見た目や動きは変えずに、コードの構造をよくする作業のことです。プロの開発者もよく使う言葉で、実際の現場でも頻繁に行われています。既存のウェブサイトのHTMLをセマンティック'たぐ'で整理し直す、というのはまさに典型的なリファクタリングですね。",
-      "durationSec": 51,
-      "visual": {
-        "type": "remotion",
-        "component": "DefinitionScreen",
-        "props": {
-          "term": "リファクタリング",
-          "reading": "Refactoring",
-          "definition": "見た目や動きは変えずに、コードの構造をよくする作業のこと。",
-          "example": "セマンティックタグで既存のHTMLを整理し直すのが典型例"
+          "body": "意味がある部分はセマンティックタグ。それ以外はdiv。「ここに名前をつけられないかな」と一度考える癖を。"
         }
       }
     },
     {
       "scene_id": 32,
-      "narration": "では、上から順番にやっていきましょう。まず、ページの一番上です。エイチワンの見出しを、header'たぐ'で囲みましょう。コードの先頭にheaderの開始'たぐ'を書いて、エイチワンの下にheaderの閉じ'たぐ'を書きます。headerの開始'たぐ'と閉じ'たぐ'で、エイチワンをサンドイッチにするイメージですね。エイチワン'たぐ'の前に半角スペースを2つ入れて字下げしましょう。字下げをすると、「エイチワンがheaderの中に入っている」ということがコードの見た目でもわかりやすくなります。できましたか？プレビューを見てください。見た目は変わっていませんよね。それで正解なんです。セマンティック'たぐ'は見た目を変えるためのものではありませんから。",
-      "durationSec": 62,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<header>\n  <h1>田中太郎のページ</h1>\n</header>",
-          "language": "html",
-          "title": "STEP 1: headerで囲む"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 33,
-      "narration": "次に、headerの中にnav'たぐ'を追加しましょう。ページ内の各セクションへのナビゲーションリンクを作ります。エイチワンの下、headerの閉じ'たぐ'の前に、こう書いてください。nav'たぐ'の中に、a'たぐ'でリンクを3つ並べました。リンク先が「#about」のようにシャープ記号で始まっていますね。これは「ページ内リンク」と言って、同じページの中の特定の場所に飛ぶためのリンクです。シャープ記号のあとの名前は、飛び先の目印になります。飛び先の設定はこのあとやりますので、今はリンクだけ先に書いておきましょう。プレビューを見ると、「自己紹介」「趣味」「リンク」というテキストリンクが表示されていると思います。",
-      "durationSec": 63,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<header>\n  <h1>田中太郎のページ</h1>\n  <nav>\n    <a href=\"#about\">自己紹介</a>\n    <a href=\"#hobby\">趣味</a>\n    <a href=\"#links\">リンク</a>\n  </nav>\n</header>",
-          "language": "html",
-          "title": "STEP 2: navを追加"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 34,
-      "narration": "続いて、main'たぐ'です。ヘッダーの下からフッターの手前まで、ページの中心的な内容をすべてmainで囲みます。headerの閉じ'たぐ'のすぐ下の行にmainの開始'たぐ'を書きます。そして、コピーライト表示の手前にmainの閉じ'たぐ'を書きましょう。headerとfooterの間にある内容が、すべてmainの中に入る形ですね。ここまでで、ページ全体に3つの大きな区画ができました。header、main、footer。これだけでも、ページの骨組みとしてはかなりわかりやすくなっています。では次に、mainの中身をさらにsectionで区切っていきましょう。自己紹介の部分、趣味の部分、リンクの部分。この3つのまとまりを、それぞれsection'たぐ'で囲んでいきます。",
-      "durationSec": 61,
-      "visual": {
-        "type": "remotion",
-        "component": "CalloutScreen",
-        "props": {
-          "type": "info",
-          "icon": "📐",
-          "title": "STEP 3: mainで全体を囲む",
-          "body": "headerの下からfooterの手前まで、すべてをmainタグで囲みます。header・main・footerの3区画が完成します。"
-        }
-      }
-    },
-    {
-      "scene_id": 35,
-      "narration": "まず、自己紹介のセクションです。エイチツーの「自己紹介」見出しから、関連するだんらくや画像までをsectionで囲みます。sectionの開始'たぐ'に「id=\"about\"」と書きました。このidが、先ほどnavで作った「#about」リンクの飛び先になります。ナビゲーションで「自己紹介」をクリックすると、このsectionまでスクロールしてくれるわけです。これでページ内リンクの仕組みが完成しますね。",
-      "durationSec": 42,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "  <section id=\"about\">\n    <h2>自己紹介</h2>\n    <p>ネイルサロン「Bloom」を経営して5年目です。</p>\n    <img src=\"https://images.unsplash.com/photo-example\" alt=\"サロンの写真\">\n  </section>",
-          "language": "html",
-          "title": "STEP 4a: section id=\"about\""
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 36,
-      "narration": "同じ要領で、趣味のセクションも囲みましょう。idは「hobby」にしました。navの「#hobby」リンクと対応していますね。そしてリンクのセクションです。3つのsectionがmainの中に並びました。本の3つの章が1冊の本に収まっているイメージです。sectionの数は皆さんのページの内容に合わせて増やしても大丈夫ですよ。",
-      "durationSec": 36,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "  <section id=\"hobby\">\n    <h2>趣味</h2>\n    <ul>\n      <li>映画鑑賞</li>\n      <li>カフェ巡り</li>\n      <li>ヨガ</li>\n    </ul>\n  </section>\n\n  <section id=\"links\">\n    <h2>リンク</h2>\n    <a href=\"https://instagram.com/bloom_nail\" target=\"_blank\">Instagram</a>\n  </section>",
-          "language": "html",
-          "title": "STEP 4b: section hobby と links"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 37,
-      "narration": "最後に、ページの一番下にfooterを作ります。コピーライト表示やお問い合わせ情報をfooterで囲みましょう。footerはmainの閉じ'たぐ'の下に書きます。mainの中ではなく、外側ですよ。メインコンテンツとフッターは別のまとまりですからね。お店でいうと、売り場を出てから出口の案内板がある、という配置です。ここで一つお伝えしておきたいことがあります。今、CodePenでは1つのHTMLペインにすべてのコードを書いていますが、実際のウェブサイトでは、このコード全体が「index.html」という1つのファイルの中身になります。パートフォーでファイルを使った開発環境に進んだとき、今日書いた構造がそのままファイルの中の構造になりますので、この感覚を覚えておいてくださいね。",
-      "durationSec": 67,
-      "visual": {
-        "type": "remotion",
-        "component": "MyCodeScene",
-        "props": {
-          "code": "<footer>\n  <p>&copy; 2024 田中太郎</p>\n</footer>",
-          "language": "html",
-          "title": "STEP 5: footerで締める"
-        },
-        "transition": {
-          "enter": "slide-up"
-        }
-      }
-    },
-    {
-      "scene_id": 38,
-      "narration": "では、ここまでのコード全体を確認しましょう。皆さんのコードもこのような形になっているか、見比べてください。名前やリンク先はそれぞれ違うと思いますが、構造は同じになっているはずです。headerの中にエイチワンとnav。mainの中にsectionが3つ。そして最後にfooter。ページの間取り図が完成しましたね。navの中のリンクをクリックしてください。ページ内の対応するsectionにスクロールするはずです。もしうまく動かない場合は、navのリンク先の「#about」と、sectionのid「about」が一致しているか確認してください。",
-      "durationSec": 54,
+      "narration": "ここまでで、自己紹介ページに必要な6つの'たぐ'を順番に書いてきました。改めて完成形を見てみましょう。ヘッダーの中にエイチワンとナビが入っていて、メインの中にセクション、最後にフッター。これが「セマンティック'たぐ'で組み立てた自己紹介ページ」の全体像です。ナビの中のリンクをクリックすると、対応するセクションまでスクロールするように作られています。シャープアバウトのリンクとセクションのidアバウトが対応している、というのが裏側の仕組みでしたね。",
+      "durationSec": 41,
       "visual": {
         "type": "remotion",
         "component": "CodeWalkthroughScreen",
@@ -774,7 +1455,7 @@
             21,
             25
           ],
-          "caption": "header・main（3つのsection）・footerの構造"
+          "caption": "header・main(3つのsection)・footerの構造"
         },
         "transition": {
           "enter": "slide-up"
@@ -782,9 +1463,9 @@
       }
     },
     {
-      "scene_id": 39,
-      "narration": "ここで、リファクタリングの前と後を見比べましょう。まず、変更前のコードを思い出してください。エイチワン、ぴー、エイチツー、ul、img、aといった'たぐ'が、ただ上から順番に並んでいるだけでした。'たぐ'と'たぐ'の間に区切りがないので、コードを読む機械にとっては「ここからここまでが1つのまとまり」という情報が一切ありません。言ってみれば、仕切りのない倉庫に荷物が並んでいるような状態です。",
-      "durationSec": 43,
+      "scene_id": 33,
+      "narration": "ここで、今日のリファクタリングの前と後を見比べましょう。変更前のコードを思い出してください。エイチワン、ぴー、エイチツー、ulといった'たぐ'が、ただ上から順番に並んでいるだけでした。'たぐ'と'たぐ'の間に区切りがないので、コードを読む機械にとっては「ここからここまでが1つのまとまり」という情報が一切ありません。仕切りのない倉庫に荷物が並んでいるような状態でしたね。一方、変更後のコードは、ヘッダー、メイン、セクション、フッターと、それぞれの役割が明確に分かれています。コードをざっと眺めただけで、ページの構成がひと目で把握できますよね。",
+      "durationSec": 51,
       "visual": {
         "type": "remotion",
         "component": "BeforeAfterScreen",
@@ -815,9 +1496,9 @@
       }
     },
     {
-      "scene_id": 40,
-      "narration": "一方、変更後のコードを見てください。headerがあって、mainがあって、その中にsectionが3つ並んで、最後にfooterがある。コードをざっと眺めただけで、ページの構成がひと目で把握できますよね。プレビューを見比べてください。見た目にはほとんど違いがありません。navのリンクが増えた程度で、全体のレイアウトや文字の大きさは何も変わっていないはずです。でも、意味はまったく違います。変更前のコードは「'たぐ'が上から順に並んでいるだけ」のページ。変更後のコードは「意味のある構造を持ったページ」です。見た目は同じでも、中身の質がまるで違うんです。",
-      "durationSec": 58,
+      "scene_id": 34,
+      "narration": "プレビューを見比べてください。見た目にはほとんど違いがありません。ナビのリンクが増えた程度で、全体のレイアウトや文字の大きさは何も変わっていないはずです。でも、意味はまったく違います。変更前のコードは「'たぐ'が上から順に並んでいるだけ」のページでした。変更後のコードは「意味のある構造を持ったページ」です。見た目は同じでも、中身の質がまるで違います。これは特に、検索エンジンとエーアイにとって大きな違いになります。検索結果での見つけやすさも変わってきますし、これからエーアイにコードをチェックしてもらうときにも、構造が整っているほうが正確なフィードバックをもらえます。コードの読みやすさは、自分自身がメンテナンスしやすいという意味でも大切なんですね。",
+      "durationSec": 53,
       "visual": {
         "type": "remotion",
         "component": "KeyPointScreen",
@@ -830,9 +1511,9 @@
       }
     },
     {
-      "scene_id": 41,
-      "narration": "これは、整理整頓されていない部屋と、きちんと収納された部屋の違いに似ています。どちらも同じ物が置いてあるんですが、片付いた部屋のほうが、どこに何があるかすぐにわかりますよね。来客があったときにも、整理された部屋のほうが好印象です。ウェブページにとっての「来客」が、検索エンジンやエーアイなわけです。実際のところ、世の中のウェブサイトを見てみると、プロが作ったサイトにはほぼ必ずセマンティック'たぐ'が使われています。パートツーの最後の講義で、エーアイにHTMLを作ってもらう実習をしますが、そのときにエーアイが出力したコードを見て、「ここにheader'たぐ'がないな」「mainの中をsectionで分けたほうが読みやすいな」と自分で判断できるかどうか。今日学んだことが、まさにその力の土台になります。",
-      "durationSec": 64,
+      "scene_id": 35,
+      "narration": "これは、整理整頓されていない部屋と、きちんと収納された部屋の違いに似ています。どちらも同じ物が置いてあるんですが、片付いた部屋のほうが、どこに何があるかすぐにわかりますよね。来客があったときにも、整理された部屋のほうが好印象です。ウェブページにとっての「来客」が、検索エンジンやエーアイなわけです。実際のところ、世の中のウェブサイトを見てみると、プロが作ったサイトにはほぼ必ずセマンティック'たぐ'が使われています。今日学んだことが、皆さんがプロの仕事に近づくための大事な土台になります。",
+      "durationSec": 47,
       "visual": {
         "type": "remotion",
         "component": "TwoColumnScreen",
@@ -854,9 +1535,9 @@
       }
     },
     {
-      "scene_id": 42,
-      "narration": "今日のポイントを振り返りましょう。1つ目。セマンティック'たぐ'は、ウェブページに「間取り図」を作るための'たぐ'です。headerがページの顔、navがナビゲーション、mainがメインコンテンツ、sectionがまとまり、articleが独立した記事、footerがページの末尾。この6つの名前と役割を、なんとなくでいいので頭に入れておいてください。2つ目。div'たぐ'は「意味のない箱」です。セマンティック'たぐ'で表現できる部分にはセマンティック'たぐ'を使い、見た目の都合でまとめたいだけのときにdivを使う。この使い分けがポイントでした。3つ目。セマンティック'たぐ'を入れても見た目はほとんど変わりません。でも、検索エンジンやエーアイにとっては大きな違いがあります。「見た目は同じだが意味が違う」。今日いちばん大切なメッセージはこれです。",
-      "durationSec": 71,
+      "scene_id": 36,
+      "narration": "今日のポイントを振り返りましょう。1つ目。セマンティック'たぐ'は、ウェブページに「間取り図」を作るための'たぐ'です。ヘッダーがページの顔、ナビがナビゲーション、メインがメインコンテンツ、セクションがまとまり、アーティクルが独立した記事、フッターがページの末尾。この6つの名前と役割を、なんとなくでいいので頭にいれておいてください。今日は1つずつ手で書きながら覚えたので、頭ではなく指先が覚えてくれていると思います。2つ目。ディブ'たぐ'は「意味のない箱」です。セマンティック'たぐ'で表現できる部分にはセマンティック'たぐ'を使い、見た目の都合でまとめたいだけのときにディブを使う。「ここに名前をつけられないかな」と一度考える癖がポイントでした。3つ目。セマンティック'たぐ'をいれても見た目はほとんど変わりません。でも、検索エンジンやエーアイにとっては大きな違いがあります。「見た目は同じだが意味が違う」。今日いちばん大切なメッセージはこれです。",
+      "durationSec": 78,
       "visual": {
         "type": "remotion",
         "component": "SummaryScreen",
@@ -875,9 +1556,9 @@
       }
     },
     {
-      "scene_id": 43,
-      "narration": "'たぐ'の名前を全部暗記する必要はありません。何を検索すべきかを知っていれば、それで十分なんです。「ページの上部にはheaderっていう'たぐ'があったな」「まとまりをつけるのはsectionだったな」くらいの記憶があれば、あとはいつでも調べられます。今日リファクタリングした自己紹介ページは、CodePenに保存されています。次の講義までに、もう一度コードを開いて、header、main、section、footerの構造をざっと眺めてください。2回目に見ると、構造がよりすっきりと頭に入ってくると思います。さて、次の講義では「フォーム」を学びます。お問い合わせフォームのように、ユーザーが文字を入力したり、選択肢を選んだりできる仕組みです。input'たぐ'やbutton'たぐ'など、新しい'たぐ'がいくつか登場しますが、どれもウェブサイトでよく見かけるおなじみのパーツです。今日の自己紹介ページに、お問い合わせフォームを追加しましょう。それでは、お疲れ様でした。次の講義でお会いしましょう。",
-      "durationSec": 76,
+      "scene_id": 37,
+      "narration": "'たぐ'の名前を全部暗記する必要はありません。「ページの上部にはヘッダーっていう'たぐ'があったな」「まとまりをつけるのはセクションだったな」くらいの記憶があれば、あとはいつでも調べられます。今日CodePenで書いたコードは保存されていますので、次の講義までに、もう一度開いてヘッダー、メイン、セクション、フッターの構造をざっと眺めてみてください。さて、次の講義では「フォーム」を学びます。お問い合わせフォームのように、ユーザーが文字を入力したり、選択肢を選んだりできる仕組みです。インプット'たぐ'やボタン'たぐ'など、新しい'たぐ'がいくつか登場しますが、どれもウェブサイトでよく見かけるおなじみのパーツです。今日の自己紹介ページに、お問い合わせフォームを追加しましょう。それでは、お疲れ様でした。次の講義でお会いしましょう。",
+      "durationSec": 70,
       "visual": {
         "type": "remotion",
         "component": "EndScreen",
