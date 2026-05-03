@@ -423,10 +423,6 @@
           {
             "actionIndex": 12,
             "phrase": "インプット'たぐ'の下に"
-          },
-          {
-            "actionIndex": 16,
-            "phrase": "もう一組追加してください"
           }
         ],
         "action": [
@@ -1767,57 +1763,19 @@
         "storageState": "config/auth/codepen.json",
         "syncPoints": [
           {
-            "actionIndex": 10,
-            "phrase": "何か起きましたか"
+            "actionIndex": 2,
+            "phrase": "「送信する」ボタンを押してください"
           },
           {
-            "actionIndex": 12,
+            "actionIndex": 9,
             "phrase": "お名前の欄を空のまま"
           }
         ],
         "action": [
           {
             "cmd": "prefill_codepen",
-            "html": "<form>\n  <label>お名前</label>\n  <input type=\"text\" placeholder=\"山田太郎\" required>\n  <label>メールアドレス</label>\n  <input type=\"email\" placeholder=\"example@mail.com\" required>\n  <label>電話番号</label>\n  <input type=\"tel\" placeholder=\"09012345678\">\n  <label>ご予約日</label>\n  <input type=\"date\">\n  <label>お問い合わせ種別</label>\n  <select>\n    <option>ご予約</option>\n    <option>ご質問</option>\n    <option>その他</option>\n  </select>\n  <label>メッセージ</label>\n  <textarea placeholder=\"お問い合わせ内容をご記入ください\"></textarea>\n  <button>送信する</button>\n</form>",
+            "html": "<form>\n  <label>お名前</label>\n  <input type=\"text\" placeholder=\"山田太郎\" required value=\"山田太郎\">\n  <label>メールアドレス</label>\n  <input type=\"email\" placeholder=\"example@mail.com\" required value=\"test@example.com\">\n  <label>電話番号</label>\n  <input type=\"tel\" placeholder=\"09012345678\">\n  <label>ご予約日</label>\n  <input type=\"date\">\n  <label>お問い合わせ種別</label>\n  <select>\n    <option>ご予約</option>\n    <option>ご質問</option>\n    <option>その他</option>\n  </select>\n  <label>メッセージ</label>\n  <textarea placeholder=\"お問い合わせ内容をご記入ください\"></textarea>\n  <button>送信する</button>\n</form>",
             "editors": "100"
-          },
-          {
-            "cmd": "wait",
-            "ms": 0
-          },
-          {
-            "cmd": "click",
-            "selector": "input[type='text']",
-            "iframe": "iframe.result-iframe"
-          },
-          {
-            "cmd": "wait",
-            "ms": 0
-          },
-          {
-            "cmd": "type",
-            "selector": "input[type='text']",
-            "key": "山田太郎",
-            "iframe": "iframe.result-iframe"
-          },
-          {
-            "cmd": "wait",
-            "ms": 0
-          },
-          {
-            "cmd": "click",
-            "selector": "input[type='email']",
-            "iframe": "iframe.result-iframe"
-          },
-          {
-            "cmd": "wait",
-            "ms": 0
-          },
-          {
-            "cmd": "type",
-            "selector": "input[type='email']",
-            "key": "test@example.com",
-            "iframe": "iframe.result-iframe"
           },
           {
             "cmd": "wait",
@@ -1831,6 +1789,27 @@
           {
             "cmd": "wait",
             "ms": 3000
+          },
+          {
+            "cmd": "click",
+            "selector": "input[type='text']",
+            "iframe": "iframe.result-iframe"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
+          },
+          {
+            "cmd": "press",
+            "key": "Meta+a"
+          },
+          {
+            "cmd": "press",
+            "key": "Backspace"
+          },
+          {
+            "cmd": "wait",
+            "ms": 0
           },
           {
             "cmd": "click",
